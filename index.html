@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#0b0c09">
+  <title>EDFS Civil Tools</title>
+  <meta name="description" content="EDFS Civil Tools — alat bantu rekayasa sipil oleh PT. DTS Engineering.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon/edfs-mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="favicon/edfs-icon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/shell.css">
+</head>
+<body>
+  <div id="app">
+    <nav id="nav">
+      <div class="nav-head">
+        <button class="logo-btn" id="nav-toggle" title="Ciutkan / luaskan menu" aria-label="Ciutkan atau luaskan menu">
+          <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="30" height="32">
+        </button>
+        <span class="title">EDFS Civil Tools<small>Alat Bantu Rekayasa Sipil</small></span>
+      </div>
+      <div class="nav-list" id="nav-list"><!-- diisi shell.js --></div>
+      <div class="nav-foot">
+        <button class="iconbtn wide" id="about-btn" title="Tentang aplikasi">ⓘ Tentang</button>
+        <button class="iconbtn" id="theme-toggle" title="Ganti tema">☾ Tema</button>
+      </div>
+    </nav>
+    <main id="workspace">
+      <div id="module-root"></div>
+    </main>
+  </div>
+  <div id="toast"></div>
+
+  <!-- About / Tentang -->
+  <div class="modal-ov" id="about-ov">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="about-title">
+      <button class="modal-x" id="about-close" aria-label="Tutup">×</button>
+      <div class="modal-hd">
+        <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
+        <div>
+          <div class="modal-title" id="about-title">EDFS Civil Tools</div>
+          <div class="modal-ver">v0.1.0 · Alat Bantu Rekayasa Sipil</div>
+        </div>
+      </div>
+
+      <div class="modal-sec">
+        <h5>Deskripsi</h5>
+        <p>Kumpulan alat bantu perhitungan rekayasa sipil dalam satu aplikasi terpasang (PWA).
+        Setiap tool berjalan mandiri, mengikuti standar SNI, dengan visual & laporan yang siap dokumentasi.</p>
+      </div>
+
+      <div class="modal-sec">
+        <h5>Catatan Rilis</h5>
+        <ul class="modal-list">
+          <li><b>v0.1.0</b> — Rilis awal.</li>
+          <li>Tool: Panjang Penyaluran Tulangan Tarik (SNI 2847:2019) — ulir &amp; polos, diagram interaktif.</li>
+          <li>Laporan terunduh: PDF &amp; teks monospace.</li>
+          <li>Tema terang/gelap, navigasi dapat diciutkan, dapat dipasang sebagai aplikasi (PWA).</li>
+        </ul>
+      </div>
+
+      <div class="modal-disc">
+        <b>Disclaimer</b>
+        Hasil perhitungan adalah alat bantu dan tidak menggantikan penilaian teknis.
+        Verifikasi seluruh keluaran oleh insinyur profesional yang bertanggung jawab sebelum digunakan
+        untuk desain, gambar kerja, atau konstruksi.
+      </div>
+
+      <div class="modal-ft">
+        <span class="cred">Iwal <span class="sep">|</span> Edifisia <span class="sep">|</span> DTS Engineering</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three.js r128 (dipakai module 3D; aman di-load walau tool pertama non-3D) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Core runtime + registry + shell (urutan penting) -->
+  <script src="core/ui-kit.js"></script>
+  <script src="core/canvas2d.js"></script>
+  <script src="core/report.js"></script>
+  <script src="core/module-registry.js"></script>
+  <script src="assets/shell.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+    }
+  </script>
+</body>
+</html>

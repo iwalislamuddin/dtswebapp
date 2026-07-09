@@ -1,0 +1,8 @@
+{
+  "id": "development-length",
+  "name": "Penyaluran Tulangan Tarik",
+  "category": "Beton Bertulang",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Panjang penyaluran tulangan tarik lurus (ld) — ulir & polos — sesuai SNI 2847:2019 Ps. 25.4.2, dengan diagram batang tertanam."
+}

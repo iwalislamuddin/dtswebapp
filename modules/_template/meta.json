@@ -1,0 +1,7 @@
+{
+  "id": "_template",
+  "name": "Template Demo",
+  "category": "Dev",
+  "needsRenderer": false,
+  "description": "Starter kit — copy folder ini untuk membuat module baru."
+}

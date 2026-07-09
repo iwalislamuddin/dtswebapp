@@ -1,0 +1,15 @@
+{
+  "name": "EDFS Civil Tools",
+  "short_name": "EDFS Tools",
+  "description": "EDFS Civil Tools — alat bantu rekayasa sipil oleh PT. DTS Engineering.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b0c09",
+  "theme_color": "#0b0c09",
+  "icons": [
+    { "src": "favicon/edfs-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "favicon/edfs-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

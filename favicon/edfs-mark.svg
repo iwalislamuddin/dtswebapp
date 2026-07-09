@@ -1,0 +1,9 @@
+<svg viewBox="0 0 100 108" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EDFS">
+  <!-- Hexagon EDFS — warna brand Edifisia. Bagian atas (ED), bawah (FS). -->
+  <!-- top-left (E) — orange -->
+  <polygon points="28,8 50,8 50,50 6.1,50" fill="#F28F3B"/>
+  <!-- top-right (D) — olive -->
+  <polygon points="50,8 72,8 93.9,50 50,50" fill="#566246"/>
+  <!-- bottom half (FS) — olive -->
+  <polygon points="6.1,58 93.9,58 72,100 28,100" fill="#566246"/>
+</svg>

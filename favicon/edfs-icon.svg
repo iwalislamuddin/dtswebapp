@@ -1,0 +1,8 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Civil Tools by Edifisia">
+  <rect width="512" height="512" rx="104" fill="#0B0C09"/>
+  <g transform="translate(106,94) scale(3)">
+    <polygon points="28,8 50,8 50,50 6.1,50" fill="#F28F3B"/>
+    <polygon points="50,8 72,8 93.9,50 50,50" fill="#566246"/>
+    <polygon points="6.1,58 93.9,58 72,100 28,100" fill="#566246"/>
+  </g>
+</svg>
