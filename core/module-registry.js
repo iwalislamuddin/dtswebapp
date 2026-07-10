@@ -41,6 +41,15 @@ window.MODULE_REGISTRY = [
     status: 'active'
   },
 
+  {
+    id: 'steel-flexure',
+    name: 'Balok Baja (Lentur)',
+    category: 'Baja',
+    icon: 'modules/steel-flexure/icon.svg',
+    entry: 'modules/steel-flexure/module.js',
+    status: 'active'
+  },
+
   // --- Roadmap (belum ada module.js, tampil abu-abu di nav) ---
   { id: 'pile-capacity', name: 'Daya Dukung Tiang',      category: 'Geoteknik',       status: 'coming-soon' },
   { id: 'load-combo',    name: 'Kombinasi Beban',        category: 'Umum',            status: 'coming-soon' },

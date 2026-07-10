@@ -1,0 +1,8 @@
+{
+  "id": "steel-flexure",
+  "name": "Balok Baja (Lentur)",
+  "category": "Baja",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Kapasitas lentur balok baja (φMn / Mn/Ω) — SNI 1729:2020 (AISC 360-16) Bab F: leleh/plastis Mp=Fy·Z, tekuk torsi-lateral (LTB: Lp, Lr, Cb) untuk I & kanal sumbu kuat (F2/F3), sumbu lemah I (F6), HSS persegi (F7) & bundar (F8). Klasifikasi kekompakan sayap/badan otomatis (Tabel B4.1b), J & Cw dihitung dari geometri. Penampang & kurva Mn–Lb tergambar. Memakai library profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP)."
+}

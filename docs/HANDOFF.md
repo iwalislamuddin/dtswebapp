@@ -25,6 +25,7 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   ⚠️ Nilai hollow/CNP idealisasi sudut tajam (≈2–5% > tabel pabrikan ber-radius) — flag verifikasi otomatis muncul di hasil.
 - PWA: `manifest.json` + `sw.js` (cache-first, precache shell+core, runtime-cache modul). **Versi cache: `civil-tools-v14`.**
   (`steel-profiles.js` ditambahkan ke precache & dimuat di `index.html` sebelum `module-registry.js`.)
+  **Versi cache dinaikkan ke `civil-tools-v15`** saat menambah Tool #5 (registry di-precache, jadi bump wajib).
 
 **Brand EDFS** (palet dari `D:\Downloads\dtsapp.pdf`)
 - Orange `#F28F3B` (aksen) · Olive `#566246` · Sage `#A4C2A5` · Sky `#30BCED` · Ink `#050401`.
@@ -96,6 +97,30 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   L=9000 → KL/r 179, Fcr 53,9 MPa elastis, φPn 307,9 kN). **Torsi WF** divalidasi vs AISC: `Cw` cocok W8×31 (530 in⁶ ≈
   141.376 cm⁶), `J≈26 cm⁴`; kasus Ly=1500/Lz=6000 → **E4 menentukan** φPn 1092,6 kN < lentur 1290,2 kN.
 
+**Tool #5 — Balok Baja (Lentur)** (`modules/steel-flexure/`)
+- SNI 1729:2020 (adopsi AISC 360-16) **Bab F**, DFBK (φb=0,90) & ASD (Ωb=1,67). `Mn` → `φMn` / `Mn/Ω`.
+- **F2/F3 — I dwi-simetris & KANAL, sumbu kuat**: leleh `Mp=Fy·Zx`; **LTB** `Lp=1,76·ry·√(E/Fy)`,
+  `Lr` pers. F2-6, `Lb≤Lp→Mp`, inelastis linear (Cb), `Lb>Lr→Fcr·Sx` (pers. F2-4); **FLB** sayap non-kompak/langsing
+  (F3). `Mn` sumbu kuat = min(LTB, FLB). **Cb** input (preset 1,0/1,14/1,32 + manual).
+- **F6 — sumbu lemah I (WF)**: `Mn=min(Fy·Zy, 1,6Fy·Sy)` + FLB sayap; tanpa LTB. **F7 — HSS persegi
+  (SHS/RHS/box)**: `Mp=Fy·Z`, tekuk lokal sayap (F7.2) & badan (F7.3), **LTB kotak (F7.4) hanya RHS sumbu
+  kuat H>B** (SHS bujursangkar & sumbu lemah dikecualikan). **F8 — HSS bundar (Pipa)**: D/t kompak/non-kompak/langsing.
+- **Zx/Zy WF & UNP DIHITUNG dari geometri** (tak ada di tabel library): `Zx=bf·tf·(d−tf)+tw·(d−2tf)²/4`,
+  `Zy=tf·bf²/2+(d−2tf)·tw²/4`. **J & Cw dihitung** (J thin-wall tanpa fillet → konservatif; `Cw` WF=`Iy·ho²/4`,
+  **kanal pakai rumus pendekatan** `Cw=(ho²bf³tf/12)·(3bf·tf+2ho·tw)/(6bf·tf+ho·tw)` + faktor `c=(ho/2)√(Iy/Cw)`).
+  `rts=√(√(Iy·Cw)/Sx)`. **Klasifikasi kekompakan** sayap & badan otomatis (Tabel B4.1b, lentur).
+- Kanvas: **penampang** (reuse drawer + sumbu lentur & arsir sayap tekan) + **kurva Mn–Lb** (plateau Mp→Lp,
+  garis inelastis→Mr di Lr, ekor elastis, titik operasi Lb, garis Mu/φ) untuk kasus LTB; **bar kapasitas**
+  (Mp/Mn/φMn/Mn·Ω + demand) untuk kasus tanpa LTB (sumbu lemah, pipa, SHS). Download PDF/Teks (ASCII-only).
+- **TIDAK termasuk**: badan non-kompak/langsing penuh (F4/F5 Rpc/Rpg — hanya diperingatkan); **siku tunggal
+  (F10) & penampang tak-simetris/CNP (F12)** → hanya **leleh elastis Mn=Fy·Sx indikatif** + peringatan
+  "bukan desain akhir" (butuh sumbu utama & pusat geser, belum di library); geser (Bab G), lendutan, tekuk
+  badan akibat beban terpusat. Sumbu lemah kanal (UNP) tak dihitung (asimetris → ditampilkan sumbu kuat).
+- **Tervalidasi vs hitung tangan** (WF400×200×8×13 BJ37, Cb=1): `Zx`=1286 cm³, `Lp`=2307 mm, `Lr`=6866 mm,
+  `Mp`=308,6 kN·m, `Mr`=199,9 kN·m; Lb=3000 (inelastis) → `Mn`=292,1 → **φMn 262,9 kN·m**; Lb=9000 (elastis)
+  → φMn 122,0. Kurva Mn(Lb) kontinu di Lp & Lr. Semua tipe profil diuji live: WF x/y, UNP, SHS (leleh F7.1),
+  RHS (LTB F7.4), Pipa (F8.1), Siku (F10* indikatif) — nol error konsol, kanvas tergambar (penampang+kurva).
+
 ## Keputusan penting (kenapa)
 
 - **Tool pertama BUKAN Anchor Bolt Group** (walau dokumen asli menaruhnya pertama): butuh 3D + rumus ACI belum
@@ -117,11 +142,13 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 ## Langkah berikutnya
 
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
-   (SNI 1729 Bab E, tekuk lentur)~~ ✅ **SELESAI**.
+   (SNI 1729 Bab E, tekuk lentur)~~ ✅ · ~~**Tool #5** Balok Baja / Lentur (SNI 1729 Bab F, LTB + tekuk lokal)~~ ✅ **SELESAI**.
    Kandidat tier-2 berikutnya di registry `coming-soon`: Daya Dukung Tiang (SNI 8460), Kombinasi Beban.
-   **Library baja siap dipakai ulang** untuk seri baja lanjutan (Balok baja φMn — LTB pakai Zx/Sx yang sudah ada;
-   Sambungan). Untuk melengkapi kolom: **E4-2 torsi WF sudah ada**; sisanya lentur-torsi E4/E5 untuk UNP/Siku/CNP
-   (perlu tambah pusat geser x0/y0, ro, J, Cw ke `steel-profiles.js`) & reduksi elemen langsing (E7).
+   **Melengkapi seri baja** (library siap dipakai ulang): **Geser balok baja (Bab G)** — pelengkap alami Tool #5
+   (butuh Aw, Cv, kn — bisa dari geometri); **Kombinasi lentur+aksial (Bab H)** menyatukan Tool #4 & #5;
+   Sambungan (baut/las). Untuk menaikkan mutu Tool #5: badan non-kompak/langsing (F4/F5, Rpc/Rpg) & siku
+   tunggal (F10)/tak-simetris (F12) — perlu tambah **Zx/Zy, J, Cw, pusat geser/sumbu utama** ke `steel-profiles.js`
+   (saat ini Zx/Zy/J/Cw WF & UNP dihitung on-the-fly di module; sebaiknya dipindah ke library agar dipakai bersama).
 2. ✅ **Standarisasi kanvas terverifikasi live** — `steel-compression` (helper `canvasCap`/`canvasTip` yang sama)
    diuji reload-bersih di preview: `.cap` dinamis muncul & update, tanpa error konsol, penampang + kurva tergambar.
    Sisa konfirmasi visual `development-length`/`beam-flexure` bersifat kosmetik (wiring identik) — tak memblok.

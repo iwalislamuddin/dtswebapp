@@ -26,7 +26,7 @@ python -m http.server 5188
 > Gunakan `http://localhost:5188`. Saat di-deploy via `https://` hal ini tidak pernah terjadi.
 
 > Service worker meng-cache agresif. Saat mengembangkan, naikkan `CACHE` di `sw.js`
-> dan/atau hard-reload (Ctrl+Shift+R). Cache versi saat ini: **civil-tools-v9**.
+> dan/atau hard-reload (Ctrl+Shift+R). Cache versi saat ini: **civil-tools-v15**.
 
 ## Deploy (cPanel)
 
@@ -55,6 +55,7 @@ modules/
   beam-flexure/            Tool #2 — Kapasitas Lentur Balok φMn (SNI 2847:2019)
   steel-tension/           Tool #3 — Batang Tarik Baja (SNI 1729:2020, DFBK & ASD)
   steel-compression/       Tool #4 — Batang Tekan Baja (SNI 1729:2020 Bab E, tekuk lentur)
+  steel-flexure/           Tool #5 — Balok Baja / Lentur (SNI 1729:2020 Bab F, LTB + tekuk lokal)
   _template/               Starter kit — copy untuk membuat module baru
 ```
 
@@ -85,10 +86,11 @@ Rangkuman sesi & langkah berikutnya: [`docs/HANDOFF.md`](docs/HANDOFF.md).
 | Tool #2 — Kapasitas Lentur Balok φMn (tunggal/rangkap, multi-lapis) | ✅ Selesai |
 | Tool #3 — Batang Tarik Baja (leleh bruto vs fraktur neto efektif, shear lag) | ✅ Selesai |
 | Tool #4 — Batang Tekan Baja (tekuk lentur + tekuk torsi E4 utk WF, dua sumbu, elemen langsing) | ✅ Selesai |
+| Tool #5 — Balok Baja / Lentur (F2/F3 LTB+FLB, F6 sumbu lemah, F7 HSS persegi, F8 HSS bundar) | ✅ Selesai |
 | Library profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP, ±138 ukuran) | ✅ Selesai |
 | Laporan unduh PDF/teks | ✅ Selesai |
 | PWA (manifest, service worker, installable) | ✅ Selesai |
-| Tool #5+ (roadmap `coming-soon` di registry) | ⏳ Berikutnya |
+| Tool #6+ (roadmap `coming-soon` di registry) | ⏳ Berikutnya |
 | Infrastruktur 3D + Anchor Bolt Group | ⏳ Fase 3 |
 
 ## Standar & disclaimer
