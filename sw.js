@@ -4,7 +4,7 @@
    - Runtime cache: modules/* saat pertama diakses (cache-first, fallback network)
    - Bump CACHE setiap kali core/shell berubah agar SW purge cache lama
    ============================================================ */
-const CACHE = 'civil-tools-v7';
+const CACHE = 'civil-tools-v14';
 
 const PRECACHE = [
   './',
@@ -15,6 +15,7 @@ const PRECACHE = [
   'core/ui-kit.js',
   'core/canvas2d.js',
   'core/report.js',
+  'core/steel-profiles.js',
   'core/module-registry.js',
   'favicon/edfs-mark.svg',
   'favicon/edfs-icon.svg'

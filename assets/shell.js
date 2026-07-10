@@ -20,6 +20,7 @@
     THREE: window.THREE || null,
     UI: UI,
     canvas2d: window.CivilCanvas2D || null,   // tier 2 — helper kanvas 2D
+    steel: window.SteelProfiles || null,      // library profil baja (tool baja)
     // renderer 3D di-lazy-init nanti (core/renderer.js), tool pertama non-3D
     getRenderer: function () { return null; }
   };

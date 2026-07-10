@@ -1,0 +1,8 @@
+{
+  "id": "steel-compression",
+  "name": "Batang Tekan Baja",
+  "category": "Baja",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Kapasitas batang tekan baja (φPn / Pn/Ω) — SNI 1729:2020 Bab E: tekuk lentur Fcr dari kelangsingan efektif KL/r (inelastis/elastis), cek dua sumbu (KLx/rx & KLy/ry), tekuk torsi E4-2 untuk WF (J & Cw dihitung), dan elemen langsing (Tabel B4.1a). Memakai library profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) dengan penampang & kurva kolom tergambar otomatis."
+}

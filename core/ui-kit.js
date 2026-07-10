@@ -176,6 +176,46 @@
     return n;
   }
 
+  /* ============================================================
+     KANVAS — helper judul & tooltip SERAGAM (cegah tumpukan teks)
+
+     Standar konsisten antar tool kanvas 2D:
+       1. canvasCap(host) -> label judul HTML di pojok kiri-atas kanvas.
+          PENDEK & DINAMIS (panggil .set(teks) tiap state). Ini SATU-SATUNYA
+          teks di pita atas — modul TIDAK menggambar judul/readout lain di sana.
+       2. canvasTip(ctx, opts) -> pill hover ber-posisi AMAN otomatis:
+          turun ke bawah kursor bila dekat atas (hindari pita judul),
+          clamp ke tepi kanvas. Semua tool memakai ini, bukan pill sendiri.
+     ============================================================ */
+  function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  function canvasCap(host, initialText) {
+    var node = el('div', 'cap', undefined);
+    node.textContent = initialText || '';
+    host.appendChild(node);
+    return { el: node, set: function (t) { node.textContent = t == null ? '' : t; } };
+  }
+
+  // opts: { mx, my, w, h, text, topBand?, bg?, fg?, font? }
+  function canvasTip(ctx, o) {
+    if (!o || o.text == null || o.text === '') return;
+    var band = (o.topBand != null) ? o.topBand : 30;   // pita judul yang direservasi (px)
+    ctx.save();
+    ctx.font = o.font || '11px "JetBrains Mono", monospace';
+    ctx.textBaseline = 'alphabetic';
+    var tw = ctx.measureText(o.text).width;
+    var bx = Math.min(Math.max(o.mx + 12, 8), Math.max(8, o.w - tw - 20));
+    // dekat atas -> di bawah kursor; selain itu -> di atas kursor
+    var by = (o.my < band + 18) ? o.my + 28 : o.my - 12;
+    by = Math.max(band + 14, Math.min(by, o.h - 10));
+    ctx.fillStyle = o.bg || cssVar('--amber');
+    roundRect(ctx, bx - 6, by - 13, tw + 12, 20, 5); ctx.fill();
+    ctx.fillStyle = o.fg || cssVar('--bg');
+    ctx.textAlign = 'left';
+    ctx.fillText(o.text, bx, by + 1);
+    ctx.restore();
+  }
+
   window.CivilUI = {
     toast: toast,
     roundRect: roundRect,
@@ -186,6 +226,8 @@
     hero: hero,
     kv: kv,
     rhead: rhead,
-    note: note
+    note: note,
+    canvasCap: canvasCap,
+    canvasTip: canvasTip
   };
 })();

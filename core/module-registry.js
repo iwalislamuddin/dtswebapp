@@ -14,9 +14,34 @@ window.MODULE_REGISTRY = [
     status: 'active'
   },
 
+  {
+    id: 'beam-flexure',
+    name: 'Kapasitas Balok (φMn)',
+    category: 'Beton Bertulang',
+    icon: 'modules/beam-flexure/icon.svg',
+    entry: 'modules/beam-flexure/module.js',
+    status: 'active'
+  },
+
+  {
+    id: 'steel-tension',
+    name: 'Batang Tarik Baja',
+    category: 'Baja',
+    icon: 'modules/steel-tension/icon.svg',
+    entry: 'modules/steel-tension/module.js',
+    status: 'active'
+  },
+
+  {
+    id: 'steel-compression',
+    name: 'Batang Tekan Baja',
+    category: 'Baja',
+    icon: 'modules/steel-compression/icon.svg',
+    entry: 'modules/steel-compression/module.js',
+    status: 'active'
+  },
+
   // --- Roadmap (belum ada module.js, tampil abu-abu di nav) ---
-  { id: 'beam-flexure',  name: 'Kapasitas Balok (φMn)', category: 'Beton Bertulang', status: 'coming-soon' },
-  { id: 'steel-tension', name: 'Batang Tarik Baja',      category: 'Baja',            status: 'coming-soon' },
   { id: 'pile-capacity', name: 'Daya Dukung Tiang',      category: 'Geoteknik',       status: 'coming-soon' },
   { id: 'load-combo',    name: 'Kombinasi Beban',        category: 'Umum',            status: 'coming-soon' },
   { id: 'anchor-bolt-group', name: 'Anchor Bolt Group',  category: 'Sambungan',       status: 'coming-soon' },

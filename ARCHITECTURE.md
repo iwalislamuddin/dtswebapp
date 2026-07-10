@@ -37,6 +37,7 @@ Dikembangkan oleh: PT. DTS Engineering (Iwal). Referensi visual/kode: `staad-vie
 │   ├── ui-kit.js                  # Helper UI reusable: toast(), form generator, hero/kv/note result builder, disposeObject()
 │   ├── canvas2d.js                # Tier 2 — helper kanvas 2D hi-DPI: setup, auto-resize, redraw sinkron, repaint saat ganti tema, dispose
 │   ├── report.js                  # Generator laporan monospace (DOS-style): unduh PDF (font Courier, tanpa library) atau teks .txt
+│   ├── steel-profiles.js          # Library DB profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) — dipakai bersama tool baja (window.SteelProfiles / runtime.steel)
 │   ├── renderer.js                # Tier 3 — factory shared THREE.WebGLRenderer + resize handling (belum ada sampai tool 3D pertama)
 │   └── orbit-controls.js          # Tier 3 — custom OrbitCtrl (di-extract dari staad-viewer.html, dipakai ulang oleh semua module 3D)
 │
@@ -107,6 +108,10 @@ window.CivilModules['anchor-bolt-group'] = {
 - Module TIDAK BOLEH memodifikasi `shell.css` atau file di luar foldernya sendiri.
 - Module boleh punya CSS sendiri via `<style>` inject saat mount (scoped dengan prefix class, misal `.abg-panel`), atau file `module.css` opsional yang di-load sama seperti `module.js`.
 - **Tier 2 (kanvas 2D):** pakai `runtime.canvas2d.create(container, drawFn)` — helper mengurus hi-DPI (devicePixelRatio), auto-resize via ResizeObserver, dan mengembalikan handle dengan `.redraw()` + `.destroy()`. `drawFn(ctx, w, h)` dipanggil tiap resize/redraw. Di `unmount()` **wajib** panggil `handle.destroy()`.
+- **Judul & tooltip kanvas — WAJIB pakai helper bersama (standar seragam, cegah tumpukan teks):**
+  1. **Judul kanvas** via `runtime.UI.canvasCap(canvasHost)` → mengembalikan `{ el, set(teks) }`. Panggil `.set()` tiap update dengan teks **pendek & dinamis** (readout kunci, mis. `phiMn 132.6 kN.m · daktail`). Ini **satu-satunya** teks di pita atas kanvas. CSS `.cap` sudah global di `shell.css` (kiri-atas, `max-width:58%` + ellipsis sebagai pengaman) — host kanvas cukup `position:relative`.
+  2. **Pill hover** via `runtime.UI.canvasTip(ctx, { mx, my, w, h, text })` → posisi otomatis aman (turun ke bawah kursor saat dekat atas agar tak menimpa judul, clamp ke tepi). **Jangan** menggambar pill hover sendiri.
+  3. **Larangan:** jangan menggambar judul/readout lain di pita atas kiri kanvas (top ~30 px) — itu direservasi untuk `.cap`. Readout tambahan taruh di bawah/sisi, bukan menumpuk di atas.
 - **Tier 3 (Three.js):** **harus** pakai renderer shared dari `runtime.getRenderer()` (bukan `new THREE.WebGLRenderer()` sendiri) — ini kunci performa saat berpindah-pindah tool. Dispose semua geometry/material/texture di `unmount()`.
 - Module tanpa gambar (murni form + tabel hasil) set `needsCanvas: false` dan `needsRenderer: false` — cukup `runtime.UI`.
 

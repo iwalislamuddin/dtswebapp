@@ -1,0 +1,8 @@
+{
+  "id": "beam-flexure",
+  "name": "Kapasitas Balok (φMn)",
+  "category": "Beton Bertulang",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Kapasitas lentur nominal φMn balok persegi bertulangan tunggal/rangkap — SNI 2847:2019, blok tegangan persegi ekuivalen, dengan diagram penampang & regangan."
+}

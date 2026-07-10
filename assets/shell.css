@@ -109,6 +109,16 @@ body{
 .ck-panel h2{font-size:16px; font-weight:600; margin-bottom:4px}
 .ck-panel .sub{font-size:12px; color:var(--ink-dim); line-height:1.5; margin-bottom:18px}
 
+/* Judul kanvas 2D — dibuat oleh CivilUI.canvasCap(); dipakai SEMUA tool.
+   max-width + ellipsis = pengaman agar teks tak pernah melebar ke separuh kanan
+   kanvas (sumber tumpukan teks). Host kanvas harus position:relative. */
+.cap{
+  position:absolute; left:14px; top:12px; max-width:58%;
+  font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-faint); pointer-events:none;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
 .ck-grp{margin-bottom:20px}
 .ck-grp > h4{
   font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em;

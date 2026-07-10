@@ -84,8 +84,6 @@
       '.dl-work{display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden}' +
       '.dl-canvas{position:relative;flex:1 1 52%;min-height:200px;border-bottom:1px solid var(--line);' +
         'background:radial-gradient(120% 120% at 30% 0%, var(--bg2), var(--bg))}' +
-      '.dl-canvas .cap{position:absolute;left:14px;top:12px;font-family:\'JetBrains Mono\',monospace;' +
-        'font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);pointer-events:none}' +
       '.dl-res{flex:1 1 48%;overflow-y:auto;padding:18px 24px 34px}';
     document.head.appendChild(s);
   }
@@ -105,7 +103,7 @@
     // Area kerja kanan: kanvas + hasil
     var work = UI.el('div', 'dl-work');
     var canvasHost = UI.el('div', 'dl-canvas');
-    canvasHost.appendChild(UI.el('div', 'cap', 'Skema penyaluran — batang tertanam di beton'));
+    state.cap = UI.canvasCap(canvasHost, 'Skema penyaluran tulangan');
     var results = UI.el('div', 'dl-res');
     work.appendChild(canvasHost);
     work.appendChild(results);
@@ -206,10 +204,12 @@
     results.innerHTML = '';
 
     if (!r.valid) {
+      state.cap.set('Skema penyaluran tulangan');
       results.appendChild(UI.el('div', 'ck-empty', 'Lengkapi f\'c, fy, dan cb untuk menghitung.'));
       if (state.cv) state.cv.redraw();
       return;
     }
+    state.cap.set('ld ' + UI.fmt(r.ldRound, 0) + ' mm · ' + (r.polos ? 'Ø' : 'D') + UI.fmt(r.db, 0));
 
     results.appendChild(UI.hero('ld — ' + (r.polos ? 'polos (Ø' + UI.fmt(r.db, 0) + ')' : 'ulir (D' + UI.fmt(r.db, 0) + ')'), UI.fmt(r.ldRound, 0), 'mm'));
     results.appendChild(UI.el('div', 'ck-empty', 'Nilai eksak ' + UI.fmt(r.ld, 1) + ' mm, dibulatkan ke atas per 10 mm. ld/db = ' + UI.fmt(r.ldbratio, 1) + '.'));
@@ -323,16 +323,12 @@
     ctx.fillStyle = dim; ctx.font = '11px "JetBrains Mono", monospace'; ctx.textAlign = 'left';
     ctx.fillText((r.polos ? 'Ø' : 'D') + fmt0(r.db), stubX + 6, yc + 4);
 
-    // ---- Readout hover ----
+    // ---- Readout hover (pill ber-posisi aman via helper bersama) ----
     if (hover && state.mouse) {
-      var tip = 'ld/db = ' + r.ldbratio.toFixed(1);
-      ctx.font = '11px "JetBrains Mono", monospace';
-      var tw = ctx.measureText(tip).width;
-      var bx = Math.min(state.mouse.x + 12, w - tw - 20), by = state.mouse.y - 26;
-      ctx.fillStyle = amber;
-      roundBar(ctx, bx - 6, by - 13, tw + 12, 20, 5); ctx.fill();
-      ctx.fillStyle = css('--bg'); ctx.textAlign = 'left';
-      ctx.fillText(tip, bx, by + 1);
+      state.UI.canvasTip(ctx, {
+        mx: state.mouse.x, my: state.mouse.y, w: w, h: h,
+        text: 'ld/db = ' + r.ldbratio.toFixed(1)
+      });
     }
 
     function fmt0(n) { return Math.round(n).toString(); }

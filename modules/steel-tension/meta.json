@@ -1,0 +1,8 @@
+{
+  "id": "steel-tension",
+  "name": "Batang Tarik Baja",
+  "category": "Baja",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Kapasitas batang tarik baja (φPn / Pn/Ω) — SNI 1729:2020: leleh penampang bruto & fraktur penampang neto efektif, faktor shear lag U, kelangsingan L/r. Memakai library profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) dengan penampang tergambar otomatis."
+}

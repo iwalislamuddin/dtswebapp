@@ -20,8 +20,13 @@ python -m http.server 5188
 # lalu buka http://localhost:5188
 ```
 
+> ⚠️ **Jalankan lewat HTTP, jangan buka file langsung.** Membuka `index.html` dengan klik-dua-kali
+> (`file:///...`) membuat browser memakai origin `null`, sehingga `manifest.json`, service worker, dan
+> `fetch()` diblokir CORS (`Cross origin requests are only supported for protocol schemes: ... http, https`).
+> Gunakan `http://localhost:5188`. Saat di-deploy via `https://` hal ini tidak pernah terjadi.
+
 > Service worker meng-cache agresif. Saat mengembangkan, naikkan `CACHE` di `sw.js`
-> dan/atau hard-reload (Ctrl+Shift+R). Cache versi saat ini: **civil-tools-v7**.
+> dan/atau hard-reload (Ctrl+Shift+R). Cache versi saat ini: **civil-tools-v9**.
 
 ## Deploy (cPanel)
 
@@ -44,8 +49,12 @@ core/
   ui-kit.js                toast, form generator, hero/kv/note, disposeObject
   canvas2d.js              Helper kanvas 2D (hi-DPI, auto-resize, repaint saat ganti tema)
   report.js                Generator laporan monospace → PDF (Courier, tanpa library) / .txt
+  steel-profiles.js        Library DB profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) — dipakai semua tool baja
 modules/
   development-length/      Tool #1 — Panjang Penyaluran Tulangan Tarik (SNI 2847:2019)
+  beam-flexure/            Tool #2 — Kapasitas Lentur Balok φMn (SNI 2847:2019)
+  steel-tension/           Tool #3 — Batang Tarik Baja (SNI 1729:2020, DFBK & ASD)
+  steel-compression/       Tool #4 — Batang Tekan Baja (SNI 1729:2020 Bab E, tekuk lentur)
   _template/               Starter kit — copy untuk membuat module baru
 ```
 
@@ -73,9 +82,13 @@ Rangkuman sesi & langkah berikutnya: [`docs/HANDOFF.md`](docs/HANDOFF.md).
 | Shell (nav, router, tema light/dark, collapse, modal Tentang) | ✅ Selesai |
 | Tema/brand EDFS (palet dari `dtsapp.pdf`) | ✅ Selesai |
 | Tool #1 — Panjang Penyaluran Tulangan Tarik (ulir + polos) | ✅ Selesai |
+| Tool #2 — Kapasitas Lentur Balok φMn (tunggal/rangkap, multi-lapis) | ✅ Selesai |
+| Tool #3 — Batang Tarik Baja (leleh bruto vs fraktur neto efektif, shear lag) | ✅ Selesai |
+| Tool #4 — Batang Tekan Baja (tekuk lentur + tekuk torsi E4 utk WF, dua sumbu, elemen langsing) | ✅ Selesai |
+| Library profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP, ±138 ukuran) | ✅ Selesai |
 | Laporan unduh PDF/teks | ✅ Selesai |
 | PWA (manifest, service worker, installable) | ✅ Selesai |
-| Tool #2–#5 (roadmap `coming-soon` di registry) | ⏳ Berikutnya |
+| Tool #5+ (roadmap `coming-soon` di registry) | ⏳ Berikutnya |
 | Infrastruktur 3D + Anchor Bolt Group | ⏳ Fase 3 |
 
 ## Standar & disclaimer
