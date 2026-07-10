@@ -50,6 +50,15 @@ window.MODULE_REGISTRY = [
     status: 'active'
   },
 
+  {
+    id: 'bearing-capacity',
+    name: 'Daya Dukung Tanah',
+    category: 'Geoteknik',
+    icon: 'modules/bearing-capacity/icon.svg',
+    entry: 'modules/bearing-capacity/module.js',
+    status: 'active'
+  },
+
   // --- Roadmap (belum ada module.js, tampil abu-abu di nav) ---
   { id: 'pile-capacity', name: 'Daya Dukung Tiang',      category: 'Geoteknik',       status: 'coming-soon' },
   { id: 'load-combo',    name: 'Kombinasi Beban',        category: 'Umum',            status: 'coming-soon' },

@@ -26,6 +26,7 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 - PWA: `manifest.json` + `sw.js` (cache-first, precache shell+core, runtime-cache modul). **Versi cache: `civil-tools-v14`.**
   (`steel-profiles.js` ditambahkan ke precache & dimuat di `index.html` sebelum `module-registry.js`.)
   **Versi cache dinaikkan ke `civil-tools-v15`** saat menambah Tool #5 (registry di-precache, jadi bump wajib).
+  **Versi cache dinaikkan ke `civil-tools-v16`** saat menambah Tool #6 (registry di-precache, jadi bump wajib).
 
 **Brand EDFS** (palet dari `D:\Downloads\dtsapp.pdf`)
 - Orange `#F28F3B` (aksen) · Olive `#566246` · Sage `#A4C2A5` · Sky `#30BCED` · Ink `#050401`.
@@ -121,6 +122,30 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   → φMn 122,0. Kurva Mn(Lb) kontinu di Lp & Lr. Semua tipe profil diuji live: WF x/y, UNP, SHS (leleh F7.1),
   RHS (LTB F7.4), Pipa (F8.1), Siku (F10* indikatif) — nol error konsol, kanvas tergambar (penampang+kurva).
 
+**Tool #6 — Daya Dukung Tanah (Fondasi Dangkal)** (`modules/bearing-capacity/`) — kategori **Geoteknik** (tool geoteknik pertama)
+- **TIGA METODE sekaligus** ditampilkan & dibandingkan: **Terzaghi (1943)**, **Meyerhof (1963)**, **Vesic (1973)**.
+  Persamaan umum `qu = c·Nc·sc·dc + q·Nq·sq·dq + ½·γ·B·Nγ·sγ·dγ`; `q` = overburden efektif di dasar (dikoreksi MAT).
+- **Faktor daya dukung**: Terzaghi `Nq = e^(2(3π/4−φ/2)tanφ)/(2cos²(45+φ/2))`, `Nc=(Nq−1)cotφ` (5,7 @ φ=0),
+  **Nγ dari tabel Terzaghi general-shear (Bowles/Das) interpolasi log-linear**. Meyerhof/Vesic `Nq=e^(π tanφ)tan²(45+φ/2)`
+  (Prandtl), `Nc=(Nq−1)cotφ` (5,14 @ φ=0); **Meyerhof Nγ=(Nq−1)tan(1,4φ)**, **Vesic Nγ=2(Nq+1)tanφ**.
+- **Faktor bentuk & kedalaman**: Terzaghi via **koefisien** (strip 1/0,5 · bujur sangkar 1,3/0,4 · lingkaran 1,3/0,3 ·
+  persegi `(1+0,3B/L)`/`(1−0,2B/L)·0,5`), **tanpa faktor kedalaman**. Meyerhof: `s,d` fungsi `Nφ=tan²(45+φ/2)` & `Df/B`
+  (φ≥10 utk sq/sγ,dq,dγ). Vesic: bentuk Vesic (`sc=1+(Nq/Nc)B/L`, `sq=1+B/L·tanφ`, `sγ=1−0,4B/L≥0,6`) + **kedalaman Hansen**
+  (`k=Df/B` bila ≤1, else `atan(Df/B)`). Bentuk: menerus / bujur sangkar / lingkaran / persegi panjang.
+- **Koreksi muka air tanah (Das)**: 4 kasus (Dw≥Df+B tanpa efek · baji Df..Df+B γ efektif rata-rata · 0..Df berlapis,
+  suku Nγ pakai γ′ · Dw≤0 seluruh γ′), `γ′=γsat−9,81`. **Keruntuhan lokal Terzaghi** (opsi): `c*=⅔c, tanφ*=⅔tanφ`
+  (hanya Terzaghi). FS (default 3) → `q_izin=qu/FS` gross & net; input `q kerja` opsional → rasio D/C.
+- Kanvas: **penampang fondasi to-scale** (permukaan tanah + arsir, telapak+kolom, beban P, garis MAT ▽ biru, baji
+  keruntuhan skematik, dimensi B & Df, label q) + **bar perbandingan qu 3 metode** (metode utama di-amber, garis q_izin
+  biru, garis q-kerja). Tabel perbandingan Nc/Nq/Nγ/qu/q_izin di panel hasil. Download PDF/Teks (ASCII-only tervalidasi).
+- **Tervalidasi live vs hitung tangan** (bujur sangkar B=2, Df=1,5, c=10 kPa, φ=30°, γ=18, FS=3, tanpa air):
+  Terzaghi Nc=37,2/Nq=22,5/Nγ=19,7 → **qu=1373 kPa** (q_izin 458); Meyerhof Nc=30,1/Nq=18,4/Nγ=15,7 → **qu=1752**
+  (584); Vesic Nc=30,1/Nq=18,4/Nγ=22,4 → **qu=1826** (609) — semua faktor cocok nilai baku literatur. φ=0 (undrained):
+  Nc 5,7/5,14, Nq=1, Nγ=0 (T 398 · M 382 · V 426). MAT Dw=0,5: q=19,2 kPa, γ_eff=10,2 (cocok). Report 60 baris 0 non-ASCII.
+- **TIDAK termasuk**: beban **miring/eksentris** (faktor inklinasi ic/iq/iγ & eksentrisitas B′/L′), dasar/lereng miring,
+  **penurunan (settlement)** — sering menentukan pada pasir/fondasi lebar, tanah berlapis, kompresibilitas/scale-effect
+  Vesic penuh, fondasi dalam (Df/B>4 → peringatan). Verifikasi mis. **SNI 8460:2017**.
+
 ## Keputusan penting (kenapa)
 
 - **Tool pertama BUKAN Anchor Bolt Group** (walau dokumen asli menaruhnya pertama): butuh 3D + rumus ACI belum
@@ -142,8 +167,11 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 ## Langkah berikutnya
 
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
-   (SNI 1729 Bab E, tekuk lentur)~~ ✅ · ~~**Tool #5** Balok Baja / Lentur (SNI 1729 Bab F, LTB + tekuk lokal)~~ ✅ **SELESAI**.
-   Kandidat tier-2 berikutnya di registry `coming-soon`: Daya Dukung Tiang (SNI 8460), Kombinasi Beban.
+   (SNI 1729 Bab E, tekuk lentur)~~ ✅ · ~~**Tool #5** Balok Baja / Lentur (SNI 1729 Bab F, LTB + tekuk lokal)~~ ✅ ·
+   ~~**Tool #6** Daya Dukung Tanah / Fondasi Dangkal (Terzaghi, Meyerhof, Vesic)~~ ✅ **SELESAI**.
+   Kandidat tier-2 berikutnya di registry `coming-soon`: **Daya Dukung Tiang** (SNI 8460), **Kombinasi Beban**.
+   **Melengkapi seri geoteknik** (Tool #6 siap dipakai ulang polanya): daya dukung + **eksentrisitas & beban miring**
+   (faktor ic/iq/iγ, luas efektif B′×L′), **penurunan (settlement)** elastis/konsolidasi, daya dukung tiang tunggal.
    **Melengkapi seri baja** (library siap dipakai ulang): **Geser balok baja (Bab G)** — pelengkap alami Tool #5
    (butuh Aw, Cv, kn — bisa dari geometri); **Kombinasi lentur+aksial (Bab H)** menyatukan Tool #4 & #5;
    Sambungan (baut/las). Untuk menaikkan mutu Tool #5: badan non-kompak/langsing (F4/F5, Rpc/Rpg) & siku

@@ -1,0 +1,8 @@
+{
+  "id": "bearing-capacity",
+  "name": "Daya Dukung Tanah",
+  "category": "Geoteknik",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Daya dukung tanah fondasi dangkal dengan 3 metode — Terzaghi (1943), Meyerhof (1963) & Vesic (1973). Persamaan daya dukung umum qu = c·Nc·sc·dc + q·Nq·sq·dq + ½·γ·B·Nγ·sγ·dγ; faktor Nc/Nq/Nγ per metode, faktor bentuk & kedalaman, koreksi muka air tanah (Das), keruntuhan umum/lokal. Bentuk menerus/bujur sangkar/lingkaran/persegi panjang. Perbandingan qu & q_izin ketiga metode, penampang fondasi tergambar; laporan PDF/teks."
+}
