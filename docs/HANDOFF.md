@@ -27,6 +27,7 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   (`steel-profiles.js` ditambahkan ke precache & dimuat di `index.html` sebelum `module-registry.js`.)
   **Versi cache dinaikkan ke `civil-tools-v15`** saat menambah Tool #5 (registry di-precache, jadi bump wajib).
   **Versi cache dinaikkan ke `civil-tools-v16`** saat menambah Tool #6 (registry di-precache, jadi bump wajib).
+  **Versi cache dinaikkan ke `civil-tools-v17`** saat menambah Tool #7 (registry di-precache, jadi bump wajib).
 
 **Brand EDFS** (palet dari `D:\Downloads\dtsapp.pdf`)
 - Orange `#F28F3B` (aksen) · Olive `#566246` · Sage `#A4C2A5` · Sky `#30BCED` · Ink `#050401`.
@@ -146,6 +147,33 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   **penurunan (settlement)** — sering menentukan pada pasir/fondasi lebar, tanah berlapis, kompresibilitas/scale-effect
   Vesic penuh, fondasi dalam (Df/B>4 → peringatan). Verifikasi mis. **SNI 8460:2017**.
 
+**Tool #7 — Penurunan Fondasi (Settlement)** (`modules/settlement/`) — kategori **Geoteknik** (pelengkap Tool #6)
+- **DUA komponen** dihitung & ditampilkan bersama: penurunan **SEGERA/elastis (Se)** + penurunan **KONSOLIDASI primer (Sc)**;
+  total `S = Se + Sc`. Plus **laju konsolidasi** (Terzaghi Tv–U) opsional → `St = Se + U·Sc`.
+- **Segera (teori elastisitas, Das/Bowles)** — faktor pengaruh **Steinbrenner** `Is = F1 + (1−2μs)/(1−μs)·F2`
+  (F1,F2 fungsi m'=L/B, n'=H/B'; A0/A1/A2 bentuk tertutup) → menangani **lapisan berhingga H** di bawah dasar.
+  **Pusat** fondasi lentur via superposisi 4-kuadran `Se = 4·q0·(B/2)·(1−μs²)/Es·Is·If`; **sudut** `Se = q0·B·…·Is`;
+  **rata-rata lentur ≈ 0,85·pusat**, **kaku ≈ 0,93·rata-rata ≈ 0,79·pusat`. Koreksi kedalaman **Fox If** (input,
+  default 1,0 konservatif). Es input **MPa** (→ ×1000 kPa). Lingkaran → luas ekuivalen persegi (B=L=0,886·D).
+  Segmen kekakuan lentur/kaku memilih Se yang masuk ke total.
+- **Konsolidasi (e–log p)** — `Sc = C·H/(1+e0)·log10(σ'f/σ'0)` dengan **klasifikasi NC/OC** via σ'c: NC pakai Cc penuh;
+  OC & σ'f≤σ'c pakai Cr; OC melewati σc → **dua tahap** (Cr sampai σc + Cc setelahnya). Tambahan tegangan **Δσ metode
+  2:1** (persegi `q0BL/((B+z)(L+z))`, strip `q0B/(B+z)`) dengan **rata-rata Simpson** (atas + 4·tengah + bawah)/6
+  di sepanjang lempung; σ'0 (efektif di tengah lempung) diinput langsung.
+- **Laju konsolidasi** (Terzaghi 1-D) — `Tv=cv·t/Hdr²`, `Hdr=Hc` (drainase tunggal) / `Hc/2` (ganda); U≤60% `U=√(4Tv/π)`,
+  U>60% `Tv=1,781−0,933·log10(100−U%)`; hitung **t50/t90** dan U pada waktu t. cv=0 → laju dilewati (anggap penuh).
+- Kanvas: **profil tanah to-scale** (permukaan, fondasi+kolom di Df, **lapisan lempung ber-arsir** sage dengan dimensi Hc,
+  **sebaran tegangan 2:1** garis putus, panah penurunan biru, dimensi B & Df, label q0) + **bar komponen penurunan**
+  (Se biru · Sc sage · Total tumpuk Se+Sc di-amber · St(t)) dengan legenda & U% pada waktu t. Download PDF/Teks (ASCII-only).
+- **Tervalidasi live vs hitung tangan** (bujur sangkar B=2, Df=1,5, q0=150 kPa; Es=10 MPa, μ=0,3, H=8 m, If=1;
+  lempung z=3/Hc=4, e0=0,9, Cc=0,25, Cr=0,05, σ'0=60, σ'c=80; cv=1,5 m²/th, drainase ganda, t=3 th):
+  **Is pusat 0,494 · Se pusat 26,95 mm**; Δσ atas/tengah/bawah 49,0/19,8/10,7 → **Δσ,avg 23,2 kPa**, σ'f 83,2, OC (OCR 1,33)
+  → **Sc 22,02 mm** (dua tahap); **S_total 48,96 mm**; Tv 1,125 → **U 95,0 %**, t50 0,53 / t90 2,26 th, **St 47,85 mm**.
+  Kasus NC (σ'c=60) → Sc melonjak **74,62 mm** (Cc penuh); strip → Se 41,3 mm (lebih besar); lingkaran → S 37,7 mm;
+  kaku → 43,3 mm; cv=0 → laju tersembunyi. Report 0 byte non-ASCII. Nol console error; canvas tetap 1 saat pindah tool.
+- **TIDAK termasuk**: pemampatan **sekunder (creep)**, lempung **berlapis banyak** (satu lapisan lempung), penurunan pasir
+  metode **Schmertmann/N-SPT**, **Δσ Boussinesq penuh**, interaksi tanah–struktur. Verifikasi mis. **SNI 8460:2017**.
+
 ## Keputusan penting (kenapa)
 
 - **Tool pertama BUKAN Anchor Bolt Group** (walau dokumen asli menaruhnya pertama): butuh 3D + rumus ACI belum
@@ -168,10 +196,11 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
    (SNI 1729 Bab E, tekuk lentur)~~ ✅ · ~~**Tool #5** Balok Baja / Lentur (SNI 1729 Bab F, LTB + tekuk lokal)~~ ✅ ·
-   ~~**Tool #6** Daya Dukung Tanah / Fondasi Dangkal (Terzaghi, Meyerhof, Vesic)~~ ✅ **SELESAI**.
+   ~~**Tool #6** Daya Dukung Tanah / Fondasi Dangkal (Terzaghi, Meyerhof, Vesic)~~ ✅ ·
+   ~~**Tool #7** Penurunan Fondasi / Settlement (elastis Steinbrenner + konsolidasi e–log p + laju Terzaghi)~~ ✅ **SELESAI**.
    Kandidat tier-2 berikutnya di registry `coming-soon`: **Daya Dukung Tiang** (SNI 8460), **Kombinasi Beban**.
-   **Melengkapi seri geoteknik** (Tool #6 siap dipakai ulang polanya): daya dukung + **eksentrisitas & beban miring**
-   (faktor ic/iq/iγ, luas efektif B′×L′), **penurunan (settlement)** elastis/konsolidasi, daya dukung tiang tunggal.
+   **Melengkapi seri geoteknik** (Tool #6/#7 siap dipakai ulang polanya): daya dukung + **eksentrisitas & beban miring**
+   (faktor ic/iq/iγ, luas efektif B′×L′), daya dukung tiang tunggal, penurunan pasir (Schmertmann/N-SPT), sekunder (creep).
    **Melengkapi seri baja** (library siap dipakai ulang): **Geser balok baja (Bab G)** — pelengkap alami Tool #5
    (butuh Aw, Cv, kn — bisa dari geometri); **Kombinasi lentur+aksial (Bab H)** menyatukan Tool #4 & #5;
    Sambungan (baut/las). Untuk menaikkan mutu Tool #5: badan non-kompak/langsing (F4/F5, Rpc/Rpg) & siku

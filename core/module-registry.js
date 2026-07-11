@@ -59,6 +59,15 @@ window.MODULE_REGISTRY = [
     status: 'active'
   },
 
+  {
+    id: 'settlement',
+    name: 'Penurunan Fondasi',
+    category: 'Geoteknik',
+    icon: 'modules/settlement/icon.svg',
+    entry: 'modules/settlement/module.js',
+    status: 'active'
+  },
+
   // --- Roadmap (belum ada module.js, tampil abu-abu di nav) ---
   { id: 'pile-capacity', name: 'Daya Dukung Tiang',      category: 'Geoteknik',       status: 'coming-soon' },
   { id: 'load-combo',    name: 'Kombinasi Beban',        category: 'Umum',            status: 'coming-soon' },

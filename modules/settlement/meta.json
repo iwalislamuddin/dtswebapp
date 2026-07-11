@@ -1,0 +1,8 @@
+{
+  "id": "settlement",
+  "name": "Penurunan Fondasi",
+  "category": "Geoteknik",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Penurunan fondasi dangkal — penurunan SEGERA (elastis) + penurunan KONSOLIDASI primer. Elastis: metode teori elastisitas (Steinbrenner Is untuk lapisan berhingga, superposisi pusat 4-sudut & sudut, koreksi kedalaman Fox If, fondasi lentur/kaku). Konsolidasi: e-log p (Cc/Cr), klasifikasi NC/OC dengan tegangan prakonsolidasi, tambahan tegangan Δσ metode 2:1 dengan rata-rata Simpson di sepanjang lapisan lempung. Laju konsolidasi (Terzaghi): Tv–U, derajat konsolidasi pada waktu t, t50/t90, drainase tunggal/ganda. Profil tanah & rincian penurunan tergambar; laporan PDF/teks."
+}
