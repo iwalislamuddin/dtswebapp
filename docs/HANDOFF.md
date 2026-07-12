@@ -28,6 +28,7 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   **Versi cache dinaikkan ke `civil-tools-v15`** saat menambah Tool #5 (registry di-precache, jadi bump wajib).
   **Versi cache dinaikkan ke `civil-tools-v16`** saat menambah Tool #6 (registry di-precache, jadi bump wajib).
   **Versi cache dinaikkan ke `civil-tools-v17`** saat menambah Tool #7 (registry di-precache, jadi bump wajib).
+  **Versi cache dinaikkan ke `civil-tools-v18`** saat menambah Tool #8 (registry di-precache, jadi bump wajib).
 
 **Brand EDFS** (palet dari `D:\Downloads\dtsapp.pdf`)
 - Orange `#F28F3B` (aksen) · Olive `#566246` · Sage `#A4C2A5` · Sky `#30BCED` · Ink `#050401`.
@@ -174,6 +175,32 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 - **TIDAK termasuk**: pemampatan **sekunder (creep)**, lempung **berlapis banyak** (satu lapisan lempung), penurunan pasir
   metode **Schmertmann/N-SPT**, **Δσ Boussinesq penuh**, interaksi tanah–struktur. Verifikasi mis. **SNI 8460:2017**.
 
+**Tool #8 — Daya Dukung Tiang Tunggal (Aksial)** (`modules/pile-capacity/`) — kategori **Geoteknik** (tiga tool geoteknik)
+- **Profil tanah BERLAPIS** (editor kartu-lapis kustom, bukan `buildForm` — komponen tabel dinamis PERTAMA di app):
+  tiap lapis punya jenis (lempung/pasir), tebal, γ, cu **atau** φ, N-SPT, dan **pilihan metode per-lapis** (statik / SPT).
+  Tombol ＋ tambah / ✕ hapus lapis. Panel kiri pakai **`ck-layout wide-form`** (400px) agar muat.
+- `Qu = Qp + Qs`; `Q_izin = Qu/FS` (opsi **kurangi berat sendiri** Wp = Ap·L·24). **Selimut per-lapis** dijumlah
+  di zona tertanam (segmen dipotong di L): **lempung metode-α (API RP2A)** `fs=α·cu`,
+  `α=0,5·ψ^-0,5 (ψ≤1)` / `0,5·ψ^-0,25 (ψ>1)`, ≤1, `ψ=cu/σ'v`; **pasir metode-β** `fs=K·σ'v·tanδ`,
+  `K=cK·(1−sinφ)` (cK: bor 1,0 / pancang 1,4), `δ=cDelta·φ` (beton 0,8 / baja 0,6); **SPT Meyerhof** `fs=nf·N`
+  (nf: bor 1 / pancang 2). fs dibatasi lunak 120 kPa (peringatan bila tercapai).
+- **Ujung** di lapis tempat ujung tiang: lempung `qp=9·cu`; pasir `qp=σ'v·Nq` (Nq Prandtl, sama Tool #6) **dibatasi
+  Meyerhof** `ql=0,5·pa·Nq·tanφ` (pa=100); SPT `qp=40·N·(L/D) ≤ 400N (pasir)/300N (lempung)`. `Qp=Ap·qp`.
+- **σ'v efektif berlapis** dengan koreksi MAT (`γ'=γ−9,81` di bawah Dw, split di batas MAT). L>profil → ujung diklamp
+  ke dasar profil + peringatan. **Cross-check Decourt-Quaresma** (bila SEMUA lapis tertanam punya N>0):
+  `fs=10(Ns/3+1)`, `qp=C·Np` (C: lempung 120 / pasir 400) — pembanding empiris (α,β=1).
+- Kanvas: **profil tanah berlapis to-scale** (lempung sage+arsir garis, pasir dotted), tiang tertanam, **panah selimut**
+  amber (panjang ∝ fs) di kedua sisi per segmen, **panah ujung qp** biru, MAT ▽, beban kepala, dimensi L & D + label lapis;
+  **bar Qs/Qp/Qu(tumpuk Qs+Qp)/Q_izin/Qu·DQ**. Download PDF/Teks (ASCII-only).
+- **Tervalidasi live vs hitung tangan** (bulat D=0,4 m, L=12, pancang beton, Dw=2, FS=2,5; L1 lempung H4 γ17 cu40,
+  L2 pasir H6 γ18 φ32, L3 pasir H8 γ19 φ36, semua statik): fs 19,2/23,0/33,9 kPa → **Qs 355,0**; ujung L3 pasir σ'v 115,9,
+  Nq 37,8, ql 1371 → qp 1371 kPa, **Qp 172,3**; **Qu 527,4 → Q_izin 211 kN**. SPT di L3 → qp 14.000 kPa (cap 400N),
+  selimut jadi 2N → **882 kN**; L=8 (ujung pindah L2) → **116 kN**; persegi Ap 0,16/perim 1,6; Decourt Ns 16,8, fs 66,1,
+  Qp 1759, **Qu 2756**. Report 66 baris 0 non-ASCII; canvas tetap 1 (unmount ×3 bersih); repaint tema OK; nol console error.
+- **TIDAK termasuk**: efisiensi **KELOMPOK** tiang, **gesekan negatif** (downdrag), beban **lateral & cabut** (uplift),
+  **penurunan** tiang, tekuk, beban gempa. qp pasir statik memakai batas Meyerhof (konservatif) → wajar berbeda jauh dari
+  Decourt (base tak-dibatasi); tampilkan rentang, gunakan penilaian teknik. Verifikasi mis. **SNI 8460:2017**.
+
 ## Keputusan penting (kenapa)
 
 - **Tool pertama BUKAN Anchor Bolt Group** (walau dokumen asli menaruhnya pertama): butuh 3D + rumus ACI belum
@@ -184,6 +211,15 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 
 ## Gotchas / catatan operasional
 
+- ⚠️ **PITA JUDUL `.cap` — JANGAN gambar apa pun di sana** (BUG BERULANG: kena di Tool #7 label q0 & Tool #8 label Q/D).
+  `.cap` = div HTML overlay `position:absolute; left:14px; top:12px; font 10px` → menempati **band vertikal y≈0–28 px**
+  dan **membentang horizontal sampai 58% lebar host**. Banyak modul menaruh sumbu elemen (fondasi/tiang) di tengah kiri,
+  **di dalam** rentang horizontal itu → teks kanvas di y<~30 pasti menumpuk cap. **Aturan wajib tiap drawer profil**:
+  (1) `padT ≥ 34` (Tool #7 pakai 60, Tool #8 pakai 64) sehingga permukaan tanah & semua anotasi turun di bawah band;
+  (2) **panah beban + label nilai (Q/q0/P) & dimensi (D/B) digambar di y ≥ ~34**, geser ke SISI elemen (kiri/kanan telapak),
+  bukan di puncak kanvas; (3) Q_izin/hasil sudah tampil di `.cap` + panel + hover `canvasTip` → **jangan** diulang sebagai
+  teks statik di pita atas. **Verifikasi**: sampling `getImageData(0,0,splitX*dpr, 30*dpr)` di region PROFIL harus
+  **0 piksel tercat** (bukan region bars — bars punya header sendiri). Uji di viewport lebar-normal, bukan yang kolaps.
 - **Service worker cache**: setiap ubah file shell/core, **bump `CACHE` di `sw.js`** (mis. v7 → v8) agar SW purge
   cache lama. Saat testing, hard-reload (Ctrl+Shift+R) atau unregister SW.
 - **PDF ASCII-only**: `report.js` mengandalkan panjang byte = panjang karakter untuk offset xref. Jangan masukkan
@@ -197,10 +233,12 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
    (SNI 1729 Bab E, tekuk lentur)~~ ✅ · ~~**Tool #5** Balok Baja / Lentur (SNI 1729 Bab F, LTB + tekuk lokal)~~ ✅ ·
    ~~**Tool #6** Daya Dukung Tanah / Fondasi Dangkal (Terzaghi, Meyerhof, Vesic)~~ ✅ ·
-   ~~**Tool #7** Penurunan Fondasi / Settlement (elastis Steinbrenner + konsolidasi e–log p + laju Terzaghi)~~ ✅ **SELESAI**.
-   Kandidat tier-2 berikutnya di registry `coming-soon`: **Daya Dukung Tiang** (SNI 8460), **Kombinasi Beban**.
-   **Melengkapi seri geoteknik** (Tool #6/#7 siap dipakai ulang polanya): daya dukung + **eksentrisitas & beban miring**
-   (faktor ic/iq/iγ, luas efektif B′×L′), daya dukung tiang tunggal, penurunan pasir (Schmertmann/N-SPT), sekunder (creep).
+   ~~**Tool #7** Penurunan Fondasi / Settlement (elastis Steinbrenner + konsolidasi e–log p + laju Terzaghi)~~ ✅ ·
+   ~~**Tool #8** Daya Dukung Tiang Tunggal (statik α/β berlapis + SPT Meyerhof + Decourt-Quaresma)~~ ✅ **SELESAI**.
+   Kandidat tier-2 berikutnya di registry `coming-soon`: **Kombinasi Beban**, **Anchor Bolt Group**.
+   **Melengkapi seri geoteknik** (Tool #6/#7/#8 siap dipakai ulang polanya): daya dukung dangkal + **eksentrisitas & beban
+   miring** (faktor ic/iq/iγ, luas efektif B′×L′), **penurunan pasir** (Schmertmann/N-SPT — tabel-lapis dari Tool #8 dipakai
+   ulang), pemampatan sekunder (creep), **efisiensi kelompok tiang** & gesekan negatif (pelengkap Tool #8).
    **Melengkapi seri baja** (library siap dipakai ulang): **Geser balok baja (Bab G)** — pelengkap alami Tool #5
    (butuh Aw, Cv, kn — bisa dari geometri); **Kombinasi lentur+aksial (Bab H)** menyatukan Tool #4 & #5;
    Sambungan (baut/las). Untuk menaikkan mutu Tool #5: badan non-kompak/langsing (F4/F5, Rpc/Rpg) & siku

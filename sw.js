@@ -4,7 +4,7 @@
    - Runtime cache: modules/* saat pertama diakses (cache-first, fallback network)
    - Bump CACHE setiap kali core/shell berubah agar SW purge cache lama
    ============================================================ */
-const CACHE = 'civil-tools-v17';
+const CACHE = 'civil-tools-v18';
 
 const PRECACHE = [
   './',

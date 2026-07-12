@@ -68,8 +68,16 @@ window.MODULE_REGISTRY = [
     status: 'active'
   },
 
+  {
+    id: 'pile-capacity',
+    name: 'Daya Dukung Tiang',
+    category: 'Geoteknik',
+    icon: 'modules/pile-capacity/icon.svg',
+    entry: 'modules/pile-capacity/module.js',
+    status: 'active'
+  },
+
   // --- Roadmap (belum ada module.js, tampil abu-abu di nav) ---
-  { id: 'pile-capacity', name: 'Daya Dukung Tiang',      category: 'Geoteknik',       status: 'coming-soon' },
   { id: 'load-combo',    name: 'Kombinasi Beban',        category: 'Umum',            status: 'coming-soon' },
   { id: 'anchor-bolt-group', name: 'Anchor Bolt Group',  category: 'Sambungan',       status: 'coming-soon' },
 
