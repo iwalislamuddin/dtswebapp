@@ -29,6 +29,7 @@ window.MODULE_REGISTRY = [
     category: 'Baja',
     icon: 'modules/steel-tension/icon.svg',
     entry: 'modules/steel-tension/module.js',
+    accepts: { axial: 'Pu' },     // terima beban aksial terfaktor (DFBK) dari Kombinasi Beban
     status: 'active'
   },
 
@@ -38,6 +39,7 @@ window.MODULE_REGISTRY = [
     category: 'Baja',
     icon: 'modules/steel-compression/icon.svg',
     entry: 'modules/steel-compression/module.js',
+    accepts: { axial: 'Pu' },     // terima beban aksial terfaktor (DFBK) dari Kombinasi Beban
     status: 'active'
   },
 
@@ -47,6 +49,7 @@ window.MODULE_REGISTRY = [
     category: 'Baja',
     icon: 'modules/steel-flexure/icon.svg',
     entry: 'modules/steel-flexure/module.js',
+    accepts: { moment: 'Mu' },    // terima momen terfaktor (DFBK) dari Kombinasi Beban
     status: 'active'
   },
 
@@ -77,8 +80,16 @@ window.MODULE_REGISTRY = [
     status: 'active'
   },
 
+  {
+    id: 'load-combo',
+    name: 'Kombinasi Beban',
+    category: 'Umum',
+    icon: 'modules/load-combo/icon.svg',
+    entry: 'modules/load-combo/module.js',
+    status: 'active'
+  },
+
   // --- Roadmap (belum ada module.js, tampil abu-abu di nav) ---
-  { id: 'load-combo',    name: 'Kombinasi Beban',        category: 'Umum',            status: 'coming-soon' },
   { id: 'anchor-bolt-group', name: 'Anchor Bolt Group',  category: 'Sambungan',       status: 'coming-soon' },
 
   // --- Dev only: validasi kontrak mount/unmount ---

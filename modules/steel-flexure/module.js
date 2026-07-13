@@ -480,7 +480,7 @@
       }
       syncVisibility(vals);
       update(vals, results);
-    });
+    }, ID);   // ID → daftar ke window.CivilForms utk terima handoff (Kombinasi Beban → Mu)
     state.form = form;
     state.results = results;
 

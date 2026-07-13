@@ -29,6 +29,15 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   **Versi cache dinaikkan ke `civil-tools-v16`** saat menambah Tool #6 (registry di-precache, jadi bump wajib).
   **Versi cache dinaikkan ke `civil-tools-v17`** saat menambah Tool #7 (registry di-precache, jadi bump wajib).
   **Versi cache dinaikkan ke `civil-tools-v18`** saat menambah Tool #8 (registry di-precache, jadi bump wajib).
+  **Versi cache dinaikkan ke `civil-tools-v19`** saat menyambungkan ikon modul (shell.js diubah + 8 `icon.svg`
+  ditambahkan ke precache — shell.js di-precache, jadi bump wajib).
+
+**Ikon modul (icon.svg) — TERSAMBUNG** (2026-07-13)
+- Sebelumnya tiap modul punya `icon.svg` tapi `shell.js` `iconMarkup()` mengabaikannya (selalu ikon generik).
+- Sekarang `hydrateIcons()` di `shell.js` **fetch isi `m.icon` lalu inline-swap** ke placeholder tiap `.nav-item .ico`
+  (di-cache di memori, gagal-diam ke ikon generik). **Inline SVG** dipilih (bukan `<img>`) agar `stroke="currentColor"`
+  ikut tema. Placeholder generik dirender sinkron dulu (layout stabil), lalu di-swap async. Modul roadmap tanpa file
+  (load-combo, anchor-bolt-group, _template) tetap pakai generik. Terverifikasi live: 8/8 ikon khusus ter-swap, 0 error.
 
 **Brand EDFS** (palet dari `D:\Downloads\dtsapp.pdf`)
 - Orange `#F28F3B` (aksen) · Olive `#566246` · Sage `#A4C2A5` · Sky `#30BCED` · Ink `#050401`.
@@ -227,6 +236,55 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 - **Kontrak module**: `unmount()` wajib membersihkan listener, `canvas2d.destroy()`, dan dispose Three.js (tool 3D).
   Sudah diuji: pindah antar tool berkali-kali → jumlah `<canvas>` tetap 1 (tidak bocor).
 - Screenshot di preview harness kadang timeout; verifikasi banyak dilakukan via pixel-sampling/eval (bukan indikasi bug app).
+- ⚠️ **SW + HTTP-cache death-loop saat testing** (2026-07-13, buang banyak langkah): `python http.server` **tidak kirim
+  `Cache-Control`** → browser cache heuristik menahan file lama TANPA revalidasi, dan **SW cache-first meng-cache yang stale
+  itu lalu terus di-serve** meski `caches.delete` + `unregister` (SW re-register tiap load dari `index.html`, controller
+  balik `true`). Gejala: edit file benar di disk (cek `fetch(url+'?bust=')`) tapi `window.MODULE_REGISTRY` tetap versi lama.
+  **Solusi paling andal: ganti PORT di `.claude/launch.json`** (mis. 5188→5199) lalu restart preview → **origin baru = tanpa
+  SW & tanpa HTTP-cache**, dijamin fresh. (Port civil-tools sekarang **5199**.) Alternatif lemah `cache:'reload'`/hard-reload
+  sering kalah oleh SW controller. Untuk user produksi tetap cukup **bump `CACHE`** — masalah ini khusus dev lokal.
+
+## Tool #9 — Kombinasi Beban + handoff "kirim ke tool lain" ✅ SELESAI (2026-07-13)
+
+**Status: terimplementasi & tervalidasi live.** `modules/load-combo/` (module.js + icon.svg), status `active`.
+- Kombinasi **LRFD (Ps. 2.3.1)** & **ASD (Ps. 2.4.1)**, SNI 1727:2020 (ASCE 7-16). (Lr|R)=maks(Lr,R); W & E ±.
+- Segment **Kuantitas** (Aksial/Momen/Geser → unit & tujuan handoff) + **Sistem** (LRFD/ASD) + opsi reduksi 0,5L.
+- Output: hero beban terfaktor maks, **tabel semua kombinasi** (maks di-`ok`, min-negatif di-`bad` + ◄), kanvas
+  **bar chart** (nol-axis, bar amber=maks, sky=min-uplift, sage=lainnya; hover `canvasTip`; **pita `.cap` 0 piksel** terverifikasi).
+- **Handoff**: infra generik di shell (`runtime.handoff.send(targetId,payload,fromLabel)` → sessionStorage → hash) +
+  `applyHandoff()` (baca `entry.accepts` registry + `window.CivilForms[id].applyInputs` → isi field + recompute + toast).
+  `buildForm` argumen ke-4 `formId` mendaftarkan form. Tombol "Kirim ke…" dibangun dinamis dari registry (`accepts`).
+  Retrofit penerima: `steel-tension`/`steel-compression` (`accepts:{axial:'Pu'}`), `steel-flexure` (`accepts:{moment:'Mu'}`).
+- **Tervalidasi live vs hitung tangan**: default (D100,L80,LRFD,aksial) → 3 komb, maks **248 kN** (komb 2: 1,2·100+1,6·80). ✓
+  Momen D50/L40/W200 → 8 komb, maks **300** (4+: 1,2·50+200+40), min **−155** (6−: 0,9·50−200) ditandai uplift. ✓
+  W+E penuh (D120,L90,W150,E110) → **12 kombinasi**, maks 384. ASD → handoff nonaktif (catatan LRFD-only, 0 tombol). ✓
+  Handoff klik: Pu=248 & Mu=300 terisi di tool tujuan + toast "diterima dari Kombinasi Beban" + sessionStorage terkonsumsi.
+  Kanvas tetap 1 (unmount bersih ×4 navigasi); nol console error. **Versi cache SW dinaikkan ke `civil-tools-v20`**.
+
+⚠️ **OPSI 2 masih DITUNDA** (lihat di bawah) — beam-flexure & geoteknik jadi penerima (butuh field demand + D/C).
+
+### Rencana asli & arsitektur (disepakati 2026-07-13)
+
+- **Tujuan**: jembatan hulu — hitung beban terfaktor (LRFD/kuat & ASD/layan, SNI 1727:2020 ≈ ASCE 7) dari beban
+  layan D/L/Lr/R/W/E, tampilkan **tabel semua kombinasi** + tandai **kombinasi kritis** (maks & min utk uplift),
+  lalu **kirim nilai puncak** ke tool lain sebagai input (Pu/Mu/…).
+- **Arsitektur handoff (generik, future-proof)**:
+  - **Pengirim (Tool #9) NOL edit ke depan** — ia hanya **baca registry**: cari modul yang punya `accepts` untuk
+    kuantitas yang dihitung (mis. `axial`,`moment`), bangun menu "Kirim ke …" dinamis. Tool baru cukup deklarasi
+    `accepts` di registry → otomatis muncul sebagai tujuan.
+  - **Penerima butuh 2 penyesuaian kecil sekali-saja**: (1) `accepts:{axial:'Pu'}` di **registry entry**;
+    (2) panggil `UI.buildForm(host, schema, onChange, ID)` — argumen ID ke-4 agar `buildForm` **mendaftarkan form ke
+    `window.CivilForms[ID]`** sehingga shell bisa `setValue`+recompute setelah `mount()`. (buildForm tak memberi id/name
+    ke input → DOM-scraping tak bisa, jadi registrasi form wajib.)
+  - **Infra di shell + ui-kit** (sekali bangun): `runtime.handoff.send(targetId,payload)` simpan payload →
+    `location.hash='#'+targetId`; shell saat mount cek payload + `registry.accepts` → isi field + `toast` "diterima dari
+    Kombinasi Beban". Payload di sessionStorage (bertahan lintas reload PWA).
+- **Scope retrofit awal = OPSI 1**: hanya **3 tool baja** yang sudah punya field beban terfaktor tunggal →
+  `steel-tension` (`Pu`←axial), `steel-compression` (`Pu`←axial), `steel-flexure` (`Mu`←moment). Backward-compatible.
+- ⏳ **OPSI 2 — DITUNDA (jangan lupa)**: agar **beam-flexure & tool geoteknik (pile/bearing)** bisa jadi penerima juga,
+  perlu **tambah field beban demand + cek D/C** ke tool-tool itu dulu (sekarang capacity-only/ASD tanpa slot demand):
+  beam-flexure ← `Mu` (bandingkan φMn), pile/bearing ← beban layan (bandingkan Q_izin/q_izin, jalur ASD).
+  Begitu field demand ada, retrofit-nya identik pola Opsi 1 (accepts + buildForm ID). Kerjakan pada iterasi berikutnya.
 
 ## Langkah berikutnya
 
@@ -235,7 +293,9 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
    ~~**Tool #6** Daya Dukung Tanah / Fondasi Dangkal (Terzaghi, Meyerhof, Vesic)~~ ✅ ·
    ~~**Tool #7** Penurunan Fondasi / Settlement (elastis Steinbrenner + konsolidasi e–log p + laju Terzaghi)~~ ✅ ·
    ~~**Tool #8** Daya Dukung Tiang Tunggal (statik α/β berlapis + SPT Meyerhof + Decourt-Quaresma)~~ ✅ **SELESAI**.
-   Kandidat tier-2 berikutnya di registry `coming-soon`: **Kombinasi Beban**, **Anchor Bolt Group**.
+   ~~**Tool #9** Kombinasi Beban (SNI 1727:2020 LRFD/ASD + handoff "kirim ke tool lain")~~ ✅ **SELESAI**.
+   Kandidat berikutnya di registry `coming-soon`: **Anchor Bolt Group** (butuh 3D). Prioritas non-3D: **OPSI 2 handoff**
+   (field demand + D/C untuk beam-flexure & geoteknik → jadi penerima Kombinasi Beban), geser balok baja (Bab G).
    **Melengkapi seri geoteknik** (Tool #6/#7/#8 siap dipakai ulang polanya): daya dukung dangkal + **eksentrisitas & beban
    miring** (faktor ic/iq/iγ, luas efektif B′×L′), **penurunan pasir** (Schmertmann/N-SPT — tabel-lapis dari Tool #8 dipakai
    ulang), pemampatan sekunder (creep), **efisiensi kelompok tiang** & gesekan negatif (pelengkap Tool #8).

@@ -4,7 +4,7 @@
    - Runtime cache: modules/* saat pertama diakses (cache-first, fallback network)
    - Bump CACHE setiap kali core/shell berubah agar SW purge cache lama
    ============================================================ */
-const CACHE = 'civil-tools-v18';
+const CACHE = 'civil-tools-v20';
 
 const PRECACHE = [
   './',
@@ -18,7 +18,16 @@ const PRECACHE = [
   'core/steel-profiles.js',
   'core/module-registry.js',
   'favicon/edfs-mark.svg',
-  'favicon/edfs-icon.svg'
+  'favicon/edfs-icon.svg',
+  'modules/development-length/icon.svg',
+  'modules/beam-flexure/icon.svg',
+  'modules/steel-tension/icon.svg',
+  'modules/steel-compression/icon.svg',
+  'modules/steel-flexure/icon.svg',
+  'modules/bearing-capacity/icon.svg',
+  'modules/settlement/icon.svg',
+  'modules/pile-capacity/icon.svg',
+  'modules/load-combo/icon.svg'
 ];
 
 self.addEventListener('install', (e) => {

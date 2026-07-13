@@ -67,7 +67,7 @@
        'segment' -> { type:'segment', id, label, options:[{value,label}], value }
      onChange(values, changedId) dipanggil tiap input berubah (live calc).
      ============================================================ */
-  function buildForm(container, schema, onChange) {
+  function buildForm(container, schema, onChange, formId) {
     var fields = {};      // id -> { get, set, type }
     var root = el('div', 'ck-form');
     var curGroup = null;
@@ -145,12 +145,20 @@
     }
     function emit(id) { if (onChange) onChange(getValues(), id); }
 
-    return {
+    var api = {
       root: root,
       fields: fields,
       getValues: getValues,
-      setValue: function (id, v) { if (fields[id]) { fields[id].set(v); } }
+      setValue: function (id, v) { if (fields[id]) { fields[id].set(v); } },
+      // Isi beberapa field sekaligus lalu picu hitung-ulang (dipakai handoff "kirim ke tool lain").
+      applyInputs: function (obj) {
+        Object.keys(obj).forEach(function (id) { if (fields[id]) fields[id].set(obj[id]); });
+        if (onChange) onChange(getValues(), '__handoff__');
+      }
     };
+    // Modul penerima handoff memanggil buildForm dengan formId → shell bisa isi input via window.CivilForms[id].
+    if (formId) { window.CivilForms = window.CivilForms || {}; window.CivilForms[formId] = api; }
+    return api;
   }
 
   /* ============================================================

@@ -22,8 +22,42 @@
     canvas2d: window.CivilCanvas2D || null,   // tier 2 — helper kanvas 2D
     steel: window.SteelProfiles || null,      // library profil baja (tool baja)
     // renderer 3D di-lazy-init nanti (core/renderer.js), tool pertama non-3D
-    getRenderer: function () { return null; }
+    getRenderer: function () { return null; },
+    // Handoff antar-tool: kirim nilai (mis. beban terfaktor) ke input tool tujuan.
+    // Pengirim tak perlu tahu detail tujuan — cukup id + payload berkunci kuantitas.
+    handoff: {
+      send: function (targetId, payload, fromLabel) {
+        try {
+          sessionStorage.setItem('civiltools-handoff', JSON.stringify({
+            to: targetId, from: fromLabel || null, payload: payload || {}, ts: Date.now()
+          }));
+        } catch (e) { /* sessionStorage bisa gagal di mode privat — abaikan */ }
+        location.hash = '#' + targetId;
+      }
+    }
   };
+
+  /* ---------- Handoff inbox: isi form tool tujuan setelah mount ---------- */
+  // Cocokkan payload.<kuantitas> → field lewat entry.accepts di registry, lalu
+  // form.applyInputs() (dari window.CivilForms[id]). Dikonsumsi sekali pakai.
+  function applyHandoff(id, entry) {
+    if (!entry || !entry.accepts) return;
+    var raw; try { raw = sessionStorage.getItem('civiltools-handoff'); } catch (e) { return; }
+    if (!raw) return;
+    var h; try { h = JSON.parse(raw); } catch (e) { try { sessionStorage.removeItem('civiltools-handoff'); } catch (_) {} return; }
+    if (!h || h.to !== id) return;
+    try { sessionStorage.removeItem('civiltools-handoff'); } catch (e) {}   // konsumsi sekali
+    var form = (window.CivilForms || {})[id];
+    if (!form || typeof form.applyInputs !== 'function') return;
+    var inputs = {}, labels = [];
+    Object.keys(entry.accepts).forEach(function (qty) {
+      var val = h.payload ? h.payload[qty] : undefined;
+      if (val != null && !isNaN(val)) { inputs[entry.accepts[qty]] = val; labels.push(entry.accepts[qty]); }
+    });
+    if (!labels.length) return;
+    form.applyInputs(inputs);
+    UI.toast(labels.join(', ') + ' diterima dari ' + (h.from || 'tool lain'), 'info');
+  }
 
   /* ---------- Render nav (grouped by kategori, urutan sesuai registry) ---------- */
   function renderNav() {
@@ -55,8 +89,30 @@
   }
 
   function iconMarkup() {
-    // ikon generik (module boleh punya icon.svg sendiri; di-load opsional nanti)
+    // ikon generik: placeholder awal + fallback (modul roadmap tanpa file icon.svg)
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg>';
+  }
+
+  // Muat icon.svg milik tiap modul (bila terdaftar) lalu swap ke placeholder.
+  // Async, di-cache, dan gagal-diam ke ikon generik (offline sebelum ter-cache / file hilang).
+  // Ikon di-inline sebagai SVG agar stroke="currentColor" mengikuti tema.
+  var iconCache = {};
+  function hydrateIcons() {
+    REGISTRY.forEach(function (m) {
+      if (!m.icon) return;
+      var apply = function (svg) {
+        var host = navList.querySelector('.nav-item[data-id="' + m.id + '"] .ico');
+        if (host) host.innerHTML = svg;
+      };
+      if (iconCache[m.icon]) { apply(iconCache[m.icon]); return; }
+      fetch(m.icon).then(function (r) { return r.ok ? r.text() : null; }).then(function (txt) {
+        if (txt == null) return;
+        txt = txt.trim();
+        if (txt.slice(0, 4).toLowerCase() !== '<svg') return; // hanya terima SVG utuh
+        iconCache[m.icon] = txt;
+        apply(txt);
+      }).catch(function () {});
+    });
   }
 
   function highlightNav(id) {
@@ -119,6 +175,7 @@
       activeModule = mod;
       try {
         mod.mount(moduleRoot, runtime);
+        applyHandoff(id, entry);   // isi input bila ada nilai dikirim dari tool lain
       } catch (e) {
         console.error(e);
         UI.toast('Error saat memuat ' + id, 'bad');
@@ -191,6 +248,7 @@
 
   /* ---------- Boot ---------- */
   renderNav();
+  hydrateIcons();
   initTheme();
   initCollapse();
   initAbout();
