@@ -338,6 +338,72 @@ Referensi **ACI 318-19 Ch. 17** (adopsi **SNI 2847:2019 Ps. 17**), beton normal 
   **angkur pasca-pasang** (post-installed — hanya cast-in), **eksentrisitas geser** (ψec,V=1), model **bearing sumbu-netral** pelat,
   pola baut **circular** (baru rectangular grid). Verifikasi mis. **ACI 318-19 / SNI 2847:2019** oleh insinyur penanggung jawab.
 
+## Tool #11–#19 — Batch 9 modul + kategori Hidraulika & Hidrologi ✅ SELESAI (2026-07-14)
+
+**Sembilan modul tier-2 (kanvas) sekaligus**, semua status `active`, dikerjakan di branch `claude/tools-batch-2`.
+SW cache **v26 → v31** (bump per batch commit). Semua **tervalidasi live vs hitung tangan** (origin fresh port 5202,
+pola port-bump untuk menghindari SW death-loop dev): nol console error, canvas tetap 1 setelah pindah 9 tool
+berturut-turut (dispose bersih).
+
+**#11 Sambungan Baut** (`bolt-connection`, Sambungan) — SNI 1729:2020 Ps. J3 DFBK. Geser (Fnv·Ab·m), tarik (Fnt·Ab),
+kombinasi J3.7 (F'nt=1,3Fnt−Fnt/(φFnv)·frv, ambang 30%), tumpu/sobek J3.10 (1,2·lc·t·Fu ≤ 2,4·d·t·Fu; lc tepi/dalam;
+dh=d+2/d+3). **Kapasitas grup geser = Σ min(geser, tumpu) per baut**. Mutu A325/8.8, A490/10.9 (N/X), A307, kustom.
+Cek spasi 2,67d/3d & tepi Tabel J3.4M. `accepts:{shear:'Vu', axial:'Tu'}`. Kanvas: denah grup + bar keadaan batas.
+Validasi: 2×2 M20 A325-N t10 → φrnv 87,7 / lc 29/48 / φRn grup 350,6 / D/C 0,43; Tu=200 → F'nt 540,7, D/C 0,39. ✓
+
+**#12 Sambungan Las** (`weld-connection`, Sambungan) — Ps. J2/J4. Fillet Rn=0,6·FEXX·kd·β·Awe (Awe=0,707wL, φ=0,75),
+kd=(1+0,5sin^1,5θ) opsional, β end-loaded Lw/w>100; logam dasar leleh (1,0·0,6FyAgv) vs fraktur (0,75·0,6FuAnv);
+batas w min Tabel J2.4/maks t−2/panjang 4w. `accepts:{shear:'Ru'}`. Validasi: w6 L200 E70 → φRn 184,0 (las govern),
+base 288/333; θ=90° → kd 1,5 → 276. ✓ BELUM: groove, grup eksentris (ICR), J2.4(c), fatik.
+
+**#13 Beban Angin** (`wind-load`, Umum) — SNI 1727:2020 Bab 26–27 prosedur pengarah, SPGAU dinding, gedung tertutup kaku.
+qz=0,613·Kz·Kzt·Kd·Ke·V² (Kz power-law B/C/D); windward +0,8 variasi z, leeward interp L/B (−0,5/−0,3/−0,2), samping −0,7;
+GCpi ±0,18/±0,55/0; geser dasar integrasi 40 strip + momen guling; beban minimum 0,77 kPa (27.1.5). Kanvas: elevasi + profil
+tekanan + panah leeward, hover z→Kz/qz/p. Validasi: V35 C H24 B30 L20 → Kh 1,204, qh 0,768, p_ww 0,384/0,661, F 554,6 kN. ✓
+BELUM: atap (uplift), Gf fleksibel, K&K Bab 30, parapet. Jalankan 2 arah (tukar B↔L).
+
+**#14 Daya Dukung CPT** (`cpt-bearing`, Geoteknik) — **input tabel CPT via TEXTAREA paste** (pola baru; parser
+z-qc-[fs], kg/cm² ↔ MPa, 1 kg/cm²=98,0665 kPa, interpolasi linear + rata-rata jendela numerik). PASIR: Meyerhof 1956
+(SI Bowles) q_izin NETO penurunan 25 mm (qc̄/15 · Kd atau (qc̄/25)((B+0,3)/B)²·Kd, Kd≤1,33); LEMPUNG: su=(qc̄−σv0)/Nk
+(default 14) + Skempton 5·su·(1+0,2Df/B)(1+0,2B/L). qc̄ jendela Df..Df+B. Kanvas: profil qc-z + fondasi + arsir jendela.
+Validasi: sampel B1,5 Df1 → qc̄ 14 kg/cm², Kd 1,22, qa 96 kPa; clay → su 96,9, qult 659, qa 220. ✓
+BELUM: MAT otomatis (pakai γ efektif manual), CPTu qt, lapisan campuran.
+
+**#15 Daya Dukung Tiang CPT** (`cpt-pile`, Geoteknik) — ujung **Schmertmann–Nottingham disederhanakan**
+qp=(avg qc L..L+4D + avg L−8D..L)/2 (tanpa jalur-minimum); selimut fs kolom sondir ATAU Rf%·qc, cap 120 kPa,
+Qs=∫fs·K·dz (200 strip); **Q_izin = Qp/3 + Qs/5** (praktik sondir Indonesia) + pembanding Qu/2,5. Kanvas: profil qc +
+tiang + arsir jendela 8D/4D + bar Qs/Qp/Qu/Qall. Validasi: Ø0,4 L12 sampel → qc1 19,07/qc2 13,61/qp 16,34 MPa,
+Qp 2053, Qs 1198 (capped), Q_izin 924 kN. ✓ BELUM: efisiensi kelompok, downdrag, LCPC kc/α, struktural tiang.
+
+**#16 Diagram P–M Kolom** (`column-pm`, Beton Bertulang) — SNI 2847:2019 kompatibilitas regangan, sapuan c log-spaced
+160 titik, koreksi beton terdesak (fs−0,85f'c) utk baris dalam blok; φ Tabel 21.2.2 (0,65/0,75→0,90 transisi
+εty..εty+0,003); plafon 0,80/0,85·Po (22.4.2); tarik murni −fyAst. Pola tulangan keliling nx/ny; cek ρg 1–8%, spasi
+bersih 25.2.3. **D/C radial eksentrisitas-konstan** (interpolasi sudut kurva desain) + kapasitas se-eksentrisitas.
+Kanvas: penampang + kurva P-M (nominal/desain/balanced/demand), hover → Mn/Pn/εt/φ. `accepts:{axial:'Pu', moment:'Mu'}`.
+Validasi PRESISI: 400×400 8D19 fc25 fy400 d'60 → Po 4259, φPn,maks 2215, **balanced cb 204 → Pb 1462 & Mb 260 cocok
+persis hitung tangan strain-compat**, Pu1200/Mu150 → D/C 0,95. ✓ BELUM: biaksial (Bresler), kelangsingan 6.6.4, Ps. 18.
+
+**#17 Debit Banjir Rasional** (`rational-method`, **Hidraulika & Hidrologi — kategori BARU**) — Q=0,00278·C·i·A;
+tc Kirpich 0,0195L^0,77·S^−0,385 atau manual; i Mononobe (R24/24)(24/tc)^⅔; preset C tutupan lahan. Kanvas: kurva
+intensitas + titik tc. Validasi: A10 C0,7 R24=120 L800 ΔH8 → tc 19,7 mnt, i 87,3, Q 1,699 m³/s. ✓
+Peringatan batas metode (≤±80–300 ha), Mononobe = pendekatan bila IDF lokal tak ada.
+
+**#18 Saluran Terbuka Manning** (`open-channel`, Hidraulika) — V=(1/n)R^⅔√S; persegi/trapesium/segitiga/**lingkaran
+terisi sebagian** (gorong-gorong, relasi θ; kapasitas maks ≈0,94D; desain y/D≤0,8); mode y→Q dan **Q→y (bisection,
+lingkaran dibatasi cabang naik)**; yc dari Q²T/gA³=1, Froude+rezim, cek V 0,6–3 m/s; preset n. Kanvas: potongan +
+muka air + garis yc. Validasi: trap b1 m1,5 y0,8 n0,013 S0,001 → A 1,76/P 3,884/V 1,435/Q 2,526/Fr 0,637/yc 0,634;
+lingkaran y/D 0,7 → A 0,5872/P 1,982/T 0,917 (eksak θ); inversi Q→y balik 0,800. ✓ BELUM: backwater, loncatan hidraulik.
+
+**#19 Aliran Pipa** (`pipe-flow`, Hidraulika) — Darcy–Weisbach, f **Swamee–Jain** (laminar 64/Re; validitas
+diperingatkan), minor ΣK·V²/2g, gradien m/km; **pembanding Hazen–Williams** SI dengan preset ε & C per material.
+Kanvas: profil EGL/HGL. Validasi: Ø100 L200 Q10 L/s PVC → V 1,273/Re 1,27e5/f 0,01711/hf 2,83/HW 2,92 (+3,2%). ✓
+BELUM: jaringan (Hardy-Cross), pompa, water hammer.
+
+⚠️ Catatan pola baru batch ini: (1) **textarea paste** utk data tabular (cpt-bearing/cpt-pile) — disisipkan manual ke
+grup form pertama, listener `input` di-remove di unmount; (2) kategori nav baru cukup lewat `category` di registry
+(urutan = kemunculan pertama); (3) verifikasi dev pakai **bump port** launch.json (5188→5201→5202) tiap kali registry
+berubah — SW origin lama tetap menyajikan registry stale (gotcha lama, makin akut dengan banyak batch).
+
 ## Langkah berikutnya
 
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
@@ -347,6 +413,11 @@ Referensi **ACI 318-19 Ch. 17** (adopsi **SNI 2847:2019 Ps. 17**), beton normal 
    ~~**Tool #8** Daya Dukung Tiang Tunggal (statik α/β berlapis + SPT Meyerhof + Decourt-Quaresma)~~ ✅ **SELESAI**.
    ~~**Tool #9** Kombinasi Beban (SNI 1727:2020 LRFD/ASD + handoff "kirim ke tool lain")~~ ✅ **SELESAI**.
    ~~**Tool #10** Anchor Bolt Group 3D (ACI 318-19 Ch.17 — tarik+geser+interaksi; infra Fase 3)~~ ✅ **SELESAI** (status `active`).
+   ~~**Tool #11–#19** batch: Sambungan Baut/Las (J3/J2), Beban Angin (SNI 1727), CPT dangkal+tiang, Diagram P–M
+   Kolom, kategori Hidraulika & Hidrologi (Rasional, Manning, Pipa)~~ ✅ **SELESAI** (2026-07-14, 9 modul aktif).
+   Lanjutan wajar batch ini: geser eksentris baut (ICR) & blok geser J4.3, grup las eksentris, beban angin ATAP +
+   K&K (Bab 30), kolom biaksial (Bresler) & kelangsingan (6.6.4), penurunan tiang dari CPT, kurva IDF dari data
+   hujan (analisis frekuensi Gumbel/LP-III), HSS Nakayasu.
    Lanjutan Tool #10: side-face blowout, tulangan angkur, pola circular, eksentrisitas geser. Prioritas non-3D: **OPSI 2 handoff**
    (field demand + D/C untuk beam-flexure & geoteknik → jadi penerima Kombinasi Beban), geser balok baja (Bab G).
    **Melengkapi seri geoteknik** (Tool #6/#7/#8 siap dipakai ulang polanya): daya dukung dangkal + **eksentrisitas & beban
