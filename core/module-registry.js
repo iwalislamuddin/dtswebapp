@@ -42,11 +42,11 @@ window.MODULE_REGISTRY = [
     category: 'Beton Bertulang',
     icon: 'modules/column-pm/icon.svg',
     entry: 'modules/column-pm/module.js',
-    accepts: { axial: 'Pu', moment: 'Mu' },   // terima beban terfaktor dari Kombinasi Beban
+    accepts: { axial: 'Pu', moment: 'Mux' },  // terima beban terfaktor dari Kombinasi Beban
     status: 'active',
     seo: {
-      title: 'Diagram Interaksi P-M Kolom Beton (SNI 2847:2019)',
-      desc: 'Diagram interaksi aksial-momen kolom beton bertulang persegi via kompatibilitas regangan: kurva nominal & desain (φ transisi), titik balanced, plafon 0,80·Po, dan cek D/C titik beban sesuai SNI 2847:2019.'
+      title: 'Diagram Interaksi P-M Kolom Beton — Biaksial 3D (SNI 2847:2019)',
+      desc: 'Permukaan interaksi 3D aksial-momen dua arah (P-Mx-My) kolom beton bertulang persegi via kompatibilitas regangan sumbu netral miring: cek biaksial kontur beban eksak (bukan Bresler), plafon 0,80·Po, φ transisi, sesuai SNI 2847:2019.'
     }
   },
 

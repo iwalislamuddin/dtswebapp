@@ -259,6 +259,11 @@ body{
 .modal-list li{position:relative; padding-left:18px; font-size:12.5px; line-height:1.5; color:var(--ink-dim)}
 .modal-list li:before{content:"▸"; position:absolute; left:0; color:var(--amber)}
 .modal-list b{color:var(--ink)}
+.modal-relnotes{max-height:230px; overflow-y:auto; background:var(--bg2); border:1px solid var(--line);
+  border-radius:10px; padding:12px 14px; scrollbar-width:thin}
+.modal-relnotes .rel-ver{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--amber);
+  letter-spacing:.06em; margin:12px 0 6px}
+.modal-relnotes .rel-ver:first-child{margin-top:0}
 .modal-disc{background:var(--amber-soft); border:1px solid var(--amber); border-radius:10px; padding:12px 14px; font-size:12px; line-height:1.6; color:var(--ink-dim); margin-bottom:18px}
 .modal-disc b{display:block; color:var(--amber); font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; margin-bottom:5px}
 .modal-ft{border-top:1px solid var(--line2); padding-top:14px; text-align:center}

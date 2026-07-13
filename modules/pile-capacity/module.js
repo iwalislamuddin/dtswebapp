@@ -707,7 +707,7 @@
   }
 
   /* ---------- Report monospace ---------- */
-  var APP_VER = 'v0.1.0';
+  var APP_VER = 'v0.2.0';
   var RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }

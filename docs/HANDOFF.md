@@ -375,13 +375,22 @@ Qs=∫fs·K·dz (200 strip); **Q_izin = Qp/3 + Qs/5** (praktik sondir Indonesia)
 tiang + arsir jendela 8D/4D + bar Qs/Qp/Qu/Qall. Validasi: Ø0,4 L12 sampel → qc1 19,07/qc2 13,61/qp 16,34 MPa,
 Qp 2053, Qs 1198 (capped), Q_izin 924 kN. ✓ BELUM: efisiensi kelompok, downdrag, LCPC kc/α, struktural tiang.
 
-**#16 Diagram P–M Kolom** (`column-pm`, Beton Bertulang) — SNI 2847:2019 kompatibilitas regangan, sapuan c log-spaced
-160 titik, koreksi beton terdesak (fs−0,85f'c) utk baris dalam blok; φ Tabel 21.2.2 (0,65/0,75→0,90 transisi
-εty..εty+0,003); plafon 0,80/0,85·Po (22.4.2); tarik murni −fyAst. Pola tulangan keliling nx/ny; cek ρg 1–8%, spasi
-bersih 25.2.3. **D/C radial eksentrisitas-konstan** (interpolasi sudut kurva desain) + kapasitas se-eksentrisitas.
-Kanvas: penampang + kurva P-M (nominal/desain/balanced/demand), hover → Mn/Pn/εt/φ. `accepts:{axial:'Pu', moment:'Mu'}`.
-Validasi PRESISI: 400×400 8D19 fc25 fy400 d'60 → Po 4259, φPn,maks 2215, **balanced cb 204 → Pb 1462 & Mb 260 cocok
-persis hitung tangan strain-compat**, Pu1200/Mu150 → D/C 0,95. ✓ BELUM: biaksial (Bresler), kelangsingan 6.6.4, Ps. 18.
+**#16 Diagram P–M Kolom** (`column-pm`, Beton Bertulang) — **DI-UPGRADE ke BIAKSIAL 3D pada v0.2.0** (tier-3 WebGL,
+modul 3D kedua setelah anchor-bolt-group). SNI 2847:2019 kompatibilitas regangan dengan **SUMBU NETRAL MIRING**:
+sapuan 48 sudut θ × 34 kedalaman c (log-spaced) → **permukaan interaksi P–Mx–My**. Blok tekan = poligon
+penampang ∩ halfplane u≤β1·c (**clipping Sutherland–Hodgman** + shoelace centroid), Cc di centroid blok; baja per
+BATANG (posisi x,y aktual) elastoplastis ±fy + koreksi beton terdesak; φ dari εt baja terjauh; plafon 0,80/0,85·Po.
+**Cek biaksial = kontur beban EKSAK**: iris permukaan desain di P=Pu (interpolasi per meridian), D/C = |Mu|/|φMn|
+pada arah β=atan2(Muy,Mux) — bukan pendekatan resiprokal Bresler. Visual 3D: mesh permukaan transparan +
+meridian/paralel, sumbu P/Mx/My berwarna, grid di P=0, **cincin kontur iris di Pu** + titik demand merah + titik
+kapasitas se-arah; orbit/zoom/pan + reset; recolor saat ganti tema; rebuild men-dispose bersih (geometri renderer
+steady 29 setelah 5× rebuild). `accepts:{axial:'Pu', moment:'Mux'}`.
+Validasi PRESISI (400×400 8D19 fc25 fy400 d'60): formulasi poligon mereproduksi uniaksial tervalidasi **persis** —
+Balanced-X = Balanced-Y: cb 204 → **Pb 1462 & Mb 260** (cocok hitung tangan), M0x=M0y=142, Po 4259, φPn,maks 2215,
+Pnt −907; iris Pu=1200 arah-x → |φMn| 160,1 → D/C 0,94; **biaksial** Mux150+Muy100 → |Mu| 180,3 @34°, kapasitas
+se-arah 140,6 (kontur membulat < uniaksial 160 — perilaku benar) → D/C 1,28 NG. 4110 tri + 930 garis per frame;
+nol console error; canvas tetap 1 saat pindah tool. ✓ BELUM: kelangsingan 6.6.4, Ps. 18, penampang non-persegi.
+⚠️ Laporan mencantumkan sampel kontur kapasitas di P=Pu (bukan lagi sampel kurva 2D).
 
 **#17 Debit Banjir Rasional** (`rational-method`, **Hidraulika & Hidrologi — kategori BARU**) — Q=0,00278·C·i·A;
 tc Kirpich 0,0195L^0,77·S^−0,385 atau manual; i Mononobe (R24/24)(24/tc)^⅔; preset C tutupan lahan. Kanvas: kurva
@@ -401,8 +410,18 @@ BELUM: jaringan (Hardy-Cross), pompa, water hammer.
 
 ⚠️ Catatan pola baru batch ini: (1) **textarea paste** utk data tabular (cpt-bearing/cpt-pile) — disisipkan manual ke
 grup form pertama, listener `input` di-remove di unmount; (2) kategori nav baru cukup lewat `category` di registry
-(urutan = kemunculan pertama); (3) verifikasi dev pakai **bump port** launch.json (5188→5201→5202) tiap kali registry
-berubah — SW origin lama tetap menyajikan registry stale (gotcha lama, makin akut dengan banyak batch).
+(urutan = kemunculan pertama); (3) verifikasi dev pakai **bump port** launch.json (5188→5201→5202→5203) tiap kali
+registry berubah — SW origin lama tetap menyajikan registry stale (gotcha lama, makin akut dengan banyak batch).
+
+## Rilis v0.2.0 (2026-07-14) ✅
+
+- **Versi**: `APP_VER = 'v0.2.0'` di SEMUA 19 module.js (footer laporan); modal Tentang di `index.html` →
+  `v0.2.0` + **Catatan Rilis dalam kartu scrollable** (`.modal-relnotes`, max-height 230px, riwayat v0.2.0 & v0.1.0).
+  CSS baru `.modal-relnotes`/`.rel-ver` di `shell.css`. **SW cache v32**.
+- **Isi rilis**: 19 tool aktif / 6 kategori + infra 3D + handoff + path-routing SEO (ringkas di modal Tentang).
+- Tool #16 di-upgrade biaksial 3D pada rilis ini (lihat blok #16 di atas).
+- Verifikasi WebGL via `CivilRenderer.get().renderer.info` (readPixels selalu kosong — preserveDrawingBuffer false);
+  screenshot harness kadang berhasil, jangan diandalkan.
 
 ## Langkah berikutnya
 

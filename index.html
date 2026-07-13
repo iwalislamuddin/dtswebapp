@@ -109,7 +109,7 @@
         <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
         <div>
           <div class="modal-title" id="about-title">EDFS Civil Tools</div>
-          <div class="modal-ver">v0.1.0 · Alat Bantu Rekayasa Sipil</div>
+          <div class="modal-ver">v0.2.0 · Alat Bantu Rekayasa Sipil</div>
         </div>
       </div>
 
@@ -121,12 +121,25 @@
 
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
-        <ul class="modal-list">
-          <li><b>v0.1.0</b> — Rilis awal.</li>
-          <li>Tool: Panjang Penyaluran Tulangan Tarik (SNI 2847:2019) — ulir &amp; polos, diagram interaktif.</li>
-          <li>Laporan terunduh: PDF &amp; teks monospace.</li>
-          <li>Tema terang/gelap, navigasi dapat diciutkan, dapat dipasang sebagai aplikasi (PWA).</li>
-        </ul>
+        <div class="modal-relnotes">
+          <div class="rel-ver">v0.2.0 — 2026-07-14</div>
+          <ul class="modal-list">
+            <li><b>19 tool aktif</b> dalam 6 kategori (dari 1 tool di v0.1.0).</li>
+            <li><b>Beton Bertulang</b>: Kapasitas Balok φMn · <b>Diagram P–M Kolom biaksial</b> dengan permukaan interaksi 3D (P–Mx–My, kontur beban eksak).</li>
+            <li><b>Baja</b>: Batang Tarik, Batang Tekan (tekuk lentur + torsi WF), Balok Lentur (LTB) — dengan library ±138 profil WF/UNP/Siku/SHS/RHS/Pipa/CNP.</li>
+            <li><b>Geoteknik</b>: Daya Dukung Tanah (Terzaghi/Meyerhof/Vesic), Penurunan Fondasi, Daya Dukung Tiang berlapis, serta <b>Daya Dukung Dangkal &amp; Tiang dari data CPT/sondir</b> (tempel data dari Excel).</li>
+            <li><b>Sambungan</b>: Anchor Bolt Group 3D (ACI 318-19 Ch.17, tarik+geser+interaksi), Sambungan Baut (J3), Sambungan Las (J2).</li>
+            <li><b>Umum</b>: Kombinasi Beban SNI 1727 dengan <b>handoff</b> "kirim ke tool lain" · Beban Angin (prosedur pengarah, dinding SPGAU).</li>
+            <li><b>Hidraulika &amp; Hidrologi</b> (kategori baru): Debit Banjir Rasional (Kirpich+Mononobe), Saluran Terbuka Manning (termasuk gorong-gorong lingkaran), Aliran Pipa (Darcy-Weisbach + Hazen-Williams).</li>
+            <li>Infrastruktur 3D WebGL bersama (satu konteks, anti-bocor) + kontrol orbit kustom.</li>
+            <li>URL bersih per tool (/nama-tool), meta SEO, sitemap; tema 4 pilihan (gelap/terang/hitam/putih).</li>
+          </ul>
+          <div class="rel-ver">v0.1.0 — 2026-07-10</div>
+          <ul class="modal-list">
+            <li>Rilis awal: Panjang Penyaluran Tulangan Tarik (SNI 2847:2019) — ulir &amp; polos, diagram interaktif.</li>
+            <li>Laporan terunduh PDF &amp; teks monospace; tema terang/gelap; PWA terpasang.</li>
+          </ul>
+        </div>
       </div>
 
       <div class="modal-disc">
