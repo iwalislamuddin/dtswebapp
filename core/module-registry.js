@@ -224,6 +224,45 @@ window.MODULE_REGISTRY = [
     }
   },
 
+  {
+    id: 'rational-method',
+    name: 'Debit Banjir Rasional',
+    category: 'Hidraulika & Hidrologi',
+    icon: 'modules/rational-method/icon.svg',
+    entry: 'modules/rational-method/module.js',
+    status: 'active',
+    seo: {
+      title: 'Debit Banjir Rencana — Metode Rasional (Kirpich + Mononobe)',
+      desc: 'Hitung debit puncak drainase kawasan: Q = 0,00278·C·i·A dengan waktu konsentrasi Kirpich dan intensitas hujan Mononobe dari hujan harian rencana R24.'
+    }
+  },
+
+  {
+    id: 'open-channel',
+    name: 'Saluran Terbuka (Manning)',
+    category: 'Hidraulika & Hidrologi',
+    icon: 'modules/open-channel/icon.svg',
+    entry: 'modules/open-channel/module.js',
+    status: 'active',
+    seo: {
+      title: 'Desain Saluran Terbuka — Manning (Persegi/Trapesium/Lingkaran)',
+      desc: 'Kapasitas & kedalaman normal saluran drainase/irigasi dengan persamaan Manning — penampang persegi, trapesium, segitiga, dan gorong-gorong lingkaran terisi sebagian, lengkap kedalaman kritis & angka Froude.'
+    }
+  },
+
+  {
+    id: 'pipe-flow',
+    name: 'Aliran Pipa (Tertutup)',
+    category: 'Hidraulika & Hidrologi',
+    icon: 'modules/pipe-flow/icon.svg',
+    entry: 'modules/pipe-flow/module.js',
+    status: 'active',
+    seo: {
+      title: 'Kehilangan Energi Pipa — Darcy-Weisbach & Hazen-Williams',
+      desc: 'Hitung kehilangan energi pipa bertekanan: faktor gesek Swamee-Jain (Colebrook), kehilangan minor ΣK, gradien hidraulik, dan pembanding Hazen-Williams untuk PVC/HDPE/baja/besi cor.'
+    }
+  },
+
   // --- Dev only: validasi kontrak mount/unmount ---
   {
     id: '_template',
