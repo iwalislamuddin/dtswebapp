@@ -144,6 +144,19 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'wind-load',
+    name: 'Beban Angin',
+    category: 'Umum',
+    icon: 'modules/wind-load/icon.svg',
+    entry: 'modules/wind-load/module.js',
+    status: 'active',
+    seo: {
+      title: 'Beban Angin Gedung — Prosedur Pengarah (SNI 1727:2020)',
+      desc: 'Hitung tekanan angin desain dinding SPGAU/MWFRS gedung tertutup kaku: qz, Kz eksposur B/C/D, tekanan windward/leeward/samping ± internal, dan geser dasar sesuai SNI 1727:2020 (ASCE 7-16).'
+    }
+  },
+
+  {
     id: 'bolt-connection',
     name: 'Sambungan Baut',
     category: 'Sambungan',

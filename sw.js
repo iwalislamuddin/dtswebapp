@@ -4,7 +4,7 @@
    - Runtime cache: modules/* saat pertama diakses (cache-first, fallback network)
    - Bump CACHE setiap kali core/shell berubah agar SW purge cache lama
    ============================================================ */
-const CACHE = 'civil-tools-v27';
+const CACHE = 'civil-tools-v28';
 
 const PRECACHE = [
   './',
@@ -32,7 +32,8 @@ const PRECACHE = [
   'modules/load-combo/icon.svg',
   'modules/anchor-bolt-group/icon.svg',
   'modules/bolt-connection/icon.svg',
-  'modules/weld-connection/icon.svg'
+  'modules/weld-connection/icon.svg',
+  'modules/wind-load/icon.svg'
 ];
 
 self.addEventListener('install', (e) => {
