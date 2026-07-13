@@ -138,8 +138,8 @@ window.MODULE_REGISTRY = [
     entry: 'modules/anchor-bolt-group/module.js',
     status: 'beta',
     seo: {
-      title: 'Anchor Bolt Group — Tarik & Breakout Beton (ACI 318-19 / SNI 2847:2019)',
-      desc: 'Cek grup baut angkur cor-di-tempat terhadap tarik: kuat baja per angkur & jebol beton (breakout) grup sesuai ACI 318-19 Ch. 17 (SNI 2847:2019 Ps. 17), dengan visual 3D kerucut breakout interaktif.'
+      title: 'Anchor Bolt Group — Tarik, Geser & Interaksi (ACI 318-19 / SNI 2847:2019)',
+      desc: 'Cek grup baut angkur cor-di-tempat terhadap tarik & geser: baja + breakout beton grup + pryout + interaksi tarik-geser sesuai ACI 318-19 Ch. 17 (SNI 2847:2019 Ps. 17), dengan visual 3D kerucut breakout interaktif.'
     }
   },
 

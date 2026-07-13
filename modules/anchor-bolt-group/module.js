@@ -3,20 +3,28 @@
    Anchor Bolt Group — angkur cor-di-tempat (cast-in) menahan TARIK + MOMEN.
    Referensi: ACI 318-19 Ch. 17 (adopsi SNI 2847:2019 Ps. 17) — "anchoring to concrete".
 
-   Cakupan v1 (TARIK):
+   Cakupan (TARIK + GESER):
+     TARIK
      - Distribusi gaya baut elastis: Ti = Nu/n + Mx·xi/Σxi² + My·yi/Σyi²
        (pelat kaku, baut elastis tarik/tekan — model pendahuluan yang disederhanakan).
      - Kuat baja tarik per angkur  : Nsa = Ase·futa            (φ=0,75)
      - Jebol beton (breakout) grup : Ncbg = (ANc/ANco)·ψec·ψed·ψc·ψcp·Nb  (ACI 17.6.2)
          Nb = kc·λa·√f'c·hef^1,5 (kc=10 cast-in), ANco = 9·hef²
+     GESER (17.7)
+     - Baja geser per angkur        : Vsa = 0,6·Ase·futa (×0,8 bila ada grout, φ=0,65)
+     - Breakout geser grup (17.7.2) : Vcbg = (AVc/AVco)·ψec,V·ψed,V·ψc,V·ψh,V·Vb
+         Vb = min[0,66·(le/da)^0,2·√da·λ·√f'c·ca1^1,5 ; 3,7·λ·√f'c·ca1^1,5], AVco = 4,5·ca1²
+     - Pryout (17.7.3)              : Vcpg = kcp·Ncbg  (kcp = 1,0 bila hef<65mm, else 2,0)
+     - Geser dibagi rata Vu/n tiap baut; searah satu tepi (ca1 = ca).
+     INTERAKSI tarik+geser (17.8)   : (Nua/φNn)^5/3 + (Vua/φVn)^5/3 ≤ 1,0
      - Visual 3D: blok beton, pelat dasar, baut silinder, KERUCUT BREAKOUT tiap
-       baut (proyeksi 1,5·hef di permukaan), overlap antar-kerucut di-highlight
-       (indikasi perilaku grup), vektor gaya tarik per baut, klik baut → inspektur.
+       baut (proyeksi 1,5·hef di permukaan), overlap antar-kerucut di-highlight,
+       vektor gaya tarik (vertikal) & geser (horizontal) per baut, klik baut → inspektur.
 
-   TIDAK termasuk (increment berikutnya): GESER (baja/breakout/pryout), cabut
-   (pullout 17.6.3), pecah sisi (side-face blowout 17.6.4), angkur pasca-pasang
-   (post-installed), tulangan angkur (anchor reinforcement), neutral-axis beton
-   (model bearing pelat). Verifikasi oleh insinyur penanggung jawab.
+   TIDAK termasuk (increment berikutnya): pecah sisi (side-face blowout 17.6.4),
+   angkur pasca-pasang (post-installed), tulangan angkur (anchor reinforcement),
+   neutral-axis beton (model bearing pelat), eksentrisitas geser (ψec,V=1).
+   Verifikasi oleh insinyur penanggung jawab.
    ============================================================ */
 (function () {
   'use strict';
@@ -44,11 +52,15 @@
     var Mx = num(v.Mx), My = num(v.My);            // kN·m
     var cond = v.cond || 'B';                      // 'A' (ada tul. suplemen) | 'B'
     var crack = v.crack || 'cracked';              // 'cracked' | 'uncracked'
+    var Vu = num(v.Vu);                            // kN — geser di centroid grup
+    var shearDir = v.shearDir || 'x';              // arah geser: 'x' | 'y'
+    var grout = (v.grout === 'yes');               // pelat di atas grout → Vsa ×0,8
 
     var n = nx * ny;
     r.nx = nx; r.ny = ny; r.sx = sx; r.sy = sy; r.n = n;
     r.da = da; r.hef = hef; r.fc = fc; r.futa = futa; r.Ase = Ase;
     r.ca = ca; r.ha = ha; r.Nu = Nu; r.Mx = Mx; r.My = My; r.cond = cond; r.crack = crack;
+    r.Vu = Vu; r.shearDir = shearDir; r.grout = grout;
 
     /* --- posisi baut (mm), pusat = centroid grup --- */
     var xs = [], ys = [], bolts = [];
@@ -125,8 +137,73 @@
     r.minSpacing = isFinite(minGap) ? minGap : 0;
     r.overlap = isFinite(minGap) && minGap < 3 * hef;      // kerucut 1,5hef saling tumpang
 
-    r.govDC = Math.max(r.dcSteel, r.dcConc);
-    r.gov = (r.dcSteel >= r.dcConc) ? 'baja' : 'beton (breakout)';
+    /* --- GESER (ACI 17.7) --- */
+    // baja geser per angkur (17.7.1); pelat di atas grout → ×0,8 (17.7.1.2.1)
+    var Vsa = 0.6 * Ase * futa / 1000;                    // kN
+    if (grout) Vsa *= 0.8;
+    var phiVsa = 0.65 * Vsa;
+    var Vbolt = n > 0 ? Vu / n : 0;                       // geser dibagi rata per baut
+    var dcVsteel = phiVsa > 0 ? Vbolt / phiVsa : Infinity;
+
+    // breakout geser grup (17.7.2) — searah satu tepi, ca1 = ca
+    var ca1 = ca, le = Math.min(hef, 8 * da);
+    var Vb = 0, AVco = 0, AVc = 0, ratioAV = 0, psiEdV = 1, psiCV = 1, psiHV = 1;
+    var Vcbg = Infinity, phiVcbg = Infinity, dcVbreak = 0;
+    var breakoutApplic = (ca1 > 0 && Vu > 0);
+    if (breakoutApplic) {
+      var Vb1 = 0.66 * Math.pow(le / da, 0.2) * Math.sqrt(da) * Math.sqrt(fc) * Math.pow(ca1, 1.5) / 1000;
+      var Vb2 = 3.7 * Math.sqrt(fc) * Math.pow(ca1, 1.5) / 1000;
+      Vb = Math.min(Vb1, Vb2);                            // kN
+      AVco = 4.5 * ca1 * ca1;                             // mm²
+      var Wperp = (shearDir === 'x') ? (ny - 1) * sy : (nx - 1) * sx;
+      var hAvail = ha > 0 ? Math.min(1.5 * ca1, ha) : 1.5 * ca1;
+      AVc = (Wperp + 3 * ca1) * hAvail;                  // 2×1,5ca1 sisi (tepi tegak lurus jauh)
+      ratioAV = AVco > 0 ? AVc / AVco : 0;
+      psiEdV = (ca >= 1.5 * ca1) ? 1.0 : (0.7 + 0.3 * ca / (1.5 * ca1));   // ca2 = ca
+      psiCV = (crack === 'uncracked') ? 1.4 : 1.0;
+      psiHV = (ha > 0 && ha < 1.5 * ca1) ? Math.sqrt(1.5 * ca1 / ha) : 1.0;
+      Vcbg = ratioAV * 1.0 * psiEdV * psiCV * psiHV * Vb;  // ψec,V = 1 (geser konsentris)
+      phiVcbg = phiC * Vcbg;
+      dcVbreak = phiVcbg > 0 ? Vu / phiVcbg : Infinity;
+    }
+
+    // pryout (17.7.3) — Vcpg = kcp·Ncbg (pakai breakout tarik KONSENTRIS, ψec=1)
+    var kcp = (hef < 65) ? 1.0 : 2.0;
+    var Ncbg0 = ratioA * psiEd * psiC * psiCp * Nb;       // kN
+    var Vcpg = kcp * Ncbg0;
+    var phiVcpg = phiC * Vcpg;
+    var dcVpry = (Vu > 0 && phiVcpg > 0) ? Vu / phiVcpg : 0;
+
+    var dcShear = Math.max(dcVsteel, dcVbreak, dcVpry);
+    var govShear = 'baja';
+    if (dcVbreak >= dcVsteel && dcVbreak >= dcVpry) govShear = 'breakout';
+    else if (dcVpry >= dcVsteel && dcVpry >= dcVbreak) govShear = 'pryout';
+
+    r.Vsa = Vsa; r.phiVsa = phiVsa; r.Vbolt = Vbolt; r.dcVsteel = dcVsteel;
+    r.le = le; r.Vb = Vb; r.AVco = AVco; r.AVc = AVc; r.ratioAV = ratioAV;
+    r.psiEdV = psiEdV; r.psiCV = psiCV; r.psiHV = psiHV; r.breakoutApplic = breakoutApplic;
+    r.Vcbg = Vcbg; r.phiVcbg = phiVcbg; r.dcVbreak = dcVbreak;
+    r.kcp = kcp; r.Ncbg0 = Ncbg0; r.Vcpg = Vcpg; r.phiVcpg = phiVcpg; r.dcVpry = dcVpry;
+    r.dcShear = dcShear; r.govShear = govShear;
+
+    /* --- interaksi tarik-geser (17.8) --- */
+    var dcTension = Math.max(r.dcSteel, r.dcConc);
+    r.dcTension = dcTension;
+    var UN = dcTension, UV = dcShear;
+    var combined = null, interactMode = 'tunggal';
+    if (sumTt > 0 && Vu > 0) {
+      if (UN <= 0.2) interactMode = 'geser saja (N≤0,2)';
+      else if (UV <= 0.2) interactMode = 'tarik saja (V≤0,2)';
+      else { combined = Math.pow(UN, 5 / 3) + Math.pow(UV, 5 / 3); interactMode = 'interaksi 5/3'; }
+    }
+    r.combined = combined; r.interactMode = interactMode; r.UN = UN; r.UV = UV;
+
+    /* --- govern keseluruhan --- */
+    r.dcGov = Math.max(dcTension, dcShear, combined || 0);
+    if (combined != null && combined >= dcTension && combined >= dcShear) r.gov = 'interaksi tarik+geser';
+    else if (Vu > 0 && dcShear >= dcTension) r.gov = 'geser — ' + govShear;
+    else r.gov = 'tarik — ' + (r.dcSteel >= r.dcConc ? 'baja' : 'breakout');
+    r.govDC = r.dcGov;
     r.valid = true;
 
     /* --- peringatan --- */
@@ -140,8 +217,15 @@
       r.warn.push('Jarak tepi ca = ' + caMin.toFixed(0) + ' mm < 1,5·hef = ' + (1.5 * hef).toFixed(0) + ' mm — efek tepi mengurangi kapasitas (ψed = ' + psiEd.toFixed(2) + ').');
     if (ha > 0 && ha < 1.5 * hef)
       r.warn.push('Tebal beton ha = ' + ha.toFixed(0) + ' mm < 1,5·hef — kemungkinan breakout tembus / perlu tinjauan hef,maks (ACI 17.6.2.1.2). Tidak dikoreksi otomatis di v1.');
-    if (r.dcSteel > 1) r.warn.push('D/C baja = ' + r.dcSteel.toFixed(2) + ' > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.');
-    if (r.dcConc > 1) r.warn.push('D/C breakout beton = ' + r.dcConc.toFixed(2) + ' > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.');
+    if (r.dcSteel > 1) r.warn.push('D/C baja tarik = ' + r.dcSteel.toFixed(2) + ' > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.');
+    if (r.dcConc > 1) r.warn.push('D/C breakout beton (tarik) = ' + r.dcConc.toFixed(2) + ' > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.');
+    if (Vu > 0 && ca1 <= 0)
+      r.warn.push('Geser Vu > 0 tetapi ca = 0 — breakout geser tidak ditinjau (dianggap tepi jauh). Bila ada tepi, isi ca agar breakout geser dihitung.');
+    if (r.dcVsteel > 1) r.warn.push('D/C geser baja = ' + r.dcVsteel.toFixed(2) + ' > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).');
+    if (r.dcVbreak > 1) r.warn.push('D/C breakout geser = ' + r.dcVbreak.toFixed(2) + ' > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.');
+    if (r.dcVpry > 1) r.warn.push('D/C pryout = ' + r.dcVpry.toFixed(2) + ' > 1 — pryout menentukan (hef dangkal relatif terhadap geser). Perdalam hef.');
+    if (r.combined != null && r.combined > 1.0)
+      r.warn.push('Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = ' + r.combined.toFixed(2) + ' > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1.');
 
     return r;
   }
@@ -283,6 +367,15 @@
           new THREE.Vector3(px, topY, pz), arrowLen, cBad.getHex(), arrowLen * 0.28, da * S * 1.2);
         g.add(arr);
       }
+
+      // vektor geser (panah horizontal searah beban) — sama tiap baut (Vu/n)
+      if (r.Vu > 0) {
+        var sdir = (r.shearDir === 'x') ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, 1);
+        var sLen = 1.1;
+        var sArr = new THREE.ArrowHelper(sdir, new THREE.Vector3(px, (plateT + 30) * S, pz),
+          sLen, cBlue.getHex(), sLen * 0.3, da * S * 1.1);
+        g.add(sArr);
+      }
     });
 
     // sumbu kecil di origin
@@ -340,9 +433,10 @@
 
     var panel = UI.el('div', 'ck-panel');
     panel.appendChild(UI.el('h2', null, 'Anchor Bolt Group'));
-    panel.appendChild(UI.el('div', 'sub', 'Grup baut angkur cor-di-tempat menahan tarik + momen — ' +
-      'ACI 318-19 Ch. 17 (SNI 2847:2019 Ps. 17). Kuat baja & jebol beton (breakout) grup dengan ' +
-      'visual kerucut breakout 3D. Putar: seret · Zoom: roda · Geser: klik-kanan. Klik baut untuk detail.'));
+    panel.appendChild(UI.el('div', 'sub', 'Grup baut angkur cor-di-tempat menahan tarik + momen + geser — ' +
+      'ACI 318-19 Ch. 17 (SNI 2847:2019 Ps. 17): baja & breakout tarik, baja/breakout/pryout geser, ' +
+      'dan interaksi tarik-geser (17.8), dengan visual kerucut breakout 3D. ' +
+      'Putar: seret · Zoom: roda · Geser tampilan: klik-kanan. Klik baut untuk detail.'));
     layout.appendChild(panel);
 
     var schema = [
@@ -364,11 +458,16 @@
         { value: 'cracked', label: 'Retak (ψc=1,0)' }, { value: 'uncracked', label: 'Tak retak (1,25)' } ] },
       { type: 'segment', id: 'cond', label: 'Kondisi φ (breakout)', value: 'B', options: [
         { value: 'B', label: 'B — tanpa tul. (0,70)' }, { value: 'A', label: 'A — ada tul. (0,75)' } ] },
+      { type: 'segment', id: 'grout', label: 'Pelat di atas grout', value: 'no', options: [
+        { value: 'no', label: 'Tidak' }, { value: 'yes', label: 'Ya (Vsa ×0,8)' } ] },
 
       { type: 'group', label: 'Beban Terfaktor (di centroid grup)' },
       { type: 'number', id: 'Nu', label: 'Tarik aksial Nu', unit: 'kN', value: 120, step: 5, hint: 'Positif = tarik. Tekan (negatif) ditahan bearing (di luar cakupan).' },
       { type: 'number', id: 'Mx', label: 'Momen Mx (gradien arah X)', unit: 'kN·m', value: 20, step: 5 },
-      { type: 'number', id: 'My', label: 'Momen My (gradien arah Y)', unit: 'kN·m', value: 0, step: 5 }
+      { type: 'number', id: 'My', label: 'Momen My (gradien arah Y)', unit: 'kN·m', value: 0, step: 5 },
+      { type: 'number', id: 'Vu', label: 'Geser Vu', unit: 'kN', value: 80, min: 0, step: 5, hint: 'Dibagi rata Vu/n tiap baut; searah satu tepi (ca1 = ca).' },
+      { type: 'segment', id: 'shearDir', label: 'Arah geser', value: 'x', options: [
+        { value: 'x', label: 'Arah X' }, { value: 'y', label: 'Arah Y' } ] }
     ];
 
     var results = UI.el('div', 'abg-res');
@@ -504,6 +603,37 @@
     results.appendChild(UI.kv('D/C breakout = ΣTt/φNcbg', isFinite(r.dcConc) ? UI.fmt(r.dcConc, 2) : '—',
       r.dcConc <= 1 ? 'ok' : 'bad'));
 
+    if (r.Vu > 0) {
+      results.appendChild(UI.rhead('Geser — baja per angkur (17.7.1)'));
+      results.appendChild(UI.kv('Geser per baut Vu/n', UI.fmt(r.Vbolt, 1) + ' kN'));
+      results.appendChild(UI.kv('Vsa = 0,6·Ase·futa' + (r.grout ? ' ·0,8' : ''), UI.fmt(r.Vsa, 1) + ' kN'));
+      results.appendChild(UI.kv('φVsa (φ=0,65)', UI.fmt(r.phiVsa, 1) + ' kN'));
+      results.appendChild(UI.kv('D/C geser baja', isFinite(r.dcVsteel) ? UI.fmt(r.dcVsteel, 2) : '—', r.dcVsteel <= 1 ? 'ok' : 'bad'));
+
+      results.appendChild(UI.rhead('Geser — breakout beton grup (17.7.2)'));
+      if (r.breakoutApplic) {
+        results.appendChild(UI.kv('Vb (dasar)', UI.fmt(r.Vb, 1) + ' kN'));
+        results.appendChild(UI.kv('AVc / AVco', UI.fmt(r.AVc, 0) + ' / ' + UI.fmt(r.AVco, 0) + ' = ' + r.ratioAV.toFixed(2)));
+        results.appendChild(UI.kv('ψed,V · ψc,V · ψh,V', r.psiEdV.toFixed(2) + ' · ' + r.psiCV.toFixed(2) + ' · ' + r.psiHV.toFixed(2)));
+        results.appendChild(UI.kv('φVcbg (φ=' + r.phiC.toFixed(2) + ')', UI.fmt(r.phiVcbg, 1) + ' kN'));
+        results.appendChild(UI.kv('D/C breakout geser = Vu/φVcbg', isFinite(r.dcVbreak) ? UI.fmt(r.dcVbreak, 2) : '—', r.dcVbreak <= 1 ? 'ok' : 'bad'));
+      } else {
+        results.appendChild(UI.el('div', 'ck-empty', 'ca = 0 → tanpa tepi; breakout geser tidak ditinjau (dianggap tepi jauh).'));
+      }
+
+      results.appendChild(UI.rhead('Geser — pryout (17.7.3)'));
+      results.appendChild(UI.kv('kcp', r.kcp.toFixed(1) + (r.hef < 65 ? ' (hef<65)' : ' (hef≥65)')));
+      results.appendChild(UI.kv('φVcpg = φ·kcp·Ncbg', UI.fmt(r.phiVcpg, 1) + ' kN'));
+      results.appendChild(UI.kv('D/C pryout = Vu/φVcpg', isFinite(r.dcVpry) ? UI.fmt(r.dcVpry, 2) : '—', r.dcVpry <= 1 ? 'ok' : 'bad'));
+    }
+
+    if (r.combined != null) {
+      results.appendChild(UI.rhead('Interaksi tarik + geser (17.8)'));
+      results.appendChild(UI.kv('Utilisasi tarik UN', r.UN.toFixed(2)));
+      results.appendChild(UI.kv('Utilisasi geser UV', r.UV.toFixed(2)));
+      results.appendChild(UI.kv('UN^5/3 + UV^5/3 ≤ 1,0', r.combined.toFixed(2), r.combined <= 1 ? 'ok' : 'bad'));
+    }
+
     var warnHtml = r.warn.length
       ? '<ul style="margin:6px 0 0 16px">' + r.warn.map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>'
       : 'Tidak ada catatan khusus.';
@@ -511,8 +641,10 @@
     results.appendChild(UI.note('Referensi & asumsi',
       'ACI 318-19 Ch. 17 (adopsi SNI 2847:2019 Ps. 17), angkur <b>cast-in</b>, beton normal (λ=1). ' +
       'Distribusi gaya baut <b>elastis pelat-kaku</b> (Ti = Nu/n + Mx·xi/Σxi² + My·yi/Σyi²) — pendahuluan, ' +
-      'bukan model bearing-beton dengan sumbu netral. Nb = 10·λ·√f\'c·hef^1,5. <b>Cakupan v1: TARIK saja</b> — ' +
-      'geser, cabut (pullout), pecah sisi (side-face blowout), pryout, dan tulangan angkur belum disertakan. ' +
+      'bukan model bearing-beton dengan sumbu netral. <b>Tarik</b>: baja (Nsa) + breakout grup (17.6.2). ' +
+      '<b>Geser</b>: baja (Vsa=0,6·Ase·futa), breakout grup (17.7.2, searah satu tepi ca1=ca, geser dibagi rata Vu/n), ' +
+      'pryout (17.7.3). <b>Interaksi</b> tarik-geser 17.8 (eksponen 5/3). ' +
+      'Belum disertakan: pecah sisi (side-face blowout), tulangan angkur, angkur pasca-pasang, eksentrisitas geser (ψec,V=1). ' +
       'Verifikasi oleh insinyur penanggung jawab.'));
 
     // inspektur baut
@@ -533,14 +665,22 @@
     }
     var bt = r.bolts[state.selected];
     var dcS = r.phiNsa > 0 ? bt.T / r.phiNsa : Infinity;
+    var dcVs = r.phiVsa > 0 ? r.Vbolt / r.phiVsa : Infinity;
     state.inspector.className = '';
-    state.inspector.innerHTML =
+    var rows =
       '<div class="ck-kv"><span class="k">Baut #' + (state.selected + 1) + ' (x,y)</span><span class="v">' +
         bt.x.toFixed(0) + ', ' + bt.y.toFixed(0) + ' mm</span></div>' +
-      '<div class="ck-kv"><span class="k">Gaya baut T</span><span class="v ' + (bt.T > 0 ? 'ok' : '') + '">' +
+      '<div class="ck-kv"><span class="k">Gaya tarik T</span><span class="v ' + (bt.T > 0 ? 'ok' : '') + '">' +
         UI.fmt(bt.T, 1) + ' kN ' + (bt.T > 0 ? '(tarik)' : '(tekan)') + '</span></div>' +
-      '<div class="ck-kv"><span class="k">D/C baja baut ini</span><span class="v ' + (dcS <= 1 ? 'ok' : 'bad') + '">' +
+      '<div class="ck-kv"><span class="k">D/C baja tarik</span><span class="v ' + (dcS <= 1 ? 'ok' : 'bad') + '">' +
         (bt.T > 0 && isFinite(dcS) ? UI.fmt(dcS, 2) : '—') + '</span></div>';
+    if (r.Vu > 0) {
+      rows +=
+        '<div class="ck-kv"><span class="k">Geser Vu/n</span><span class="v">' + UI.fmt(r.Vbolt, 1) + ' kN</span></div>' +
+        '<div class="ck-kv"><span class="k">D/C baja geser</span><span class="v ' + (dcVs <= 1 ? 'ok' : 'bad') + '">' +
+          (isFinite(dcVs) ? UI.fmt(dcVs, 2) : '—') + '</span></div>';
+    }
+    state.inspector.innerHTML = rows;
   }
 
   /* ============================================================
@@ -578,7 +718,7 @@
     var L = [];
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS CIVIL TOOLS'));
-    L.push(centerR('ANCHOR BOLT GROUP - TARIK (ACI 318-19 Ch.17)'));
+    L.push(centerR('ANCHOR BOLT GROUP - TARIK+GESER (ACI 318-19 Ch.17)'));
     L.push(' ' + rep('=', RW));
     L.push(rowR('SNI 2847:2019 Ps. 17 (cast-in)', dt));
     L.push('');
@@ -594,6 +734,7 @@
     L.push(' BEBAN TERFAKTOR (centroid grup)'); L.push(ruleR('-'));
     L.push(rowR('Nu (tarik)', numR(r.Nu, 1) + ' kN'));
     L.push(rowR('Mx / My', numR(r.Mx, 1) + ' / ' + numR(r.My, 1) + ' kN*m'));
+    L.push(rowR('Vu (geser, arah ' + (r.shearDir === 'x' ? 'X' : 'Y') + ')', numR(r.Vu, 1) + ' kN'));
     L.push('');
     L.push(' GAYA BAUT (elastis)'); L.push(ruleR('-'));
     L.push(rowR('Tarik baut maks Tmax', numR(r.Tmax, 1) + ' kN'));
@@ -614,6 +755,33 @@
     L.push(rowR('phiNcbg (phi=' + numR(r.phiC, 2) + ')', numR(r.phiNcbg, 1) + ' kN'));
     L.push(rowR('>> D/C breakout', numR(r.dcConc, 2) + (r.dcConc <= 1 ? ' OK' : ' NG')));
     L.push(ruleR('='));
+    if (r.Vu > 0) {
+      L.push('');
+      L.push(' GESER (17.7)'); L.push(ruleR('='));
+      L.push(rowR('Geser per baut Vu/n', numR(r.Vbolt, 1) + ' kN'));
+      L.push(rowR('Vsa = 0.6*Ase*futa' + (r.grout ? ' *0.8' : ''), numR(r.Vsa, 1) + ' kN'));
+      L.push(rowR('phiVsa (phi=0.65)', numR(r.phiVsa, 1) + ' kN'));
+      L.push(rowR('>> D/C geser baja', numR(r.dcVsteel, 2) + (r.dcVsteel <= 1 ? ' OK' : ' NG')));
+      if (r.breakoutApplic) {
+        L.push(rowR('Vb dasar', numR(r.Vb, 1) + ' kN'));
+        L.push(rowR('AVc / AVco', numR(r.AVc, 0) + ' / ' + numR(r.AVco, 0)));
+        L.push(rowR('psi_edV/cV/hV', numR(r.psiEdV, 2) + '/' + numR(r.psiCV, 2) + '/' + numR(r.psiHV, 2)));
+        L.push(rowR('phiVcbg', numR(r.phiVcbg, 1) + ' kN'));
+        L.push(rowR('>> D/C breakout geser', numR(r.dcVbreak, 2) + (r.dcVbreak <= 1 ? ' OK' : ' NG')));
+      } else {
+        L.push(' Breakout geser: ca=0 (tanpa tepi) - tidak ditinjau.');
+      }
+      L.push(rowR('kcp / phiVcpg', numR(r.kcp, 1) + ' / ' + numR(r.phiVcpg, 1) + ' kN'));
+      L.push(rowR('>> D/C pryout', numR(r.dcVpry, 2) + (r.dcVpry <= 1 ? ' OK' : ' NG')));
+      L.push(ruleR('='));
+    }
+    if (r.combined != null) {
+      L.push('');
+      L.push(' INTERAKSI TARIK+GESER (17.8)'); L.push(ruleR('-'));
+      L.push(rowR('UN / UV', numR(r.UN, 2) + ' / ' + numR(r.UV, 2)));
+      L.push(rowR('>> UN^5/3 + UV^5/3 <= 1.0', numR(r.combined, 2) + (r.combined <= 1 ? ' OK' : ' NG')));
+      L.push(ruleR('='));
+    }
     L.push(rowR('>> D/C MENENTUKAN (' + r.gov + ')', numR(r.govDC, 2)));
     L.push(ruleR('='));
 
@@ -622,9 +790,9 @@
       r.warn.forEach(function (w) { wrapR(' - ' + tolatin(w), RW).forEach(function (ln) { L.push(ln); }); });
     }
     L.push('');
-    L.push(' Cakupan v1: TARIK saja (baja + breakout beton grup). Geser, pullout,');
-    L.push(' side-face blowout, pryout, tul. angkur BELUM disertakan.');
-    L.push(' Distribusi gaya baut elastis pelat-kaku (pendahuluan).');
+    L.push(' Cakupan: TARIK (baja+breakout) & GESER (baja+breakout+pryout) + interaksi 17.8.');
+    L.push(' BELUM: side-face blowout, tul. angkur, angkur pasca-pasang, eksentrisitas geser.');
+    L.push(' Distribusi gaya baut elastis pelat-kaku; geser dibagi rata (pendahuluan).');
     L.push(' Verifikasi oleh insinyur penanggung jawab.');
     L.push('');
     L.push(' ' + rep('=', RW));
