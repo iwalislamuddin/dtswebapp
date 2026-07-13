@@ -24,7 +24,10 @@
       <div class="nav-list" id="nav-list"><!-- diisi shell.js --></div>
       <div class="nav-foot">
         <button class="iconbtn wide" id="about-btn" title="Tentang aplikasi">ⓘ Tentang</button>
-        <button class="iconbtn" id="theme-toggle" title="Ganti tema">☾ Tema</button>
+        <div class="theme-menu" id="theme-menu">
+          <button class="iconbtn" id="theme-toggle" title="Pilih tema" aria-haspopup="true" aria-expanded="false">☾ Tema</button>
+          <div class="theme-pop" id="theme-pop" role="menu" aria-label="Pilih tema"><!-- diisi shell.js --></div>
+        </div>
       </div>
     </nav>
     <main id="workspace">

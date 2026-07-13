@@ -60,6 +60,18 @@
   }
 
   /* ---------- Render nav (grouped by kategori, urutan sesuai registry) ---------- */
+  // Setiap kategori = header toggle (dropdown). Status ciutkan disimpan per-kategori.
+  var CHEVRON = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+  function loadCollapsedCats() {
+    try { return JSON.parse(localStorage.getItem('civiltools-navcats') || '[]'); }
+    catch (e) { return []; }
+  }
+  function saveCollapsedCats(list) {
+    try { localStorage.setItem('civiltools-navcats', JSON.stringify(list)); } catch (e) {}
+  }
+
   function renderNav() {
     navList.innerHTML = '';
     var cats = [];
@@ -68,8 +80,21 @@
       if (!byCat[m.category]) { byCat[m.category] = []; cats.push(m.category); }
       byCat[m.category].push(m);
     });
+    var collapsed = loadCollapsedCats();
     cats.forEach(function (cat) {
-      navList.appendChild(UI.el('div', 'nav-cat', cat));
+      var sec = UI.el('div', 'nav-sec' + (collapsed.indexOf(cat) >= 0 ? ' collapsed' : ''));
+      var head = UI.el('button', 'nav-cat');
+      head.type = 'button';
+      head.innerHTML = '<span class="nav-cat-txt">' + cat + '</span>' + CHEVRON;
+      head.addEventListener('click', function () {
+        var isCol = sec.classList.toggle('collapsed');
+        var list = loadCollapsedCats();
+        var i = list.indexOf(cat);
+        if (isCol && i < 0) list.push(cat);
+        else if (!isCol && i >= 0) list.splice(i, 1);
+        saveCollapsedCats(list);
+      });
+      var items = UI.el('div', 'nav-cat-items');
       byCat[cat].forEach(function (m) {
         var disabled = (m.status === 'coming-soon');
         var btn = UI.el('button', 'nav-item' + (disabled ? ' disabled' : ''));
@@ -83,8 +108,11 @@
         if (!disabled) {
           btn.addEventListener('click', function () { location.hash = '#' + m.id; });
         }
-        navList.appendChild(btn);
+        items.appendChild(btn);
       });
+      sec.appendChild(head);
+      sec.appendChild(items);
+      navList.appendChild(sec);
     });
   }
 
@@ -116,9 +144,17 @@
   }
 
   function highlightNav(id) {
+    var activeBtn = null;
     Array.prototype.forEach.call(navList.querySelectorAll('.nav-item'), function (b) {
-      b.classList.toggle('active', b.dataset.id === id);
+      var on = b.dataset.id === id;
+      b.classList.toggle('active', on);
+      if (on) activeBtn = b;
     });
+    // Ungkap kategori tool aktif bila sedang diciutkan (mis. dibuka via deep-link).
+    if (activeBtn && activeBtn.closest) {
+      var sec = activeBtn.closest('.nav-sec');
+      if (sec) sec.classList.remove('collapsed');
+    }
   }
 
   /* ---------- Welcome state ---------- */
@@ -203,22 +239,56 @@
     activate(id);
   }
 
-  /* ---------- Theme toggle ---------- */
+  /* ---------- Theme dropdown (klik → 4 pilihan → apply) ---------- */
   function initTheme() {
-    var saved = localStorage.getItem('civiltools-theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    var THEMES = [
+      { id: 'dark',  icon: '☾', name: 'Gelap' },
+      { id: 'light', icon: '☀', name: 'Terang' },
+      { id: 'black', icon: '●', name: 'Hitam' },
+      { id: 'white', icon: '○', name: 'Putih' }
+    ];
+    var byId = {};
+    THEMES.forEach(function (t) { byId[t.id] = t; });
+
     var btn = document.getElementById('theme-toggle');
-    function syncLabel() {
-      if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '☀ Tema' : '☾ Tema';
-    }
-    syncLabel();
-    if (btn) btn.addEventListener('click', function () {
-      var cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-      var next = cur === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('civiltools-theme', next);
-      btn.textContent = next === 'light' ? '☀ Tema' : '☾ Tema';
+    var pop = document.getElementById('theme-pop');
+    var menu = document.getElementById('theme-menu');
+
+    // Bangun opsi menu sekali
+    if (pop) THEMES.forEach(function (t) {
+      var o = UI.el('button', 'theme-opt');
+      o.type = 'button';
+      o.dataset.theme = t.id;
+      o.setAttribute('role', 'menuitemradio');
+      o.innerHTML = '<span class="ti">' + t.icon + '</span><span>' + t.name + '</span>';
+      o.addEventListener('click', function () { apply(t.id); closeMenu(); });
+      pop.appendChild(o);
     });
+
+    var saved = localStorage.getItem('civiltools-theme');
+    apply(byId[saved] ? saved : 'dark');
+
+    function apply(id) {
+      var t = byId[id] || THEMES[0];
+      document.documentElement.setAttribute('data-theme', t.id);
+      localStorage.setItem('civiltools-theme', t.id);
+      if (btn) btn.textContent = t.icon + ' Tema';
+      if (pop) Array.prototype.forEach.call(pop.children, function (o) {
+        var on = o.dataset.theme === t.id;
+        o.classList.toggle('active', on);
+        o.setAttribute('aria-checked', on ? 'true' : 'false');
+      });
+    }
+    function openMenu()  { if (pop) { pop.classList.add('show');    btn.setAttribute('aria-expanded', 'true'); } }
+    function closeMenu() { if (pop) { pop.classList.remove('show'); btn.setAttribute('aria-expanded', 'false'); } }
+
+    if (btn) btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (pop && pop.classList.contains('show')) closeMenu(); else openMenu();
+    });
+    // Tutup saat klik di luar / tekan Escape
+    document.addEventListener('click', function (e) { if (menu && !menu.contains(e.target)) closeMenu(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
   }
 
   /* ---------- Collapse sidebar ---------- */
