@@ -1,6 +1,8 @@
 /* ============================================================
    Civil Tools — assets/shell.js
-   Router (hash-based) + module loader + lifecycle mount/unmount.
+   Router (path-based, History API) + module loader + lifecycle mount/unmount.
+   Tiap tool = URL sendiri (/{id}) agar terindeks Google secara terpisah;
+   <title>, meta description, canonical, & Open Graph diperbarui per tool.
    Shell TIDAK PERNAH diubah untuk menambah tool.
    ============================================================ */
 (function () {
@@ -32,7 +34,7 @@
             to: targetId, from: fromLabel || null, payload: payload || {}, ts: Date.now()
           }));
         } catch (e) { /* sessionStorage bisa gagal di mode privat — abaikan */ }
-        location.hash = '#' + targetId;
+        navigate(targetId);
       }
     }
   };
@@ -106,7 +108,7 @@
           '<span class="ico">' + iconMarkup(m) + '</span>' +
           '<span class="lbl">' + m.name + '</span>' + badge;
         if (!disabled) {
-          btn.addEventListener('click', function () { location.hash = '#' + m.id; });
+          btn.addEventListener('click', function () { navigate(m.id); });
         }
         items.appendChild(btn);
       });
@@ -191,8 +193,11 @@
   function activate(id) {
     var entry = REGISTRY.filter(function (m) { return m.id === id; })[0];
     if (!entry || entry.status === 'coming-soon' || !entry.entry) {
-      unmountActive(); activeId = null; highlightNav(null); showWelcome(); return;
+      unmountActive(); activeId = null; highlightNav(null); showWelcome();
+      setMeta(null); trackPageView(); return;
     }
+
+    setMeta(entry); trackPageView();
 
     // sudah aktif -> no-op
     if (id === activeId && activeModule) return;
@@ -232,10 +237,67 @@
     });
   }
 
-  /* ---------- Routing ---------- */
-  function onHashChange() {
-    var id = location.hash.replace(/^#/, '');
-    if (!id) { activeId = null; unmountActive(); highlightNav(null); showWelcome(); return; }
+  /* ---------- Routing (path-based, History API) ---------- */
+  // URL kanonik SELALU ke domain produksi (biar konsisten walau diakses via
+  // localhost / preview). Dipakai untuk <link rel=canonical> & og:url.
+  var SITE = 'https://tools.dtsengineering.co.id';
+  var DEFAULT_TITLE = 'EDFS Civil Tools — Alat Bantu Rekayasa Sipil (SNI)';
+  var DEFAULT_DESC =
+    'Kumpulan kalkulator rekayasa sipil sesuai SNI: beton bertulang, baja, ' +
+    'geoteknik, dan kombinasi beban. Gratis, berjalan di browser, oleh PT. DTS Engineering.';
+
+  // id tool dari path: "/beam-flexure" -> "beam-flexure" (abaikan slash & query)
+  function currentId() {
+    return location.pathname.replace(/^\/+|\/+$/g, '');
+  }
+
+  function setTag(attr, key, val) {
+    var el = document.head.querySelector('meta[' + attr + '="' + key + '"]');
+    if (el) el.setAttribute('content', val);
+  }
+
+  // Perbarui title + meta description + canonical + Open Graph per tool.
+  // entry=null -> halaman utama (nilai default situs).
+  function setMeta(entry) {
+    var seo = entry && entry.seo;
+    var title = seo ? seo.title + ' — EDFS Civil Tools' : DEFAULT_TITLE;
+    var desc  = seo ? seo.desc : DEFAULT_DESC;
+    var url   = SITE + (entry && entry.id && entry.status !== 'coming-soon' ? '/' + entry.id : '/');
+    document.title = title;
+    setTag('name', 'description', desc);
+    setTag('property', 'og:title', title);
+    setTag('property', 'og:description', desc);
+    setTag('property', 'og:url', url);
+    setTag('name', 'twitter:title', title);
+    setTag('name', 'twitter:description', desc);
+    var can = document.head.querySelector('link[rel="canonical"]');
+    if (can) can.setAttribute('href', url);
+  }
+
+  // GA4 SPA page_view: dikirim manual tiap rute (config memakai send_page_view:false).
+  // No-op bila gtag belum dimuat (Measurement ID masih placeholder).
+  function trackPageView() {
+    if (typeof window.gtag !== 'function') return;
+    window.gtag('event', 'page_view', {
+      page_title: document.title,
+      page_location: location.href,
+      page_path: location.pathname || '/'
+    });
+  }
+
+  // Pindah tool via URL bersih (/{id}). id kosong/null -> halaman utama.
+  function navigate(id) {
+    var path = id ? '/' + id : '/';
+    if (location.pathname !== path) history.pushState({ id: id || '' }, '', path);
+    route();
+  }
+
+  function route() {
+    var id = currentId();
+    if (!id) {
+      activeId = null; unmountActive(); highlightNav(null); showWelcome();
+      setMeta(null); trackPageView(); return;
+    }
     activate(id);
   }
 
@@ -322,6 +384,13 @@
   initTheme();
   initCollapse();
   initAbout();
-  window.addEventListener('hashchange', onHashChange);
-  onHashChange(); // buka tool dari hash (deep-link / PWA reopen) atau welcome
+  // Back-compat: tautan/PWA lama memakai "#id". Bila datang dengan hash dan
+  // path masih root, konversi ke URL bersih "/id" tanpa menambah history.
+  (function migrateHash() {
+    var h = location.hash.replace(/^#/, '');
+    if (h && !currentId()) history.replaceState({ id: h }, '', '/' + h);
+  })();
+
+  window.addEventListener('popstate', route);
+  route(); // buka tool dari path (deep-link / PWA reopen) atau welcome
 })();

@@ -1,0 +1,43 @@
+# ============================================================
+# EDFS Civil Tools — konfigurasi Apache (shared hosting / cPanel)
+# Letakkan file ini di root subdomain (document root = folder "edfs/").
+# Fungsi utama: SPA fallback — semua URL /{tool} disajikan oleh index.html
+# supaya deep-link & reload (mis. /beam-flexure) tidak 404.
+# ============================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # (Opsional) paksa HTTPS — aktifkan setelah SSL subdomain terpasang:
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # File atau direktori yang benar-benar ada disajikan apa adanya
+  # (assets, core, modules, favicon, sitemap.xml, robots.txt, sw.js, manifest.json).
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Sisanya (rute SPA) -> index.html; URL di address bar tetap.
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# MIME type yang kadang belum dikenali server lama
+<IfModule mod_mime.c>
+  AddType image/svg+xml            .svg
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+# Cache: app ini update file di tempat (nama file TIDAK ber-hash) dan
+# mengandalkan service worker untuk cache-busting. Jadi HTTP cache dibuat
+# konservatif — revalidasi cepat — agar bump versi SW & perubahan file cepat
+# terambil. index.html, sw.js, manifest.json wajib selalu fresh.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|svg|png|jpg|jpeg|webp|woff2?)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "(index\.html|sw\.js|manifest\.json)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

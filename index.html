@@ -2,15 +2,80 @@
 <html lang="id" data-theme="dark">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="theme-color" content="#0b0c09">
-  <title>EDFS Civil Tools</title>
-  <meta name="description" content="EDFS Civil Tools — alat bantu rekayasa sipil oleh PT. DTS Engineering.">
+
+  <!-- SEO: judul & deskripsi default (situs). Shell (assets/shell.js) menimpa
+       ini secara dinamis per tool agar tiap URL /{id} punya title & description
+       sendiri. Nilai statis di sini dipakai untuk halaman utama & sebagai
+       fallback bagi crawler/scraper yang tak mengeksekusi JavaScript. -->
+  <title>EDFS Civil Tools — Alat Bantu Rekayasa Sipil (SNI)</title>
+  <meta name="description" content="Kumpulan kalkulator rekayasa sipil sesuai SNI: beton bertulang, baja, geoteknik, dan kombinasi beban. Gratis, berjalan di browser, oleh PT. DTS Engineering.">
+  <meta name="author" content="PT. DTS Engineering">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://tools.dtsengineering.co.id/">
+
+  <!-- Open Graph / Twitter (preview saat dibagikan). Catatan: scraper media
+       sosial TIDAK mengeksekusi JS, jadi preview per-tool memerlukan
+       prerender; tanpa itu semua share memakai nilai default situs di bawah. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="EDFS Civil Tools">
+  <meta property="og:title" content="EDFS Civil Tools — Alat Bantu Rekayasa Sipil (SNI)">
+  <meta property="og:description" content="Kumpulan kalkulator rekayasa sipil sesuai SNI: beton bertulang, baja, geoteknik, dan kombinasi beban. Berjalan di browser, oleh PT. DTS Engineering.">
+  <meta property="og:url" content="https://tools.dtsengineering.co.id/">
+  <meta property="og:image" content="https://tools.dtsengineering.co.id/favicon/edfs-icon.svg">
+  <meta property="og:locale" content="id_ID">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="EDFS Civil Tools — Alat Bantu Rekayasa Sipil (SNI)">
+  <meta name="twitter:description" content="Kumpulan kalkulator rekayasa sipil sesuai SNI: beton bertulang, baja, geoteknik, dan kombinasi beban.">
+  <meta name="twitter:image" content="https://tools.dtsengineering.co.id/favicon/edfs-icon.svg">
+
+  <!-- Google Search Console (verifikasi metode "HTML tag"): ganti CONTENT lalu
+       hapus komentar. Alternatif & lebih direkomendasikan: verifikasi via DNS
+       TXT record di panel domain dtsengineering.co.id (tak perlu tag ini). -->
+  <!-- <meta name="google-site-verification" content="GANTI_DENGAN_TOKEN_ANDA"> -->
+
+  <!-- Data terstruktur: bantu Google memahami situs sebagai aplikasi web. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "EDFS Civil Tools",
+    "url": "https://tools.dtsengineering.co.id/",
+    "applicationCategory": "EngineeringApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "id-ID",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "IDR" },
+    "publisher": { "@type": "Organization", "name": "PT. DTS Engineering" }
+  }
+  </script>
+
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="favicon/edfs-mark.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="favicon/edfs-icon.svg">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/shell.css">
+
+  <!-- Google Analytics 4. Ganti G-XXXXXXXXXX dengan Measurement ID Anda.
+       Selama masih placeholder, skrip di bawah TIDAK memuat gtag (tidak
+       mengirim data). SPA page_view per tool dikirim manual dari shell.js. -->
+  <script>
+    window.GA4_MEASUREMENT_ID = 'G-XXXXXXXXXX';
+    (function () {
+      var id = window.GA4_MEASUREMENT_ID;
+      if (!id || /X{4,}/.test(id)) return;                 // placeholder → jangan muat
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      // send_page_view:false — page_view dikirim manual per rute SPA (lihat shell.js)
+      window.gtag('config', id, { send_page_view: false });
+    })();
+  </script>
 </head>
 <body>
   <div id="app">

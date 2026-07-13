@@ -4,7 +4,7 @@
    - Runtime cache: modules/* saat pertama diakses (cache-first, fallback network)
    - Bump CACHE setiap kali core/shell berubah agar SW purge cache lama
    ============================================================ */
-const CACHE = 'civil-tools-v22';
+const CACHE = 'civil-tools-v23';
 
 const PRECACHE = [
   './',
@@ -31,8 +31,16 @@ const PRECACHE = [
 ];
 
 self.addEventListener('install', (e) => {
+  // Cache tiap item SATU per SATU (bukan addAll yang all-or-nothing): satu
+  // aset gagal/flaky tak boleh membatalkan seluruh precache — terutama
+  // index.html yang dibutuhkan fallback offline. Gagal per-item diabaikan;
+  // yang belum ter-cache akan terisi runtime saat pertama diakses.
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(PRECACHE)).then(() => self.skipWaiting())
+    caches.open(CACHE).then((c) =>
+      Promise.all(PRECACHE.map((url) =>
+        c.add(new Request(url, { cache: 'reload' })).catch(() => null)
+      ))
+    ).then(() => self.skipWaiting())
   );
 });
 
@@ -51,6 +59,19 @@ self.addEventListener('fetch', (e) => {
 
   // Lewati request lintas-origin (mis. font Google, CDN Three.js) — biarkan network tangani
   if (url.origin !== self.location.origin) return;
+
+  // Navigasi (deep-link /{id}): app adalah SPA, jadi SEMUA rute disajikan oleh
+  // index.html. Network-first agar index.html selalu segar; fallback ke cache
+  // saat offline atau saat server dev tak punya SPA-rewrite (mis. python http.server
+  // membalas 404 untuk /beam-flexure). Ini membuat reload deep-link tetap jalan.
+  if (req.mode === 'navigate') {
+    e.respondWith(
+      fetch(req)
+        .then((res) => (res && res.ok) ? res : caches.match('index.html'))
+        .catch(() => caches.match('index.html'))
+    );
+    return;
+  }
 
   // Cache-first untuk semua asset se-origin, isi cache saat pertama diakses
   e.respondWith(
