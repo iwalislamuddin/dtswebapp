@@ -118,6 +118,32 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'cpt-bearing',
+    name: 'Daya Dukung CPT',
+    category: 'Geoteknik',
+    icon: 'modules/cpt-bearing/icon.svg',
+    entry: 'modules/cpt-bearing/module.js',
+    status: 'active',
+    seo: {
+      title: 'Daya Dukung Fondasi Dangkal dari CPT/Sondir',
+      desc: 'Hitung daya dukung izin fondasi dangkal langsung dari data sondir (qc): metode Meyerhof untuk pasir (penurunan 25 mm) dan su dari qc + Skempton untuk lempung — tempel data z–qc dari Excel.'
+    }
+  },
+
+  {
+    id: 'cpt-pile',
+    name: 'Daya Dukung Tiang (CPT)',
+    category: 'Geoteknik',
+    icon: 'modules/cpt-pile/icon.svg',
+    entry: 'modules/cpt-pile/module.js',
+    status: 'active',
+    seo: {
+      title: 'Daya Dukung Tiang dari CPT/Sondir (Schmertmann)',
+      desc: 'Kapasitas aksial tiang tunggal dari data sondir: tahanan ujung Schmertmann (rata-rata 4D/8D) + selimut dari fs sondir atau rasio gesek, Q izin = Qp/3 + Qs/5 sesuai praktik sondir Indonesia.'
+    }
+  },
+
+  {
     id: 'load-combo',
     name: 'Kombinasi Beban',
     category: 'Umum',
