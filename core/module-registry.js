@@ -37,6 +37,20 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'column-pm',
+    name: 'Diagram P–M Kolom',
+    category: 'Beton Bertulang',
+    icon: 'modules/column-pm/icon.svg',
+    entry: 'modules/column-pm/module.js',
+    accepts: { axial: 'Pu', moment: 'Mu' },   // terima beban terfaktor dari Kombinasi Beban
+    status: 'active',
+    seo: {
+      title: 'Diagram Interaksi P-M Kolom Beton (SNI 2847:2019)',
+      desc: 'Diagram interaksi aksial-momen kolom beton bertulang persegi via kompatibilitas regangan: kurva nominal & desain (φ transisi), titik balanced, plafon 0,80·Po, dan cek D/C titik beban sesuai SNI 2847:2019.'
+    }
+  },
+
+  {
     id: 'steel-tension',
     name: 'Batang Tarik Baja',
     category: 'Baja',
