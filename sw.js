@@ -29,7 +29,8 @@ const PRECACHE = [
   'modules/bearing-capacity/icon.svg',
   'modules/settlement/icon.svg',
   'modules/pile-capacity/icon.svg',
-  'modules/load-combo/icon.svg'
+  'modules/load-combo/icon.svg',
+  'modules/anchor-bolt-group/icon.svg'
 ];
 
 self.addEventListener('install', (e) => {

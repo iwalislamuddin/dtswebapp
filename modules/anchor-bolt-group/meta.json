@@ -1,0 +1,8 @@
+{
+  "id": "anchor-bolt-group",
+  "name": "Anchor Bolt Group",
+  "category": "Sambungan",
+  "needsCanvas": false,
+  "needsRenderer": true,
+  "description": "Grup baut angkur cor-di-tempat (cast-in) menahan tarik + momen — ACI 318-19 Ch. 17 (SNI 2847:2019 Ps. 17): kuat baja tarik per angkur & jebol beton (breakout) grup dengan faktor ANc/ANco, ψec, ψed, ψc. Visual 3D interaktif (Three.js): blok beton, pelat dasar, baut, kerucut breakout tiap angkur dengan deteksi tumpang-tindih, vektor gaya, dan klik-pilih baut untuk inspektur. Cakupan v1: tarik saja."
+}
