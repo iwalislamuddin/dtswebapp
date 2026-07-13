@@ -286,6 +286,58 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   beam-flexure ← `Mu` (bandingkan φMn), pile/bearing ← beban layan (bandingkan Q_izin/q_izin, jalur ASD).
   Begitu field demand ada, retrofit-nya identik pola Opsi 1 (accepts + buildForm ID). Kerjakan pada iterasi berikutnya.
 
+## Infrastruktur 3D (Fase 3) — TERPASANG (2026-07-13)
+
+**Tier-3 rendering akhirnya dibangun** (prasyarat tool 3D pertama). ⚠️ Catatan: `staad-viewer.html` &
+`assets/three.min.js` **tidak ada di repo** (ada di PC) — jadi orbit-controls **ditulis dari nol**, bukan extract.
+- `core/orbit-controls.js` (`window.CivilOrbit.create(camera, dom, opts)`) — orbit/pan/zoom kamera **tanpa
+  dependensi addon** (Three.js r128 dari CDN tak memuat contoh OrbitControls). Mouse (drag=orbit, kanan/Shift=pan,
+  roda=dolly) + sentuh (1 jari orbit, 2 jari pinch+pan), **damping/inersia**, spherical coords, `setView()`, `dispose()`.
+- `core/renderer.js` (`window.CivilRenderer.get()`) — **factory WebGLRenderer BERSAMA (satu konteks WebGL untuk
+  seluruh app)**; satu `<canvas>` dipindah antar tool 3D via `mount(container)`/`unmount()` → cegah kebocoran konteks
+  (browser batasi jumlah konteks). Kelola `setSize`+`ResizeObserver` (`onResize` callback) & loop rAF (`start(fn)`/`stop()`).
+  Renderer TIDAK di-dispose saat pindah tool — hanya scene/geometry/material milik module (pakai `UI.disposeObject`).
+- **Wiring shell**: `runtime.getRenderer()` → `CivilRenderer.get()` (null bila WebGL gagal / core belum dimuat),
+  `runtime.orbit` → `CivilOrbit`. `index.html` memuat kedua core sebelum `module-registry.js`; keduanya di-precache di `sw.js`.
+- **Kontrak module 3D**: `meta.needsRenderer:true`. Di `mount`: `var R=runtime.getRenderer(); R.mount(view);
+  R.onResize=…; controls=runtime.orbit.create(cam, R.canvas, …); R.start(()=>{controls.update(); R.renderer.render(scene,cam)})`.
+  Di `unmount` **WAJIB**: lepas listener → `R.stop(); R.unmount()` (canvas dicopot, renderer tetap hidup) →
+  `controls.dispose()` → `UI.disposeObject(scene)`. **Terverifikasi**: pindah antar tool ×N → `<canvas>` tetap 1 (tak bocor).
+- **Versi cache SW**: dinaikkan **v20 → v24** (2 core baru precache), **→ v25** (module.js + registry seo geser),
+  **→ v26** (registry status `active`).
+
+## Tool #10 — Anchor Bolt Group (3D) ✅ SELESAI (2026-07-13)
+
+**Modul 3D pertama** (Three.js/WebGL, tier-3). `modules/anchor-bolt-group/` (module.js + meta.json + icon.svg),
+status **`active`**, kategori **Sambungan**. Grup baut angkur **cor-di-tempat (cast-in)** menahan **tarik + momen + geser**.
+Referensi **ACI 318-19 Ch. 17** (adopsi **SNI 2847:2019 Ps. 17**), beton normal (λ=1).
+
+- **Distribusi gaya baut ELASTIS pelat-kaku** (pendahuluan, bukan model bearing sumbu-netral):
+  `Ti = Nu/n + Mx·xi/Σxi² + My·yi/Σyi²` (baut tarik/tekan; +tarik). `Tmax` untuk cek baja, `ΣTt` (baut tertarik) untuk breakout grup.
+- **TARIK**: baja/angkur (17.6.1) `Nsa=Ase·futa` (φ=0,75); **breakout grup (17.6.2)** `Ncbg=(ANc/ANco)·ψec·ψed·ψc·ψcp·Nb`,
+  `Nb=10·λ·√f'c·hef^1,5`, `ANco=9·hef²`; `ANc` proyeksi grup dibatasi 1,5hef & tepi `ca`; φ=0,70/0,75 (kondisi B/A).
+  `ψec` dari eksentrisitas resultan tarik (dua arah), `ψed` tepi, `ψc` retak(1,0)/tak-retak(1,25).
+- **GESER (17.7)**: baja `Vsa=0,6·Ase·futa` (×0,8 bila grout, φ=0,65), geser **dibagi rata Vu/n**;
+  **breakout grup (17.7.2)** `Vcbg=(AVc/AVco)·ψec,V·ψed,V·ψc,V·ψh,V·Vb`,
+  `Vb=min[0,66·(le/da)^0,2·√da·√f'c·ca1^1,5 ; 3,7·√f'c·ca1^1,5]`, `le=min(hef,8da)`, `AVco=4,5·ca1²`, **searah satu tepi ca1=ca**;
+  **pryout (17.7.3)** `Vcpg=kcp·Ncbg0` (kcp 1,0 bila hef<65mm else 2,0; Ncbg0 = breakout tarik konsentris).
+- **Interaksi tarik-geser (17.8)**: bila keduanya > utilisasi 0,2 → `(UN)^5/3 + (UV)^5/3 ≤ 1,0`. **Govern = maks(tarik, geser, interaksi)**.
+- **Ase**: perkiraan `≈0,58·da²` (auto-isi saat `da` diubah; dapat ditimpa manual).
+- **Visual 3D**: blok beton semi-transparan, pelat dasar, baut silinder + mur, **KERUCUT BREAKOUT** tiap angkur
+  (apex di −hef, radius 1,5hef di permukaan) + lingkaran proyeksi; **overlap kerucut di-highlight** amber bila spasi<3hef
+  (indikasi grup, sudah tercermin di ANc/ANco). **Vektor gaya**: tarik vertikal (merah, ∝T) + geser horizontal (biru, searah beban).
+  Grid + sumbu; **orbit/pan/zoom + auto-fit + tombol reset**; **klik baut → inspektur** (gaya T, geser Vu/n, D/C baja tarik & geser).
+  `rebuild()` tiap input berubah; **recolor saat tema berganti** (MutationObserver `data-theme`). Skala scene `S=0,01` (mm→unit).
+- Laporan PDF/teks (ASCII-only; `tolatin` map ψ→psi, φ→phi, Σ→sum, ·→*, dst).
+- **Tervalidasi live vs hitung tangan** (Chromium headless + WebGL SwiftShader; default 2×2, sx=sy=250, da24/Ase353,
+  hef375, ca600, ha600, f'c25, futa400, Nu120, Mx20, Vu80 arah-X): Tmax **70,0 kN**, ΣTt 140; **tarik** φNsa 105,9 → D/C **0,66**,
+  breakout φNcbg → D/C **0,45**; **geser** Vsa **84,7**/φVsa 55,1 → D/C 0,36, Vb **271,9** (min 2 pers.), φVcbg **159,3** → D/C 0,50,
+  kcp 2, φVcpg **759,4** → D/C 0,11; **interaksi** UN 0,66/UV 0,50 → **0,82** ≤ 1 (menentukan). Nu=400 → 1,91 (NG, live).
+  Dispose bersih (canvas tetap 1 setelah pindah tool & balik); nol console error.
+- **TIDAK termasuk** (increment berikutnya): pecah sisi **side-face blowout (17.6.4)**, **tulangan angkur** (anchor reinf, 17.5.2.1),
+  **angkur pasca-pasang** (post-installed — hanya cast-in), **eksentrisitas geser** (ψec,V=1), model **bearing sumbu-netral** pelat,
+  pola baut **circular** (baru rectangular grid). Verifikasi mis. **ACI 318-19 / SNI 2847:2019** oleh insinyur penanggung jawab.
+
 ## Langkah berikutnya
 
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
@@ -294,7 +346,8 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
    ~~**Tool #7** Penurunan Fondasi / Settlement (elastis Steinbrenner + konsolidasi e–log p + laju Terzaghi)~~ ✅ ·
    ~~**Tool #8** Daya Dukung Tiang Tunggal (statik α/β berlapis + SPT Meyerhof + Decourt-Quaresma)~~ ✅ **SELESAI**.
    ~~**Tool #9** Kombinasi Beban (SNI 1727:2020 LRFD/ASD + handoff "kirim ke tool lain")~~ ✅ **SELESAI**.
-   Kandidat berikutnya di registry `coming-soon`: **Anchor Bolt Group** (butuh 3D). Prioritas non-3D: **OPSI 2 handoff**
+   ~~**Tool #10** Anchor Bolt Group 3D (ACI 318-19 Ch.17 — tarik+geser+interaksi; infra Fase 3)~~ ✅ **SELESAI** (status `active`).
+   Lanjutan Tool #10: side-face blowout, tulangan angkur, pola circular, eksentrisitas geser. Prioritas non-3D: **OPSI 2 handoff**
    (field demand + D/C untuk beam-flexure & geoteknik → jadi penerima Kombinasi Beban), geser balok baja (Bab G).
    **Melengkapi seri geoteknik** (Tool #6/#7/#8 siap dipakai ulang polanya): daya dukung dangkal + **eksentrisitas & beban
    miring** (faktor ic/iq/iγ, luas efektif B′×L′), **penurunan pasir** (Schmertmann/N-SPT — tabel-lapis dari Tool #8 dipakai
@@ -307,7 +360,7 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 2. ✅ **Standarisasi kanvas terverifikasi live** — `steel-compression` (helper `canvasCap`/`canvasTip` yang sama)
    diuji reload-bersih di preview: `.cap` dinamis muncul & update, tanpa error konsol, penampang + kurva tergambar.
    Sisa konfirmasi visual `development-length`/`beam-flexure` bersifat kosmetik (wiring identik) — tak memblok.
-2. **Fase 3**: `core/renderer.js` + `orbit-controls.js` (extract dari `staad-viewer.html`), lalu Anchor Bolt Group (3D).
+2. ~~**Fase 3**: `core/renderer.js` + `orbit-controls.js`, lalu Anchor Bolt Group (3D)~~ ✅ **SELESAI** (orbit-controls ditulis dari nol — `staad-viewer.html` tak ada di repo).
 3. Opsional: logo EDFS resmi (SVG), PNG favicon 192/512 untuk dukungan iOS, halaman kategori.
 
 ## Verifikasi rilis v0.1.0
