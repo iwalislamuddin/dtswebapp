@@ -143,6 +143,34 @@ window.MODULE_REGISTRY = [
     }
   },
 
+  {
+    id: 'bolt-connection',
+    name: 'Sambungan Baut',
+    category: 'Sambungan',
+    icon: 'modules/bolt-connection/icon.svg',
+    entry: 'modules/bolt-connection/module.js',
+    accepts: { shear: 'Vu', axial: 'Tu' },   // terima geser/tarik terfaktor dari Kombinasi Beban
+    status: 'active',
+    seo: {
+      title: 'Sambungan Baut — Geser, Tarik & Tumpu (SNI 1729:2020)',
+      desc: 'Cek sambungan baut tipe tumpu: kuat geser & tarik baut, kombinasi tarik-geser, dan tumpu/sobek lubang sesuai SNI 1729:2020 (AISC 360-16) Ps. J3 — mutu A325/A490/Gr.8.8/Gr.10.9.'
+    }
+  },
+
+  {
+    id: 'weld-connection',
+    name: 'Sambungan Las',
+    category: 'Sambungan',
+    icon: 'modules/weld-connection/icon.svg',
+    entry: 'modules/weld-connection/module.js',
+    accepts: { shear: 'Ru' },                // terima beban terfaktor dari Kombinasi Beban
+    status: 'active',
+    seo: {
+      title: 'Sambungan Las Sudut / Fillet (SNI 1729:2020)',
+      desc: 'Hitung kuat las sudut (fillet): throat efektif, faktor arah beban, reduksi las panjang, dan cek logam dasar sesuai SNI 1729:2020 (AISC 360-16) Ps. J2 & J4.'
+    }
+  },
+
   // --- Dev only: validasi kontrak mount/unmount ---
   {
     id: '_template',
