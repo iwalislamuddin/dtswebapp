@@ -54,7 +54,60 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="favicon/edfs-mark.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="favicon/edfs-icon.svg">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Critical CSS inline: warna dasar & layout minimum agar halaman TIDAK PERNAH
+       putih polos — walau shell.css / font eksternal gagal atau lambat dimuat
+       (mis. jaringan seluler yang tidak bisa menjangkau CDN). -->
+  <style>
+    html{background:#0b0c09}
+    html[data-theme="light"]{background:#eaede6}
+    html[data-theme="white"]{background:#ffffff}
+    html[data-theme="black"]{background:#000000}
+    body{background:inherit; color:#eaede6; font-family:system-ui,sans-serif; margin:0}
+    #err-banner{display:none; position:fixed; left:0; right:0; bottom:0; z-index:9999;
+      background:#c4472f; color:#fff; font:12px/1.5 monospace; padding:10px 14px;
+      word-break:break-word; max-height:40vh; overflow:auto}
+  </style>
+
+  <!-- Penangkap error global: tampilkan pesan error di layar (bukan layar kosong
+       bisu) — penting untuk diagnosis di browser mobile tanpa DevTools. -->
+  <script>
+    (function () {
+      function show(msg) {
+        var el = document.getElementById('err-banner');
+        if (!el) return;
+        el.style.display = 'block';
+        el.textContent += (el.textContent ? '\n' : '') + msg;
+      }
+      window.addEventListener('error', function (e) {
+        var url = e.target && (e.target.src || e.target.href);
+        if (url) {
+          // Hanya laporkan kegagalan aset SE-ORIGIN (core app). Kegagalan
+          // pihak-ketiga (gtag, Google Fonts, CDN three.js) tidak kritis —
+          // app tetap berfungsi — dan sering dipicu adblocker/jaringan.
+          if (String(url).indexOf(location.origin) === 0) show('Gagal memuat: ' + url);
+        } else {
+          show('Error: ' + e.message + ' (' + (e.filename || '?') + ':' + (e.lineno || '?') + ')');
+        }
+      }, true);
+      window.addEventListener('unhandledrejection', function (e) {
+        show('Promise error: ' + (e.reason && e.reason.message ? e.reason.message : e.reason));
+      });
+    })();
+  </script>
+
+  <!-- Google Fonts: dimuat NON-BLOCKING (media="print" → swap ke "all" saat
+       selesai). Font eksternal yang gagal/lambat tidak boleh menahan first
+       paint — sebelumnya link stylesheet ini render-blocking dan menyebabkan
+       layar putih di jaringan yang tak bisa menjangkau fonts.googleapis.com.
+       Fallback: system-ui / monospace (sudah ada di font-stack shell.css). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  </noscript>
   <link rel="stylesheet" href="assets/shell.css">
 
   <!-- Google Analytics 4 (aktif: G-2MDVZFKNSE). SPA page_view per tool
@@ -99,6 +152,7 @@
     </main>
   </div>
   <div id="toast"></div>
+  <div id="err-banner" role="alert"></div>
 
   <!-- About / Tentang -->
   <div class="modal-ov" id="about-ov">
@@ -154,18 +208,24 @@
     </div>
   </div>
 
-  <!-- Three.js r128 (dipakai module 3D; aman di-load walau tool pertama non-3D) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Three.js r128 (dipakai module 3D; aman di-load walau tool pertama non-3D).
+       async (bukan defer): CDN yang lambat/menggantung tidak boleh menahan
+       eksekusi script core di bawah. Konsekuensi: THREE bisa datang belakangan —
+       core/renderer.js membaca window.THREE secara lazy saat tool 3D pertama
+       dibuka, dan module 3D punya fallback "WebGL tidak tersedia". -->
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  <!-- Core runtime + registry + shell (urutan penting) -->
-  <script src="core/ui-kit.js"></script>
-  <script src="core/canvas2d.js"></script>
-  <script src="core/report.js"></script>
-  <script src="core/steel-profiles.js"></script>
-  <script src="core/orbit-controls.js"></script>
-  <script src="core/renderer.js"></script>
-  <script src="core/module-registry.js"></script>
-  <script src="assets/shell.js"></script>
+  <!-- Core runtime + registry + shell: defer menjaga urutan eksekusi tanpa
+       memblokir parser & first paint (sebelumnya script klasik parser-blocking
+       ikut andil membuat layar putih saat jaringan bermasalah). -->
+  <script defer src="core/ui-kit.js"></script>
+  <script defer src="core/canvas2d.js"></script>
+  <script defer src="core/report.js"></script>
+  <script defer src="core/steel-profiles.js"></script>
+  <script defer src="core/orbit-controls.js"></script>
+  <script defer src="core/renderer.js"></script>
+  <script defer src="core/module-registry.js"></script>
+  <script defer src="assets/shell.js"></script>
 
   <script>
     if ('serviceWorker' in navigator) {

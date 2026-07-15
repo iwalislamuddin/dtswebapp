@@ -19,7 +19,9 @@
 
   // Shared runtime dependency yang diberikan ke tiap module
   var runtime = {
-    THREE: window.THREE || null,
+    // getter: three.js dimuat async dari CDN dan bisa tiba setelah shell boot,
+    // jadi jangan capture nilainya sekali di sini.
+    get THREE() { return window.THREE || null; },
     UI: UI,
     canvas2d: window.CivilCanvas2D || null,   // tier 2 — helper kanvas 2D
     steel: window.SteelProfiles || null,      // library profil baja (tool baja)

@@ -23,10 +23,13 @@
    ============================================================ */
 (function () {
   'use strict';
-  var THREE = window.THREE;
   var shared = null;   // controller singleton
 
   function build() {
+    // Baca window.THREE di sini (bukan saat script ini dieksekusi): three.js
+    // dimuat async dari CDN dan bisa tiba SETELAH core — get() akan retry
+    // selama shared masih null, jadi 3D pulih begitu THREE tersedia.
+    var THREE = window.THREE;
     if (!THREE || !THREE.WebGLRenderer) return null;
     var renderer;
     try {
