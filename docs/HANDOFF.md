@@ -423,6 +423,70 @@ registry berubah — SW origin lama tetap menyajikan registry stale (gotcha lama
 - Verifikasi WebGL via `CivilRenderer.get().renderer.info` (readPixels selalu kosong — preserveDrawingBuffer false);
   screenshot harness kadang berhasil, jangan diandalkan.
 
+## Tool #20 — Tulangan Minimum ✅ SELESAI (2026-07-17) — awal siklus v0.3.0
+
+**Lima jenis elemen dalam SATU modul** (`modules/min-reinforcement/`, kategori Beton Bertulang, tier-2 kanvas,
+status `active`) — SNI 2847:2019. Field form tampil/sembunyi dinamis per elemen (pola `syncVisibility`),
+selimut default auto-ganti per elemen (balok/kolom 40, pelat 20, pilecap 75). `APP_VER = 'v0.3.0'` (modul baru
+saja — 19 modul lain masih v0.2.0, bump serentak saat rilis).
+- **BALOK (Ps. 9.6.1.2)**: As,min = maks(0,25√f'c/fy; 1,4/fy)·bw·d, d = h−cc−ds−db/2 (1 lapis); cabang menentukan
+  ditandai; jumlah batang (min 2) + cek spasi bersih ≥ maks(25,db) (Ps. 25.2.1, warning bila NG →saran 2 lapis).
+  **Plus geser minimum (Ps. 9.6.3.4)**: Av,min/s = maks(0,062√f'c; 0,35)·bw/fyt, sengkang 2 kaki, spasi ≤ min(d/2,600)
+  (Ps. 9.7.6.2.2). Catatan 9.6.1.3 (boleh diabaikan bila As ≥ 4/3 As,perlu) & skin h>900 (9.7.2.3).
+- **KOLOM PERSEGI (Ps. 10.6.1.1)**: 0,01Ag ≤ Ast ≤ 0,08Ag, min 4 batang (10.7.3.1), jumlah digenapkan; distribusi
+  keliling `layoutRect` (4 sudut + sisa ke sisi terpanjang berpasangan); cek spasi bersih ≥ maks(1,5db,40) (25.2.3);
+  **sengkang ikat minimum** Ø10/Ø13 (25.7.2.2) + s ≤ min(16db,48dt,sisi) (25.7.2.1).
+- **KOLOM LINGKARAN**: sda, min 4 (ikat) / **6 (spiral)**; spasi bersih via tali busur ring. **Spiral (25.7.3.3)**:
+  ρs = 0,45(Ag/Ach−1)f'c/fyt (fyt≤700), pitch s = 4Asp/(Dc·ρs), pitch bersih diklamp 25–75 mm (25.7.3.1).
+- **PELAT (7.6.1.1/8.6.1.1 → 24.4.3.2)**: fy<420 → 0,0020; fy≥420 → maks(0,0018·420/fy; 0,0014); spasi ≤ min(3h,450);
+  dua arah → catatan penampang kritis ≤ min(2h,450) (8.7.2.2). Output D{db}-{s} per meter.
+- **PILE CAP (Ps. 13.3 → basis fondasi telapak)**: As,min/m per arah + **jumlah batang tersebar di denah B×L**
+  (n = ceil((lebar−2cc)/s)+1); catatan balok-tinggi/STM bila h≥900 & catatan praktik As,min balok lebih konservatif.
+- Kanvas per elemen: balok (penampang+sengkang+batang bawah+garis d amber), kolom persegi (batang keliling),
+  kolom lingkaran (ring batang, spiral putus-putus + label pitch), pelat (potongan 1 m + dim spasi s), pile cap
+  (potongan + 2 stub tiang). Semua `fitRect` padT=44 (aturan pita `.cap`), hover `canvasTip` (As/ρ/config).
+- **Tervalidasi live** (origin fresh port **5204** — pola bump port): balok 300×500 fc25 fy420 D19 → **440,5 mm²**,
+  2D19, Ø10-220 (Av/s 0,250; 628 vs d/2 220) ✓; fc64 → cabang √f'c 0,476% ✓; kolom 400×400 → **1600 mm²**, 6D19
+  (ρ 1,06%), ikat Ø10-300 (16db 304) ✓; kolom D500 spiral → **1963,5 mm²**, 7D19, **ρs 1,118%**, Ø10-65 (teoretis
+  66,9; bersih 55) ✓; D300 ikat → min 4 → 4D19 ✓; pelat h120 → **216 mm²/m**, D10-360 (teoretis 364, cap 3h=360) ✓;
+  fy280 → 0,20% ✓; pilecap h800 B=L=1800 cc75 → **1440 mm²/m**, D16-135, **14 batang/arah** ✓; balok bw200 D36 →
+  warning spasi 28<36 ✓. Pita `.cap` **0 piksel** di keempat gambar (pixel-sampling); kanvas tetap 1 setelah 6×
+  pindah tool; repaint tema OK; nol console error. Screenshot harness timeout (gotcha lama, bukan bug).
+- Registry + SEO ditambah; ikon `icon.svg` (penampang + 4 batang); sw.js precache ikon + **CACHE v33 → v34**;
+  port launch.json 5203 → **5204**.
+- **TIDAK termasuk**: detailing seismik (Ps. 18), As,perlu dari analisis beban (tool kapasitas terpisah),
+  tulangan kulit otomatis, balok-T (bw sayap tarik, Ps. 9.6.1.2 kasus khusus).
+
+## Tool #21 — Balok/Pelat Satu Arah Menerus (Metode Koefisien) ✅ SELESAI (2026-07-17)
+
+`modules/continuous-beam/` (kategori Beton Bertulang, tier-2 kanvas, `active`, APP_VER v0.3.0) —
+**SNI 2847:2019 Ps. 6.5** (Tabel 6.5.2 momen & 6.5.4 geser): `Mu = C·wu·ln²`, `Vu = C·wu·ln/2`.
+- **Input**: jenis (pelat 1-arah per lajur 1 m / balok), jumlah bentang n (1–12), L ujung & L dalam (as–as, field
+  L-dalam muncul n≥3), **lebar tumpuan** → ln bersih, dimensi (h pelat / b×h balok) → **berat sendiri otomatis**
+  (γc 24), qD SDL + qL (kN/m² pelat · kN/m balok — dua pasang field, toggle per elemen), **kondisi ujung eksterior**
+  (bebas → M+ 1/11 & M−ext 0 · balok tepi → 1/14 & 1/24 · kolom → 1/14 & 1/16), opsi **M− = 1/12 semua tumpuan**
+  (pelat ≤3 m / kolom kaku Σk>8), tumpuan 1-bentang (sendi–sendi / jepit–sendi / jepit–jepit).
+- **wu = maks(1,4D; 1,2D+1,6L)** (Ps. 5.3.1), kombinasi menentukan ditandai. **M− pakai ln rata-rata** dua bentang
+  bersebelahan (tumpuan dalam pertama: n=2 → 1/9, n>2 → 1/10 dgn lnavg; lainnya 1/11); M+ ujung/dalam 1/(14|11)/16;
+  **Vu**: muka luar wu·ln/2, tumpuan dalam pertama **1,15·wu·ln/2**. **1 bentang = statika elastis eksak** (di luar
+  Ps. 6.5): ss wl²/8 · js wl²/8 & 9wl²/128 & V 5/8·3/8 · jj wl²/12 & wl²/24 — diberi catatan eksplisit.
+- **Cek syarat Ps. 6.5.1 otomatis**: qL ≤ 3qD (row ok/bad + warning), beda bentang bersebelahan ≤20% (warning bila
+  lewat), hint "boleh 1/12" muncul bila pelat & semua ln ≤ 3 m; warning bila 1/12 dipakai di luar syaratnya.
+  Redistribusi tidak diizinkan (Ps. 6.5.3) dicantumkan.
+- **Kanvas**: skema struktur (balok + tumpuan segitiga + panah wu, simbol jepit utk 1 bentang) + **diagram momen**
+  (parabola per bentang lewat 3 titik: M− tumpuan di atas garis nol, M+ di bawah; label nilai setengah kiri +
+  "simetris"); hover per tumpuan (Mu− & Vu) / per bentang (Mu+) via `canvasTip`. padT=44, **pita `.cap` 0 piksel**.
+- **Tervalidasi live** (port **5205**): pelat n=4 L4 t=300 h130 SDL1,5 LL3 spandrel → wu 10,344; M+ 10,11/8,85,
+  M− 5,90/14,16/12,87, Vu 19,14/22,01 ✓ semua persis hitung tangan. Balok n=2 300×500 qD15 qL10 L6 t=400 kolom →
+  wu 38,32, M+ 85,84, M− 75,11/133,52 (1/9), Vu 107,30/123,39 ✓. Ujung bebas → 1/11 = 109,25 & M−ext 0 ✓.
+  1 bentang jj → 11,80/5,90 ✓; js → 17,70/9,96/23,92/14,35 ✓. n=3 L4/L5 → lnavg 4,2 → M−FI 18,25 + warning 27%>20% ✓.
+  Pelat ln 2,8 → hint 1/12; m12 aktif → semua M− 6,76 ✓. qL 20 > 3qD → row bad + warning ✓. Kanvas tetap 1 setelah
+  6× pindah tool; repaint tema OK; nol console error.
+- Registry + SEO; sw.js precache ikon + **CACHE v34 → v35**; port launch.json 5204 → **5205**.
+- **TIDAK termasuk**: beban tidak merata/terpusat, variasi bentang lebih dari 2 nilai (ujung/dalam), pola beban
+  hidup eksplisit (pattern loading — sudah implisit dalam koefisien), pelat dua arah, kantilever.
+  Kandidat lanjutan: kirim Mu/Vu via handoff ke beam-flexure begitu OPSI 2 (field demand) ada.
+
 ## Langkah berikutnya
 
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
@@ -434,6 +498,11 @@ registry berubah — SW origin lama tetap menyajikan registry stale (gotcha lama
    ~~**Tool #10** Anchor Bolt Group 3D (ACI 318-19 Ch.17 — tarik+geser+interaksi; infra Fase 3)~~ ✅ **SELESAI** (status `active`).
    ~~**Tool #11–#19** batch: Sambungan Baut/Las (J3/J2), Beban Angin (SNI 1727), CPT dangkal+tiang, Diagram P–M
    Kolom, kategori Hidraulika & Hidrologi (Rasional, Manning, Pipa)~~ ✅ **SELESAI** (2026-07-14, 9 modul aktif).
+   ~~**Tool #20** Tulangan Minimum (balok + geser min, kolom persegi/lingkaran + ikat/spiral, pelat, pile cap)~~
+   ✅ **SELESAI** (2026-07-17, tool pertama siklus v0.3.0).
+   ~~**Tool #21** Balok/Pelat Satu Arah Menerus — metode koefisien Ps. 6.5 (momen + geser ultimit, 1 bentang
+   statika eksak)~~ ✅ **SELESAI** (2026-07-17). **Saat rilis v0.3.0**: bump `APP_VER` di SEMUA module.js
+   + modal Tentang index.html + catatan rilis + SW bump (pola rilis v0.2.0).
    Lanjutan wajar batch ini: geser eksentris baut (ICR) & blok geser J4.3, grup las eksentris, beban angin ATAP +
    K&K (Bab 30), kolom biaksial (Bresler) & kelangsingan (6.6.4), penurunan tiang dari CPT, kurva IDF dari data
    hujan (analisis frekuensi Gumbel/LP-III), HSS Nakayasu.

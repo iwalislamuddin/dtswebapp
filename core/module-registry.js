@@ -51,6 +51,32 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'continuous-beam',
+    name: 'Balok/Pelat Menerus',
+    category: 'Beton Bertulang',
+    icon: 'modules/continuous-beam/icon.svg',
+    entry: 'modules/continuous-beam/module.js',
+    status: 'active',
+    seo: {
+      title: 'Momen & Geser Balok / Pelat Satu Arah Menerus — Metode Koefisien (SNI 2847:2019 Ps. 6.5)',
+      desc: 'Hitung momen positif-negatif dan geser ultimit balok atau pelat satu arah menerus dengan metode koefisien SNI 2847:2019 Tabel 6.5.2 & 6.5.4 — berat sendiri otomatis, wu = 1,2D+1,6L, diagram momen interaktif, termasuk statika eksak untuk satu bentang.'
+    }
+  },
+
+  {
+    id: 'min-reinforcement',
+    name: 'Tulangan Minimum',
+    category: 'Beton Bertulang',
+    icon: 'modules/min-reinforcement/icon.svg',
+    entry: 'modules/min-reinforcement/module.js',
+    status: 'active',
+    seo: {
+      title: 'Tulangan Minimum Beton — Balok, Kolom, Pelat, Pile Cap (SNI 2847:2019)',
+      desc: 'Hitung tulangan minimum SNI 2847:2019 dalam satu tool: As,min lentur & sengkang minimum balok, Ast 1% kolom persegi/lingkaran + spiral ρs, tulangan susut-suhu pelat, dan tulangan pile cap per meter — lengkap dengan jumlah batang, spasi, dan gambar penampang.'
+    }
+  },
+
+  {
     id: 'steel-tension',
     name: 'Batang Tarik Baja',
     category: 'Baja',

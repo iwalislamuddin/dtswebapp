@@ -4,8 +4,8 @@
     {
       "name": "civil-tools",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "5203"],
-      "port": 5203
+      "runtimeArgs": ["-m", "http.server", "5205"],
+      "port": 5205
     }
   ]
 }
