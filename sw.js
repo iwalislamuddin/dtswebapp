@@ -4,7 +4,7 @@
    - Runtime cache: modules/* saat pertama diakses (cache-first, fallback network)
    - Bump CACHE setiap kali core/shell berubah agar SW purge cache lama
    ============================================================ */
-const CACHE = 'civil-tools-v35';
+const CACHE = 'civil-tools-v38';
 
 const PRECACHE = [
   './',
@@ -25,6 +25,9 @@ const PRECACHE = [
   'modules/beam-flexure/icon.svg',
   'modules/min-reinforcement/icon.svg',
   'modules/continuous-beam/icon.svg',
+  'modules/pile-cap/icon.svg',
+  'modules/lateral-broms/icon.svg',
+  'modules/py-analysis/icon.svg',
   'modules/steel-tension/icon.svg',
   'modules/steel-compression/icon.svg',
   'modules/steel-flexure/icon.svg',

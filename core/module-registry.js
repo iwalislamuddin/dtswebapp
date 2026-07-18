@@ -77,6 +77,20 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'pile-cap',
+    name: 'Desain Pile Cap',
+    category: 'Beton Bertulang',
+    icon: 'modules/pile-cap/icon.svg',
+    entry: 'modules/pile-cap/module.js',
+    accepts: { axial: 'Pu' },  // terima Pu terfaktor dari Kombinasi Beban
+    status: 'active',
+    seo: {
+      title: 'Desain Pile Cap / Poer 2–6 Tiang — Lentur, Geser & Pons (SNI 2847:2019)',
+      desc: 'Desain poer/pile cap 2–6 tiang metode kaku SNI 2847:2019: reaksi tiang dari beban ultimate kolom (Pu) atau kapasitas tekan tiang (desain kapasitas), lentur di muka kolom, geser satu-arah, pons dua-arah kolom & pons tiang — lengkap denah interaktif dan rasio D/C.'
+    }
+  },
+
+  {
     id: 'steel-tension',
     name: 'Batang Tarik Baja',
     category: 'Baja',
@@ -180,6 +194,32 @@ window.MODULE_REGISTRY = [
     seo: {
       title: 'Daya Dukung Tiang dari CPT/Sondir (Schmertmann)',
       desc: 'Kapasitas aksial tiang tunggal dari data sondir: tahanan ujung Schmertmann (rata-rata 4D/8D) + selimut dari fs sondir atau rasio gesek, Q izin = Qp/3 + Qs/5 sesuai praktik sondir Indonesia.'
+    }
+  },
+
+  {
+    id: 'lateral-broms',
+    name: 'Lateral Tiang — Broms',
+    category: 'Geoteknik',
+    icon: 'modules/lateral-broms/icon.svg',
+    entry: 'modules/lateral-broms/module.js',
+    status: 'active',
+    seo: {
+      title: 'Kapasitas Lateral Tiang — Metode Broms (Lempung & Pasir)',
+      desc: 'Hitung kapasitas lateral ultimit tiang tunggal dengan metode Broms 1964: tanah lempung (9·cu·D) & pasir (3·Kp·γ\'·z·D), kepala bebas/jepit, klasifikasi tiang pendek (kegagalan tanah) vs panjang (leleh lentur), momen maksimum, dan diagram tekanan tanah interaktif.'
+    }
+  },
+
+  {
+    id: 'py-analysis',
+    name: 'Analisis P-Y',
+    category: 'Geoteknik',
+    icon: 'modules/py-analysis/icon.svg',
+    entry: 'modules/py-analysis/module.js',
+    status: 'active',
+    seo: {
+      title: 'Analisis P-Y Tiang Dibebani Lateral — Beda Hingga (Matlock & API)',
+      desc: 'Analisis tiang dibebani lateral metode kurva p-y (beam on nonlinear Winkler) dengan beda hingga: kurva Matlock lempung lunak & API pasir, kepala bebas/jepit, profil defleksi & momen sepanjang tiang, dan kurva beban–defleksi kepala (H–y0).'
     }
   },
 

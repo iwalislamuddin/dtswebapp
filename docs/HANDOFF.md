@@ -487,6 +487,59 @@ saja — 19 modul lain masih v0.2.0, bump serentak saat rilis).
   hidup eksplisit (pattern loading — sudah implisit dalam koefisien), pelat dua arah, kantilever.
   Kandidat lanjutan: kirim Mu/Vu via handoff ke beam-flexure begitu OPSI 2 (field demand) ada.
 
+## Tool #22 — Desain Pile Cap (Poer) ✅ SELESAI (2026-07-18)
+
+`modules/pile-cap/` (kategori **Beton Bertulang**, tier-2 kanvas denah, `active`, APP_VER v0.3.0, `accepts:{axial:'Pu'}`)
+— **SNI 2847:2019** metode kaku (rigid cap).
+- **Susunan 2–6 tiang** otomatis: 2 baris · 3 segitiga (R=s/√3) · 4 bujursangkar · 5 quincunx/dadu · 6 (2×3).
+  Dimensi poer dari bounding-box tiang + overhang `ov`.
+- **Dua basis beban** (yang diminta): **Ultimate kolom Pu** → Ru=Pu/N + opsi **momen biaksial** (distribusi kaku
+  Ru,i = Pu/N + Muy·xi/Σx² + Mux·yi/Σy², guard Σ=0 → warning) · **Kapasitas tiang** (desain kapasitas) → Ru=Q semua tiang.
+- **Cek**: lentur di muka kolom (Ps. 13.4.2, As tiap arah + As,min susut-suhu, φMn, D/C) · geser 1-arah (Ps. 22.5,
+  penampang d dari muka, reaksi tiang interpolasi ±dp/2) · pons kolom (Ps. 22.6, b0 keliling d/2, β, αs=40) ·
+  **pons tiang** (keliling d/2 dipangkas tepi → sudut/tepi/dalam αs 20/30/40; tiang persegi-ekuivalen 0,886·dp).
+  Lapis luar (d besar) → arah kantilever terbesar. **Governing = D/C maks** dari 6 cek.
+- **Kanvas denah** dgn overlay segment (Susunan / Lentur / Geser 1-arah / Pons), hover reaksi per tiang, dim Lx×Ly.
+- **Tervalidasi live** (port 5205, semua persis hitung tangan): default 4-tiang Pu 4000/dp400/s1200/h800/fc30/fy420 →
+  Ru 1000, poer 2000×2000, d 713/688, **Lentur Y govern D/C 0,93** (As,min 6D25), φMn 752; pons kolom D/C 0,44
+  (φVc 4555); pons tiang sudut D/C 0,57 (b0 1854, αs20). Mux 500 → Ru 1208,3/791,7 = 1000±208,3 ✓. N=2/N=6 default
+  → "TIDAK OK" (benar: pons-tiang & geser 1-arah gagal pada geometri tipis). Nol error, dispose bersih.
+- **TIDAK termasuk**: strut-and-tie poer tebal (Ps. 23), berat sendiri poer (diabaikan, konservatif), tulangan minimum
+  detail (lihat Tool #20), reaksi tiang non-linear/pegas.
+
+## Tool #23 — Lateral Tiang (Broms) ✅ SELESAI (2026-07-18)
+
+`modules/lateral-broms/` (kategori **Geoteknik**, tier-2 kanvas, `active`, APP_VER v0.3.0) — **Broms 1964**, rigid-plastic /
+sendi-plastis. **Hu = min(kegagalan tanah [pendek], leleh lentur [panjang])**.
+- **Lempung** (p_u=9·cu·D, nol 0–1,5D) & **pasir** (p_u=3·Kp·γ'·z·D, Kp=tan²(45+φ/2)), kepala **bebas/jepit**.
+- Persamaan: lempung bebas-pendek `f²+(4e+3D+2L)f−(L−1,5D)²=0`, Hu=9cuD·f (turunan kesetimbangan kaku diverifikasi);
+  bebas-panjang `My=Hu(e+1,5D+0,5f)`; jepit-pendek `Hu=9cuD(L−1,5D)`; jepit-panjang `2My=Hu(e+1,5D+0,5f)`.
+  Pasir bebas-pendek `Hu=0,5·Kp·γ'·D·L³/(e+L)`, bebas-panjang `My=Hu(e+0,667f)` (bisection akar u=√H), jepit-pendek
+  `Hu=1,5·Kp·γ'·D·L²`, jepit-panjang `2My=Hu(e+0,667f)`. Klasifikasi pendek/panjang = mode dgn Hu terkecil.
+- **Kanvas** elevasi + diagram tekanan tanah (blok 9cuD lempung / segitiga pasir), titik rotasi (bebas-pendek),
+  garis Mmax. Output: dua moda + Hu governing + Mmax & kedalamannya + Mmax/My.
+- **Tervalidasi live** (persis hitung tangan): clay/free Hu 454,5 (short 772/long 454,5), clay/fixed 696,4, sand/free
+  316,3 (short 732), sand/fixed 502,1. My=5000 → beralih ke mode "pendek" ✓.
+- **TIDAK termasuk**: defleksi kerja (→ Tool #24), tanah berlapis, faktor keamanan (catatan SF 2–3).
+
+## Tool #24 — Analisis P-Y (Tiang Lateral) ✅ SELESAI (2026-07-18)
+
+`modules/py-analysis/` (kategori **Geoteknik**, tier-2 kanvas, `active`, APP_VER v0.3.0) — **beda-hingga orde-4**
+balok di atas pegas p-y tak-linear, iterasi sekan + under-relaksasi 0,5, **pembebanan bertahap 10 langkah (warm-start)**.
+- FD `EI·y''''+p(y,z)=0`, 60 elemen, ghost node ±2, solver Gauss-elim pivot parsial (N=65). BC kepala: geser=H,
+  momen=M0=M+H·e (bebas) / kemiringan=0 (jepit); ujung: M=0, V=0.
+- **Kurva p-y**: **Matlock lempung lunak** (p_u=min[(3+γ'z/cu+0,5z/D),9]cu·D, y50=2,5ε50D, p=0,5pu(y/y50)^⅓) ·
+  **API pasir** (p_u=min[(C1z+C2D),C3D]γ'z dgn **C1/C2/C3 Reese** dari φ; p=A·pu·tanh(kzy/(A·pu)), A statik).
+- **Konvensi tanda** (diperbaiki saat dev): beban +H → y₀ positif; **M=+EI·y''**; momen jepit kepala = reaksi kekangan
+  `EI·2(y1−y0)/dz²` (bukan M0). Secant clay pakai y kecil (slope awal ∞), sand pakai k·z.
+- **Kanvas** 3 tampilan (segment): profil Defleksi, profil Momen, **kurva H–y₀**; hover baca z & nilai.
+- **Tervalidasi live**: clay/free H200 → y₀ 36,0mm, Mmax 348@3,25m; H400 → y₀ 130mm (softening 3,6×) ✓; clay/fixed →
+  y₀ 9,7mm (lebih kaku), rotasi≈0, momen hogging kepala −364@0m ✓; sand/free 25,5mm, sand/fixed 5,96mm. Konvergen
+  20–51 iterasi semua kombinasi, ~82ms/update, nol error. Broms (#23) & P-Y saling merujuk (kapasitas vs respons).
+- **TIDAK termasuk**: tanah berlapis (1 lapis homogen), EI retak (pakai E/I tereduksi manual), p-y siklik, gap/liquefaction.
+
+Registry + SEO ketiga tool; **sw.js precache 3 ikon + CACHE v35 → v38**.
+
 ## Langkah berikutnya
 
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
