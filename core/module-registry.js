@@ -250,6 +250,20 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'base-plate',
+    name: 'Base Plate & Anchor',
+    category: 'Sambungan',
+    icon: 'modules/base-plate/icon.svg',
+    entry: 'modules/base-plate/module.js',
+    accepts: { axial: 'Pu', moment: 'Mu' },  // terima Pu & Mu terfaktor dari Kombinasi Beban
+    status: 'active',
+    seo: {
+      title: 'Base Plate & Anchor Rod Kolom Baja — Tumpu, Tebal Pelat & Tarik Angkur (AISC Design Guide 1)',
+      desc: 'Desain pelat landas (base plate) & angkur kolom baja satu sistem: tumpu beton (AISC 360-22 J8 / ACI 318-19), tebal pelat leleh lentur, rezim konsentrik / momen kecil / momen besar (e vs ecrit) dengan gaya tarik angkur, dan geser dasar gesekan — metode Drake & Elkin (AISC Design Guide 1, 2nd Ed.), lengkap elevasi blok tumpu & denah interaktif.'
+    }
+  },
+
+  {
     id: 'wind-load',
     name: 'Beban Angin',
     category: 'Umum',

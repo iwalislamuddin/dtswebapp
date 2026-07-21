@@ -31,7 +31,7 @@
   'use strict';
   window.CivilModules = window.CivilModules || {};
   var ID = 'lateral-broms';
-  var APP_VER = 'v0.3.0';
+  var APP_VER = 'v0.4.0';
 
   var state = {};
 

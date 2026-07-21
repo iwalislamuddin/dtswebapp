@@ -25,7 +25,7 @@
   'use strict';
   window.CivilModules = window.CivilModules || {};
   var ID = 'py-analysis';
-  var APP_VER = 'v0.3.0';
+  var APP_VER = 'v0.4.0';
 
   var NEL = 60;          // jumlah elemen (61 node)
   var STEPS = 10;        // langkah pembebanan (kurva H-y0)

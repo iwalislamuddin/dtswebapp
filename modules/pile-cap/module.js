@@ -24,7 +24,7 @@
   'use strict';
   window.CivilModules = window.CivilModules || {};
   var ID = 'pile-cap';
-  var APP_VER = 'v0.3.0';
+  var APP_VER = 'v0.4.0';
 
   var BARS = [16, 19, 22, 25, 29, 32, 36];
   var PHI_F = 0.9;      // lentur (tension-controlled)
