@@ -265,7 +265,11 @@
 
     state.cap.set('A ' + r.A + ' ha · C ' + r.C.toFixed(2) + ' · Q ' + r.Q.toFixed(3) + ' m³/s');
 
-    results.appendChild(UI.hero('Debit puncak Q = 0,00278·C·i·A', r.Q.toFixed(3), 'm³/s'));
+    results.appendChild(UI.heroRow([
+      { label: 'Debit puncak Q', value: r.Q.toFixed(3), unit: 'm³/s' },
+      { label: 'Intensitas i', value: r.i.toFixed(1), unit: 'mm/jam' },
+      { label: 'Waktu konsentrasi tc', value: r.tcMin.toFixed(1), unit: 'menit' }
+    ]));
 
     results.appendChild(UI.rhead('Parameter'));
     results.appendChild(UI.kv('Luas A', r.A + ' ha (' + (r.A / 100).toFixed(2) + ' km²)'));
@@ -301,7 +305,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

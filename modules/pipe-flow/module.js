@@ -273,7 +273,11 @@
     state.cap.set('Ø' + (r.D * 1000).toFixed(0) + ' · Q ' + (r.Q * 1000).toFixed(1) +
       ' L/s · hL ' + r.hTot.toFixed(2) + ' m');
 
-    results.appendChild(UI.hero('Total kehilangan energi hL = hf + hm', r.hTot.toFixed(3), 'm'));
+    results.appendChild(UI.heroRow([
+      { label: 'hL total = hf + hm', value: r.hTot.toFixed(3), unit: 'm' },
+      { label: 'Kecepatan V', value: r.V.toFixed(2), unit: 'm/s', tone: (r.V >= 0.3 && r.V <= 3) ? 'ok' : 'bad' },
+      { label: 'Gradien hidraulik', value: r.gradient.toFixed(2), unit: 'm/km' }
+    ]));
 
     results.appendChild(UI.rhead('Hidraulika dasar'));
     results.appendChild(UI.kv('Luas A', (r.A * 1e6).toFixed(0) + ' mm²'));
@@ -310,7 +314,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

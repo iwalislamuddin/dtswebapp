@@ -276,10 +276,12 @@
     }
     state.cap.set('phiMn ' + UI.fmt(r.phiMnkNm, 1) + ' kN.m · ' + r.cls);
 
-    var heroState = (r.et >= 0.005 && !r.belowMin) ? '' : (r.et < 0.004 || r.belowMin ? 'bad' : '');
-    results.appendChild(UI.hero('φMn (φ = ' + UI.fmt(r.phi, 2) + ')', UI.fmt(r.phiMnkNm, 1), 'kN·m'));
-    results.appendChild(UI.el('div', 'ck-empty',
-      'Mn = ' + UI.fmt(r.MnkNm, 1) + ' kN·m · ' + r.cls + ' · εt = ' + r.et.toFixed(4) + '.'));
+    var etTone = (r.et >= 0.005 && !r.belowMin) ? 'ok' : ((r.et < 0.004 || r.belowMin) ? 'bad' : '');
+    results.appendChild(UI.heroRow([
+      { label: 'φMn (φ = ' + UI.fmt(r.phi, 2) + ')', value: UI.fmt(r.phiMnkNm, 1), unit: 'kN·m' },
+      { label: 'Mn nominal', value: UI.fmt(r.MnkNm, 1), unit: 'kN·m' },
+      { label: 'εt — ' + r.cls, value: r.et.toFixed(4), tone: etTone }
+    ]));
 
     results.appendChild(UI.rhead('Geometri & tulangan'));
     results.appendChild(UI.kv('Tul. tarik', r.n1 + ' D' + r.db1 + (r.nLay > 1 ? ' — ' + r.nLay + ' lapis (' + r.layers.slice().reverse().join('/') + ')' : ' — 1 lapis')));
@@ -502,7 +504,7 @@
   }
 
   /* ---------- Report monospace (DOS-style) ---------- */
-  var APP_VER = 'v0.2.0';
+  var APP_VER = 'v0.3.0';
   var RW = 62;
 
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }

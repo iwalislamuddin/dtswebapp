@@ -251,7 +251,11 @@
     state.cap.set((r.soil === 'clay' ? 'Lempung' : 'Pasir') + ' · kepala ' +
       (r.head === 'free' ? 'bebas' : 'jepit') + ' · Hu ' + UI.fmt(r.Hu, 0) + ' kN');
 
-    results.appendChild(UI.hero('Hu — kapasitas lateral ultimit', UI.fmt(r.Hu, 1), 'kN'));
+    results.appendChild(UI.heroRow([
+      { label: 'Hu lateral ultimit', value: UI.fmt(r.Hu, 1), unit: 'kN' },
+      { label: 'H tanah (pendek)', value: UI.fmt(r.Hshort, 1), unit: 'kN', tone: r.short ? 'ok' : '' },
+      { label: 'H leleh (panjang)', value: UI.fmt(r.Hlong, 1), unit: 'kN', tone: r.short ? '' : 'ok' }
+    ]));
     results.appendChild(UI.kv('Mode kegagalan', r.mode, r.short ? '' : 'ok'));
 
     results.appendChild(UI.rhead('Data'));

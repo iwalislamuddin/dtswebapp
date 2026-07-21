@@ -211,8 +211,12 @@
     }
     state.cap.set('ld ' + UI.fmt(r.ldRound, 0) + ' mm · ' + (r.polos ? 'Ø' : 'D') + UI.fmt(r.db, 0));
 
-    results.appendChild(UI.hero('ld — ' + (r.polos ? 'polos (Ø' + UI.fmt(r.db, 0) + ')' : 'ulir (D' + UI.fmt(r.db, 0) + ')'), UI.fmt(r.ldRound, 0), 'mm'));
-    results.appendChild(UI.el('div', 'ck-empty', 'Nilai eksak ' + UI.fmt(r.ld, 1) + ' mm, dibulatkan ke atas per 10 mm. ld/db = ' + UI.fmt(r.ldbratio, 1) + '.'));
+    results.appendChild(UI.heroRow([
+      { label: 'ld pakai — ' + (r.polos ? 'Ø' : 'D') + UI.fmt(r.db, 0), value: UI.fmt(r.ldRound, 0), unit: 'mm' },
+      { label: 'ld / db', value: UI.fmt(r.ldbratio, 1) },
+      { label: '(cb+Ktr)/db', value: UI.fmt(r.ratio, 2) }
+    ]));
+    results.appendChild(UI.el('div', 'ck-empty', 'Nilai eksak ' + UI.fmt(r.ld, 1) + ' mm, dibulatkan ke atas per 10 mm.'));
 
     results.appendChild(UI.rhead('Faktor terpakai'));
     results.appendChild(UI.kv('db', UI.fmt(r.db, 0) + ' mm'));
@@ -369,7 +373,7 @@
   }
 
   /* ---------- Report monospace (DOS-style) ---------- */
-  var APP_VER = 'v0.2.0';
+  var APP_VER = 'v0.3.0';
   var RW = 62;   // lebar konten report
 
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }

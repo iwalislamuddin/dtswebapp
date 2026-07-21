@@ -432,8 +432,12 @@
     state.cap.set(r.n + '×M' + r.d + ' ' + r.gradeLabel + ' · D/C ' +
       (isFinite(r.govDC) ? r.govDC.toFixed(2) : '—') + ' (' + r.gov + ')');
 
-    results.appendChild(UI.hero('D/C menentukan (' + r.gov + ')',
-      isFinite(r.govDC) ? UI.fmt(r.govDC, 2) : '—', r.govDC <= 1 ? 'OK' : 'NG'));
+    results.appendChild(UI.heroRow([
+      { label: 'D/C menentukan (' + r.gov + ')', value: isFinite(r.govDC) ? UI.fmt(r.govDC, 2) : '—',
+        unit: r.govDC <= 1 ? 'OK' : 'NG', tone: r.govDC <= 1 ? 'ok' : 'bad' },
+      { label: 'φRn grup efektif', value: UI.fmt(r.phiRge, 1), unit: 'kN' },
+      { label: 'Vu terpakai', value: UI.fmt(r.Vu, 1), unit: 'kN' }
+    ]));
 
     results.appendChild(UI.rhead('Properti baut'));
     results.appendChild(UI.kv('Mutu · ulir', r.gradeLabel + ' · ' + r.thread));
@@ -487,7 +491,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

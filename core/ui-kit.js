@@ -170,6 +170,24 @@
     h.appendChild(el('div', 'v', value + (unit ? ' <small>' + unit + '</small>' : '')));
     return h;
   }
+  // heroRow(items) -> baris 2–3 kartu hero sejajar. Kartu pertama = utama (amber),
+  // kartu berikutnya = pendukung (muted). Tiap item: {label, value, unit?, tone?, sub?}
+  //   tone: 'ok' | 'bad'  -> warnai nilai
+  //   sub : true|false    -> paksa gaya utama/muted (default: index>0 = muted)
+  function heroRow(items) {
+    items = items || [];
+    var row = el('div', 'ck-hero-row');
+    items.forEach(function (it, i) {
+      if (!it) return;
+      var sub = (it.sub !== undefined) ? it.sub : (i > 0);
+      var h = el('div', 'ck-hero' + (sub ? ' sub' : ''));
+      h.appendChild(el('div', 'k', it.label));
+      h.appendChild(el('div', 'v' + (it.tone ? ' ' + it.tone : ''),
+        it.value + (it.unit ? ' <small>' + it.unit + '</small>' : '')));
+      row.appendChild(h);
+    });
+    return row;
+  }
   function kv(k, v, state) {
     var row = el('div', 'ck-kv');
     row.appendChild(el('span', 'k', k));
@@ -232,6 +250,7 @@
     el: el,
     buildForm: buildForm,
     hero: hero,
+    heroRow: heroRow,
     kv: kv,
     rhead: rhead,
     note: note,

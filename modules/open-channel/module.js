@@ -380,10 +380,13 @@
       ? 'Q ' + r.Q.toFixed(3) + ' m³/s'
       : 'y ' + r.y.toFixed(3) + ' m') + ' · V ' + r.V.toFixed(2) + ' m/s');
 
-    if (r.mode === 'fromY')
-      results.appendChild(UI.hero('Kapasitas debit Q', r.Q.toFixed(3), 'm³/s'));
-    else
-      results.appendChild(UI.hero('Kedalaman normal y', r.y.toFixed(3), 'm'));
+    results.appendChild(UI.heroRow([
+      r.mode === 'fromY'
+        ? { label: 'Kapasitas debit Q', value: r.Q.toFixed(3), unit: 'm³/s' }
+        : { label: 'Kedalaman normal y', value: r.y.toFixed(3), unit: 'm' },
+      { label: 'Kecepatan V', value: r.V.toFixed(2), unit: 'm/s', tone: (r.V >= 0.6 && r.V <= 3) ? 'ok' : 'bad' },
+      { label: 'Froude — ' + r.regime, value: r.Fr.toFixed(2), tone: r.regime === 'subkritis' ? 'ok' : 'bad' }
+    ]));
 
     results.appendChild(UI.rhead('Geometri terisi'));
     results.appendChild(UI.kv('Luas basah A', r.A.toFixed(4) + ' m²'));
@@ -421,7 +424,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

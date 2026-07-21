@@ -340,22 +340,15 @@
     var pm = r.pm;
     state.cap.set(shapeName(r.shape) + ' · B=' + r.B + ' m · ' + methodName(r.primary) + ' · qu ' + pm.qu.toFixed(0) + ' kPa');
 
-    var dcTxt = (r.dc !== null) ? ' · q/q_izin = ' + r.dc.toFixed(2) : '';
-    var hero = UI.el('div', 'ck-hero');
-    hero.appendChild(UI.el('div', 'k', 'q_ult / q_izin — ' + methodName(r.primary)));
-    var vrow = UI.el('div');
-    vrow.style.cssText = 'display:flex; align-items:baseline; gap:24px; flex-wrap:wrap';
-    var v1 = UI.el('div', 'v', UI.fmt(pm.qu, 1) + ' <small>kPa</small>');
-    var v2 = UI.el('div');
-    v2.style.cssText = "font-family:'JetBrains Mono',monospace; color:var(--ink-dim)";
-    v2.innerHTML = '<div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase">q_izin = qu/FS</div>' +
-      '<div style="font-size:21px;font-weight:700;line-height:1.15;color:var(--ink)">' + UI.fmt(pm.qall, 1) +
-      ' <small style="font-size:12px;font-weight:500;color:var(--ink-dim)">kPa</small></div>';
-    vrow.appendChild(v1); vrow.appendChild(v2);
-    hero.appendChild(vrow);
-    results.appendChild(hero);
+    results.appendChild(UI.heroRow([
+      { label: 'q_ult — ' + methodName(r.primary), value: UI.fmt(pm.qu, 1), unit: 'kPa' },
+      { label: 'q_izin = qu/FS', value: UI.fmt(pm.qall, 1), unit: 'kPa' },
+      (r.dc !== null)
+        ? { label: 'D/C = q/q_izin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
+        : { label: 'q_ult neto', value: UI.fmt(pm.qnet, 1), unit: 'kPa' }
+    ]));
     results.appendChild(UI.el('div', 'ck-empty',
-      'q_ult,net = ' + UI.fmt(pm.qnet, 1) + ' kPa · FS = ' + r.FS + dcTxt + '.'));
+      'q_ult,net = ' + UI.fmt(pm.qnet, 1) + ' kPa · FS = ' + r.FS + '.'));
 
     // Tabel perbandingan 3 metode
     results.appendChild(UI.rhead('Perbandingan 3 metode'));
@@ -616,7 +609,7 @@
   }
 
   /* ---------- Report monospace ---------- */
-  var APP_VER = 'v0.2.0';
+  var APP_VER = 'v0.3.0';
   var RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }

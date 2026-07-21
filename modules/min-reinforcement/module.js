@@ -366,7 +366,11 @@
 
     if (r.elem === 'balok') {
       state.cap.set('As,min ' + UI.fmt(r.AsMin, 0) + ' mm² · ' + fmtCfg(r));
-      results.appendChild(UI.hero('As,min lentur — pakai ' + fmtCfg(r), UI.fmt(r.AsMin, 1), 'mm²'));
+      results.appendChild(UI.heroRow([
+        { label: 'As,min lentur', value: UI.fmt(r.AsMin, 1), unit: 'mm²' },
+        { label: 'As pakai — ' + fmtCfg(r), value: UI.fmt(r.AsProv, 1), unit: 'mm²', tone: r.AsProv >= r.AsMin ? 'ok' : 'bad' },
+        { label: 'ρmin', value: UI.fmt(r.rhoMin * 100, 3), unit: '%' }
+      ]));
       results.appendChild(UI.rhead('Lentur (Ps. 9.6.1.2)'));
       results.appendChild(UI.kv('d (1 lapis)', UI.fmt(r.d, 1) + ' mm'));
       results.appendChild(UI.kv("0,25·√f'c/fy", UI.fmt(r.rho1 * 1000, 3) + ' ‰', r.govSqrt ? 'ok' : ''));
@@ -386,7 +390,11 @@
         'Av,min berlaku bila Vu > 0,5φVc (Ps. 9.6.3.1) — di luar itu sengkang boleh lebih renggang.'));
     } else if (r.elem === 'kolom-p' || r.elem === 'kolom-l') {
       state.cap.set('Ast,min ' + UI.fmt(r.AstMin, 0) + ' mm² · ' + fmtCfg(r));
-      results.appendChild(UI.hero('Ast,min = 1%·Ag — pakai ' + fmtCfg(r), UI.fmt(r.AstMin, 1), 'mm²'));
+      results.appendChild(UI.heroRow([
+        { label: 'Ast,min = 1%·Ag', value: UI.fmt(r.AstMin, 1), unit: 'mm²' },
+        { label: 'Ast pakai — ' + fmtCfg(r), value: UI.fmt(r.AsProv, 1), unit: 'mm²', tone: r.AsProv >= r.AstMin ? 'ok' : 'bad' },
+        { label: 'ρ terpasang', value: UI.fmt(r.rhoProv * 100, 2), unit: '%', tone: r.rhoProv >= 0.01 ? 'ok' : 'bad' }
+      ]));
       results.appendChild(UI.rhead('Longitudinal (Ps. 10.6.1.1)'));
       results.appendChild(UI.kv('Ag', UI.fmt(r.Ag, 0) + ' mm²'));
       results.appendChild(UI.kv('Ast,min = 0,01·Ag', UI.fmt(r.AstMin, 1) + ' mm²'));
@@ -414,7 +422,11 @@
         'Persyaratan seismik (SRPMK/SRPMM, Ps. 18) lebih ketat dan belum dicakup tool ini.'));
     } else if (r.elem === 'pelat') {
       state.cap.set('As,min ' + UI.fmt(r.AsMin, 0) + ' mm²/m · ' + fmtCfg(r));
-      results.appendChild(UI.hero('As,min per meter — pakai ' + fmtCfg(r), UI.fmt(r.AsMin, 1), 'mm²/m'));
+      results.appendChild(UI.heroRow([
+        { label: 'As,min per meter', value: UI.fmt(r.AsMin, 1), unit: 'mm²/m' },
+        { label: 'As pakai — ' + fmtCfg(r), value: UI.fmt(r.AsProv, 1), unit: 'mm²/m', tone: r.AsProv >= r.AsMin ? 'ok' : 'bad' },
+        { label: 'ρmin', value: UI.fmt(r.rhoMin * 100, 2), unit: '%' }
+      ]));
       results.appendChild(UI.rhead('Minimum (Ps. ' + (r.dua ? '8.6.1.1' : '7.6.1.1') + ' / 24.4.3.2)'));
       results.appendChild(UI.kv('ρmin', UI.fmt(r.rhoMin * 100, 2) + ' %  (' + (r.fy < 420 ? 'fy < 420 → 0,20%' : 'maks(0,0018·420/fy; 0,0014)') + ')'));
       results.appendChild(UI.kv('As,min = ρmin·1000·h', UI.fmt(r.AsMin, 1) + ' mm²/m'));
@@ -427,7 +439,11 @@
         'Tebal minimum pelat (Tabel 7.3.1.1 / 8.3.1.1) dicek terpisah.'));
     } else {
       state.cap.set('As,min ' + UI.fmt(r.AsMin, 0) + ' mm²/m · ' + fmtCfg(r));
-      results.appendChild(UI.hero('As,min per meter tiap arah — pakai ' + fmtCfg(r), UI.fmt(r.AsMin, 1), 'mm²/m'));
+      results.appendChild(UI.heroRow([
+        { label: 'As,min/m tiap arah', value: UI.fmt(r.AsMin, 1), unit: 'mm²/m' },
+        { label: 'As pakai — ' + fmtCfg(r), value: UI.fmt(r.AsProv, 1), unit: 'mm²/m', tone: r.AsProv >= r.AsMin ? 'ok' : 'bad' },
+        { label: 'ρmin', value: UI.fmt(r.rhoMin * 100, 2), unit: '%' }
+      ]));
       results.appendChild(UI.rhead('Minimum lentur (Ps. 13.3 → 7.6.1.1 / 8.6.1.1)'));
       results.appendChild(UI.kv('ρmin', UI.fmt(r.rhoMin * 100, 2) + ' %'));
       results.appendChild(UI.kv('As,min = ρmin·1000·h', UI.fmt(r.AsMin, 1) + ' mm²/m'));

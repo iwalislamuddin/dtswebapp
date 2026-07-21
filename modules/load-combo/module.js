@@ -224,8 +224,14 @@
     state.cap.set(r.qtyLabel + ' · ' + (r.sys === 'lrfd' ? 'LRFD (kuat)' : 'ASD (layan)') + ' · ' + r.combos.length + ' kombinasi');
 
     var govVal = r.gov ? r.gov.val : 0;
-    results.appendChild(UI.hero('Beban ' + r.qtyLabel.toLowerCase() + ' terfaktor maks (' + (r.sys === 'lrfd' ? 'LRFD' : 'ASD') + ')',
-      UI.fmt(govVal, 1), r.unit));
+    var hasMin = r.govMin && r.govMin.val < 0;
+    results.appendChild(UI.heroRow([
+      { label: (r.sys === 'lrfd' ? 'LRFD' : 'ASD') + ' terfaktor maks', value: UI.fmt(govVal, 1), unit: r.unit },
+      hasMin
+        ? { label: 'Minimum (pembalikan)', value: UI.fmt(r.govMin.val, 1), unit: r.unit, tone: 'bad' }
+        : { label: 'Kombinasi menentukan', value: r.gov ? r.gov.id : '—' },
+      { label: 'Jumlah kombinasi', value: r.combos.length }
+    ]));
     if (r.gov) results.appendChild(UI.el('div', 'ck-empty',
       'Menentukan: kombinasi <b>' + r.gov.id + '</b> — ' + r.gov.expr +
       (r.govMin && r.govMin.val < 0 ? ' · minimum ' + r.govMin.val.toFixed(1) + ' ' + r.unit + ' (kombinasi ' + r.govMin.id + ')' : '') + '.'));
@@ -383,7 +389,7 @@
   }
 
   /* ---------- Report monospace ---------- */
-  var APP_VER = 'v0.2.0';
+  var APP_VER = 'v0.3.0';
   var RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }

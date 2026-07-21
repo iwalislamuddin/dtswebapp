@@ -572,10 +572,20 @@
       (r.dc != null ? ' · D/C ' + r.dc.toFixed(2) + (biax ? ' (biaksial)' : '') : ''));
 
     if (r.dc != null)
-      results.appendChild(UI.hero('D/C ' + (biax ? 'biaksial' : 'uniaksial') + ' (iris P=Pu, arah resultan)',
-        UI.fmt(r.dc, 2), r.dc <= 1 ? 'OK' : 'NG'));
+      results.appendChild(UI.heroRow([
+        { label: 'D/C ' + (biax ? 'biaksial' : 'uniaksial'), value: UI.fmt(r.dc, 2),
+          unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' },
+        { label: '|Mu| resultan', value: UI.fmt(r.Mu, 1), unit: 'kN·m' },
+        r.capM
+          ? { label: 'φMn kapasitas @Pu', value: UI.fmt(r.capM.m, 1), unit: 'kN·m' }
+          : { label: 'φPn plafon', value: UI.fmt(r.phiPnMax, 0), unit: 'kN' }
+      ]));
     else
-      results.appendChild(UI.hero('φPn maks (plafon aksial)', UI.fmt(r.phiPnMax, 0), 'kN'));
+      results.appendChild(UI.heroRow([
+        { label: 'φPn maks (plafon aksial)', value: UI.fmt(r.phiPnMax, 0), unit: 'kN' },
+        { label: 'Po tekan murni', value: UI.fmt(r.Po, 0), unit: 'kN' },
+        { label: 'Pnt tarik murni', value: UI.fmt(r.Pnt, 0), unit: 'kN' }
+      ]));
 
     results.appendChild(UI.rhead('Penampang & tulangan'));
     results.appendChild(UI.kv('Ag / Ast', UI.fmt(r.Ag, 0) + ' / ' + UI.fmt(r.Ast, 0) + ' mm²'));
@@ -623,7 +633,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

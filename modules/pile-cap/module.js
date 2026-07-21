@@ -440,8 +440,11 @@
     state.cap.set(r.n + ' tiang · poer ' + Math.round(r.Lx) + '×' + Math.round(r.Ly) +
       ' · Ru,maks ' + UI.fmt(r.Rmax, 0) + ' kN');
 
-    results.appendChild(UI.hero('Governing — ' + r.gov.name + (r.ok ? ' · AMAN' : ' · TIDAK OK'),
-      UI.fmt(r.gov.dc, 2), 'D/C'));
+    results.appendChild(UI.heroRow([
+      { label: 'D/C — ' + r.gov.name, value: UI.fmt(r.gov.dc, 2), unit: r.ok ? 'AMAN' : 'NG', tone: r.ok ? 'ok' : 'bad' },
+      { label: 'Ru maks / tiang', value: UI.fmt(r.Rmax, 1), unit: 'kN' },
+      { label: 'Ru min / tiang', value: UI.fmt(r.Rmin, 1), unit: 'kN', tone: r.Rmin >= -1e-6 ? '' : 'bad' }
+    ]));
 
     // Reaksi & geometri
     results.appendChild(UI.rhead('Reaksi tiang & geometri'));

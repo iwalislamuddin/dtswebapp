@@ -351,8 +351,13 @@
     state.cap.set((r.soil === 'sand' ? 'Pasir' : 'Lempung') + ' · qc̄ ' + (r.qcb / 1000).toFixed(2) +
       ' MPa · q,izin ' + r.qaNet.toFixed(0) + ' kPa');
 
-    results.appendChild(UI.hero('Daya dukung izin NETO (' + r.method + ')',
-      UI.fmt(r.qaNet, 0), 'kPa' + (r.dc > 0 ? ' · D/C ' + r.dc.toFixed(2) + (r.dc <= 1 ? ' OK' : ' NG') : '')));
+    results.appendChild(UI.heroRow([
+      { label: 'q izin NETO (' + r.method + ')', value: UI.fmt(r.qaNet, 0), unit: 'kPa' },
+      { label: 'q izin BRUTO', value: UI.fmt(r.qaGross, 0), unit: 'kPa' },
+      r.dc > 0
+        ? { label: 'D/C = qkerja/qizin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
+        : { label: 'qc̄ rata-rata', value: (r.qcb / 1000).toFixed(2), unit: 'MPa' }
+    ]));
 
     results.appendChild(UI.rhead('Data & rata-rata'));
     results.appendChild(UI.kv('Jumlah titik data', r.nPts + ' (0–' + r.zMax.toFixed(1) + ' m)'));
@@ -393,7 +398,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

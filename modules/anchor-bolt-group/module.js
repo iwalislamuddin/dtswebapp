@@ -580,8 +580,11 @@
     var dc = r.govDC;
     state.cap.set(r.n + ' baut · D/C ' + (isFinite(dc) ? dc.toFixed(2) : '—') + ' · menentukan: ' + r.gov);
 
-    results.appendChild(UI.hero('D/C menentukan (' + r.gov + ')', isFinite(dc) ? UI.fmt(dc, 2) : '—',
-      dc <= 1 ? 'OK' : 'NG'));
+    results.appendChild(UI.heroRow([
+      { label: 'D/C — ' + r.gov, value: isFinite(dc) ? UI.fmt(dc, 2) : '—', unit: dc <= 1 ? 'OK' : 'NG', tone: dc <= 1 ? 'ok' : 'bad' },
+      { label: 'D/C baja tarik', value: isFinite(r.dcSteel) ? UI.fmt(r.dcSteel, 2) : '—', tone: r.dcSteel <= 1 ? 'ok' : 'bad' },
+      { label: 'D/C jebol beton', value: isFinite(r.dcConc) ? UI.fmt(r.dcConc, 2) : '—', tone: r.dcConc <= 1 ? 'ok' : 'bad' }
+    ]));
 
     results.appendChild(UI.rhead('Gaya baut (elastis)'));
     results.appendChild(UI.kv('Jumlah baut n', r.n + ' (' + r.nx + '×' + r.ny + ')'));
@@ -686,7 +689,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

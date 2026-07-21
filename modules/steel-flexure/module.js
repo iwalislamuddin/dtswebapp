@@ -529,10 +529,14 @@
     var axLbl = r.axis === 'y' ? 'y-y (lemah)' : 'x-x (kuat)';
     state.cap.set(r.ti.name + '  ·  ' + p.name + '  ·  phiMn ' + r.phiMn.toFixed(1) + ' kN.m · ' + f.section);
 
-    var dcTxt = (r.dcL !== null) ? ' · Mu/φMn = ' + r.dcL.toFixed(2) : '';
-    results.appendChild(UI.hero('φMn (DFBK) — sumbu ' + axLbl, UI.fmt(r.phiMn, 1), 'kN·m'));
-    results.appendChild(UI.el('div', 'ck-empty',
-      'ASD: Mn/Ω = ' + UI.fmt(r.Ma, 1) + ' kN·m' + dcTxt + '. Menentukan: ' + f.gov + '.'));
+    results.appendChild(UI.heroRow([
+      { label: 'φMn DFBK — ' + axLbl, value: UI.fmt(r.phiMn, 1), unit: 'kN·m' },
+      { label: 'Mn/Ω (ASD)', value: UI.fmt(r.Ma, 1), unit: 'kN·m' },
+      (r.dcL !== null)
+        ? { label: 'Mu/φMn', value: UI.fmt(r.dcL, 2), unit: r.dcL <= 1 ? 'OK' : 'NG', tone: r.dcL <= 1 ? 'ok' : 'bad' }
+        : { label: 'Mn nominal', value: UI.fmt(r.phiMn / 0.9, 1), unit: 'kN·m' }
+    ]));
+    results.appendChild(UI.el('div', 'ck-empty', 'Menentukan: ' + f.gov + '.'));
 
     results.appendChild(UI.rhead('Profil & penampang'));
     results.appendChild(UI.kv('Tipe', r.ti.name + ' — ' + r.ti.full));
@@ -884,7 +888,7 @@
   }
 
   /* ---------- Report monospace ---------- */
-  var APP_VER = 'v0.2.0';
+  var APP_VER = 'v0.3.0';
   var RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }

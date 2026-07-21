@@ -352,8 +352,11 @@
     state.cap.set('V=' + r.V + ' m/s · Eksp. ' + r.expo + ' · qh ' + r.qh.toFixed(3) +
       ' kPa · F ' + r.Fdesign.toFixed(0) + ' kN');
 
-    results.appendChild(UI.hero('Geser dasar arah angin (per arah ini)',
-      UI.fmt(r.Fdesign, 1), 'kN' + (r.minGoverns ? ' · beban minimum menentukan' : '')));
+    results.appendChild(UI.heroRow([
+      { label: 'Geser dasar F' + (r.minGoverns ? ' (min)' : ''), value: UI.fmt(r.Fdesign, 1), unit: 'kN' },
+      { label: 'Tekanan velositas qh', value: r.qh.toFixed(3), unit: 'kPa' },
+      { label: 'Momen guling dasar', value: UI.fmt(r.M, 0), unit: 'kN·m' }
+    ]));
 
     results.appendChild(UI.rhead('Tekanan velositas'));
     results.appendChild(UI.kv('Kh (z = H = ' + r.H + ' m)', r.Kh.toFixed(3)));
@@ -400,7 +403,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

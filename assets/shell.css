@@ -212,6 +212,18 @@ body{
 .ck-hero .k{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); margin-bottom:6px}
 .ck-hero .v{font-size:34px; font-weight:700; font-family:'JetBrains Mono',monospace; line-height:1}
 .ck-hero .v small{font-size:16px; color:var(--ink-dim); font-weight:500; margin-left:4px}
+.ck-hero .v.ok{color:var(--ok)} .ck-hero .v.bad{color:var(--bad)}
+
+/* baris kartu hero sejajar (2–3 metrik penting berdampingan) */
+.ck-hero-row{display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap}
+.ck-hero-row .ck-hero{flex:1 1 0; min-width:118px; margin-bottom:0}
+.ck-hero-row .ck-hero .v{font-size:25px}
+.ck-hero-row .ck-hero .v small{font-size:13px; margin-left:3px}
+/* kartu pendukung — lebih kalem agar hasil utama tetap menonjol */
+.ck-hero.sub{background:var(--panel-solid); border-color:var(--line)}
+.ck-hero.sub .k{color:var(--ink-faint)}
+.ck-hero.sub .v{color:var(--ink-dim)}
+.ck-hero.sub .v.ok{color:var(--ok)} .ck-hero.sub .v.bad{color:var(--bad)}
 
 .ck-kv{display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px solid var(--line2); font-family:'JetBrains Mono',monospace; font-size:12.5px}
 .ck-kv:last-child{border-bottom:0}

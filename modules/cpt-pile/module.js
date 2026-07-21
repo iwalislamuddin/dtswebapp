@@ -406,8 +406,13 @@
     state.cap.set((r.shape === 'circle' ? 'Ø' : '□') + r.D + ' m · L ' + r.Lp + ' m · Q,izin ' +
       r.Qall.toFixed(0) + ' kN');
 
-    results.appendChild(UI.hero('Q izin = Qp/' + r.FSp + ' + Qs/' + r.FSs,
-      UI.fmt(r.Qall, 0), 'kN' + (r.dc > 0 ? ' · D/C ' + r.dc.toFixed(2) + (r.dc <= 1 ? ' OK' : ' NG') : '')));
+    results.appendChild(UI.heroRow([
+      { label: 'Q izin total', value: UI.fmt(r.Qall, 0), unit: 'kN' },
+      { label: 'Qp ujung (ult)', value: UI.fmt(r.Qp, 0), unit: 'kN' },
+      r.dc > 0
+        ? { label: 'D/C = P/Qizin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
+        : { label: 'Qs selimut (ult)', value: UI.fmt(r.Qs, 0), unit: 'kN' }
+    ]));
 
     results.appendChild(UI.rhead('Tahanan ujung (Schmertmann 4D/8D)'));
     results.appendChild(UI.kv('qc1 (L → L+4D)', (r.qc1 / 1000).toFixed(2) + ' MPa'));
@@ -446,7 +451,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }

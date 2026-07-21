@@ -426,20 +426,14 @@
 
     state.cap.set(shapeName(r.shape).split(' ')[0] + ' D=' + r.D + ' m · L=' + r.Leff + ' m · Q_izin ' + UI.fmt(r.Qallow, 0) + ' kN');
 
-    // Hero — Q izin
-    var hero = UI.el('div', 'ck-hero');
-    hero.appendChild(UI.el('div', 'k', 'Beban izin aksial Q_izin = Qu / FS' + (r.inclW ? ' − Wp' : '')));
-    var vrow = UI.el('div'); vrow.style.cssText = 'display:flex; align-items:baseline; gap:24px; flex-wrap:wrap';
-    vrow.appendChild(UI.el('div', 'v', UI.fmt(r.Qallow, 0) + ' <small>kN</small>'));
-    var v2 = UI.el('div'); v2.style.cssText = "font-family:'JetBrains Mono',monospace; color:var(--ink-dim)";
-    v2.innerHTML = '<div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase">Qu = Qp + Qs</div>' +
-      '<div style="font-size:16px;font-weight:700;line-height:1.15;color:var(--ink)">' +
-      UI.fmt(r.Qu, 0) + ' <small style="font-size:12px;font-weight:500;color:var(--ink-dim)">kN (FS ' + r.FS + ')</small></div>';
-    vrow.appendChild(v2); hero.appendChild(vrow);
-    results.appendChild(hero);
-
+    // Hero — Q izin + komponen Qp/Qs
+    results.appendChild(UI.heroRow([
+      { label: 'Q_izin = Qu/FS' + (r.inclW ? ' − Wp' : ''), value: UI.fmt(r.Qallow, 0), unit: 'kN' },
+      { label: 'Qp ujung', value: UI.fmt(r.Qp, 0), unit: 'kN' },
+      { label: 'Qs selimut', value: UI.fmt(r.Qs, 0), unit: 'kN' }
+    ]));
     results.appendChild(UI.el('div', 'ck-empty',
-      'Qp = tahanan ujung · Qs = tahanan selimut · Qu = ultimit · Q_izin = beban kerja izin.'));
+      'Qu = Qp + Qs = ' + UI.fmt(r.Qu, 0) + ' kN (ultimit) · FS = ' + r.FS + ' · Q_izin = beban kerja izin.'));
 
     // Ringkas kapasitas
     results.appendChild(UI.rhead('Kapasitas'));
@@ -707,7 +701,7 @@
   }
 
   /* ---------- Report monospace ---------- */
-  var APP_VER = 'v0.2.0';
+  var APP_VER = 'v0.3.0';
   var RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }

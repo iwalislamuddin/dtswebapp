@@ -344,20 +344,12 @@
 
     state.cap.set(shapeName(r.shape) + ' · B=' + r.B + ' m · S_total ' + r.Stotal.toFixed(1) + ' mm');
 
-    // Hero — total penurunan
-    var hero = UI.el('div', 'ck-hero');
-    hero.appendChild(UI.el('div', 'k', 'Penurunan total S = Se + Sc' + (r.rigid ? ' (fondasi kaku)' : ' (lentur, pusat)')));
-    var vrow = UI.el('div');
-    vrow.style.cssText = 'display:flex; align-items:baseline; gap:24px; flex-wrap:wrap';
-    var v1 = UI.el('div', 'v', UI.fmt(r.Stotal, 1) + ' <small>mm</small>');
-    var v2 = UI.el('div');
-    v2.style.cssText = "font-family:'JetBrains Mono',monospace; color:var(--ink-dim)";
-    v2.innerHTML = '<div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase">segera + konsolidasi</div>' +
-      '<div style="font-size:16px;font-weight:700;line-height:1.15;color:var(--ink)">' +
-      UI.fmt(r.Se, 1) + ' + ' + UI.fmt(r.Sc, 1) + ' <small style="font-size:12px;font-weight:500;color:var(--ink-dim)">mm</small></div>';
-    vrow.appendChild(v1); vrow.appendChild(v2);
-    hero.appendChild(vrow);
-    results.appendChild(hero);
+    // Hero — total penurunan + komponen Se/Sc
+    results.appendChild(UI.heroRow([
+      { label: 'S total' + (r.rigid ? ' (kaku)' : ' (lentur)'), value: UI.fmt(r.Stotal, 1), unit: 'mm' },
+      { label: 'Se segera', value: UI.fmt(r.Se, 1), unit: 'mm' },
+      { label: 'Sc konsolidasi', value: UI.fmt(r.Sc, 1), unit: 'mm' }
+    ]));
 
     var stTxt = (r.rate.active && r.rate.t) ? ' · pada t=' + r.rate.t + ' th: St = ' + UI.fmt(r.rate.St, 1) + ' mm (U=' + (r.rate.U * 100).toFixed(0) + '%)' : '';
     results.appendChild(UI.el('div', 'ck-empty',
@@ -630,7 +622,7 @@
   }
 
   /* ---------- Report monospace ---------- */
-  var APP_VER = 'v0.2.0';
+  var APP_VER = 'v0.3.0';
   var RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }

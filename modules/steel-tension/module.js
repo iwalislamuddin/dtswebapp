@@ -272,10 +272,13 @@
     var p = r.p;
     state.cap.set(r.ti.name + '  ·  ' + p.name);
 
-    var dcTxt = (r.dcL !== null) ? ' · Pu/φPn = ' + r.dcL.toFixed(2) : '';
-    results.appendChild(UI.hero('φPn (DFBK) — ' + r.govLRFD, UI.fmt(r.phiPn, 1), 'kN'));
-    results.appendChild(UI.el('div', 'ck-empty',
-      'ASD: Pn/Ω = ' + UI.fmt(r.Pa, 1) + ' kN (' + r.govASD + ')' + dcTxt + '.'));
+    results.appendChild(UI.heroRow([
+      { label: 'φPn DFBK — ' + r.govLRFD, value: UI.fmt(r.phiPn, 1), unit: 'kN' },
+      { label: 'Pn/Ω (ASD)', value: UI.fmt(r.Pa, 1), unit: 'kN' },
+      (r.dcL !== null)
+        ? { label: 'Pu/φPn', value: UI.fmt(r.dcL, 2), unit: r.dcL <= 1 ? 'OK' : 'NG', tone: r.dcL <= 1 ? 'ok' : 'bad' }
+        : { label: 'φPn fraktur', value: UI.fmt(r.phiPnR, 1), unit: 'kN' }
+    ]));
 
     results.appendChild(UI.rhead('Profil'));
     results.appendChild(UI.kv('Tipe', r.ti.name + ' — ' + r.ti.full));
@@ -536,7 +539,7 @@
   }
 
   /* ---------- Report monospace ---------- */
-  var APP_VER = 'v0.2.0';
+  var APP_VER = 'v0.3.0';
   var RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }

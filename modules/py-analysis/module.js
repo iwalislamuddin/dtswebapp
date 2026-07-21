@@ -377,7 +377,11 @@
     state.cap.set((r.soil === 'clay' ? 'Lempung' : 'Pasir') + ' · y₀ ' + UI.fmt(r.y0, 1) +
       ' mm · Mmax ' + UI.fmt(r.Mmax, 0) + ' kNm');
 
-    results.appendChild(UI.hero('Defleksi kepala y₀ (H = ' + UI.fmt(r.H, 0) + ' kN)', UI.fmt(r.y0, 2), 'mm'));
+    results.appendChild(UI.heroRow([
+      { label: 'Defleksi kepala y₀', value: UI.fmt(r.y0, 2), unit: 'mm' },
+      { label: 'Momen maks', value: UI.fmt(r.Mmax, 1), unit: 'kNm' },
+      { label: 'Rotasi kepala', value: UI.fmt(Math.abs(r.slope0) * 1000, 3), unit: 'mrad' }
+    ]));
 
     results.appendChild(UI.rhead('Hasil pada beban penuh'));
     results.appendChild(UI.kv('Defleksi kepala y₀', UI.fmt(r.y0, 2) + ' mm'));

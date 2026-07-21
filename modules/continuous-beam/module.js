@@ -286,7 +286,11 @@
     var uW = r.elem === 'pelat' ? ' kN/m²' : ' kN/m';
     state.cap.set('Mu− ' + UI.fmt(r.MnegMax, 1) + ' · Mu+ ' + UI.fmt(r.MposMax, 1) + uM);
 
-    results.appendChild(UI.hero('Momen negatif ultimit maksimum', UI.fmt(r.MnegMax, 2), uM.trim()));
+    results.appendChild(UI.heroRow([
+      { label: 'Mu− negatif maks', value: UI.fmt(r.MnegMax, 2), unit: uM.trim() },
+      { label: 'Mu+ positif maks', value: UI.fmt(r.MposMax, 2), unit: uM.trim() },
+      { label: 'wu menentukan', value: UI.fmt(r.wu, 2), unit: uW.trim() }
+    ]));
 
     results.appendChild(UI.rhead('Beban'));
     results.appendChild(UI.kv('Berat sendiri (γc 24)', UI.fmt(r.qself, 2) + uW));

@@ -345,8 +345,15 @@
     state.cap.set('w' + r.w + ' × ' + r.Lw + ' mm · φRn ' + UI.fmt(r.phiRn, 1) + ' kN' +
       (r.Ru > 0 ? ' · D/C ' + (isFinite(r.dc) ? r.dc.toFixed(2) : '—') : ''));
 
-    results.appendChild(UI.hero('φRn desain (' + (r.weldGoverns ? 'las menentukan' : 'logam dasar menentukan') + ')',
-      UI.fmt(r.phiRn, 1), 'kN' + (r.Ru > 0 ? ' · D/C ' + (isFinite(r.dc) ? r.dc.toFixed(2) : '—') + (r.dc <= 1 ? ' OK' : ' NG') : '')));
+    results.appendChild(UI.heroRow([
+      { label: 'φRn desain — ' + (r.weldGoverns ? 'las' : 'logam dasar'), value: UI.fmt(r.phiRn, 1), unit: 'kN' },
+      { label: 'φRn las', value: UI.fmt(r.phiRnw, 1), unit: 'kN', tone: r.weldGoverns ? 'ok' : '' },
+      (r.Ru > 0)
+        ? { label: 'D/C = Ru/φRn', value: isFinite(r.dc) ? UI.fmt(r.dc, 2) : '—', unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
+        : (r.baseOk
+          ? { label: 'φRn logam dasar', value: UI.fmt(r.phiBase, 1), unit: 'kN', tone: !r.weldGoverns ? 'ok' : '' }
+          : { label: 'FEXX', value: r.Fexx, unit: 'MPa' })
+    ]));
 
     results.appendChild(UI.rhead('Kuat las sudut (J2.4)'));
     results.appendChild(UI.kv('FEXX', r.Fexx + ' MPa'));
@@ -393,7 +400,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.2.0', RW = 62;
+  var APP_VER = 'v0.3.0', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }
