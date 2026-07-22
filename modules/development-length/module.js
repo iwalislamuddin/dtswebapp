@@ -373,7 +373,7 @@
   }
 
   /* ---------- Report monospace (DOS-style) ---------- */
-  var APP_VER = 'v0.4.0';
+  var APP_VER = 'v0.5.0';
   var RW = 62;   // lebar konten report
 
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }

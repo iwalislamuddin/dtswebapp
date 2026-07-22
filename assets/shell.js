@@ -129,21 +129,23 @@
   // Async, di-cache, dan gagal-diam ke ikon generik (offline sebelum ter-cache / file hilang).
   // Ikon di-inline sebagai SVG agar stroke="currentColor" mengikuti tema.
   var iconCache = {};
+  function fetchIcon(m, apply) {
+    if (!m.icon) return;
+    if (iconCache[m.icon]) { apply(iconCache[m.icon]); return; }
+    fetch(m.icon).then(function (r) { return r.ok ? r.text() : null; }).then(function (txt) {
+      if (txt == null) return;
+      txt = txt.trim();
+      if (txt.slice(0, 4).toLowerCase() !== '<svg') return; // hanya terima SVG utuh
+      iconCache[m.icon] = txt;
+      apply(txt);
+    }).catch(function () {});
+  }
   function hydrateIcons() {
     REGISTRY.forEach(function (m) {
-      if (!m.icon) return;
-      var apply = function (svg) {
+      fetchIcon(m, function (svg) {
         var host = navList.querySelector('.nav-item[data-id="' + m.id + '"] .ico');
         if (host) host.innerHTML = svg;
-      };
-      if (iconCache[m.icon]) { apply(iconCache[m.icon]); return; }
-      fetch(m.icon).then(function (r) { return r.ok ? r.text() : null; }).then(function (txt) {
-        if (txt == null) return;
-        txt = txt.trim();
-        if (txt.slice(0, 4).toLowerCase() !== '<svg') return; // hanya terima SVG utuh
-        iconCache[m.icon] = txt;
-        apply(txt);
-      }).catch(function () {});
+      });
     });
   }
 
@@ -161,16 +163,65 @@
     }
   }
 
-  /* ---------- Welcome state ---------- */
+  /* ---------- Halaman depan: launcher ikon tool per kategori ---------- */
+  // Kartu klik = navigate(id). Ikon dihidrasi dari cache yang sama dengan nav.
+  // Kategori 'Dev' (template internal) tidak ditampilkan.
   function showWelcome() {
-    moduleRoot.innerHTML =
-      '<div class="welcome">' +
-        '<div>' +
-          '<div class="w-mark">Alat Bantu Rekayasa Sipil</div>' +
-          '<h1>EDFS Civil Tools</h1>' +
-          '<p>Pilih sebuah tool di panel kiri untuk memulai. Setiap tool berjalan mandiri di dalam shell ini dan bisa dipasang sebagai aplikasi (PWA).</p>' +
-        '</div>' +
-      '</div>';
+    var cats = [], byCat = {};
+    REGISTRY.forEach(function (m) {
+      if (m.category === 'Dev') return;
+      if (!byCat[m.category]) { byCat[m.category] = []; cats.push(m.category); }
+      byCat[m.category].push(m);
+    });
+    var nActive = REGISTRY.filter(function (m) { return m.status === 'active'; }).length;
+
+    var home = UI.el('div', 'home');
+    var hd = UI.el('div', 'home-hd');
+    hd.innerHTML =
+      '<div class="w-mark">Alat Bantu Rekayasa Sipil</div>' +
+      '<h1>EDFS Civil Tools</h1>' +
+      '<p>' + nActive + ' kalkulator rekayasa sipil sesuai SNI — pilih tool untuk memulai. ' +
+      'Setiap tool berjalan mandiri dan bisa dipasang sebagai aplikasi (PWA).</p>';
+    home.appendChild(hd);
+
+    cats.forEach(function (cat) {
+      var sec = UI.el('div', 'home-cat');
+      sec.appendChild(UI.el('h3', null, cat));
+      var grid = UI.el('div', 'home-grid');
+      byCat[cat].forEach(function (m) {
+        var disabled = (m.status === 'coming-soon');
+        var card = UI.el('button', 'home-card' + (disabled ? ' disabled' : ''));
+        card.type = 'button';
+        card.dataset.id = m.id;
+        var badge = '';
+        if (m.status === 'coming-soon') badge = '<span class="badge">soon</span>';
+        else if (m.status === 'beta') badge = '<span class="badge beta">beta</span>';
+        card.innerHTML =
+          '<span class="hico">' + iconMarkup(m) + '</span>' +
+          '<span class="hlbl">' + m.name + '</span>' + badge;
+        if (!disabled) card.addEventListener('click', function () { navigate(m.id); });
+        grid.appendChild(card);
+        fetchIcon(m, function (svg) {
+          var host = card.querySelector('.hico');
+          if (host) host.innerHTML = svg;
+        });
+      });
+      sec.appendChild(grid);
+      home.appendChild(sec);
+    });
+
+    moduleRoot.innerHTML = '';
+    moduleRoot.appendChild(home);
+  }
+
+  /* ---------- Sidebar auto-hide di halaman depan ---------- */
+  // Halaman depan: nav DIPAKSA ciut (launcher sudah menampilkan semua tool).
+  // Masuk tool: kembalikan sesuai preferensi tersimpan pengguna.
+  function syncNav(isHome) {
+    var app = document.getElementById('app');
+    if (!app) return;
+    if (isHome) app.classList.add('collapsed');
+    else if (localStorage.getItem('civiltools-nav') !== 'collapsed') app.classList.remove('collapsed');
   }
 
   /* ---------- Module loader ---------- */
@@ -195,11 +246,11 @@
   function activate(id) {
     var entry = REGISTRY.filter(function (m) { return m.id === id; })[0];
     if (!entry || entry.status === 'coming-soon' || !entry.entry) {
-      unmountActive(); activeId = null; highlightNav(null); showWelcome();
+      unmountActive(); activeId = null; highlightNav(null); showWelcome(); syncNav(true);
       setMeta(null); trackPageView(); return;
     }
 
-    setMeta(entry); trackPageView();
+    setMeta(entry); trackPageView(); syncNav(false);
 
     // sudah aktif -> no-op
     if (id === activeId && activeModule) return;
@@ -297,7 +348,7 @@
   function route() {
     var id = currentId();
     if (!id) {
-      activeId = null; unmountActive(); highlightNav(null); showWelcome();
+      activeId = null; unmountActive(); highlightNav(null); showWelcome(); syncNav(true);
       setMeta(null); trackPageView(); return;
     }
     activate(id);
@@ -380,12 +431,19 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   }
 
+  /* ---------- Judul nav = link ke halaman depan (SPA, tanpa reload) ---------- */
+  function initHomeLink() {
+    var a = document.getElementById('nav-home');
+    if (a) a.addEventListener('click', function (e) { e.preventDefault(); navigate(''); });
+  }
+
   /* ---------- Boot ---------- */
   renderNav();
   hydrateIcons();
   initTheme();
   initCollapse();
   initAbout();
+  initHomeLink();
   // Back-compat: tautan/PWA lama memakai "#id". Bila datang dengan hash dan
   // path masih root, konversi ke URL bersih "/id" tanpa menambah history.
   (function migrateHash() {

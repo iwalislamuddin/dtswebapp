@@ -224,6 +224,32 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'retaining-stone',
+    name: 'DPT Batu Kali',
+    category: 'Geoteknik',
+    icon: 'modules/retaining-stone/icon.svg',
+    entry: 'modules/retaining-stone/module.js',
+    status: 'active',
+    seo: {
+      title: 'Dinding Penahan Tanah Batu Kali (Gravitasi) — Stabilitas & Volume',
+      desc: 'Desain DPT pasangan batu kali tipe gravitasi: badan trapesium siku-siku (sisi tegak atau miring ke tanah) + tapak persegi, tekanan aktif Rankine (lereng β & beban merata), cek guling, geser, daya dukung (e, qmax/qmin) dan volume pasangan — lengkap potongan interaktif.'
+    }
+  },
+
+  {
+    id: 'retaining-concrete',
+    name: 'DPT Beton Kantilever',
+    category: 'Geoteknik',
+    icon: 'modules/retaining-concrete/icon.svg',
+    entry: 'modules/retaining-concrete/module.js',
+    status: 'active',
+    seo: {
+      title: 'Dinding Penahan Tanah Beton Kantilever — Stabilitas, Penulangan & BOQ (SNI 2847:2019)',
+      desc: 'Desain DPT beton bertulang kantilever: stem trapesium siku-siku, tapak toe/heel bebas menjorok, stabilitas guling-geser-daya dukung, tumpuan terfaktor 1,2D+1,6H+1,6L → tulangan stem/toe/heel per SNI 2847:2019, plus BOQ beton, estimasi besi & bekisting.'
+    }
+  },
+
+  {
     id: 'load-combo',
     name: 'Kombinasi Beban',
     category: 'Umum',

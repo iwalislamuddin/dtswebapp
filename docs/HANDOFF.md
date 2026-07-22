@@ -540,6 +540,63 @@ balok di atas pegas p-y tak-linear, iterasi sekan + under-relaksasi 0,5, **pembe
 
 Registry + SEO ketiga tool; **sw.js precache 3 ikon + CACHE v35 → v38**.
 
+## Tool #25 — Base Plate & Anchor Rod ✅ SELESAI (2026-07-21) — rilis v0.4.0
+
+`modules/base-plate/` (kategori Sambungan). AISC Design Guide 1 (Drake & Elkin) diselaraskan AISC 360-22 J8 +
+ACI 318-19: tumpu beton, tebal pelat leleh lentur (m/n/lambda-n'), rezim konsentrik / momen kecil / momen besar
+(e vs ecrit) + gaya tarik angkur, geser dasar gesekan. Handoff Pu/Mu dari Kombinasi Beban. Tervalidasi eksak
+terhadap contoh 4.1 & 4.7 DG1. Pembagian tugas: tool ini hitung demand tarik T angkur → cek breakout beton di
+tool `anchor-bolt-group` (ACI 318-19 Ch.17). Detail lain: lihat catatan rilis v0.4.0 di index.html.
+
+## Tool #26 & #27 — Dinding Penahan Tanah (DPT) ✅ SELESAI (2026-07-22) — rilis v0.5.0
+
+**#26 `retaining-stone` — DPT Batu Kali (Gravitasi)** (kategori Geoteknik, Tier 2 kanvas):
+- Bentuk badan trapesium siku-siku, **2 opsi orientasi** (segment `opsi`): `tegak` = sisi tegak ke tanah
+  (miring di muka bebas), `miring` = sisi miring ke tanah (tegak di muka bebas). Tapak persegi dengan proyeksi
+  toe & heel bebas ≥ 0.
+- Tekanan aktif **Rankine pada bidang vertikal semu di tepi tumit** (H' = H + tf + ws·tanβ; resultan miring β →
+  Pah/Pav), beban merata q setinggi H' (hanya pendorong, tidak menahan — konservatif). Berat tanah di atas tumit +
+  baji di atas sisi miring + baji lereng ikut menahan.
+- Cek: guling (default ≥2,0), geser dasar μ=tan(k·φ₂)+adhesi k·c₂ (Das, k default 0,67) + **pasif Rankine opsional**
+  (segment, default TIDAK — tanah depan bisa tergali), daya dukung (x̄, e vs B/6, qmax/qmin trapesium → segitiga bila
+  e>B/6, banding q_izin input), volume pasangan per meter & total L.
+- Kanvas: potongan (urugan+lereng, tekstur batu deterministik, diagram tekanan di bidang semu, distribusi tumpu,
+  resultan R + tanda sepertiga tengah) + panel bar kontrol (guling/geser/daya dukung/e) hijau-merah dgn garis batas.
+
+**#27 `retaining-concrete` — DPT Beton Kantilever** (kategori Geoteknik, Tier 2 kanvas):
+- Geometri sama (2 opsi orientasi stem, lebih tipis; toe/heel bebas — bisa menjorok luar, dalam, atau keduanya;
+  proyeksi 0 ditangani: baris desain jadi "— (proyeksi 0)").
+- **Dua lapis analisis**: (1) stabilitas beban LAYAN (identik #26); (2) penulangan dari beban TERFAKTOR
+  U = 1,2D + 1,6H + 1,6L → distribusi tumpu terfaktor qu(x) linier/segitiga (kontak parsial Lc = 3x̄u), lalu:
+  - STEM: Mu = 1,6·cosβ·Ka(γH³/6 + qH²/2) di dasar, d = t_bawah − selimut − db/2.
+  - TOE: ∫[qu(x) − 1,2γc·tf]·lengan dx **numerik 200 pias** (tanah di atas toe diabaikan — konservatif).
+  - HEEL: ∫[1,2(γc·tf + γ₁·hs(x)) + 1,6q − qu(x)]·lengan dx numerik (hs ikut lereng β).
+  - Lentur SNI 2847:2019 (Rn→ρ→As; As,min lentur maks(0,25√fc′;1,4)/fy·b·d dgn alternatif 4/3·As,perlu;
+    s ≤ min(3h;450), cek εt ≥ 0,005), geser satu arah φVc = 0,75·0,17√fc′·b·d.
+  - Susut-suhu: stem horizontal 0,0020·Ag (2 muka), muka depan vertikal 0,0012·Ag, tapak memanjang 0,0018·Ag.
+- **BOQ**: volume beton, estimasi besi per set tulangan (6 set, kg/m' & total; catatan +10–15% overlap/waste),
+  rasio kg/m³, bekisting. Kanvas: potongan + garis tulangan merah (stem→bengkok ke tapak, toe bawah, heel atas) +
+  6 bar kontrol (guling/geser/daya dukung/stem/toe/heel).
+- **Verifikasi hand-check live** (default): Pa=38,88 kN/m, FS guling 2,72 (stone) / Mu stem 67,2 kNm, As 704 mm²
+  (aturan 4/3 menentukan), φMn 92,5 kNm, rasio besi 40 kg/m³ — semua cocok hitungan manual. Edge case toe=0 &
+  distribusi segitiga terfaktor teruji. Keduanya TANPA air tanah & gempa (dicatat di UI + laporan).
+
+## Rilis v0.5.0 (2026-07-22) ✅
+
+27 tool aktif. APP_VER v0.5.0 di semua module.js, SW cache `civil-tools-v42` (+2 ikon precache),
+catatan rilis di index.html, sitemap +2 URL (retaining-stone, retaining-concrete), port preview 5207.
+
+**Shell UX (v0.5.0):**
+- Judul nav "EDFS Civil Tools" = `<a id="nav-home" href="/">` — di-intercept `initHomeLink()` → `navigate('')`
+  (SPA, tanpa reload; href tetap valid utk SEO/middle-click).
+- **Halaman depan = launcher**: `showWelcome()` kini merender `.home` — hero + grid kartu tool per kategori
+  (`.home-cat` > `.home-grid` > `.home-card`, ikon 22px via `fetchIcon()` — refactor dari `hydrateIcons`,
+  cache ikon dipakai bersama nav). Kategori `Dev` (_template) disembunyikan. Kelas `.welcome` tetap dipakai
+  untuk state "Memuat…" & error.
+- **Nav auto-hide di halaman depan**: `syncNav(isHome)` — rute home MEMAKSA `#app.collapsed`; masuk tool
+  mengembalikan sesuai preferensi `localStorage('civiltools-nav')` (preferensi TIDAK ditimpa oleh paksaan).
+  Toggle logo tetap berfungsi di mana pun.
+
 ## Langkah berikutnya
 
 1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja

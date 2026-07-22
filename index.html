@@ -83,7 +83,7 @@
         <button class="logo-btn" id="nav-toggle" title="Ciutkan / luaskan menu" aria-label="Ciutkan atau luaskan menu">
           <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="30" height="32">
         </button>
-        <span class="title">EDFS Civil Tools<small>Alat Bantu Rekayasa Sipil</small></span>
+        <a class="title" id="nav-home" href="/" title="Ke halaman depan">EDFS Civil Tools<small>Alat Bantu Rekayasa Sipil</small></a>
       </div>
       <div class="nav-list" id="nav-list"><!-- diisi shell.js --></div>
       <div class="nav-foot">
@@ -108,7 +108,7 @@
         <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
         <div>
           <div class="modal-title" id="about-title">EDFS Civil Tools</div>
-          <div class="modal-ver">v0.4.0 · Alat Bantu Rekayasa Sipil</div>
+          <div class="modal-ver">v0.5.0 · Alat Bantu Rekayasa Sipil</div>
         </div>
       </div>
 
@@ -121,6 +121,13 @@
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
         <div class="modal-relnotes">
+          <div class="rel-ver">v0.5.0 — 2026-07-22</div>
+          <ul class="modal-list">
+            <li><b>27 tool aktif</b> — 2 tool baru <b>Dinding Penahan Tanah (DPT)</b> di kategori Geoteknik.</li>
+            <li><b>DPT Batu Kali (Gravitasi)</b>: badan trapesium siku-siku 2 opsi orientasi (sisi tegak / sisi miring ke tanah) + tapak persegi; tekanan aktif Rankine (lereng β &amp; beban merata q), cek guling, geser (opsi tahanan pasif), daya dukung (e vs B/6, qmax/qmin) &amp; volume pasangan — potongan interaktif dengan diagram tekanan &amp; distribusi tumpu.</li>
+            <li><b>DPT Beton Kantilever</b>: stem trapesium siku-siku, tapak toe/heel bebas menjorok (luar/dalam/keduanya); stabilitas layan + tumpuan terfaktor 1,2D+1,6H+1,6L → <b>penulangan stem/toe/heel</b> per SNI 2847:2019 (lentur, geser satu arah, susut-suhu) + <b>BOQ</b> beton, estimasi besi per set tulangan &amp; bekisting.</li>
+            <li><b>Halaman depan baru</b>: launcher ikon semua tool dikelompokkan per kategori; menu navigasi otomatis ciut di halaman depan; judul "EDFS Civil Tools" kini tautan ke halaman depan.</li>
+          </ul>
           <div class="rel-ver">v0.4.0 — 2026-07-21</div>
           <ul class="modal-list">
             <li><b>25 tool aktif</b> — tool baru <b>Base Plate &amp; Anchor Rod</b>.</li>
