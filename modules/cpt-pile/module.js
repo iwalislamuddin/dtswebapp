@@ -477,6 +477,67 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — profil qc(z) + tiang + zona Schmertmann 8D/4D + grafik kapasitas
+  function figCPTPile(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var px0 = 116, pw = 210, top = 18, ph = 172, bot = top + ph;
+    var zMax = Math.max(r.zMax, r.Lp + 4 * r.D) * 1.03;
+    var qcMax = 1;
+    r.pts.forEach(function (p) { qcMax = Math.max(qcMax, p.qc); });
+    qcMax *= 1.08;
+    function X(qc) { return px0 + qc / qcMax * pw; }
+    function Y(z) { return top + z / zMax * ph; }
+    // zona rata-rata ujung: L-8D..L (abu muda) & L..L+4D (abu sedang)
+    ops.push({ t: 'rect', x: px0, y: Y(Math.max(0, r.Lp - 8 * r.D)), w: pw, h: Y(r.Lp) - Y(Math.max(0, r.Lp - 8 * r.D)), fill: true, g: 0.93 });
+    ops.push({ t: 'rect', x: px0, y: Y(r.Lp), w: pw, h: Y(Math.min(zMax, r.Lp + 4 * r.D)) - Y(r.Lp), fill: true, g: 0.88 });
+    // grid + tick
+    var stQ = F.niceStep(qcMax / 1000, 4) * 1000;
+    for (var tq = 0; tq <= qcMax; tq += stQ) {
+      ops.push({ t: 'line', x1: X(tq), y1: top, x2: X(tq), y2: bot, lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: X(tq), y: top - 4, s: numR(tq / 1000, 0), size: 6.5, align: 'c', g: 0.3 });
+    }
+    var stZ = F.niceStep(zMax, 6);
+    for (var tz = 0; tz <= zMax; tz += stZ) {
+      ops.push({ t: 'line', x1: px0, y1: Y(tz), x2: px0 + pw, y2: Y(tz), lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: px0 - 5, y: Y(tz) + 2.3, s: numR(tz, 0), size: 6.5, align: 'r', g: 0.3 });
+    }
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0, y2: bot, lw: 0.9 });
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0 + pw, y2: top, lw: 0.9 });
+    ops.push({ t: 'text', x: px0 + pw + 6, y: top - 4, s: 'qc (MPa)', size: 6.5 });
+    ops.push({ t: 'text', x: px0 - 5, y: bot + 10, s: 'z (m)', size: 6.5, align: 'r' });
+    // kurva qc(z)
+    var step = Math.max(1, Math.ceil(r.pts.length / 90));
+    var pts2 = [];
+    for (var i = 0; i < r.pts.length; i += step) pts2.push([X(r.pts[i].qc), Y(Math.min(r.pts[i].z, zMax))]);
+    ops.push({ t: 'poly', pts: pts2, lw: 1.1 });
+    // tiang (rect gelap) dari 0..Lp di posisi kiri plot
+    var xPile = px0 + 16, wPile = 9;
+    ops.push({ t: 'rect', x: xPile, y: top, w: wPile, h: Y(r.Lp) - top, fill: true, g: 0.3 });
+    ops.push({ t: 'text', x: xPile + wPile + 3, y: Y(r.Lp) - 3, s: 'L=' + numR(r.Lp, 1) + ' m', size: 6, g: 0.25 });
+    ops.push({ t: 'text', x: px0 + pw - 4, y: Y(r.Lp) - 3, s: 'zona 8D/4D', size: 5.5, align: 'r', g: 0.45 });
+    /* --- grafik kapasitas (kanan) --- */
+    var bx0 = 396, bw = 100, by = 40;
+    var rows = [['Qp', r.Qp, 0.25], ['Qs', r.Qs, 0.5], ['Qu', r.Qu, 0.7], ['Q_izin', r.Qall, 0.1]];
+    var maxV = Math.max(r.Qu, r.Pw || 0) * 1.08;
+    rows.forEach(function (rw, i3) {
+      var y = by + i3 * 20;
+      ops.push({ t: 'text', x: bx0 - 6, y: y + 8, s: rw[0], size: 6.5, align: 'r' });
+      ops.push({ t: 'rect', x: bx0, y: y, w: rw[1] / maxV * bw, h: 12, fill: true, g: rw[2] });
+      ops.push({ t: 'text', x: bx0 + rw[1] / maxV * bw + 4, y: y + 8, s: numR(rw[1], 0), size: 6.5 });
+    });
+    ops.push({ t: 'text', x: bx0 + bw / 2, y: by - 9, s: 'kN', size: 6.5, align: 'c', g: 0.3 });
+    if (r.Pw > 0) {
+      ops.push({ t: 'line', x1: bx0 + r.Pw / maxV * bw, y1: by - 5, x2: bx0 + r.Pw / maxV * bw, y2: by + 82, lw: 1, dash: [3, 2] });
+      ops.push({ t: 'text', x: bx0 + r.Pw / maxV * bw, y: by + 91, s: 'P=' + numR(r.Pw, 0), size: 6, align: 'c' });
+    }
+    var yCap = bot + 24;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Profil qc & tiang ' + (r.shape === 'circle' ? 'D=' : 's=') +
+      numR(r.D, 2) + ' m - qp=' + numR(r.qp / 1000, 2) + ' MPa, Q_izin=' + numR(r.Qall, 0) + ' kN', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Profil qc, tiang & kapasitas - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -493,6 +554,8 @@
     L.push(rowR('Ap / K', numR(r.Ap, 4) + ' m2 / ' + numR(r.K, 3) + ' m'));
     L.push(rowR('Data CPT', r.nPts + ' titik, 0-' + numR(r.zMax, 1) + ' m'));
     L.push(rowR('Sumber selimut', r.fsrc === 'data' ? 'kolom fs sondir' : 'Rf ' + r.Rf + '% * qc'));
+    L.push('');
+    L.push(figCPTPile(r));
     L.push('');
     L.push(' TAHANAN UJUNG'); L.push(ruleR('='));
     L.push(rowR('qc1 (L..L+4D)', numR(r.qc1 / 1000, 2) + ' MPa'));
@@ -522,7 +585,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

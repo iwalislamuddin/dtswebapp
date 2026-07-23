@@ -653,6 +653,102 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — profil tanah + sebaran tegangan 2:1 + lapisan lempung
+  function figProfile(r) {
+    var F = window.CivilReport.fig;
+    var c = r.consol, ops = [];
+    var cxF = 240, yg = 30;
+    var deep = c.active ? (c.ztop + c.Hc) : (r.Df + 2 * r.B);
+    var s = Math.min(150 / Math.max(deep, 0.5), 120 / Math.max(r.B * 2.2, 1));
+    function Y(z) { return yg + z * s; }                  // z dari muka tanah
+    var Bs = r.B * s, yBase = Y(r.Df);
+    // muka tanah + hatch
+    ops.push({ t: 'line', x1: 90, y1: yg, x2: 420, y2: yg, lw: 1 });
+    for (var i = 0; i < 16; i++) {
+      var xh = 90 + 330 * i / 15;
+      ops.push({ t: 'line', x1: xh, y1: yg, x2: xh - 6, y2: yg - 6, lw: 0.4, g: 0.6 });
+    }
+    // lapisan lempung (band abu)
+    if (c.active) {
+      ops.push({ t: 'rect', x: 90, y: Y(c.ztop), w: 330, h: c.Hc * s, fill: true, g: 0.9 });
+      ops.push({ t: 'rect', x: 90, y: Y(c.ztop), w: 330, h: c.Hc * s, lw: 0.4, g: 0.6 });
+      ops.push({ t: 'text', x: 96, y: Y(c.ztop) + 10, s: 'LEMPUNG  e0=' + numR(c.e0, 2) + ', Cc=' + numR(c.Cc, 3) +
+        ', Hc=' + numR(c.Hc, 2) + ' m', size: 6, g: 0.3 });
+    }
+    // fondasi + q0
+    var tF = Math.max(8, Bs * 0.16);
+    ops.push({ t: 'rect', x: cxF - Bs / 2, y: yBase - tF, w: Bs, h: tF, fill: true, g: 0.35 });
+    F.arrow(ops, cxF, yBase - tF - 26, cxF, yBase - tF - 4, { lw: 1 });
+    ops.push({ t: 'text', x: cxF + 5, y: yBase - tF - 14, s: 'q0=' + numR(r.q0, 0) + ' kPa', size: 6.5 });
+    F.dimH(ops, cxF - Bs / 2, cxF + Bs / 2, yBase + 14, 'B=' + numR(r.B, 2) + ' m');
+    // sebaran 2:1 (dari tepi dasar, 1H:2V) hingga dasar lempung / kedalaman gambar
+    var zEnd = deep - r.Df;
+    ops.push({ t: 'line', x1: cxF - Bs / 2, y1: yBase, x2: cxF - Bs / 2 - zEnd * s / 2, y2: Y(deep), lw: 0.6, g: 0.4, dash: [4, 3] });
+    ops.push({ t: 'line', x1: cxF + Bs / 2, y1: yBase, x2: cxF + Bs / 2 + zEnd * s / 2, y2: Y(deep), lw: 0.6, g: 0.4, dash: [4, 3] });
+    ops.push({ t: 'text', x: cxF + Bs / 2 + zEnd * s / 4 + 6, y: Y(r.Df + zEnd / 2), s: '2:1', size: 6, g: 0.35 });
+    // dsigma di lempung (atas/tengah/bawah)
+    if (c.active) {
+      [[c.ztop, c.dTop, 'atas'], [c.ztop + c.Hc / 2, c.dMid, 'tengah'], [c.ztop + c.Hc, c.dBot, 'bawah']].forEach(function (row) {
+        ops.push({ t: 'text', x: 426, y: Y(row[0]) + 2.3, s: 'ds ' + row[2] + ' = ' + numR(row[1], 1) + ' kPa', size: 6, g: 0.3 });
+        ops.push({ t: 'line', x1: 420, y1: Y(row[0]), x2: 423, y2: Y(row[0]), lw: 0.4, g: 0.5 });
+      });
+    }
+    // dim Df kiri
+    if (r.Df > 0) {
+      F.dimV(ops, yg, yBase, 78, '');
+      ops.push({ t: 'text', x: 72, y: (yg + yBase) / 2 + 2.5, s: 'Df=' + numR(r.Df, 2), size: 6.5, align: 'r' });
+    }
+    var yCap = Y(deep) + 26;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Profil tanah & sebaran tegangan 2:1 - Se=' + numR(r.Se, 1) +
+      ' mm, Sc=' + numR(r.Sc, 1) + ' mm, total ' + numR(r.Stotal, 1) + ' mm', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Profil tanah & distribusi tegangan - lihat versi PDF' } };
+  }
+
+  // Gbr. 2 — kurva penurunan vs waktu (Terzaghi Tv-U)
+  function figTime(r) {
+    var F = window.CivilReport.fig;
+    var rt = r.rate, ops = [];
+    var px0 = 96, pw = 360, top = 14, ph = 140, bot = top + ph;
+    var tMax = Math.max(rt.t90 * 1.6, rt.t ? rt.t * 1.2 : 0, 1);
+    var Smax = (r.Se + r.Sc) * 1.12;
+    function X(t) { return px0 + t / tMax * pw; }
+    function Y(S) { return top + S / Smax * ph; }        // penurunan ke bawah
+    var stT = F.niceStep(tMax, 6), stS = F.niceStep(Smax, 5);
+    for (var tt = 0; tt <= tMax; tt += stT) {
+      ops.push({ t: 'line', x1: X(tt), y1: top, x2: X(tt), y2: bot, lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: X(tt), y: bot + 10, s: numR(tt, stT < 1 ? 1 : 0), size: 6.5, align: 'c', g: 0.3 });
+    }
+    for (var ss = 0; ss <= Smax; ss += stS) {
+      ops.push({ t: 'line', x1: px0, y1: Y(ss), x2: px0 + pw, y2: Y(ss), lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: px0 - 5, y: Y(ss) + 2.3, s: String(Math.round(ss)), size: 6.5, align: 'r', g: 0.3 });
+    }
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0, y2: bot, lw: 0.9 });
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0 + pw, y2: top, lw: 0.9 });
+    ops.push({ t: 'text', x: px0 - 5, y: top - 4, s: 'S (mm)', size: 7, align: 'r' });
+    ops.push({ t: 'text', x: px0 + pw / 2, y: bot + 21, s: 't (tahun)', size: 7, align: 'c' });
+    // kurva St(t) = Se + U(Tv)*Sc
+    var pts = [];
+    for (var i = 0; i <= 80; i++) {
+      var t2 = tMax * i / 80;
+      var U = degreeU(rt.cv * t2 / (rt.Hdr * rt.Hdr));
+      pts.push([X(t2), Y(r.Se + U * r.Sc)]);
+    }
+    ops.push({ t: 'poly', pts: pts, lw: 1.2 });
+    // marker t50 / t90 / titik t
+    [[rt.t50, 't50'], [rt.t90, 't90']].forEach(function (m) {
+      if (m[0] > tMax) return;
+      ops.push({ t: 'line', x1: X(m[0]), y1: top, x2: X(m[0]), y2: bot, lw: 0.5, g: 0.45, dash: [4, 3] });
+      ops.push({ t: 'text', x: X(m[0]), y: top - 3, s: m[1] + '=' + numR(m[0], 2), size: 6, align: 'c', g: 0.35 });
+    });
+    if (rt.t) F.cross(ops, X(rt.t), Y(rt.St), 't=' + numR(rt.t, 1) + ' th, St=' + numR(rt.St, 1));
+    var yCap = bot + 32;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 2  Kurva penurunan-waktu (Terzaghi, cv=' + numR(rt.cv, 2) +
+      ' m2/th, drainase ' + (rt.drain === 'double' ? 'ganda' : 'tunggal') + ')', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 2 Kurva penurunan vs waktu - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -716,6 +812,9 @@
     if (rt.active && rt.t) L.push(rowR('   St pada t=' + numR(rt.t, 1) + ' th', numR(rt.St, 2) + ' mm'));
     L.push(ruleR('='));
     L.push('');
+    L.push(figProfile(r));
+    L.push('');
+    if (rt.active) { L.push(figTime(r)); L.push(''); }
     var notes = r.warn.slice();
     if (notes.length) {
       L.push(' CATATAN'); L.push(ruleR('-'));
@@ -731,7 +830,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

@@ -19,6 +19,9 @@
      eksak dari permukaan — bukan pendekatan Bresler).
    - Visual 3D: permukaan desain (mesh transparan + meridian/paralel),
      sumbu P/Mx/My, kontur iris di Pu, titik demand; orbit/pan/zoom.
+     Toggle tampilan: permukaan 3D ⇄ penampang kolom (kanvas 2D).
+   - Laporan PDF menyertakan gambar vektor: penampang, kurva P-M
+     uniaksial, dan kontur biaksial di P=Pu (via core/report.js fig ops).
 
    TIDAK termasuk: kelangsingan/orde-2 (Ps. 6.6.4 — Mu sudah diperbesar),
    detail gempa (Ps. 18), penampang non-persegi, tulangan tak-simetris.
@@ -438,6 +441,113 @@
   }
 
   /* ============================================================
+     PENAMPANG 2D — kanvas tampilan alternatif dari permukaan 3D
+     ============================================================ */
+  function drawSection(ctx, w, h) {
+    var r = state.result;
+    var cInk = css('--ink') || '#e8ead8', cDim = css('--ink-dim') || '#acb89b';
+    var cFaint = css('--ink-faint') || '#7c8770', cAmber = css('--amber') || '#f28f3b';
+    var cSage = css('--sage') || '#a4c2a5', cBg = css('--bg') || '#171a12';
+    if (!r || !r.valid) {
+      ctx.fillStyle = cFaint;
+      ctx.font = '12px "Space Grotesk", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Lengkapi input untuk melihat penampang.', w / 2, h / 2);
+      return;
+    }
+    var s = Math.min((w - 170) / r.b, (h - 130) / r.h);
+    if (!isFinite(s) || s <= 0) return;
+    var bs = r.b * s, hs = r.h * s;
+    var cx = w / 2 - 22, cy = h / 2 + 6;
+    var x0 = cx - bs / 2, y0 = cy - hs / 2;
+
+    // sumbu penampang (x kanan, y atas) — garis pusat dashed
+    ctx.save();
+    ctx.setLineDash([6, 5]);
+    ctx.strokeStyle = cFaint; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0 - 26, cy); ctx.lineTo(x0 + bs + 26, cy);
+    ctx.moveTo(cx, y0 - 26); ctx.lineTo(cx, y0 + hs + 26);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = cDim;
+    ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left'; ctx.fillText('x', x0 + bs + 30, cy + 4);
+    ctx.textAlign = 'center'; ctx.fillText('y', cx, y0 - 32);
+
+    // beton
+    ctx.globalAlpha = 0.13;
+    ctx.fillStyle = cSage;
+    ctx.fillRect(x0, y0, bs, hs);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = cInk; ctx.lineWidth = 1.6;
+    ctx.strokeRect(x0, y0, bs, hs);
+
+    // sengkang (ilustratif — posisi dari d' dan db)
+    var ti = Math.max(3, (r.dp - r.db / 2 - 4) * s);
+    ctx.strokeStyle = cDim; ctx.lineWidth = 1.2;
+    state.UI.roundRect(ctx, x0 + ti, y0 + ti, bs - 2 * ti, hs - 2 * ti, Math.min(7, ti));
+    ctx.stroke();
+
+    // tulangan
+    var rb = Math.max(3, r.db * s / 2);
+    r.bars.forEach(function (bar) {
+      ctx.beginPath();
+      ctx.arc(cx + bar.x * s, cy - bar.y * s, rb, 0, 2 * Math.PI);
+      ctx.fillStyle = cAmber; ctx.fill();
+      ctx.strokeStyle = cBg; ctx.lineWidth = 1; ctx.stroke();
+    });
+
+    // helper tick dimensi (garis miring 45° gaya gambar teknik)
+    function tick(x, y) {
+      ctx.beginPath();
+      ctx.moveTo(x - 4, y + 4); ctx.lineTo(x + 4, y - 4);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = cDim; ctx.lineWidth = 1;
+    ctx.fillStyle = cDim;
+    ctx.font = '11px "JetBrains Mono", monospace';
+
+    // dimensi b (bawah)
+    var yd = y0 + hs + 30;
+    ctx.beginPath(); ctx.moveTo(x0, yd); ctx.lineTo(x0 + bs, yd); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0, y0 + hs + 6); ctx.lineTo(x0, yd + 4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0 + bs, y0 + hs + 6); ctx.lineTo(x0 + bs, yd + 4); ctx.stroke();
+    tick(x0, yd); tick(x0 + bs, yd);
+    ctx.textAlign = 'center';
+    ctx.fillText('b = ' + r.b, x0 + bs / 2, yd + 15);
+
+    // dimensi h (kanan)
+    var xd = x0 + bs + 42;
+    ctx.beginPath(); ctx.moveTo(xd, y0); ctx.lineTo(xd, y0 + hs); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0 + bs + 6, y0); ctx.lineTo(xd + 4, y0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0 + bs + 6, y0 + hs); ctx.lineTo(xd + 4, y0 + hs); ctx.stroke();
+    tick(xd, y0); tick(xd, y0 + hs);
+    ctx.save();
+    ctx.translate(xd + 14, y0 + hs / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillText('h = ' + r.h, 0, 0);
+    ctx.restore();
+
+    // leader d' ke batang sudut kiri-atas
+    var bx1 = x0 + r.dp * s, by1 = y0 + r.dp * s;
+    ctx.strokeStyle = cFaint;
+    ctx.beginPath(); ctx.moveTo(bx1, by1); ctx.lineTo(x0 - 18, y0 - 14); ctx.stroke();
+    ctx.fillStyle = cDim;
+    ctx.textAlign = 'right';
+    ctx.fillText("d' = " + r.dp, x0 - 22, y0 - 12);
+
+    // ringkasan bawah
+    ctx.textAlign = 'center';
+    ctx.fillStyle = cFaint;
+    ctx.font = '11px "JetBrains Mono", monospace';
+    ctx.fillText(r.nBars + 'D' + r.db + '  ·  ρg = ' + (r.rho * 100).toFixed(2) + ' %  ·  sengkang ilustratif',
+      w / 2, h - 12);
+    ctx.restore();
+  }
+
+  /* ============================================================
      RENDER DOM + WIRING (pola tier-3, ikut anchor-bolt-group)
      ============================================================ */
   function injectStyle() {
@@ -457,7 +567,15 @@
       '.pm-fitwrap{position:absolute;left:10px;top:38px}' +
       '.pm-fitbtn{font:11px "Space Grotesk",sans-serif;background:var(--panel-solid);color:var(--ink-dim);' +
         'border:1px solid var(--line);border-radius:7px;padding:4px 9px;cursor:pointer}' +
-      '.pm-fitbtn:hover{border-color:var(--amber);color:var(--amber)}';
+      '.pm-fitbtn:hover{border-color:var(--amber);color:var(--amber)}' +
+      '.pm-viewseg{position:absolute;right:10px;top:8px;z-index:4;display:flex;overflow:hidden;' +
+        'border:1px solid var(--line);border-radius:8px;background:var(--panel-solid)}' +
+      '.pm-viewseg button{font:11px "Space Grotesk",sans-serif;background:transparent;color:var(--ink-dim);' +
+        'border:0;padding:5px 11px;cursor:pointer}' +
+      '.pm-viewseg button.active{background:var(--amber);color:var(--bg)}' +
+      '.pm-sec{position:absolute;inset:0;z-index:2;display:none;' +
+        'background:radial-gradient(130% 130% at 30% 0%, var(--bg2), var(--bg))}' +
+      '.pm-view .cap{z-index:3}';
     document.head.appendChild(s);
   }
 
@@ -525,6 +643,33 @@
       if (state.controls && state.fitRadius) state.controls.setView([0, 0, 0], state.fitRadius);
     });
     fitWrap.appendChild(fitBtn); view.appendChild(fitWrap);
+
+    /* --- toggle tampilan: permukaan 3D ⇄ penampang kolom (kanvas 2D) --- */
+    var secDiv = UI.el('div', 'pm-sec');
+    view.appendChild(secDiv);
+    state.sec = window.CivilCanvas2D ? window.CivilCanvas2D.create(secDiv, drawSection) : null;
+    var segWrap = UI.el('div', 'pm-viewseg');
+    var btn3d = UI.el('button', 'active', '3D P–M');
+    var btnSec = UI.el('button', null, 'Penampang');
+    btn3d.type = 'button'; btnSec.type = 'button';
+    function setMode(m) {
+      state.viewMode = m;
+      btn3d.classList.toggle('active', m === '3d');
+      btnSec.classList.toggle('active', m === 'sec');
+      secDiv.style.display = m === 'sec' ? 'block' : 'none';
+      fitWrap.style.display = m === 'sec' ? 'none' : '';
+      if (state.R && state.loopFn) {
+        if (m === 'sec') state.R.stop();                 // hemat GPU saat 3D tertutup
+        else state.R.start(state.loopFn);
+      }
+      if (m === 'sec' && state.sec) state.sec.resize();   // ukur ulang setelah di-show
+    }
+    btn3d.addEventListener('click', function () { setMode('3d'); });
+    btnSec.addEventListener('click', function () { setMode('sec'); });
+    segWrap.appendChild(btn3d); segWrap.appendChild(btnSec);
+    view.appendChild(segWrap);
+    state.viewMode = '3d';
+
     work.appendChild(view);
     work.appendChild(results);
     layout.appendChild(work);
@@ -534,6 +679,7 @@
     var R = state.runtime.getRenderer ? state.runtime.getRenderer() : null;
     if (!R) {
       view.appendChild(UI.el('div', 'ck-empty', 'WebGL tidak tersedia di browser ini — visual 3D dinonaktifkan. Hasil numerik tetap dihitung.'));
+      setMode('sec');                                    // fallback: tampilkan penampang 2D
     } else {
       state.R = R;
       var sc = buildScene();
@@ -544,10 +690,11 @@
       });
       state.themeObs = new MutationObserver(function () { rebuild(state.result); });
       state.themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-      R.start(function () {
+      state.loopFn = function () {
         if (state.controls) state.controls.update();
         R.renderer.render(sc.scene, sc.cam);
-      });
+      };
+      R.start(state.loopFn);
     }
 
     update(form.getValues(), results);
@@ -564,6 +711,7 @@
       state.cap.set('Diagram P–M kolom');
       results.appendChild(UI.el('div', 'ck-empty', r.warn[0] || 'Lengkapi input.'));
       rebuild(r);
+      if (state.sec) state.sec.redraw();
       return;
     }
 
@@ -628,12 +776,13 @@
       'penampang non-persegi. Verifikasi oleh insinyur penanggung jawab.'));
 
     rebuild(r);
+    if (state.sec) state.sec.redraw();
   }
 
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.5.0', RW = 62;
+  var APP_VER = 'v0.5.1', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }
@@ -660,6 +809,164 @@
     return lines.length ? lines : [''];
   }
 
+  /* ---------- gambar vektor untuk PDF (core/report.js fig ops) ----------
+     Koordinat lokal pt, origin kiri-atas, y ke bawah, lebar tersedia 528. */
+  function niceStep(range, n) {
+    var raw = Math.abs(range) / Math.max(1, n);
+    if (raw <= 0 || !isFinite(raw)) return 1;
+    var p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+    var m = raw / p;
+    return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p;
+  }
+  function dimHOps(ops, xa, xb, y, label) {
+    ops.push({ t: 'line', x1: xa, y1: y, x2: xb, y2: y, lw: 0.6 });
+    [xa, xb].forEach(function (x) {
+      ops.push({ t: 'line', x1: x, y1: y - 4, x2: x, y2: y + 4, lw: 0.6 });
+      ops.push({ t: 'line', x1: x - 2.5, y1: y + 2.5, x2: x + 2.5, y2: y - 2.5, lw: 0.6 });
+    });
+    ops.push({ t: 'text', x: (xa + xb) / 2, y: y - 3, s: label, size: 7, align: 'c' });
+  }
+  function dimVOps(ops, ya, yb, x, label) {
+    ops.push({ t: 'line', x1: x, y1: ya, x2: x, y2: yb, lw: 0.6 });
+    [ya, yb].forEach(function (y) {
+      ops.push({ t: 'line', x1: x - 4, y1: y, x2: x + 4, y2: y, lw: 0.6 });
+      ops.push({ t: 'line', x1: x - 2.5, y1: y + 2.5, x2: x + 2.5, y2: y - 2.5, lw: 0.6 });
+    });
+    ops.push({ t: 'text', x: x + 6, y: (ya + yb) / 2 + 2.5, s: label, size: 7 });
+  }
+
+  // Gbr. 1 — penampang kolom (beton, sengkang ilustratif, tulangan, dimensi)
+  function figSection(r) {
+    var ops = [];
+    var s = Math.min(230 / r.b, 140 / r.h);
+    var bs = r.b * s, hs = r.h * s;
+    var cx = 264, y0 = 22, x0 = cx - bs / 2, cyc = y0 + hs / 2;
+    // sumbu penampang
+    ops.push({ t: 'line', x1: x0 - 18, y1: cyc, x2: x0 + bs + 18, y2: cyc, lw: 0.4, g: 0.6, dash: [4, 3] });
+    ops.push({ t: 'line', x1: cx, y1: y0 - 14, x2: cx, y2: y0 + hs + 14, lw: 0.4, g: 0.6, dash: [4, 3] });
+    ops.push({ t: 'text', x: x0 + bs + 21, y: cyc + 2.5, s: 'x', size: 7, g: 0.4 });
+    ops.push({ t: 'text', x: cx + 4, y: y0 - 8, s: 'y', size: 7, g: 0.4 });
+    // beton + sengkang
+    ops.push({ t: 'rect', x: x0, y: y0, w: bs, h: hs, lw: 1.1 });
+    var ti = Math.max(3, (r.dp - r.db / 2 - 4) * s);
+    ops.push({ t: 'rect', x: x0 + ti, y: y0 + ti, w: bs - 2 * ti, h: hs - 2 * ti, lw: 0.7, g: 0.45 });
+    // tulangan
+    var rb = Math.max(1.8, r.db * s / 2);
+    r.bars.forEach(function (bar) {
+      ops.push({ t: 'circle', cx: cx + bar.x * s, cy: cyc - bar.y * s, r: rb, fill: true });
+    });
+    // dimensi & leader d'
+    dimHOps(ops, x0, x0 + bs, y0 + hs + 24, 'b = ' + r.b);
+    dimVOps(ops, y0, y0 + hs, x0 + bs + 36, 'h = ' + r.h);
+    ops.push({ t: 'line', x1: x0 + r.dp * s, y1: y0 + r.dp * s, x2: x0 - 20, y2: y0 - 8, lw: 0.5, g: 0.4 });
+    ops.push({ t: 'text', x: x0 - 22, y: y0 - 8, s: "d' = " + r.dp, size: 6.5, align: 'r', g: 0.2 });
+    var yCap = y0 + hs + 40;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Penampang kolom ' + r.b + 'x' + r.h +
+      ' - ' + r.nBars + 'D' + r.db + ' (sengkang ilustratif)', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Penampang kolom - lihat versi PDF' } };
+  }
+
+  // Gbr. 2 — kurva interaksi phiPn-phiMn uniaksial (meridian theta=90deg & 0deg)
+  function figPM(r) {
+    var ops = [];
+    var px0 = 96, pw = 356, top = 14, ph = 188, bot = top + ph;
+    var rowX = r.surf[NTH / 4], rowY = r.surf[0];
+    var maxM = 1;
+    rowX.forEach(function (p) { maxM = Math.max(maxM, Math.abs(p.Mx)); });
+    rowY.forEach(function (p) { maxM = Math.max(maxM, Math.abs(p.My)); });
+    maxM = Math.max(maxM, Math.abs(r.Mux), Math.abs(r.Muy)) * 1.06;
+    var Pmax = r.phiPnMax * 1.12, Pmin = r.phiPnt * 1.1;
+    function MX(M) { return px0 + Math.abs(M) / maxM * pw; }
+    function PY(P) { return top + (Pmax - P) / (Pmax - Pmin) * ph; }
+    // grid + tick P
+    var stP = niceStep(Pmax - Pmin, 6);
+    for (var tp = Math.ceil(Pmin / stP) * stP; tp <= Pmax; tp += stP) {
+      ops.push({ t: 'line', x1: px0, y1: PY(tp), x2: px0 + pw, y2: PY(tp), lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: px0 - 5, y: PY(tp) + 2.3, s: String(Math.round(tp)), size: 6.5, align: 'r', g: 0.3 });
+    }
+    // grid + tick M
+    var stM = niceStep(maxM, 5);
+    for (var tm = 0; tm <= maxM; tm += stM) {
+      ops.push({ t: 'line', x1: MX(tm), y1: top, x2: MX(tm), y2: bot, lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: MX(tm), y: bot + 10, s: String(Math.round(tm)), size: 6.5, align: 'c', g: 0.3 });
+    }
+    // sumbu
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0, y2: bot, lw: 0.9 });
+    if (Pmin < 0 && Pmax > 0)
+      ops.push({ t: 'line', x1: px0, y1: PY(0), x2: px0 + pw, y2: PY(0), lw: 0.9 });
+    ops.push({ t: 'text', x: px0, y: top - 4, s: 'phiPn (kN)', size: 7 });
+    ops.push({ t: 'text', x: px0 + pw / 2, y: bot + 21, s: 'phiMn (kN.m)', size: 7, align: 'c' });
+    // kurva X (tebal) & Y (putus-putus)
+    ops.push({ t: 'poly', pts: rowX.map(function (p) { return [MX(p.Mx), PY(p.P)]; }), lw: 1.2 });
+    ops.push({ t: 'poly', pts: rowY.map(function (p) { return [MX(p.My), PY(p.P)]; }), lw: 0.9, g: 0.45, dash: [3, 2] });
+    // legenda
+    var lx = px0 + pw - 118, ly = top + 10;
+    ops.push({ t: 'line', x1: lx, y1: ly, x2: lx + 18, y2: ly, lw: 1.2 });
+    ops.push({ t: 'text', x: lx + 22, y: ly + 2.3, s: 'thd sumbu-x (Mx)', size: 6.5 });
+    ops.push({ t: 'line', x1: lx, y1: ly + 11, x2: lx + 18, y2: ly + 11, lw: 0.9, g: 0.45, dash: [3, 2] });
+    ops.push({ t: 'text', x: lx + 22, y: ly + 13.3, s: 'thd sumbu-y (My)', size: 6.5, g: 0.35 });
+    // titik demand
+    function marker(M, P, lab, g) {
+      if (P > Pmax || P < Pmin || Math.abs(M) > maxM) return;
+      var x = MX(M), y = PY(P);
+      ops.push({ t: 'line', x1: x - 3.5, y1: y - 3.5, x2: x + 3.5, y2: y + 3.5, lw: 1.2, g: g });
+      ops.push({ t: 'line', x1: x - 3.5, y1: y + 3.5, x2: x + 3.5, y2: y - 3.5, lw: 1.2, g: g });
+      ops.push({ t: 'text', x: x + 6, y: y - 3, s: lab, size: 6, g: g });
+    }
+    if (r.dc != null) {
+      marker(r.Mux, r.Pu, '(|Mux|, Pu)', 0);
+      if (Math.abs(r.Muy) > 0.001) marker(r.Muy, r.Pu, '(|Muy|, Pu)', 0.4);
+    }
+    var yCap = bot + 32;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 2  Kurva interaksi desain phiPn-phiMn uniaksial ' +
+      '(meridian theta=90deg & 0deg)', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 2 Kurva interaksi phiPn-phiMn - lihat versi PDF' } };
+  }
+
+  // Gbr. 3 — kontur kapasitas biaksial di P = Pu + titik demand
+  function figContour(r) {
+    var ops = [];
+    var half = 86, cx = 264, cyc = 16 + half;
+    var maxMM = 1;
+    r.contour.forEach(function (q) { maxMM = Math.max(maxMM, Math.abs(q.Mx), Math.abs(q.My)); });
+    maxMM = Math.max(maxMM, Math.abs(r.Mux), Math.abs(r.Muy)) * 1.15;
+    function XX(Mx) { return cx + Mx / maxMM * half; }
+    function YY(My) { return cyc - My / maxMM * half; }
+    // salib sumbu + tick
+    ops.push({ t: 'line', x1: cx - half - 16, y1: cyc, x2: cx + half + 16, y2: cyc, lw: 0.5, g: 0.55, dash: [4, 3] });
+    ops.push({ t: 'line', x1: cx, y1: cyc - half - 12, x2: cx, y2: cyc + half + 12, lw: 0.5, g: 0.55, dash: [4, 3] });
+    ops.push({ t: 'text', x: cx + half + 20, y: cyc + 2.5, s: 'phiMnx', size: 6.5, g: 0.35 });
+    ops.push({ t: 'text', x: cx + 4, y: cyc - half - 15, s: 'phiMny (kN.m)', size: 6.5, g: 0.35 });
+    var st = niceStep(maxMM, 2);
+    for (var tv = st; tv <= maxMM; tv += st) {
+      [[XX(tv), cyc, String(Math.round(tv))], [XX(-tv), cyc, '-' + Math.round(tv)]].forEach(function (tk) {
+        ops.push({ t: 'line', x1: tk[0], y1: tk[1] - 2.5, x2: tk[0], y2: tk[1] + 2.5, lw: 0.5, g: 0.35 });
+        ops.push({ t: 'text', x: tk[0], y: tk[1] + 10, s: tk[2], size: 6, align: 'c', g: 0.4 });
+      });
+      ops.push({ t: 'line', x1: cx - 2.5, y1: YY(tv), x2: cx + 2.5, y2: YY(tv), lw: 0.5, g: 0.35 });
+      ops.push({ t: 'text', x: cx - 5, y: YY(tv) + 2.3, s: String(Math.round(tv)), size: 6, align: 'r', g: 0.4 });
+    }
+    // kontur kapasitas (tutup loop)
+    var pts = r.contour.map(function (q) { return [XX(q.Mx), YY(q.My)]; });
+    ops.push({ t: 'poly', pts: pts, close: true, lw: 1.2 });
+    // garis arah beban + kapasitas se-arah + demand
+    if (r.capM) {
+      ops.push({ t: 'line', x1: cx, y1: cyc, x2: XX(r.capM.Mx), y2: YY(r.capM.My), lw: 0.5, g: 0.5, dash: [2, 2] });
+      ops.push({ t: 'circle', cx: XX(r.capM.Mx), cy: YY(r.capM.My), r: 2.4, lw: 0.9 });
+    }
+    var dx = XX(r.Mux), dy = YY(r.Muy);
+    ops.push({ t: 'line', x1: dx - 3.5, y1: dy - 3.5, x2: dx + 3.5, y2: dy + 3.5, lw: 1.2 });
+    ops.push({ t: 'line', x1: dx - 3.5, y1: dy + 3.5, x2: dx + 3.5, y2: dy - 3.5, lw: 1.2 });
+    ops.push({ t: 'text', x: dx + 6, y: dy - 3, s: '(Mux, Muy)', size: 6 });
+    var yCap = cyc + half + 28;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 3  Kontur kapasitas biaksial di P = Pu = ' +
+      numR(r.Pu, 0) + ' kN' + (r.dc != null ? '  (D/C = ' + numR(r.dc, 2) + ')' : ''), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 3 Kontur kapasitas biaksial - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -677,6 +984,8 @@
     L.push(rowR('Ast / rho_g', numR(r.Ast, 0) + ' mm2 / ' + numR(r.rho * 100, 2) + ' %'));
     L.push(rowR('beta1 / Pengikat', numR(r.beta1, 3) + ' / ' + (r.tie === 'spiral' ? 'spiral' : 'sengkang ikat')));
     L.push('');
+    L.push(figSection(r));
+    L.push('');
     L.push(' TITIK KUNCI (NOMINAL)'); L.push(ruleR('='));
     L.push(rowR('Po tekan murni', numR(r.Po, 0) + ' kN'));
     L.push(rowR('Pn,maks = ' + numR(r.alphaMax, 2) + '*Po', numR(r.PnMax, 0) + ' kN'));
@@ -685,6 +994,8 @@
     L.push(rowR('Lentur murni M0x / M0y', numR(r.M0x, 0) + ' / ' + numR(r.M0y, 0) + ' kNm'));
     L.push(rowR('Tarik murni Pnt', numR(r.Pnt, 0) + ' kN'));
     L.push(rowR('phi tekan/tarik ; plafon', numR(r.phiC, 2) + ' / 0.90 ; ' + numR(r.phiPnMax, 0) + ' kN'));
+    L.push('');
+    L.push(figPM(r));
     if (r.dc != null) {
       L.push('');
       L.push(' CEK TITIK BEBAN (iris P = Pu)'); L.push(ruleR('='));
@@ -695,6 +1006,8 @@
       L.push(ruleR('='));
     }
     if (r.contour && r.contour.length >= 8) {
+      L.push('');
+      L.push(figContour(r));
       L.push('');
       L.push(' SAMPEL KONTUR KAPASITAS DI P=Pu (phiMnx ; phiMny kNm)');
       L.push(ruleR('-'));
@@ -715,7 +1028,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {
@@ -747,6 +1060,7 @@
         state.R.stop();
         state.R.unmount();
       }
+      if (state.sec) state.sec.destroy();
       if (state.controls) state.controls.dispose();
       if (state.themeObs) state.themeObs.disconnect();
       if (state.scene) state.UI.disposeObject(state.scene);

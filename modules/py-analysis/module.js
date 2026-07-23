@@ -552,6 +552,68 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — profil defleksi & momen sepanjang tiang + kurva H-y0
+  function figPY(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var top = 20, ph = 160, bot = top + ph;
+    var y = r.sol.y, M = r.sol.M, dz = r.sol.dz, n = y.length - 1;
+    function Z(z) { return top + z / r.L * ph; }
+    /* --- panel kiri: y(z) & M(z), sumbu nol vertikal --- */
+    var x0 = 150, half = 66;
+    var yAbs = Math.max(Math.abs(r.ymax) / 1000, 1e-9);
+    var mAbs = Math.max(Math.abs(r.Mmax), 1e-9);
+    ops.push({ t: 'line', x1: x0, y1: top, x2: x0, y2: bot, lw: 0.8 });
+    // muka tanah
+    ops.push({ t: 'line', x1: x0 - half - 16, y1: top, x2: x0 + half + 16, y2: top, lw: 0.9 });
+    for (var ih = 0; ih < 8; ih++) {
+      var xh = x0 - half - 16 + (2 * half + 32) * ih / 7;
+      ops.push({ t: 'line', x1: xh, y1: top, x2: xh - 5, y2: top - 5, lw: 0.4, g: 0.6 });
+    }
+    // tick kedalaman
+    var stZ = F.niceStep(r.L, 5);
+    for (var tz = 0; tz <= r.L; tz += stZ) {
+      ops.push({ t: 'line', x1: x0 - 2.5, y1: Z(tz), x2: x0 + 2.5, y2: Z(tz), lw: 0.4, g: 0.4 });
+      ops.push({ t: 'text', x: x0 - half - 20, y: Z(tz) + 2.3, s: numR(tz, 0), size: 6, align: 'r', g: 0.35 });
+    }
+    ops.push({ t: 'text', x: x0 - half - 20, y: bot + 10, s: 'z (m)', size: 6.5, align: 'r', g: 0.3 });
+    // kurva defleksi (solid) & momen (dashed)
+    var ptsY = [], ptsM = [];
+    for (var i = 0; i <= n; i++) {
+      ptsY.push([x0 + (y[i] / yAbs) * half, Z(i * dz)]);
+      ptsM.push([x0 + (M[i] / mAbs) * half, Z(i * dz)]);
+    }
+    ops.push({ t: 'poly', pts: ptsY, lw: 1.2 });
+    ops.push({ t: 'poly', pts: ptsM, lw: 0.9, g: 0.45, dash: [3, 2] });
+    // legenda + marker Mmax
+    ops.push({ t: 'line', x1: x0 - half, y1: bot + 16, x2: x0 - half + 16, y2: bot + 16, lw: 1.2 });
+    ops.push({ t: 'text', x: x0 - half + 20, y: bot + 18.3, s: 'y (maks ' + numR(r.ymax, 1) + ' mm)', size: 6 });
+    ops.push({ t: 'line', x1: x0 - half, y1: bot + 26, x2: x0 - half + 16, y2: bot + 26, lw: 0.9, g: 0.45, dash: [3, 2] });
+    ops.push({ t: 'text', x: x0 - half + 20, y: bot + 28.3, s: 'M (maks ' + numR(r.Mmax, 0) + ' kNm)', size: 6, g: 0.35 });
+    var iMx = Math.max(0, Math.min(n, Math.round(r.MmaxZ / dz)));
+    F.cross(ops, x0 + (M[iMx] / mAbs) * half, Z(r.MmaxZ), '', 0.3);
+    ops.push({ t: 'text', x: x0 + half + 4, y: Z(r.MmaxZ) + 2.3, s: 'Mmax @ ' + numR(r.MmaxZ, 1) + ' m', size: 5.5, g: 0.35 });
+    // panah H di kepala
+    F.arrow(ops, x0 - half - 4, top - 10, x0 - 4, top - 10, { lw: 1.2 });
+    ops.push({ t: 'text', x: x0 - half - 8, y: top - 14, s: 'H=' + numR(r.H, 0) + ' kN', size: 6.5, align: 'r' });
+    /* --- panel kanan: kurva H-y0 --- */
+    var px = 330, pw2 = 150;
+    var yMaxC = Math.max(r.y0, 0.001) * 1.08, hMaxC = r.H * 1.08;
+    function XC(yv) { return px + yv / yMaxC * pw2; }
+    function YC(hv) { return bot - hv / hMaxC * ph * 0.85; }
+    ops.push({ t: 'line', x1: px, y1: bot - ph * 0.85, x2: px, y2: bot, lw: 0.8 });
+    ops.push({ t: 'line', x1: px, y1: bot, x2: px + pw2, y2: bot, lw: 0.8 });
+    ops.push({ t: 'text', x: px - 3, y: bot - ph * 0.85 - 4, s: 'H (kN)', size: 6.5, g: 0.3 });
+    ops.push({ t: 'text', x: px + pw2, y: bot + 10, s: 'y0 (mm)', size: 6.5, align: 'r', g: 0.3 });
+    var ptsC = r.curve.map(function (pt) { return [XC(pt.y0), YC(pt.H)]; });
+    ops.push({ t: 'poly', pts: ptsC, lw: 1.2 });
+    F.cross(ops, XC(r.y0), YC(r.H), '(' + numR(r.y0, 1) + ', ' + numR(r.H, 0) + ')');
+    var yCap = bot + 42;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Profil defleksi & momen (kiri) dan kurva beban-defleksi kepala H-y0 (kanan)', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Profil defleksi-momen & kurva H-y0 - lihat versi PDF' } };
+  }
+
   function buildReport(vals, r) {
     var now = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes());
@@ -580,6 +642,8 @@
     L.push(ruleR('-'));
     r.curve.forEach(function (pt) { if (pt.H > 0) L.push(rowR('H = ' + numR(pt.H, 0) + ' kN', 'y0 = ' + numR(pt.y0, 2) + ' mm')); });
     L.push('');
+    L.push(figPY(r));
+    L.push('');
     L.push(' OUTPUT (beban penuh)');
     L.push(ruleR('='));
     L.push(rowR('>> Defleksi kepala y0', numR(r.y0, 2) + ' mm'));
@@ -600,7 +664,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

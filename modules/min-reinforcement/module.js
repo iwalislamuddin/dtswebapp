@@ -734,6 +734,87 @@
 
   var ELEM_LBL = { 'balok': 'BALOK', 'kolom-p': 'KOLOM PERSEGI', 'kolom-l': 'KOLOM LINGKARAN', 'pelat': 'PELAT (SLAB)', 'pilecap': 'PILE CAP' };
 
+  // Gbr. 1 — penampang elemen dengan tulangan minimum terpasang
+  function figMinReinf(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var cx = 264, y0 = 20, yBot, capText;
+
+    if (r.elem === 'balok') {
+      var s = Math.min(150 / r.bw, 140 / r.h);
+      var bs = r.bw * s, hs = r.h * s, x0 = cx - bs / 2;
+      ops.push({ t: 'rect', x: x0, y: y0, w: bs, h: hs, lw: 1.1 });
+      var ti = Math.max(2.5, (r.cc + r.ds / 2) * s);
+      ops.push({ t: 'rect', x: x0 + ti, y: y0 + ti, w: bs - 2 * ti, h: hs - 2 * ti, lw: 0.7, g: 0.45 });
+      var edge = r.cc + r.ds + r.db / 2, rb = Math.max(1.8, r.db * s / 2);
+      for (var i = 0; i < r.n; i++) {
+        var xb = r.n === 1 ? r.bw / 2 : edge + (r.bw - 2 * edge) * i / (r.n - 1);
+        ops.push({ t: 'circle', cx: x0 + xb * s, cy: y0 + (r.h - edge) * s, r: rb, fill: true });
+      }
+      F.dimH(ops, x0, x0 + bs, y0 + hs + 16, 'bw = ' + Math.round(r.bw));
+      F.dimV(ops, y0, y0 + hs, x0 + bs + 16, '');
+      ops.push({ t: 'text', x: x0 + bs + 22, y: y0 + hs / 2 + 2.5, s: 'h = ' + Math.round(r.h), size: 6.5 });
+      ops.push({ t: 'text', x: cx, y: y0 + hs / 2, s: r.n + 'D' + r.db + ' + O' + r.ds + '-' + r.sPakai, size: 7, align: 'c', g: 0.3 });
+      yBot = y0 + hs + 26;
+      capText = 'Penampang balok ' + Math.round(r.bw) + 'x' + Math.round(r.h) + ' - As,min ' + r.n + 'D' + r.db;
+    } else if (r.elem === 'kolom-p') {
+      var s2 = Math.min(150 / r.b, 140 / r.h);
+      var bs2 = r.b * s2, hs2 = r.h * s2, x02 = cx - bs2 / 2;
+      ops.push({ t: 'rect', x: x02, y: y0, w: bs2, h: hs2, lw: 1.1 });
+      var ti2 = Math.max(2.5, (r.cc + r.ds / 2) * s2);
+      ops.push({ t: 'rect', x: x02 + ti2, y: y0 + ti2, w: bs2 - 2 * ti2, h: hs2 - 2 * ti2, lw: 0.7, g: 0.45 });
+      var edge2 = r.cc + r.ds + r.db / 2, rb2 = Math.max(1.8, r.db * s2 / 2);
+      var nx = r.layout.nx, ny = r.layout.ny;
+      for (var ix = 0; ix < nx; ix++) for (var iy = 0; iy < ny; iy++) {
+        if (ix > 0 && ix < nx - 1 && iy > 0 && iy < ny - 1) continue;   // keliling saja
+        var px = edge2 + (r.b - 2 * edge2) * (nx === 1 ? 0.5 : ix / (nx - 1));
+        var py = edge2 + (r.h - 2 * edge2) * (ny === 1 ? 0.5 : iy / (ny - 1));
+        ops.push({ t: 'circle', cx: x02 + px * s2, cy: y0 + py * s2, r: rb2, fill: true });
+      }
+      F.dimH(ops, x02, x02 + bs2, y0 + hs2 + 16, 'b = ' + Math.round(r.b));
+      F.dimV(ops, y0, y0 + hs2, x02 + bs2 + 16, '');
+      ops.push({ t: 'text', x: x02 + bs2 + 22, y: y0 + hs2 / 2 + 2.5, s: 'h = ' + Math.round(r.h), size: 6.5 });
+      ops.push({ t: 'text', x: cx, y: y0 + hs2 / 2 + 2, s: r.n + 'D' + r.db, size: 7, align: 'c', g: 0.3 });
+      yBot = y0 + hs2 + 26;
+      capText = 'Penampang kolom ' + Math.round(r.b) + 'x' + Math.round(r.h) + ' - ' + r.n + 'D' + r.db + ' (rho ' + numR(r.rhoProv * 100, 2) + '%)';
+    } else if (r.elem === 'kolom-l') {
+      var s3 = 140 / r.D, rad = r.D / 2 * s3, cyc = y0 + rad;
+      ops.push({ t: 'circle', cx: cx, cy: cyc, r: rad, lw: 1.1 });
+      ops.push({ t: 'circle', cx: cx, cy: cyc, r: Math.max(3, (r.D / 2 - r.cc - r.dsp / 2) * s3), lw: 0.7, g: 0.45 });
+      var rr = r.ringR * s3, rb3 = Math.max(1.8, r.db * s3 / 2);
+      for (var k = 0; k < r.n; k++) {
+        var ang = 2 * Math.PI * k / r.n - Math.PI / 2;
+        ops.push({ t: 'circle', cx: cx + rr * Math.cos(ang), cy: cyc + rr * Math.sin(ang), r: rb3, fill: true });
+      }
+      F.dimH(ops, cx - rad, cx + rad, cyc + rad + 16, 'D = ' + Math.round(r.D));
+      ops.push({ t: 'text', x: cx, y: cyc + 2, s: r.n + 'D' + r.db, size: 7, align: 'c', g: 0.3 });
+      yBot = cyc + rad + 26;
+      capText = 'Kolom bundar D=' + Math.round(r.D) + ' - ' + r.n + 'D' + r.db + ', ' +
+        (r.spiral ? 'spiral O' + r.dsp + '-' + r.sPitchPakai : 'sengkang O' + r.ds + '-' + r.sTiePakai);
+    } else {
+      // pelat / pile cap: potongan selebar 1 m
+      var hM = r.h, sw = 340, s4 = Math.min(sw / 1000, 90 / hM);
+      var bs4 = 1000 * s4, hs4 = hM * s4, x04 = cx - bs4 / 2;
+      ops.push({ t: 'rect', x: x04, y: y0 + 14, w: bs4, h: hs4, lw: 1.1 });
+      var nb = Math.max(2, Math.floor(1000 / r.sPakai) + 1);
+      var cover = (r.elem === 'pilecap' ? r.cc || 75 : 20) + r.db / 2;
+      var rb4 = Math.max(1.8, r.db * s4 * 1.4 / 2);
+      for (var ib = 0; ib < nb; ib++) {
+        var xb4 = x04 + (ib * r.sPakai + (1000 - (nb - 1) * r.sPakai) / 2) * s4;
+        ops.push({ t: 'circle', cx: xb4, cy: y0 + 14 + hs4 - cover * s4, r: rb4, fill: true });
+      }
+      F.dimH(ops, x04, x04 + bs4, y0 + 14 + hs4 + 16, '1000 (per meter)');
+      F.dimV(ops, y0 + 14, y0 + 14 + hs4, x04 + bs4 + 16, '');
+      ops.push({ t: 'text', x: x04 + bs4 + 22, y: y0 + 14 + hs4 / 2 + 2.5, s: 'h = ' + Math.round(r.h), size: 6.5 });
+      ops.push({ t: 'text', x: cx, y: y0 + 8, s: 'D' + r.db + '-' + r.sPakai + ' (' + numR(r.AsProv, 0) + ' mm2/m)', size: 7, align: 'c', g: 0.3 });
+      yBot = y0 + 14 + hs4 + 26;
+      capText = (r.elem === 'pilecap' ? 'Pile cap' : 'Pelat') + ' h=' + Math.round(r.h) + ' - D' + r.db + '-' + r.sPakai + ' per arah';
+    }
+    ops.push({ t: 'text', x: 264, y: yBot + 8, s: 'Gbr. 1  ' + capText, size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yBot + 18) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Penampang tulangan minimum - lihat versi PDF' } };
+  }
+
   function buildReport(vals, r) {
     var now = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes());
@@ -851,6 +932,8 @@
       L.push(ruleR('='));
     }
 
+    L.push('');
+    L.push(figMinReinf(r));
     if (r.warn.length) {
       L.push('');
       L.push(' CATATAN');
@@ -865,7 +948,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

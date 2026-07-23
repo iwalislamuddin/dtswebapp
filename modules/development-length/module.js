@@ -404,6 +404,36 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — skema batang tarik tertanam sepanjang ld (vektor PDF)
+  function figLd(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var x0 = 140, bw = 250, y0 = 18, bh = 84;
+    var yb = y0 + 34;                                    // sumbu batang (skematik)
+    // blok beton + arsir ringan
+    ops.push({ t: 'rect', x: x0, y: y0, w: bw, h: bh, lw: 1.1 });
+    for (var i = 1; i <= 6; i++) {
+      var xh = x0 + bw * i / 7;
+      ops.push({ t: 'line', x1: xh - 14, y1: y0 + bh, x2: xh + 14, y2: y0, lw: 0.3, g: 0.8 });
+    }
+    // batang: tertanam x0..muka, menerus keluar + panah tarik
+    var xFace = x0 + bw, xEnd = xFace + 58;
+    ops.push({ t: 'rect', x: x0 + 6, y: yb - 2.5, w: xEnd - x0 - 6, h: 5, fill: true, g: 0.25 });
+    F.arrow(ops, xEnd + 2, yb, xEnd + 40, yb, { lw: 1.1 });
+    ops.push({ t: 'text', x: xEnd + 6, y: yb - 7, s: 'T = As*fy', size: 6.5 });
+    ops.push({ t: 'text', x: x0 + 10, y: yb - 6, s: (r.polos ? 'O' : 'D') + r.db, size: 6.5, g: 0.3 });
+    // dimensi cb (muka atas -> pusat batang) & ld
+    F.dimV(ops, y0, yb, x0 - 14, '');
+    ops.push({ t: 'text', x: x0 - 20, y: (y0 + yb) / 2 + 2.5, s: 'cb = ' + Math.round(r.cb), size: 6.5, align: 'r' });
+    F.dimH(ops, x0 + 6, xFace, y0 + bh + 16, 'ld = ' + r.ldRound + ' mm');
+    ops.push({ t: 'text', x: x0 + bw / 2, y: y0 + 12, s: 'beton f\'c', size: 6.5, g: 0.45, align: 'c' });
+    var yCap = y0 + bh + 34;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Skema penyaluran batang tarik lurus - ld = ' +
+      r.ldRound + ' mm (' + numR(r.ldbratio, 1) + ' db)', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Skema penyaluran tulangan - lihat versi PDF' } };
+  }
+
   function buildReport(vals, r) {
     var now = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes());
@@ -469,6 +499,8 @@
     L.push('    (dibulatkan ke atas per 10 mm)');
     L.push(rowR('Kontrol ld >= 300 mm', r.ldMin ? 'DIKONTROL BATAS 300' : 'OK'));
     L.push(ruleR('='));
+    L.push('');
+    L.push(figLd(r));
 
     var notes = r.warn.slice();
     if (polos) notes.unshift('Tulangan polos: nilai = 2x ld ulir setara; gunakan kait standar untuk desain final.');
@@ -483,7 +515,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

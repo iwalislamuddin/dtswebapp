@@ -331,6 +331,48 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — kurva intensitas Mononobe i(t) + titik operasi tc
+  function figMononobe(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var px0 = 96, pw = 360, top = 14, ph = 160, bot = top + ph;
+    var tMax = Math.max(120, r.tcMin * 2.2);
+    function iOf(tMin) { return (r.R24 / 24) * Math.pow(24 / (tMin / 60), 2 / 3); }
+    var iMax = iOf(5) * 1.05;
+    function X(t) { return px0 + t / tMax * pw; }
+    function Y(ii) { return top + (1 - ii / iMax) * ph; }
+    // grid + tick
+    var stT = F.niceStep(tMax, 6), stI = F.niceStep(iMax, 5);
+    for (var tt = 0; tt <= tMax; tt += stT) {
+      ops.push({ t: 'line', x1: X(tt), y1: top, x2: X(tt), y2: bot, lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: X(tt), y: bot + 10, s: String(Math.round(tt)), size: 6.5, align: 'c', g: 0.3 });
+    }
+    for (var ii2 = 0; ii2 <= iMax; ii2 += stI) {
+      ops.push({ t: 'line', x1: px0, y1: Y(ii2), x2: px0 + pw, y2: Y(ii2), lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: px0 - 5, y: Y(ii2) + 2.3, s: String(Math.round(ii2)), size: 6.5, align: 'r', g: 0.3 });
+    }
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0, y2: bot, lw: 0.9 });
+    ops.push({ t: 'line', x1: px0, y1: bot, x2: px0 + pw, y2: bot, lw: 0.9 });
+    ops.push({ t: 'text', x: px0, y: top - 4, s: 'i (mm/jam)', size: 7 });
+    ops.push({ t: 'text', x: px0 + pw / 2, y: bot + 21, s: 't (menit)', size: 7, align: 'c' });
+    // kurva Mononobe (mulai t=5 menit)
+    var pts = [];
+    for (var k = 0; k <= 90; k++) {
+      var tm = 5 + (tMax - 5) * k / 90;
+      pts.push([X(tm), Y(Math.min(iOf(tm), iMax))]);
+    }
+    ops.push({ t: 'poly', pts: pts, lw: 1.2 });
+    // titik operasi (tc, i)
+    ops.push({ t: 'line', x1: X(r.tcMin), y1: bot, x2: X(r.tcMin), y2: Y(r.i), lw: 0.5, g: 0.45, dash: [3, 2] });
+    ops.push({ t: 'line', x1: px0, y1: Y(r.i), x2: X(r.tcMin), y2: Y(r.i), lw: 0.5, g: 0.45, dash: [3, 2] });
+    F.cross(ops, X(r.tcMin), Y(r.i), 'tc=' + numR(r.tcMin, 1) + " mnt, i=" + numR(r.i, 1));
+    var yCap = bot + 32;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Kurva intensitas Mononobe (R24=' + numR(r.R24, 0) +
+      ' mm) - Q puncak = ' + numR(r.Q, 3) + ' m3/s', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Kurva intensitas Mononobe - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -354,6 +396,8 @@
       L.push(rowR('tc manual', numR(r.tcMin, 1) + ' menit'));
     }
     L.push('');
+    L.push(figMononobe(r));
+    L.push('');
     L.push(' HASIL'); L.push(ruleR('='));
     L.push(rowR('i Mononobe', numR(r.i, 1) + ' mm/jam'));
     L.push(rowR('>> Q PUNCAK = 0.00278*C*i*A', numR(r.Q, 3) + ' m3/s'));
@@ -371,7 +415,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

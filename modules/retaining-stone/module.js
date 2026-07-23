@@ -692,6 +692,62 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — potongan DPT: badan+tapak, tekanan aktif, distribusi tumpu
+  function figWall(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var slopeH = r.beta > 0.001 ? r.ws * Math.tan(r.beta * D2R) : 0;
+    var s = Math.min(120 / (r.tf + r.H + slopeH + 0.4), 180 / (r.B + 1.4));
+    var x0 = 116, yb = 158;
+    function X(x) { return x0 + x * s; }
+    function Y(y) { return yb - y * s; }
+    // tapak
+    ops.push({ t: 'rect', x: X(0), y: Y(r.tf), w: r.B * s, h: r.tf * s, lw: 1.1 });
+    // badan trapesium (opsi tegak: muka belakang vertikal; miring: muka depan vertikal)
+    var stem = (r.opsi === 'tegak')
+      ? [[r.toe, r.tf], [r.toe + r.bBot, r.tf], [r.toe + r.bBot, r.tf + r.H], [r.toe + r.bBot - r.bTop, r.tf + r.H]]
+      : [[r.toe, r.tf], [r.toe + r.bBot, r.tf], [r.toe + r.bTop, r.tf + r.H], [r.toe, r.tf + r.H]];
+    ops.push({ t: 'poly', pts: stem.map(function (p) { return [X(p[0]), Y(p[1])]; }), close: true, lw: 1.1 });
+    // arsir pasangan (diagonal ringan)
+    for (var ia = 1; ia <= 4; ia++) {
+      var yy = r.tf + r.H * ia / 5;
+      ops.push({ t: 'line', x1: X(r.toe) + 3, y1: Y(yy), x2: X(r.toe + r.bBot) - 3, y2: Y(yy) - 6, lw: 0.3, g: 0.75 });
+    }
+    // muka tanah urugan (belakang, naik beta) + tanah depan (level D)
+    var xTopBack = (r.opsi === 'tegak') ? r.toe + r.bBot : r.toe + r.bTop;
+    ops.push({ t: 'line', x1: X(xTopBack), y1: Y(r.tf + r.H), x2: X(r.B + 1.2), y2: Y(r.tf + r.H + slopeH + (r.beta > 0.001 ? 1.2 * Math.tan(r.beta * D2R) : 0)), lw: 0.9, g: 0.3 });
+    if (r.beta > 0.001) ops.push({ t: 'text', x: X(r.B + 0.5), y: Y(r.tf + r.H + slopeH) - 8, s: 'beta=' + numR(r.beta, 0) + 'deg', size: 6, g: 0.35 });
+    ops.push({ t: 'line', x1: X(-0.9), y1: Y(r.D), x2: X(r.toe), y2: Y(r.D), lw: 0.9, g: 0.3 });
+    ops.push({ t: 'text', x: X(-0.85), y: Y(r.D) - 3, s: 'muka tanah depan', size: 5.5, g: 0.45 });
+    // bidang semu x=B + segitiga tekanan aktif
+    ops.push({ t: 'line', x1: X(r.B), y1: Y(r.Hp), x2: X(r.B), y2: Y(0), lw: 0.5, g: 0.5, dash: [4, 3] });
+    var wp = 56;
+    ops.push({ t: 'poly', pts: [[X(r.B), Y(r.Hp)], [X(r.B), Y(0)], [X(r.B) + wp, Y(0)]], close: true, fill: true, g: 0.9 });
+    ops.push({ t: 'poly', pts: [[X(r.B), Y(r.Hp)], [X(r.B), Y(0)], [X(r.B) + wp, Y(0)]], close: true, lw: 0.6, g: 0.45 });
+    F.arrow(ops, X(r.B) + wp * 0.55 + 20, Y(r.yPa), X(r.B) + 2, Y(r.yPa), { lw: 1.2 });
+    ops.push({ t: 'text', x: X(r.B) + wp * 0.55 + 24, y: Y(r.yPa) + 2.3, s: 'Pa=' + numR(r.Pa, 1) + ' kN/m', size: 6.5 });
+    ops.push({ t: 'text', x: X(r.B) + 4, y: Y(r.Hp) + 8, s: "H'=" + numR(r.Hp, 2), size: 5.5, g: 0.4 });
+    // distribusi tumpu di dasar (qmax di toe)
+    if (isFinite(r.qmax) && r.qmax > 0) {
+      var hq = 18;
+      var hMin = r.tri ? 0 : hq * r.qmin / r.qmax;
+      ops.push({ t: 'poly', pts: [[X(0), yb], [X(r.B), yb], [X(r.B), yb + hMin], [X(0), yb + hq]], close: true, fill: true, g: 0.85 });
+      ops.push({ t: 'poly', pts: [[X(0), yb], [X(r.B), yb], [X(r.B), yb + hMin], [X(0), yb + hq]], close: true, lw: 0.5, g: 0.4 });
+      ops.push({ t: 'text', x: X(0) - 3, y: yb + hq + 8, s: 'qmax=' + numR(r.qmax, 0), size: 6, align: 'r' });
+      ops.push({ t: 'text', x: X(r.B) + 3, y: yb + hMin + 8, s: 'qmin=' + numR(r.qmin, 0) + ' kPa', size: 6 });
+    }
+    // dimensi B & H (dim B di bawah blok tumpu + labelnya agar tak bertumpuk)
+    F.dimH(ops, X(0), X(r.B), yb + 42, 'B = ' + numR(r.B, 2) + ' m');
+    F.dimV(ops, Y(r.tf + r.H), Y(r.tf), X(0) - 18, '');
+    ops.push({ t: 'text', x: X(0) - 24, y: Y(r.tf + r.H / 2) + 2.5, s: 'H=' + numR(r.H, 2), size: 6.5, align: 'r' });
+    var yCap = yb + 62;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Potongan DPT batu kali (' +
+      (r.opsi === 'tegak' ? 'sisi tegak ke tanah' : 'sisi miring ke tanah') + ') - FS guling ' +
+      numR(r.FSot, 2) + ', FS geser ' + numR(r.FSsl, 2), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Potongan DPT & tekanan tanah - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -718,6 +774,8 @@
     L.push(rowR('Fondasi: gamma2 / phi2 / c2', numR(r.g2, 1) + ' / ' + numR(r.phi2, 0) + 'deg / ' + numR(r.c2, 1)));
     L.push(rowR('q_izin / k gesekan dasar', numR(r.qall, 0) + ' kPa / ' + numR(r.kf, 2)));
     L.push(rowR('gamma pasangan batu', numR(r.gw, 1) + ' kN/m3'));
+    L.push('');
+    L.push(figWall(r));
     L.push('');
     L.push(' TEKANAN TANAH (RANKINE)');
     L.push(ruleR('-'));
@@ -773,7 +831,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

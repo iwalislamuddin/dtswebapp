@@ -640,6 +640,63 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — elevasi base plate: blok tumpu Y, angkur tarik T, beban Pu & Mu
+  function figBasePlate(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var sc = Math.min(260 / r.N, 0.8);
+    var cx = 240, yP = 108, tPl = Math.max(5, Math.min(10, r.tp * sc));
+    var xL = cx - r.N * sc / 2, xR = cx + r.N * sc / 2;
+    // beton/pedestal
+    ops.push({ t: 'rect', x: xL - 30, y: yP + tPl, w: r.N * sc + 60, h: 42, lw: 0.9 });
+    for (var i = 0; i < 10; i++) {
+      var xh = xL - 30 + (r.N * sc + 60) * i / 9;
+      ops.push({ t: 'line', x1: xh, y1: yP + tPl + 42, x2: xh - 8, y2: yP + tPl + 34, lw: 0.3, g: 0.75 });
+    }
+    ops.push({ t: 'text', x: xL - 26, y: yP + tPl + 14, s: "f'c=" + numR(r.fc, 0), size: 6, g: 0.4 });
+    // pelat & kolom
+    ops.push({ t: 'rect', x: xL, y: yP, w: r.N * sc, h: tPl, fill: true, g: 0.6 });
+    ops.push({ t: 'rect', x: xL, y: yP, w: r.N * sc, h: tPl, lw: 0.9 });
+    var dc = Math.max(20, (r.d || r.N * 0.4) * sc);
+    ops.push({ t: 'rect', x: cx - dc / 2, y: yP - 44, w: dc, h: 44, lw: 1 });
+    // beban Pu & Mu
+    F.arrow(ops, cx, yP - 74, cx, yP - 50, { lw: 1.3 });
+    ops.push({ t: 'text', x: cx + 6, y: yP - 62, s: 'Pu=' + numR(r.Pu, 0) + ' kN', size: 6.5 });
+    if (r.Mu > 0) {
+      F.arrow(ops, cx - dc / 2 - 26, yP - 30, cx - dc / 2 - 4, yP - 30, { lw: 1 });
+      F.arrow(ops, cx + dc / 2 + 26, yP - 14, cx + dc / 2 + 4, yP - 14, { lw: 1 });
+      ops.push({ t: 'text', x: cx + dc / 2 + 8, y: yP - 34, s: 'Mu=' + numR(r.Mu, 0) + ' kNm', size: 6.5 });
+    }
+    // blok tumpu Y (sisi tekan = kanan) — panah ke atas
+    if (r.Y > 0) {
+      var Ys = Math.min(r.Y, r.N) * sc;
+      var hB = Math.max(12, Math.min(26, r.fp * 2));
+      ops.push({ t: 'rect', x: xR - Ys, y: yP + tPl, w: Ys, h: hB, fill: true, g: 0.82 });
+      ops.push({ t: 'rect', x: xR - Ys, y: yP + tPl, w: Ys, h: hB, lw: 0.6, g: 0.35 });
+      for (var k = 0; k <= 3; k++)
+        F.arrow(ops, xR - Ys + Ys * k / 3, yP + tPl + hB + 8, xR - Ys + Ys * k / 3, yP + tPl + 2, { lw: 0.6, g: 0.3 });
+      ops.push({ t: 'text', x: xR - Ys / 2, y: yP + tPl + hB + 18, s: 'fp=' + numR(r.fp, 2) + ' MPa', size: 6, align: 'c', g: 0.25 });
+      F.dimH(ops, xR - Ys, xR, yP + tPl + hB + 26, 'Y=' + numR(r.Y, 0));
+    }
+    // angkur tarik (sisi kiri, aEdge dari tepi)
+    if (r.aEdge > 0) {
+      var xRod = xL + r.aEdge * sc;
+      ops.push({ t: 'line', x1: xRod, y1: yP - 8, x2: xRod, y2: yP + tPl + 38, lw: 1.4, g: 0.3 });
+      if (r.T > 0) {
+        F.arrow(ops, xRod, yP + tPl + 16, xRod, yP + tPl + 38, { lw: 1 });
+        ops.push({ t: 'text', x: xRod - 5, y: yP + tPl + 34, s: 'T=' + numR(r.T / 1000, 1) + ' kN', size: 6, align: 'r' });
+      }
+      ops.push({ t: 'text', x: xRod, y: yP - 12, s: r.nT + ' angkur ' + numR(r.db, 0) + ' mm', size: 5.5, align: 'c', g: 0.35 });
+    }
+    // dimensi N
+    F.dimH(ops, xL, xR, yP + tPl + 56, 'N = ' + numR(r.N, 0) + ' mm (B = ' + numR(r.B, 0) + ')');
+    var yCap = yP + tPl + 74;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Elevasi base plate - rezim ' + tolatin(MODE_LABEL[r.mode]) +
+      ', e=' + numR(r.e, 0) + ' mm, tp perlu ' + numR(r.tpReq, 1) + ' mm', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Elevasi base plate & blok tumpu - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -662,6 +719,8 @@
     L.push(rowR('Pu / Mu', numR(r.Pu, 1) + ' kN / ' + numR(r.Mu, 1) + ' kNm'));
     L.push(rowR('e = Mu/Pu / ecrit', numR(r.e, 0) + ' / ' + numR(r.ecrit, 0) + ' mm'));
     if (r.Vu > 0) L.push(rowR('Vu (geser dasar)', numR(r.Vu, 1) + ' kN'));
+    L.push('');
+    L.push(figBasePlate(r));
     L.push('');
     L.push(' TUMPU BETON (AISC J8 / ACI 22.8)'); L.push(ruleR('='));
     L.push(rowR('fp(max)=phic*0.85*fc*sqrt(A2/A1)', numR(r.fpMax, 2) + ' MPa'));
@@ -710,7 +769,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

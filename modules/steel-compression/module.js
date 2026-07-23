@@ -677,6 +677,55 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — kurva kolom Fcr vs KL/r (E3) + titik desain (vektor PDF)
+  function figColumnCurve(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var px0 = 96, pw = 360, top = 12, ph = 170, bot = top + ph;
+    var lamMax = Math.max(220, r.lam * 1.15, (r.tors ? r.tors.lamEq * 1.1 : 0));
+    var Fmax = r.Fy * 1.08;
+    function X(lm) { return px0 + lm / lamMax * pw; }
+    function Y(f) { return top + (Fmax - f) / Fmax * ph; }
+    // grid + tick
+    var stF = F.niceStep(Fmax, 5);
+    for (var tf = 0; tf <= Fmax; tf += stF) {
+      ops.push({ t: 'line', x1: px0, y1: Y(tf), x2: px0 + pw, y2: Y(tf), lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: px0 - 5, y: Y(tf) + 2.3, s: String(Math.round(tf)), size: 6.5, align: 'r', g: 0.3 });
+    }
+    var stL = F.niceStep(lamMax, 6);
+    for (var tl = 0; tl <= lamMax; tl += stL) {
+      ops.push({ t: 'line', x1: X(tl), y1: top, x2: X(tl), y2: bot, lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: X(tl), y: bot + 10, s: String(Math.round(tl)), size: 6.5, align: 'c', g: 0.3 });
+    }
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0, y2: bot, lw: 0.9 });
+    ops.push({ t: 'line', x1: px0, y1: bot, x2: px0 + pw, y2: bot, lw: 0.9 });
+    ops.push({ t: 'text', x: px0, y: top - 4, s: 'Fcr (MPa)', size: 7 });
+    ops.push({ t: 'text', x: px0 + pw / 2, y: bot + 21, s: 'KL/r', size: 7, align: 'c' });
+    // batas inelastis-elastis
+    if (r.lamLimit < lamMax) {
+      ops.push({ t: 'line', x1: X(r.lamLimit), y1: top, x2: X(r.lamLimit), y2: bot, lw: 0.6, g: 0.45, dash: [4, 3] });
+      ops.push({ t: 'text', x: X(r.lamLimit) + 3, y: top + 10, s: '4.71*sqrt(E/Fy) = ' + numR(r.lamLimit, 0), size: 6, g: 0.35 });
+    }
+    // kurva Fcr(lambda)
+    var pts = [];
+    for (var i = 0; i <= 72; i++) {
+      var lm = lamMax * i / 72;
+      pts.push([X(lm), Y(Fcr(lm, r.Fy))]);
+    }
+    ops.push({ t: 'poly', pts: pts, lw: 1.2 });
+    // titik desain lentur + torsi (bila ada)
+    F.cross(ops, X(r.lam), Y(r.FcrFlex), 'KL/r=' + numR(r.lam, 0) + ', Fcr=' + numR(r.FcrFlex, 0));
+    if (r.tors && r.tors.lamEq < lamMax) {
+      ops.push({ t: 'circle', cx: X(r.tors.lamEq), cy: Y(r.tors.Fcr), r: 2.6, lw: 0.9, g: 0.35 });
+      ops.push({ t: 'text', x: X(r.tors.lamEq) + 5, y: Y(r.tors.Fcr) + 9, s: 'torsi E4', size: 6, g: 0.35 });
+    }
+    var yCap = bot + 32;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Kurva kolom Fcr-KL/r (Ps. E3) - ' + tolatin(r.p.name) +
+      ', ' + tolatin(r.govLS) + ', ' + tolatin(r.mode), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Kurva kolom Fcr vs KL/r - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -729,6 +778,8 @@
       L.push(rowR('Pn torsi = Fcr*Ag', numR(r.tors.Pn, 1) + ' kN'));
       L.push('');
     }
+    L.push(figColumnCurve(r));
+    L.push('');
     L.push(' OUTPUT — DFBK (LRFD)');
     L.push(ruleR('='));
     L.push(rowR('Keadaan batas menentukan', tolatin(r.govLS)));
@@ -767,7 +818,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

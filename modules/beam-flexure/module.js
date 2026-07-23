@@ -535,6 +535,80 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — penampang + diagram regangan + blok tegangan (vektor PDF)
+  function figBeam(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var s = Math.min(110 / r.b, 150 / r.h);
+    var bs = r.b * s, hs = r.h * s;
+    var x0 = 118 - bs / 2, y0 = 22;
+    function Y(depth) { return y0 + depth * s; }           // kedalaman dari serat atas
+
+    /* --- panel 1: penampang --- */
+    ops.push({ t: 'rect', x: x0, y: y0, w: bs, h: hs, lw: 1.1 });
+    var edge = r.cc + r.ds + r.db1 / 2;
+    var yBot0 = edge, pitch = r.db1 + r.sv;
+    var rb = Math.max(1.6, r.db1 * s / 2);
+    r.layers.forEach(function (n, li) {
+      if (!n) return;
+      var depth = r.h - (yBot0 + li * pitch);
+      for (var i = 0; i < n; i++) {
+        var xb = n === 1 ? r.b / 2 : edge + (r.b - 2 * edge) * i / (n - 1);
+        ops.push({ t: 'circle', cx: x0 + xb * s, cy: Y(depth), r: rb, fill: true });
+      }
+    });
+    if (r.doubly && r.Asc > 0) {
+      var rb2 = Math.max(1.6, r.db2 * s / 2);
+      var edge2 = r.cc + r.ds + r.db2 / 2;
+      for (var j = 0; j < r.n2; j++) {
+        var xb2 = r.n2 === 1 ? r.b / 2 : edge2 + (r.b - 2 * edge2) * j / (r.n2 - 1);
+        ops.push({ t: 'circle', cx: x0 + xb2 * s, cy: Y(r.dp), r: rb2, lw: 0.9 });
+      }
+    }
+    F.dimH(ops, x0, x0 + bs, y0 + hs + 16, 'b = ' + Math.round(r.b));
+    F.dimV(ops, y0, y0 + hs, x0 - 16, '');
+    ops.push({ t: 'text', x: x0 - 22, y: y0 + hs / 2 + 2.5, s: 'h = ' + Math.round(r.h), size: 6.5, align: 'r' });
+    // garis d (centroid tulangan tarik)
+    ops.push({ t: 'line', x1: x0 + bs + 4, y1: y0, x2: x0 + bs + 12, y2: y0, lw: 0.5, g: 0.4 });
+    ops.push({ t: 'line', x1: x0 + bs + 8, y1: y0, x2: x0 + bs + 8, y2: Y(r.d), lw: 0.5, g: 0.4 });
+    ops.push({ t: 'line', x1: x0 + bs + 4, y1: Y(r.d), x2: x0 + bs + 12, y2: Y(r.d), lw: 0.5, g: 0.4 });
+    ops.push({ t: 'text', x: x0 + bs + 14, y: Y(r.d / 2) + 2, s: 'd=' + Math.round(r.d), size: 6, g: 0.35 });
+
+    /* --- garis sumbu netral menembus ketiga panel --- */
+    ops.push({ t: 'line', x1: x0, y1: Y(r.c), x2: 480, y2: Y(r.c), lw: 0.4, g: 0.6, dash: [4, 3] });
+    ops.push({ t: 'text', x: 484, y: Y(r.c) + 2.3, s: 'c=' + numR(r.c, 0), size: 6, g: 0.35 });
+
+    /* --- panel 2: diagram regangan --- */
+    var xE = 268, wE = 52;
+    var eTop = wE, eBot = Math.min(wE * 1.4, wE * r.et / 0.003);
+    ops.push({ t: 'line', x1: xE, y1: y0, x2: xE, y2: Y(r.dt), lw: 0.8 });
+    ops.push({ t: 'poly', pts: [[xE, y0], [xE - eTop, y0], [xE + eBot, Y(r.dt)], [xE, Y(r.dt)]], close: true, lw: 0.8, g: 0.25 });
+    ops.push({ t: 'text', x: xE - eTop - 2, y: y0 - 4, s: '0.003', size: 6, align: 'l' });
+    ops.push({ t: 'text', x: xE + eBot + 3, y: Y(r.dt) + 2.3, s: 'et=' + numR(r.et, 4), size: 6 });
+    ops.push({ t: 'text', x: xE, y: Y(r.h) + 14, s: 'regangan', size: 6.5, g: 0.4, align: 'c' });
+
+    /* --- panel 3: blok tegangan --- */
+    var xS = 395, wS = 50;
+    ops.push({ t: 'rect', x: xS, y: y0, w: wS, h: r.a * s, lw: 0.9 });
+    for (var k = 1; k <= 3; k++)
+      ops.push({ t: 'line', x1: xS + wS * k / 4, y1: y0, x2: xS + wS * k / 4, y2: y0 + r.a * s, lw: 0.3, g: 0.75 });
+    ops.push({ t: 'text', x: xS + wS / 2, y: y0 - 4, s: "0.85f'c", size: 6, align: 'c' });
+    ops.push({ t: 'line', x1: xS + wS, y1: y0 + r.a * s, x2: xS + wS + 8, y2: y0 + r.a * s, lw: 0.5, g: 0.4 });
+    ops.push({ t: 'text', x: xS + wS + 10, y: y0 + r.a * s + 2.3, s: 'a=' + numR(r.a, 0), size: 6, g: 0.35 });
+    F.arrow(ops, xS + wS + 26, Y(r.a / 2), xS + wS - 4, Y(r.a / 2), { lw: 1 });
+    ops.push({ t: 'text', x: xS + wS + 29, y: Y(r.a / 2) + 2.3, s: 'Cc', size: 6.5 });
+    F.arrow(ops, xS + wS - 4, Y(r.d), xS + wS + 26, Y(r.d), { lw: 1 });
+    ops.push({ t: 'text', x: xS + wS + 29, y: Y(r.d) + 2.3, s: 'Ts', size: 6.5 });
+    ops.push({ t: 'text', x: xS + wS / 2, y: Y(r.h) + 14, s: 'tegangan', size: 6.5, g: 0.4, align: 'c' });
+
+    var yCap = Y(r.h) + 30;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Penampang ' + Math.round(r.b) + 'x' + Math.round(r.h) +
+      ' - ' + r.n1 + 'D' + r.db1 + (r.doubly && r.Asc > 0 ? ' + ' + r.n2 + 'D' + r.db2 + ' tekan' : '') +
+      ' | regangan & blok tegangan', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Penampang & blok tegangan - lihat versi PDF' } };
+  }
+
   function buildReport(vals, r) {
     var now = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes());
@@ -587,6 +661,8 @@
     L.push(' Mn = 0.85*fc*b*a*(d - a/2)');
     if (r.doubly && r.Asc > 0) L.push("      + A's*fs'*(d - d')");
     L.push('');
+    L.push(figBeam(r));
+    L.push('');
     L.push(' OUTPUT');
     L.push(ruleR('='));
     L.push(rowR('Mn  (nominal)', numR(r.MnkNm, 1) + ' kN.m'));
@@ -613,7 +689,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

@@ -715,6 +715,57 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — denah grup baut + proyeksi breakout 1.5hef + gaya tiap baut
+  function figAnchorPlan(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var Wx = (r.nx - 1) * r.sx, Wy = (r.ny - 1) * r.sy;
+    var ext = 1.5 * r.hef;
+    var s = Math.min(220 / (Wx + 2 * ext + 1), 140 / (Wy + 2 * ext + 1));
+    var cx = 250, cyc = 26 + (Wy + 2 * ext) * s / 2;
+    function X(x) { return cx + x * s; }
+    function Y(y) { return cyc - y * s; }                 // denah: y ke atas
+    // area breakout ANc (proyeksi 1.5hef, tanpa klip tepi — skematik)
+    ops.push({ t: 'rect', x: X(-Wx / 2 - ext), y: Y(Wy / 2 + ext), w: (Wx + 2 * ext) * s, h: (Wy + 2 * ext) * s, fill: true, g: 0.93 });
+    ops.push({ t: 'rect', x: X(-Wx / 2 - ext), y: Y(Wy / 2 + ext), w: (Wx + 2 * ext) * s, h: (Wy + 2 * ext) * s, lw: 0.5, g: 0.5, dash: [4, 3] });
+    ops.push({ t: 'text', x: X(-Wx / 2 - ext) + 3, y: Y(Wy / 2 + ext) + 8, s: 'ANc (1.5hef = ' + numR(ext, 0) + ')', size: 6, g: 0.4 });
+    // tepi beton (bila ca terbatas) — sisi kiri
+    if (r.ca > 0 && r.ca < ext) {
+      var xe = X(-Wx / 2 - r.ca);
+      ops.push({ t: 'line', x1: xe, y1: Y(Wy / 2 + ext) - 8, x2: xe, y2: Y(-Wy / 2 - ext) + 8, lw: 1 });
+      for (var ih = 0; ih < 7; ih++) {
+        var yh = Y(Wy / 2 + ext) + ((Wy + 2 * ext) * s) * ih / 6;
+        ops.push({ t: 'line', x1: xe, y1: yh, x2: xe - 6, y2: yh + 6, lw: 0.4, g: 0.5 });
+      }
+      ops.push({ t: 'text', x: xe - 4, y: Y(0) + 2.3, s: 'ca=' + numR(r.ca, 0), size: 6, align: 'r', g: 0.3 });
+    }
+    // baut + gaya T (isi = tarik, kosong = tekan)
+    var showT = r.n <= 20;
+    r.bolts.forEach(function (bt) {
+      var bx = X(bt.x), by = Y(bt.y);
+      if (bt.T > 0.001) ops.push({ t: 'circle', cx: bx, cy: by, r: 3.6, fill: true, g: Math.max(0.05, 0.6 - 0.55 * bt.T / Math.max(r.Tmax, 0.001)) });
+      else ops.push({ t: 'circle', cx: bx, cy: by, r: 3.6, lw: 0.9, g: 0.35 });
+      if (showT) ops.push({ t: 'text', x: bx + 5, y: by - 4, s: numR(bt.T, 1), size: 5.5, g: 0.3 });
+    });
+    // dimensi spasi
+    if (r.nx > 1) F.dimH(ops, X(-Wx / 2), X(-Wx / 2 + r.sx), Y(-Wy / 2 - ext) + 16, 'sx=' + numR(r.sx, 0));
+    if (r.ny > 1) {
+      F.dimV(ops, Y(Wy / 2), Y(Wy / 2 - r.sy), X(Wx / 2 + ext) + 12, '');
+      ops.push({ t: 'text', x: X(Wx / 2 + ext) + 18, y: (Y(Wy / 2) + Y(Wy / 2 - r.sy)) / 2 + 2.5, s: 'sy=' + numR(r.sy, 0), size: 6.5 });
+    }
+    // panah geser Vu
+    if (r.Vu > 0) {
+      if (r.shearDir === 'x') F.arrow(ops, X(0) - 26, Y(0), X(0) - 6, Y(0), { lw: 1.2 });
+      else F.arrow(ops, X(0), Y(0) + 26, X(0), Y(0) + 6, { lw: 1.2 });
+      ops.push({ t: 'text', x: X(0) - 30, y: Y(0) - 6, s: 'Vu=' + numR(r.Vu, 0), size: 6 });
+    }
+    var yCap = Y(-Wy / 2 - ext) + 34;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Denah grup ' + r.nx + 'x' + r.ny + ' (da=' + numR(r.da, 0) +
+      ', hef=' + numR(r.hef, 0) + ') - angka = gaya baut (kN), Tmax=' + numR(r.Tmax, 1) + ' kN', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Denah grup baut & breakout - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -742,6 +793,8 @@
     L.push(' GAYA BAUT (elastis)'); L.push(ruleR('-'));
     L.push(rowR('Tarik baut maks Tmax', numR(r.Tmax, 1) + ' kN'));
     L.push(rowR('Sum tarik (baut tertarik)', numR(r.sumTt, 1) + ' kN'));
+    L.push('');
+    L.push(figAnchorPlan(r));
     L.push('');
     L.push(' KUAT BAJA TARIK (17.6.1)'); L.push(ruleR('='));
     L.push(rowR('Nsa = Ase*futa', numR(r.Nsa, 1) + ' kN'));
@@ -801,7 +854,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

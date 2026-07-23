@@ -664,6 +664,45 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — denah poer: tiang + reaksi, kolom, perimeter pons, dimensi
+  function figPileCap(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var sc = Math.min(230 / r.Lx, 132 / r.Ly);
+    var cx0 = 250, cyc = 28 + r.Ly * sc / 2;
+    function X(x) { return cx0 + x * sc; }
+    function Y(y) { return cyc - y * sc; }                // denah: y ke atas
+    // poer
+    ops.push({ t: 'rect', x: X(-r.Lx / 2), y: Y(r.Ly / 2), w: r.Lx * sc, h: r.Ly * sc, lw: 1.2 });
+    // kolom (pusat)
+    ops.push({ t: 'rect', x: X(-r.cx / 2), y: Y(r.cy / 2), w: r.cx * sc, h: r.cy * sc, fill: true, g: 0.55 });
+    // perimeter pons kolom (d/2 dari muka)
+    var bx = (r.cx + r.davg) * sc, by = (r.cy + r.davg) * sc;
+    ops.push({ t: 'rect', x: cx0 - bx / 2, y: cyc - by / 2, w: bx, h: by, lw: 0.6, g: 0.4, dash: [4, 3] });
+    ops.push({ t: 'text', x: cx0 + bx / 2 + 3, y: cyc - by / 2 + 6, s: 'b0 pons', size: 5.5, g: 0.4 });
+    // tiang + reaksi
+    var rp = Math.max(4, r.dp / 2 * sc);
+    r.piles.forEach(function (pl, i2) {
+      ops.push({ t: 'circle', cx: X(pl.x), cy: Y(pl.y), r: rp, lw: 1 });
+      ops.push({ t: 'circle', cx: X(pl.x), cy: Y(pl.y), r: 1.2, fill: true, g: 0.3 });
+      ops.push({ t: 'text', x: X(pl.x), y: Y(pl.y) + rp + 8, s: numR(r.R[i2], 0), size: 5.5, align: 'c', g: 0.25 });
+    });
+    // dimensi
+    F.dimH(ops, X(-r.Lx / 2), X(r.Lx / 2), Y(-r.Ly / 2) + 18, 'Lx = ' + Math.round(r.Lx));
+    F.dimV(ops, Y(r.Ly / 2), Y(-r.Ly / 2), X(r.Lx / 2) + 16, '');
+    ops.push({ t: 'text', x: X(r.Lx / 2) + 22, y: cyc + 2.5, s: 'Ly = ' + Math.round(r.Ly), size: 6.5 });
+    if (r.piles.length >= 2) {
+      var pA = r.piles[0], pB = r.piles[1];
+      if (Math.abs(pA.y - pB.y) < 1)
+        F.dimH(ops, X(pA.x), X(pB.x), Y(r.Ly / 2) - 10, 's = ' + Math.round(r.s));
+    }
+    var yCap = Y(-r.Ly / 2) + 34;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Denah poer ' + r.n + ' tiang (angka = reaksi kN) - ' +
+      'governing: ' + tolatin(r.gov.name) + ' D/C ' + numR(r.gov.dc, 2), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Denah poer & reaksi tiang - lihat versi PDF' } };
+  }
+
   function buildReport(vals, r) {
     var now = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes());
@@ -698,6 +737,8 @@
       L.push(rowR('Tiang ' + (i + 1) + '  (x=' + numR(r.piles[i].x, 0) + ', y=' + numR(r.piles[i].y, 0) + ')', numR(Ri, 1)));
     });
     L.push(rowR('Ru maks / min', numR(r.Rmax, 1) + ' / ' + numR(r.Rmin, 1) + ' kN'));
+    L.push('');
+    L.push(figPileCap(r));
     L.push('');
     L.push(' LENTUR DI MUKA KOLOM (Ps. 13.4.2)');
     L.push(ruleR('-'));
@@ -745,7 +786,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

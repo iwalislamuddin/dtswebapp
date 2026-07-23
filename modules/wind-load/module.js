@@ -429,6 +429,56 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — elevasi gedung + profil tekanan windward & leeward
+  function figWind(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var bx = 220, bw2 = 110, yTopB = 26, hB = 130, yG = yTopB + hB;   // gedung
+    function Yz(z) { return yG - z / r.H * hB; }
+    // tanah + gedung
+    ops.push({ t: 'line', x1: 60, y1: yG, x2: 470, y2: yG, lw: 1 });
+    for (var i = 0; i < 18; i++) {
+      var xh = 60 + 410 * i / 17;
+      ops.push({ t: 'line', x1: xh, y1: yG, x2: xh - 6, y2: yG + 6, lw: 0.4, g: 0.6 });
+    }
+    ops.push({ t: 'rect', x: bx, y: yTopB, w: bw2, h: hB, lw: 1.1 });
+    ops.push({ t: 'text', x: bx + bw2 / 2, y: yTopB + hB / 2, s: 'B=' + numR(r.B, 1) + ' m', size: 6.5, align: 'c', g: 0.4 });
+    F.dimV(ops, yTopB, yG, bx + bw2 + 74, '');
+    ops.push({ t: 'text', x: bx + bw2 + 80, y: (yTopB + yG) / 2 + 2.5, s: 'H=' + numR(r.H, 1), size: 6.5 });
+    // profil tekanan windward (kiri, panah menuju dinding, panjang ~ pWW)
+    var pMax = Math.max(r.pWWtopMinus, Math.abs(r.pLeeMinus), 0.01);
+    var pSc = 52 / pMax;
+    var prof = [];
+    r.table.forEach(function (t2) { prof.push([t2.z, t2.pWWm]); });
+    prof.unshift([0.02 * r.H, r.table[0].pWWm]);          // kaki profil
+    var pts = prof.map(function (pp) { return [bx - pp[1] * pSc, Yz(pp[0])]; });
+    pts.push([bx, Yz(prof[prof.length - 1][0])]);
+    pts.push([bx, Yz(prof[0][0])]);
+    ops.push({ t: 'poly', pts: pts, close: true, lw: 0.7, g: 0.55 });
+    [0.15, 0.45, 0.75, 0.98].forEach(function (f) {
+      var z = f * r.H, pv = r.table[Math.min(3, Math.floor(f * 4))].pWWm;
+      F.arrow(ops, bx - pv * pSc + 1, Yz(z), bx - 2, Yz(z), { lw: 0.8, g: 0.3 });
+    });
+    ops.push({ t: 'text', x: bx - 8, y: yTopB - 6, s: 'windward ' + numR(r.pWWtopMinus, 2) + ' kPa', size: 6, align: 'r', g: 0.25 });
+    // leeward (kanan, isap seragam — panah menjauh dinding)
+    var pl = Math.abs(r.pLeeMinus) * pSc;
+    [0.2, 0.5, 0.8].forEach(function (f) {
+      F.arrow(ops, bx + bw2 + 2, Yz(f * r.H), bx + bw2 + 2 + pl, Yz(f * r.H), { lw: 0.8, g: 0.45 });
+    });
+    ops.push({ t: 'line', x1: bx + bw2 + pl + 2, y1: yTopB, x2: bx + bw2 + pl + 2, y2: yG, lw: 0.6, g: 0.55, dash: [3, 2] });
+    ops.push({ t: 'text', x: bx + bw2 + 8, y: yTopB - 6, s: 'leeward ' + numR(r.pLee, 2) + ' kPa', size: 6, g: 0.35 });
+    // panah angin datang + geser dasar
+    F.arrow(ops, 68, Yz(0.65 * r.H), 118, Yz(0.65 * r.H), { lw: 1.4 });
+    ops.push({ t: 'text', x: 70, y: Yz(0.65 * r.H) - 8, s: 'V=' + numR(r.V, 0) + ' m/s (' + r.expo + ')', size: 6.5 });
+    F.arrow(ops, bx + bw2 / 2 - 30, yG + 16, bx + bw2 / 2 + 30, yG + 16, { lw: 1 });
+    ops.push({ t: 'text', x: bx + bw2 / 2 + 36, y: yG + 18.5, s: 'F=' + numR(r.Fdesign, 0) + ' kN, M=' + numR(r.M, 0) + ' kN.m', size: 6.5 });
+    var yCap = yG + 34;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Elevasi tekanan angin SPGAU (qh=' + numR(r.qh, 3) +
+      ' kPa, GCpi=+/-' + numR(r.GCpi, 2) + ')', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Profil tekanan angin - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -463,6 +513,8 @@
       L.push(rowR('z=' + numR(t.z, 1) + ' m  Kz=' + numR(t.Kz, 3), 'qz ' + numR(t.qz, 3) + ' kPa'));
     });
     L.push('');
+    L.push(figWind(r));
+    L.push('');
     L.push(' GAYA TOTAL ARAH ANGIN'); L.push(ruleR('='));
     L.push(rowR('F hitungan', numR(r.F, 1) + ' kN'));
     L.push(rowR('F minimum (0.77 kPa)', numR(r.Fmin, 1) + ' kN' + (r.minGoverns ? ' <<MENENTUKAN' : '')));
@@ -481,7 +533,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

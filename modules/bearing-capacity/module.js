@@ -638,6 +638,65 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — potongan fondasi dangkal + grafik batang q_izin 3 metode
+  function figBearing(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    /* --- potongan fondasi (kiri) --- */
+    var gx0 = 46, gx1 = 250, yg = 34, cxF = 148;
+    var depthExt = Math.max(r.Df + r.B, r.Dw > 0 ? r.Dw + 0.3 : 0, 1);
+    var s = Math.min(120 / depthExt, 130 / Math.max(r.B * 1.7, 1));
+    var Bs = r.B * s, yBase = yg + r.Df * s;
+    // muka tanah + hatch
+    ops.push({ t: 'line', x1: gx0, y1: yg, x2: gx1, y2: yg, lw: 1 });
+    for (var i = 0; i < 12; i++) {
+      var xh = gx0 + (gx1 - gx0) * i / 11;
+      ops.push({ t: 'line', x1: xh, y1: yg, x2: xh - 6, y2: yg - 6, lw: 0.4, g: 0.6 });
+    }
+    // fondasi + kolom
+    var tF = Math.max(10, Bs * 0.18);
+    ops.push({ t: 'rect', x: cxF - Bs / 2, y: yBase - tF, w: Bs, h: tF, lw: 1.1 });
+    ops.push({ t: 'rect', x: cxF - Bs * 0.12, y: Math.min(yg, yBase - tF - 22), w: Bs * 0.24, h: (yBase - tF) - Math.min(yg, yBase - tF - 22), lw: 0.8, g: 0.3 });
+    // dimensi B & Df
+    F.dimH(ops, cxF - Bs / 2, cxF + Bs / 2, yBase + 16, 'B = ' + numR(r.B, 2) + ' m');
+    if (r.Df > 0) {
+      F.dimV(ops, yg, yBase, gx1 + 14, '');
+      ops.push({ t: 'text', x: gx1 + 20, y: (yg + yBase) / 2 + 2.5, s: 'Df = ' + numR(r.Df, 2), size: 6.5 });
+    }
+    // MAT
+    if (r.Dw > 0 && r.Dw < depthExt) {
+      var yw = yg + r.Dw * s;
+      ops.push({ t: 'line', x1: gx0, y1: yw, x2: gx1, y2: yw, lw: 0.5, g: 0.45, dash: [5, 3] });
+      ops.push({ t: 'poly', pts: [[gx0 + 14, yw - 6], [gx0 + 20, yw - 6], [gx0 + 17, yw - 1]], close: true, fill: true, g: 0.45 });
+      ops.push({ t: 'text', x: gx0 + 24, y: yw - 3, s: 'MAT Dw=' + numR(r.Dw, 2), size: 6, g: 0.35 });
+    }
+    // parameter tanah
+    ops.push({ t: 'text', x: gx0 + 2, y: yBase + 34, s: 'gamma=' + numR(r.gamma, 1) + ' kN/m3, c=' + numR(r.c, 1) +
+      ' kPa, phi=' + numR(r.phiDeg, 1) + 'deg', size: 6.5, g: 0.3 });
+
+    /* --- grafik batang q_izin (kanan) --- */
+    var bx0 = 342, bw = 130, by = 40;
+    var vals = [['Terzaghi', r.methods.terzaghi.qall, 0.55], ['Meyerhof', r.methods.meyerhof.qall, 0.4],
+                ['Vesic', r.methods.vesic.qall, 0.25]];
+    var maxV = Math.max(vals[0][1], vals[1][1], vals[2][1], r.qApp || 0) * 1.1;
+    vals.forEach(function (row, i2) {
+      var y = by + i2 * 22;
+      ops.push({ t: 'text', x: bx0 - 6, y: y + 8, s: row[0], size: 6.5, align: 'r' });
+      ops.push({ t: 'rect', x: bx0, y: y, w: row[1] / maxV * bw, h: 12, fill: true, g: row[2] });
+      ops.push({ t: 'text', x: bx0 + row[1] / maxV * bw + 4, y: y + 8, s: numR(row[1], 0), size: 6.5 });
+    });
+    ops.push({ t: 'text', x: bx0 + bw / 2, y: by - 8, s: 'q_izin (kPa), FS=' + numR(r.FS, 1), size: 6.5, align: 'c', g: 0.3 });
+    if (r.qApp > 0 && r.qApp < maxV) {
+      ops.push({ t: 'line', x1: bx0 + r.qApp / maxV * bw, y1: by - 4, x2: bx0 + r.qApp / maxV * bw, y2: by + 66, lw: 1, dash: [3, 2] });
+      ops.push({ t: 'text', x: bx0 + r.qApp / maxV * bw, y: by + 76, s: 'q_kerja=' + numR(r.qApp, 0), size: 6, align: 'c' });
+    }
+    var yCap = Math.max(yBase + 48, by + 88);
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Potongan fondasi ' + tolatin(shapeName(r.shape)) +
+      ' B=' + numR(r.B, 2) + ' m, Df=' + numR(r.Df, 2) + ' m - q_izin per metode', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Potongan fondasi & q_izin - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -679,6 +738,8 @@
       L.push(' ' + nm + pad(m.Nc.toFixed(1), 7) + ' ' + pad(m.Nq.toFixed(1), 7) + ' ' + pad(m.Ng.toFixed(1), 7) + ' ' + pad(m.qu.toFixed(0), 7) + ' ' + pad(m.qall.toFixed(0), 7));
     });
     L.push('');
+    L.push(figBearing(r));
+    L.push('');
     L.push(' RINCIAN - ' + tolatin(methodName(r.primary)));
     L.push(ruleR('='));
     L.push(rowR('Nc / Nq / Ng', numR(pm.Nc, 2) + ' / ' + numR(pm.Nq, 2) + ' / ' + numR(pm.Ng, 2)));
@@ -713,7 +774,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

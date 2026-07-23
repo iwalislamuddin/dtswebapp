@@ -568,6 +568,52 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — skema batang tarik + grafik batang kapasitas (vektor PDF)
+  function figTension(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    /* --- skema batang (elevasi) --- */
+    var mx0 = 110, mx1 = 430, my0 = 22, mh = 40, myc = my0 + mh / 2;
+    ops.push({ t: 'rect', x: mx0, y: my0, w: mx1 - mx0, h: mh, lw: 1.1 });
+    if (r.conn === 'bolt' && r.nHole > 0) {
+      var nShow = Math.min(r.nHole, 6);
+      for (var i = 0; i < nShow; i++) {
+        var hy = my0 + mh * (i + 1) / (nShow + 1);
+        ops.push({ t: 'circle', cx: mx0 + 42, cy: hy, r: 3.2, lw: 0.8 });
+      }
+      ops.push({ t: 'line', x1: mx0 + 42, y1: my0 - 8, x2: mx0 + 42, y2: my0 + mh + 8, lw: 0.4, g: 0.5, dash: [3, 2] });
+      ops.push({ t: 'text', x: mx0 + 42, y: my0 - 11, s: 'pot. neto An (' + r.nHole + ' lubang dia ' + numR(r.dh, 0) + ')', size: 6, align: 'c', g: 0.3 });
+    } else {
+      ops.push({ t: 'text', x: mx0 + 42, y: my0 - 11, s: 'sambungan las / tanpa lubang', size: 6, align: 'c', g: 0.3 });
+    }
+    ops.push({ t: 'line', x1: mx1 - 60, y1: my0 - 8, x2: mx1 - 60, y2: my0 + mh + 8, lw: 0.4, g: 0.5, dash: [3, 2] });
+    ops.push({ t: 'text', x: mx1 - 60, y: my0 - 11, s: 'bruto Ag', size: 6, align: 'c', g: 0.3 });
+    F.arrow(ops, mx0, myc, mx0 - 42, myc, { lw: 1.2 });
+    F.arrow(ops, mx1, myc, mx1 + 42, myc, { lw: 1.2 });
+    ops.push({ t: 'text', x: mx1 + 20, y: myc - 6, s: 'T', size: 7 });
+    ops.push({ t: 'text', x: (mx0 + mx1) / 2, y: myc + 2.5, s: tolatin(r.p.name), size: 6.5, align: 'c', g: 0.35 });
+
+    /* --- grafik batang kapasitas DFBK + titik beban --- */
+    var bx0 = 190, bw = 250, by = 96;
+    var maxV = Math.max(r.phiPnY, r.phiPnR, r.Pu || 0) * 1.08;
+    function BW(v) { return v / maxV * bw; }
+    [['Leleh 0.90*Fy*Ag', r.phiPnY, 0.55], ['Fraktur 0.75*Fu*Ae', r.phiPnR, 0.25]].forEach(function (row, i) {
+      var y = by + i * 20;
+      ops.push({ t: 'text', x: bx0 - 6, y: y + 8, s: row[0], size: 6.5, align: 'r' });
+      ops.push({ t: 'rect', x: bx0, y: y, w: BW(row[1]), h: 12, fill: true, g: row[2] });
+      ops.push({ t: 'text', x: bx0 + BW(row[1]) + 4, y: y + 8, s: numR(row[1], 0) + ' kN', size: 6.5 });
+    });
+    if (r.Pu > 0) {
+      ops.push({ t: 'line', x1: bx0 + BW(r.Pu), y1: by - 8, x2: bx0 + BW(r.Pu), y2: by + 44, lw: 1, dash: [3, 2] });
+      ops.push({ t: 'text', x: bx0 + BW(r.Pu), y: by + 52, s: 'Pu = ' + numR(r.Pu, 0) + ' kN', size: 6.5, align: 'c' });
+    }
+    var yCap = by + 64;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Batang tarik ' + tolatin(r.p.name) +
+      ' - menentukan: ' + tolatin(r.govLRFD) + ' (phiPn = ' + numR(r.phiPn, 0) + ' kN)', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Skema batang tarik & kapasitas - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -613,6 +659,8 @@
     L.push(rowR('Pn leleh  = Fy*Ag', numR(r.PnY, 1) + ' kN'));
     L.push(rowR('Pn frakt. = Fu*Ae', numR(r.PnR, 1) + ' kN'));
     L.push('');
+    L.push(figTension(r));
+    L.push('');
     L.push(' OUTPUT — DFBK (LRFD)');
     L.push(ruleR('='));
     L.push(rowR('phi*Pn leleh (phi 0.90)', numR(r.phiPnY, 1) + ' kN'));
@@ -648,7 +696,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

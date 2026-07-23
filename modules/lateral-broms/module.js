@@ -436,6 +436,61 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — elevasi tiang + diagram tekanan tanah ultimit Broms
+  function figBroms(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var yg = 44, cxP = 190;
+    var s = 130 / r.L;
+    function Y(z) { return yg + z * s; }                  // z dari muka tanah
+    var yTop = yg - Math.max(14, r.e * s);                // kepala tiang (e di atas tanah)
+    var wP = Math.max(8, Math.min(20, r.D * 1000 * 0.02));
+    // muka tanah + hatch
+    ops.push({ t: 'line', x1: 80, y1: yg, x2: 420, y2: yg, lw: 1 });
+    for (var i = 0; i < 16; i++) {
+      var xh = 80 + 340 * i / 15;
+      ops.push({ t: 'line', x1: xh, y1: yg, x2: xh - 6, y2: yg - 6, lw: 0.4, g: 0.6 });
+    }
+    // tiang
+    ops.push({ t: 'rect', x: cxP - wP / 2, y: yTop, w: wP, h: Y(r.L) - yTop, lw: 1.1 });
+    // beban H di kepala + label e
+    F.arrow(ops, cxP - 56, yTop + 4, cxP - wP / 2 - 2, yTop + 4, { lw: 1.3 });
+    ops.push({ t: 'text', x: cxP - 58, y: yTop - 2, s: 'Hu=' + numR(r.Hu, 0) + ' kN', size: 6.5, align: 'r' });
+    if (r.e > 0.01) {
+      F.dimV(ops, yTop, yg, cxP - wP / 2 - 22, '');
+      ops.push({ t: 'text', x: cxP - wP / 2 - 28, y: (yTop + yg) / 2 + 2.5, s: 'e=' + numR(r.e, 2), size: 6, align: 'r' });
+    }
+    ops.push({ t: 'text', x: cxP + wP / 2 + 4, y: yTop + 8, s: r.head === 'free' ? 'kepala bebas' : 'kepala jepit', size: 6, g: 0.35 });
+    // diagram tekanan ultimit pu (kanan tiang)
+    var xPr = cxP + wP / 2 + 26, wMax = 110;
+    if (r.soil === 'clay') {
+      // nol s/d 1.5D, konstan 9cuD di bawahnya
+      var z0 = 1.5 * r.D;
+      ops.push({ t: 'rect', x: xPr, y: Y(z0), w: wMax, h: Y(r.L) - Y(z0), fill: true, g: 0.88 });
+      ops.push({ t: 'rect', x: xPr, y: Y(z0), w: wMax, h: Y(r.L) - Y(z0), lw: 0.6, g: 0.4 });
+      ops.push({ t: 'text', x: xPr + wMax + 4, y: (Y(z0) + Y(r.L)) / 2 + 2.3, s: 'pu=9cuD=' + numR(r.k, 1) + ' kN/m', size: 6, g: 0.3 });
+      ops.push({ t: 'text', x: xPr + 3, y: Y(z0) - 3, s: 'zona nol 1.5D', size: 5.5, g: 0.45 });
+    } else {
+      // segitiga 3 Kp gamma' z D
+      ops.push({ t: 'poly', pts: [[xPr, yg], [xPr, Y(r.L)], [xPr + wMax, Y(r.L)]], close: true, fill: true, g: 0.88 });
+      ops.push({ t: 'poly', pts: [[xPr, yg], [xPr, Y(r.L)], [xPr + wMax, Y(r.L)]], close: true, lw: 0.6, g: 0.4 });
+      ops.push({ t: 'text', x: xPr + wMax + 4, y: Y(r.L) + 2.3, s: 'pu=3Kp.g\'.L.D=' + numR(3 * r.Kp * r.gam * r.L * r.D, 0) + ' kN/m', size: 6, g: 0.3 });
+    }
+    // zmax (lokasi Mmax)
+    if (r.zmax > 0 && r.zmax < r.L) {
+      ops.push({ t: 'line', x1: cxP - wP / 2 - 12, y1: Y(r.zmax), x2: xPr + wMax, y2: Y(r.zmax), lw: 0.5, g: 0.4, dash: [4, 3] });
+      ops.push({ t: 'text', x: cxP - wP / 2 - 14, y: Y(r.zmax) + 2.3, s: 'zmax=' + numR(r.zmax, 2) + ' m, Mmax=' + numR(r.Mmax, 0), size: 6, align: 'r', g: 0.25 });
+    }
+    // dimensi L
+    F.dimV(ops, yg, Y(r.L), 92, '');
+    ops.push({ t: 'text', x: 86, y: (yg + Y(r.L)) / 2 + 2.5, s: 'L=' + numR(r.L, 1) + ' m', size: 6.5, align: 'r' });
+    var yCap = Y(r.L) + 26;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Skema Broms ' + (r.soil === 'clay' ? 'lempung' : 'pasir') +
+      ', ' + (r.head === 'free' ? 'kepala bebas' : 'kepala jepit') + ' - ' + tolatin(r.mode), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Skema tiang & tekanan Broms - lihat versi PDF' } };
+  }
+
   function buildReport(vals, r) {
     var now = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes());
@@ -460,6 +515,8 @@
     L.push(rowR('H tanah (tiang pendek)', numR(r.Hshort, 1) + ' kN'));
     L.push(rowR('H leleh (tiang panjang)', numR(r.Hlong, 1) + ' kN'));
     L.push('');
+    L.push(figBroms(r));
+    L.push('');
     L.push(' OUTPUT');
     L.push(ruleR('='));
     L.push(rowR('>> Hu GOVERNING', numR(r.Hu, 1) + ' kN'));
@@ -483,7 +540,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

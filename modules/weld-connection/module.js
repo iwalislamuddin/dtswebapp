@@ -426,6 +426,60 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — potongan sambungan T (fillet 2 sisi, kaki w & throat te) + kapasitas
+  function figWeld(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var cx = 150, yBase = 130;
+    var tB = 16, tV = 14;                                 // tebal pelat (skematik)
+    var wpx = Math.max(10, Math.min(26, r.w * 2.2));      // kaki las (skematik proporsional)
+    // pelat dasar + pelat vertikal
+    ops.push({ t: 'rect', x: cx - 95, y: yBase, w: 190, h: tB, lw: 1 });
+    ops.push({ t: 'rect', x: cx - tV / 2, y: yBase - 92, w: tV, h: 92, lw: 1 });
+    // fillet dua sisi (segitiga)
+    ops.push({ t: 'poly', pts: [[cx - tV / 2, yBase], [cx - tV / 2 - wpx, yBase], [cx - tV / 2, yBase - wpx]], close: true, fill: true, g: 0.75 });
+    ops.push({ t: 'poly', pts: [[cx - tV / 2, yBase], [cx - tV / 2 - wpx, yBase], [cx - tV / 2, yBase - wpx]], close: true, lw: 0.8 });
+    ops.push({ t: 'poly', pts: [[cx + tV / 2, yBase], [cx + tV / 2 + wpx, yBase], [cx + tV / 2, yBase - wpx]], close: true, fill: true, g: 0.75 });
+    ops.push({ t: 'poly', pts: [[cx + tV / 2, yBase], [cx + tV / 2 + wpx, yBase], [cx + tV / 2, yBase - wpx]], close: true, lw: 0.8 });
+    // throat te (garis putus dari sudut dalam ke muka las)
+    ops.push({ t: 'line', x1: cx + tV / 2, y1: yBase, x2: cx + tV / 2 + wpx / 2, y2: yBase - wpx / 2, lw: 0.5, g: 0.35, dash: [2, 2] });
+    ops.push({ t: 'text', x: cx + tV / 2 + wpx / 2 + 4, y: yBase - wpx / 2 - 2, s: 'te=0.707w=' + numR(r.te, 1), size: 6, g: 0.3 });
+    // label kaki w & t
+    F.dimV(ops, yBase - wpx, yBase, cx - tV / 2 - wpx - 12, '');
+    ops.push({ t: 'text', x: cx - tV / 2 - wpx - 18, y: yBase - wpx / 2 + 2.5, s: 'w=' + r.w, size: 6.5, align: 'r' });
+    ops.push({ t: 'text', x: cx + 100, y: yBase + tB / 2 + 2.5, s: 't=' + numR(r.t, 0), size: 6.5 });
+    // panah beban Ru pada pelat vertikal (sudut theta thd sumbu las)
+    F.arrow(ops, cx, yBase - 118, cx, yBase - 96, { lw: 1.2 });
+    ops.push({ t: 'text', x: cx + 6, y: yBase - 106, s: 'Ru=' + numR(r.Ru, 0) + ' kN (theta=' + numR(r.theta, 0) + 'deg)', size: 6.5 });
+    ops.push({ t: 'text', x: cx, y: yBase + tB + 12, s: 'Lw total = ' + r.Lw + ' mm (tegak lurus bidang gambar)', size: 6, align: 'c', g: 0.35 });
+    /* --- grafik kapasitas --- */
+    var bx0 = 335, bw = 150, by = 42;
+    var rows = [['Las (J2.4)', r.phiRnw, 0.2]];
+    if (r.baseOk) {
+      rows.push(['Dasar leleh', r.phiRyBase, 0.45]);
+      rows.push(['Dasar fraktur', r.phiRuBase, 0.6]);
+    }
+    var maxV = Math.max(r.Ru, 0.01);
+    rows.forEach(function (rw) { maxV = Math.max(maxV, rw[1]); });
+    maxV *= 1.1;
+    rows.forEach(function (rw, i2) {
+      var y = by + i2 * 18;
+      ops.push({ t: 'text', x: bx0 - 6, y: y + 8, s: rw[0], size: 6.5, align: 'r' });
+      ops.push({ t: 'rect', x: bx0, y: y, w: rw[1] / maxV * bw, h: 11, fill: true, g: rw[2] });
+      ops.push({ t: 'text', x: bx0 + rw[1] / maxV * bw + 4, y: y + 8, s: numR(rw[1], 0), size: 6.5 });
+    });
+    if (r.Ru > 0) {
+      ops.push({ t: 'line', x1: bx0 + r.Ru / maxV * bw, y1: by - 6, x2: bx0 + r.Ru / maxV * bw, y2: by + rows.length * 18 + 2, lw: 1, dash: [3, 2] });
+      ops.push({ t: 'text', x: bx0 + r.Ru / maxV * bw, y: by + rows.length * 18 + 11, s: 'Ru', size: 6, align: 'c' });
+    }
+    ops.push({ t: 'text', x: bx0 + bw / 2, y: by - 10, s: 'phiRn (kN)', size: 6.5, align: 'c', g: 0.3 });
+    var yCap = 172;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Las sudut 2 sisi w=' + r.w + ' mm, Lw=' + r.Lw +
+      ' mm - phiRn desain = ' + numR(r.phiRn, 1) + ' kN (' + (r.weldGoverns ? 'las' : 'logam dasar') + ' menentukan)', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Potongan las fillet & kapasitas - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -442,6 +496,8 @@
     L.push(rowR('Sudut beban theta', numR(r.theta, 0) + ' deg'));
     L.push(rowR('Throat te / Awe', numR(r.te, 2) + ' mm / ' + numR(r.Awe, 0) + ' mm2'));
     L.push(rowR('Logam dasar t/Fy/Fu', numR(r.t, 0) + ' mm / ' + numR(r.Fy, 0) + ' / ' + numR(r.Fu, 0) + ' MPa'));
+    L.push('');
+    L.push(figWeld(r));
     L.push('');
     L.push(' KUAT LAS (J2.4)'); L.push(ruleR('='));
     L.push(rowR('kd arah', numR(r.kd, 3)));
@@ -474,7 +530,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

@@ -509,6 +509,59 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — skema balok menerus + diagram momen (parabola per bentang)
+  function figMoment(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var uM = r.elem === 'pelat' ? ' kNm/m' : ' kNm';
+    var total = 0;
+    r.spanLen.forEach(function (Ls) { total += Ls; });
+    var x0 = 76, sx = 380 / total, yb = 92;
+    var Mmax = Math.max(r.MnegMax || 0.001, r.MposMax || 0.001);
+    var sM = 52 / Mmax;
+    // beban merata wu (panah kecil di atas balok)
+    for (var ia = 0; ia <= 14; ia++) {
+      var xa = x0 + total * sx * ia / 14;
+      F.arrow(ops, xa, yb - 22, xa, yb - 6, { lw: 0.5, g: 0.55 });
+    }
+    ops.push({ t: 'line', x1: x0, y1: yb - 22, x2: x0 + total * sx, y2: yb - 22, lw: 0.5, g: 0.55 });
+    ops.push({ t: 'text', x: x0 + total * sx + 6, y: yb - 20, s: 'wu=' + numR(r.wu, 2), size: 6.5, g: 0.3 });
+    // balok + tumpuan
+    ops.push({ t: 'line', x1: x0, y1: yb, x2: x0 + total * sx, y2: yb, lw: 1.6 });
+    var xs = [x0];
+    r.spanLen.forEach(function (Ls) { xs.push(xs[xs.length - 1] + Ls * sx); });
+    xs.forEach(function (xsup, i2) {
+      ops.push({ t: 'poly', pts: [[xsup, yb], [xsup - 5, yb + 9], [xsup + 5, yb + 9]], close: true, fill: true, g: 0.4 });
+      if (r.supV && r.supV[i2] != null)
+        ops.push({ t: 'text', x: xsup, y: yb + 18, s: 'V=' + numR(r.supV[i2], 1), size: 5.5, align: 'c', g: 0.4 });
+    });
+    // diagram momen: parabola tiap bentang lewat (-Ml, +Mpos, -Mr); positif ke bawah
+    for (var isp = 0; isp < r.spanLen.length; isp++) {
+      var Ml = -(r.supM[isp] || 0), Mr = -(r.supM[isp + 1] || 0);
+      var Mm = r.spanM[isp] || 0;
+      var pts = [];
+      for (var k = 0; k <= 24; k++) {
+        var t = k / 24;
+        // kuadratik lewat 3 titik: M(0)=Ml, M(0.5)=Mm, M(1)=Mr
+        var Mt = Ml * (1 - t) * (1 - 2 * t) + 4 * Mm * t * (1 - t) + Mr * t * (2 * t - 1);
+        pts.push([xs[isp] + (xs[isp + 1] - xs[isp]) * t, yb + Mt * sM]);
+      }
+      ops.push({ t: 'poly', pts: pts, lw: 1.1 });
+      // label puncak positif & negatif
+      ops.push({ t: 'text', x: (xs[isp] + xs[isp + 1]) / 2, y: yb + Mm * sM + 9, s: numR(Mm, 1), size: 6, align: 'c', g: 0.2 });
+    }
+    xs.forEach(function (xsup, i3) {
+      var Ms = r.supM[i3] || 0;
+      if (Ms > 0.005) ops.push({ t: 'text', x: xsup, y: yb - Ms * sM - 4, s: '-' + numR(Ms, 1), size: 6, align: 'c', g: 0.2 });
+    });
+    var yCap = yb + Mmax * sM + 26;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Diagram momen ' +
+      (r.n === 1 ? 'statika eksak (1 bentang)' : 'metode koefisien (' + r.n + ' bentang)') +
+      ' - M+maks ' + numR(r.MposMax, 1) + tolatin(uM) + ', M-maks ' + numR(r.MnegMax, 1) + tolatin(uM), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Diagram momen balok menerus - lihat versi PDF' } };
+  }
+
   function buildReport(vals, r) {
     var now = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes());
@@ -544,6 +597,8 @@
     L.push(rowR('qL', numR(r.wL, 2) + uW));
     L.push(rowR('Cek qL <= 3 qD (6.5.1c)', r.wL <= 3 * r.wD ? 'OK' : 'TIDAK OK'));
     L.push(rowR('wu = maks(1.4D; 1.2D+1.6L)', numR(r.wu, 2) + uW + (r.gov14 ? ' (1.4D)' : ' (1.2D+1.6L)')));
+    L.push('');
+    L.push(figMoment(r));
     L.push('');
     if (r.n === 1) {
       L.push(' STATIKA EKSAK - 1 BENTANG (di luar Ps. 6.5)');
@@ -592,7 +647,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

@@ -417,6 +417,37 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — grafik batang seluruh kombinasi (maks & min tersorot)
+  function figCombos(r) {
+    var ops = [];
+    var rowH = 15, by = 18;
+    var n = r.combos.length;
+    var vMax = 0, vMin = 0;
+    r.combos.forEach(function (c) { vMax = Math.max(vMax, c.val); vMin = Math.min(vMin, c.val); });
+    if (vMax <= 0) vMax = 1;
+    var bx0 = 150, bwTot = 290;
+    var span = vMax - Math.min(vMin, 0) || 1;
+    var xZero = bx0 + (0 - Math.min(vMin, 0)) / span * bwTot;
+    function XV(v) { return bx0 + (v - Math.min(vMin, 0)) / span * bwTot; }
+    r.combos.forEach(function (c, i) {
+      var y = by + i * rowH;
+      var isGov = c === r.gov, isMin = c === r.govMin && c.val < 0;
+      ops.push({ t: 'text', x: bx0 - 8, y: y + 8, s: c.id + '. ' + tolatin(c.expr).slice(0, 24), size: 5.8, align: 'r', g: isGov || isMin ? 0 : 0.35 });
+      var x1 = Math.min(xZero, XV(c.val)), wB = Math.abs(XV(c.val) - xZero);
+      ops.push({ t: 'rect', x: x1, y: y + 1, w: Math.max(wB, 0.5), h: 10, fill: true, g: isGov ? 0.15 : (isMin ? 0.45 : 0.72) });
+      ops.push({ t: 'text', x: c.val >= 0 ? XV(c.val) + 4 : x1 - 4, y: y + 8.5, s: numR(c.val, 1) + (isGov ? ' <<MAKS' : (isMin ? ' <<MIN' : '')), size: 6, align: c.val >= 0 ? 'l' : 'r', g: isGov || isMin ? 0 : 0.35 });
+    });
+    // garis nol
+    ops.push({ t: 'line', x1: xZero, y1: by - 6, x2: xZero, y2: by + n * rowH + 4, lw: 0.7 });
+    ops.push({ t: 'text', x: xZero, y: by - 9, s: '0', size: 6, align: 'c', g: 0.35 });
+    var yCap = by + n * rowH + 20;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Kombinasi ' + (r.sys === 'lrfd' ? 'LRFD' : 'ASD') +
+      ' - ' + tolatin(r.qtyLabel) + ' (' + tolatin(r.unit) + '), maks komb ' + (r.gov ? r.gov.id : '-') +
+      ' = ' + (r.gov ? numR(r.gov.val, 1) : '-'), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Grafik batang kombinasi - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -450,6 +481,8 @@
     });
     L.push(ruleR('='));
     L.push('');
+    L.push(figCombos(r));
+    L.push('');
     L.push(' HASIL');
     L.push(ruleR('='));
     if (r.gov) {
@@ -474,7 +507,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

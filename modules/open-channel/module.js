@@ -451,6 +451,68 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — potongan melintang saluran + muka air normal & kritis
+  function figChannel(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var cx = 200, yBase = 152;
+    function hw(h) {                                      // setengah-lebar pada tinggi h
+      if (r.shape === 'rect') return r.b / 2;
+      if (r.shape === 'trap') return r.b / 2 + r.m * h;
+      if (r.shape === 'tri') return r.m * h;
+      return r.D / 2;
+    }
+    var Hd = r.shape === 'circle' ? r.D : Math.max(r.y * 1.35, (r.yc || 0) * 1.15, 0.4);
+    var s = Math.min(200 / Math.max(2 * hw(Hd), 0.3), 118 / Hd);
+    function Y(h) { return yBase - h * s; }
+    if (r.shape === 'circle') {
+      var cyC = yBase - r.D / 2 * s, rad = r.D / 2 * s;
+      ops.push({ t: 'circle', cx: cx, cy: cyC, r: rad, lw: 1.2 });
+      // air: poligon busur bawah sampai chord di y
+      var thw = Math.acos(Math.max(-1, 1 - 2 * r.y / r.D));
+      var pts = [];
+      for (var k = -20; k <= 20; k++) {
+        var th = thw * k / 20;
+        pts.push([cx + rad * Math.sin(th), yBase - (r.D / 2) * (1 - Math.cos(th)) * s]);
+      }
+      ops.push({ t: 'poly', pts: pts, close: true, fill: true, g: 0.88 });
+      ops.push({ t: 'poly', pts: pts, close: true, lw: 0.5, g: 0.5 });
+      F.dimV(ops, Y(r.D), yBase, cx + rad + 22, '');
+      ops.push({ t: 'text', x: cx + rad + 28, y: (Y(r.D) + yBase) / 2 + 2.5, s: 'D=' + numR(r.D, 2), size: 6.5 });
+    } else {
+      // dinding saluran
+      ops.push({ t: 'poly', pts: [[cx - hw(Hd) * s, Y(Hd)], [cx - hw(0) * s, yBase], [cx + hw(0) * s, yBase], [cx + hw(Hd) * s, Y(Hd)]], lw: 1.2 });
+      // air
+      ops.push({ t: 'poly', pts: [[cx - hw(r.y) * s, Y(r.y)], [cx - hw(0) * s, yBase], [cx + hw(0) * s, yBase], [cx + hw(r.y) * s, Y(r.y)]], close: true, fill: true, g: 0.88 });
+      ops.push({ t: 'line', x1: cx - hw(r.y) * s, y1: Y(r.y), x2: cx + hw(r.y) * s, y2: Y(r.y), lw: 0.8, g: 0.35 });
+      if (r.shape !== 'tri') F.dimH(ops, cx - hw(0) * s, cx + hw(0) * s, yBase + 14, 'b=' + numR(r.b, 2));
+      if (r.shape !== 'rect') ops.push({ t: 'text', x: cx + (hw(Hd) + hw(0)) / 2 * s + 6, y: (Y(Hd) + yBase) / 2, s: 'm=' + numR(r.m, 1), size: 6, g: 0.35 });
+    }
+    // simbol muka air + dimensi y
+    ops.push({ t: 'poly', pts: [[cx - 8, Y(r.y) - 8], [cx, Y(r.y) - 8], [cx - 4, Y(r.y) - 2]], close: true, fill: true, g: 0.35 });
+    F.dimV(ops, Y(r.y), yBase, cx - hw(Hd) * s - 18, '');
+    ops.push({ t: 'text', x: cx - hw(Hd) * s - 24, y: (Y(r.y) + yBase) / 2 + 2.5, s: 'y=' + numR(r.y, 3), size: 6.5, align: 'r' });
+    ops.push({ t: 'text', x: cx, y: Y(r.y) + 10, s: 'T=' + numR(r.T, 2) + ' m', size: 6, align: 'c', g: 0.35 });
+    // kedalaman kritis
+    if (r.yc != null) {
+      ops.push({ t: 'line', x1: cx - hw(Math.min(r.yc, Hd)) * s, y1: Y(r.yc), x2: cx + hw(Math.min(r.yc, Hd)) * s, y2: Y(r.yc), lw: 0.6, g: 0.45, dash: [4, 3] });
+      ops.push({ t: 'text', x: cx + hw(Math.min(r.yc, Hd)) * s + 4, y: Y(r.yc) + 2.3, s: 'yc=' + numR(r.yc, 3), size: 6, g: 0.35 });
+    }
+    /* --- ringkasan hidraulika (kanan) --- */
+    var tx = 372;
+    [['Q = ' + numR(r.Q, 3) + ' m3/s', 0], ['V = ' + numR(r.V, 2) + ' m/s', 1],
+     ['R = ' + numR(r.R, 3) + ' m', 2], ['Fr = ' + numR(r.Fr, 2) + ' (' + r.regime + ')', 3],
+     ['n = ' + numR(r.n, 3) + ', S = ' + r.S, 4]].forEach(function (row) {
+      ops.push({ t: 'text', x: tx, y: 52 + row[1] * 14, s: row[0], size: 7, g: row[1] < 2 ? 0 : 0.3 });
+    });
+    var yCap = yBase + 30;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Potongan saluran ' +
+      ({ rect: 'persegi', trap: 'trapesium', tri: 'segitiga', circle: 'lingkaran' }[r.shape]) +
+      ' - kedalaman normal y=' + numR(r.y, 3) + ' m', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Potongan saluran & muka air - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -468,6 +530,8 @@
     if (r.shape === 'circle') L.push(rowR('Diameter D', numR(r.D, 2) + ' m'));
     L.push(rowR('Manning n / S', numR(r.n, 3) + ' / ' + r.S));
     L.push(rowR('Mode', r.mode === 'fromY' ? 'y diketahui -> Q' : 'Q diketahui -> y'));
+    L.push('');
+    L.push(figChannel(r));
     L.push('');
     L.push(' HASIL'); L.push(ruleR('='));
     L.push(rowR('Kedalaman y', numR(r.y, 3) + ' m' + (r.shape === 'circle' ? '  (y/D ' + numR(r.y / r.D, 2) + ')' : '')));
@@ -492,7 +556,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

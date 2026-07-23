@@ -341,6 +341,45 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — profil energi pipa: EGL & HGL sepanjang L
+  function figEnergy(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var px0 = 90, pw = 360, top = 16, ph = 140, bot = top + ph;
+    var Hmax = Math.max(r.hTot + r.hv, 0.001) * 1.15;
+    function Y(head) { return bot - head / Hmax * ph; }
+    var x1 = px0 + pw;
+    // pipa (garis tebal abu di bawah) + panah aliran
+    ops.push({ t: 'line', x1: px0, y1: bot, x2: x1, y2: bot, lw: 5, g: 0.7 });
+    F.arrow(ops, px0 + pw * 0.46, bot - 9, px0 + pw * 0.56, bot - 9, { lw: 1.1 });
+    ops.push({ t: 'text', x: px0 + pw * 0.58, y: bot - 7, s: 'Q=' + numR(r.Q * 1000, 1) + ' L/s, V=' + numR(r.V, 2) + ' m/s', size: 6.5, g: 0.3 });
+    // tick head kiri
+    var stH = F.niceStep(Hmax, 4);
+    for (var th = 0; th <= Hmax; th += stH) {
+      ops.push({ t: 'line', x1: px0 - 3, y1: Y(th), x2: px0, y2: Y(th), lw: 0.5, g: 0.4 });
+      ops.push({ t: 'text', x: px0 - 6, y: Y(th) + 2.3, s: numR(th, stH < 1 ? 2 : 1), size: 6, align: 'r', g: 0.35 });
+    }
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0, y2: bot, lw: 0.8 });
+    ops.push({ t: 'text', x: px0 - 6, y: top - 4, s: 'head (m)', size: 6.5, align: 'r', g: 0.3 });
+    // EGL (hulu hTot+hv → hilir hv) & HGL (= EGL - hv)
+    var eglUp = r.hTot + r.hv;
+    ops.push({ t: 'line', x1: px0, y1: Y(eglUp), x2: x1, y2: Y(r.hv), lw: 1.3 });
+    ops.push({ t: 'text', x: px0 + 6, y: Y(eglUp) - 4, s: 'EGL', size: 6.5 });
+    ops.push({ t: 'line', x1: px0, y1: Y(eglUp - r.hv), x2: x1, y2: Y(0), lw: 1, g: 0.45, dash: [5, 3] });
+    ops.push({ t: 'text', x: px0 + 46, y: Y(eglUp - r.hv) + 9, s: 'HGL', size: 6.5, g: 0.35 });
+    // anotasi hv & hL total di hilir
+    F.dimV(ops, Y(r.hv), Y(0), x1 + 14, '');
+    ops.push({ t: 'text', x: x1 + 20, y: (Y(r.hv) + Y(0)) / 2 + 2.5, s: 'hv=' + numR(r.hv, 3), size: 6 });
+    F.dimV(ops, Y(eglUp), Y(r.hv), x1 + 40, '');
+    ops.push({ t: 'text', x: x1 + 46, y: (Y(eglUp) + Y(r.hv)) / 2 + 2.5, s: 'hL=' + numR(r.hTot, 2), size: 6 });
+    ops.push({ t: 'text', x: px0 + pw / 2, y: bot + 12, s: 'L = ' + numR(r.Lp, 0) + ' m, D = ' + numR(r.D * 1000, 0) + ' mm (' + tolatin(r.matLabel) + ')', size: 6.5, align: 'c', g: 0.35 });
+    var yCap = bot + 28;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Profil energi (EGL/HGL) - f=' + numR(r.f, 4) +
+      ' (' + r.regime + '), hf=' + numR(r.hf, 2) + ' m, hm=' + numR(r.hm, 2) + ' m', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Profil energi EGL/HGL - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -357,6 +396,8 @@
     L.push(rowR('Material', tolatin(r.matLabel) + ' (eps ' + numR(r.eps * 1000, 4) + ' mm, C ' + r.C + ')'));
     L.push(rowR('Debit Q', numR(r.Q * 1000, 2) + ' L/s'));
     L.push(rowR('Viskositas nu', (r.nu * 1e6).toFixed(3) + 'e-6 m2/s'));
+    L.push('');
+    L.push(figEnergy(r));
     L.push('');
     L.push(' HASIL'); L.push(ruleR('='));
     L.push(rowR('Kecepatan V', numR(r.V, 3) + ' m/s'));
@@ -383,7 +424,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

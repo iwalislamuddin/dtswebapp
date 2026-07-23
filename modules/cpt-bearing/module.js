@@ -424,6 +424,54 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — profil qc(z) data sondir + fondasi & jendela rata-rata Df..Df+B
+  function figCPT(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var px0 = 120, pw = 300, top = 18, ph = 168, bot = top + ph;
+    var zMax = r.zMax * 1.02;
+    var qcMax = 1;
+    r.pts.forEach(function (p) { qcMax = Math.max(qcMax, p.qc); });
+    qcMax *= 1.08;
+    function X(qc) { return px0 + qc / qcMax * pw; }
+    function Y(z) { return top + z / zMax * ph; }
+    // jendela rata-rata Df..Df+B (band abu)
+    var yA = Y(Math.min(r.Df, zMax)), yB2 = Y(Math.min(r.Df + r.B, zMax));
+    ops.push({ t: 'rect', x: px0, y: yA, w: pw, h: yB2 - yA, fill: true, g: 0.92 });
+    // grid + tick qc (MPa)
+    var stQ = F.niceStep(qcMax / 1000, 5) * 1000;
+    for (var tq = 0; tq <= qcMax; tq += stQ) {
+      ops.push({ t: 'line', x1: X(tq), y1: top, x2: X(tq), y2: bot, lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: X(tq), y: top - 4, s: numR(tq / 1000, 0), size: 6.5, align: 'c', g: 0.3 });
+    }
+    var stZ = F.niceStep(zMax, 6);
+    for (var tz = 0; tz <= zMax; tz += stZ) {
+      ops.push({ t: 'line', x1: px0, y1: Y(tz), x2: px0 + pw, y2: Y(tz), lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: px0 - 5, y: Y(tz) + 2.3, s: numR(tz, 0), size: 6.5, align: 'r', g: 0.3 });
+    }
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0, y2: bot, lw: 0.9 });
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0 + pw, y2: top, lw: 0.9 });
+    ops.push({ t: 'text', x: px0 + pw + 6, y: top - 4, s: 'qc (MPa)', size: 6.5 });
+    ops.push({ t: 'text', x: px0 - 5, y: bot + 10, s: 'z (m)', size: 6.5, align: 'r' });
+    // kurva qc(z) — downsample maks 90 titik
+    var step = Math.max(1, Math.ceil(r.pts.length / 90));
+    var pts2 = [];
+    for (var i = 0; i < r.pts.length; i += step) pts2.push([X(r.pts[i].qc), Y(Math.min(r.pts[i].z, zMax))]);
+    ops.push({ t: 'poly', pts: pts2, lw: 1.1 });
+    // garis qc rata-rata di jendela
+    ops.push({ t: 'line', x1: X(r.qcb), y1: yA, x2: X(r.qcb), y2: yB2, lw: 1, g: 0.25, dash: [3, 2] });
+    ops.push({ t: 'text', x: X(r.qcb) + 4, y: (yA + yB2) / 2 + 2.3, s: 'qc rata2=' + numR(r.qcb / 1000, 2) + ' MPa', size: 6, g: 0.2 });
+    // fondasi di Df (simbol di kiri jendela)
+    ops.push({ t: 'rect', x: px0 - 34, y: yA - 6, w: 26, h: 6, fill: true, g: 0.35 });
+    ops.push({ t: 'text', x: px0 - 36, y: yA + 2, s: 'B=' + numR(r.B, 1), size: 5.5, align: 'r', g: 0.35 });
+    ops.push({ t: 'text', x: px0 + 4, y: yB2 - 4, s: 'jendela Df..Df+B', size: 5.5, g: 0.45 });
+    var yCap = bot + 24;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Profil qc sondir (' + r.nPts + ' titik) - ' +
+      (r.soil === 'sand' ? 'pasir Meyerhof' : 'lempung Skempton') + ', q_izin neto = ' + numR(r.qaNet, 0) + ' kPa', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Profil qc & jendela rata-rata - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -440,6 +488,8 @@
     L.push(rowR('Jenis tanah pendukung', r.soil === 'sand' ? 'PASIR' : 'LEMPUNG (Nk=' + r.Nk + ', FS=' + r.FS + ')'));
     L.push(rowR('Data CPT', r.nPts + ' titik, 0-' + numR(r.zMax, 1) + ' m'));
     L.push(rowR('qc rata-rata (Df..Df+B)', numR(r.qcb / 1000, 2) + ' MPa = ' + numR(r.qcb / KGCM2, 0) + ' kg/cm2'));
+    L.push('');
+    L.push(figCPT(r));
     L.push('');
     L.push(' HASIL'); L.push(ruleR('='));
     if (r.soil === 'sand') {
@@ -466,7 +516,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

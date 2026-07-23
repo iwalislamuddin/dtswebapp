@@ -918,6 +918,69 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — kurva Mn vs Lb (LTB: plastis / inelastis / elastis) + titik desain
+  function figLTB(r) {
+    var F = window.CivilReport.fig;
+    var f = r.f, ops = [];
+    var px0 = 96, pw = 360, top = 12, ph = 165, bot = top + ph;
+    var Mp = f.Mp / 1e6, Mr = (f.Mr || 0.7 * (f.Sx || f.S) * f.Fy) / 1e6;
+    var Lp = f.Lp, Lr = f.Lr, Cb = r.Cb || 1;
+    var xMax = Math.max(Lr * 1.35, r.Lb * 1.15, Lp * 2);
+    var yMax = Mp * 1.1;
+    function X(Lb) { return px0 + Math.min(Lb / xMax, 1) * pw; }
+    function Y(M) { return top + (yMax - M) / yMax * ph; }
+    function MnAt(Lb) {
+      if (Lb <= Lp) return Mp;
+      if (Lb <= Lr) return Math.min(Cb * (Mp - (Mp - Mr) * (Lb - Lp) / (Lr - Lp)), Mp);
+      if (f.rts) {
+        var lamb = Lb / f.rts, jc = f.J * f.c / (f.Sx * f.ho);
+        var Fcr = Cb * Math.PI * Math.PI * E_MOD / (lamb * lamb) * Math.sqrt(1 + 0.078 * jc * lamb * lamb);
+        return Math.min(Fcr * f.Sx / 1e6, Mp);
+      }
+      var A = r.p.A * 100;
+      return Math.min(2 * E_MOD * Cb * Math.sqrt(f.J * A) / (Lb / f.ry) / 1e6, Mp);
+    }
+    // grid + tick
+    var stM = F.niceStep(yMax, 5);
+    for (var tm = 0; tm <= yMax; tm += stM) {
+      ops.push({ t: 'line', x1: px0, y1: Y(tm), x2: px0 + pw, y2: Y(tm), lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: px0 - 5, y: Y(tm) + 2.3, s: String(Math.round(tm)), size: 6.5, align: 'r', g: 0.3 });
+    }
+    var stL = F.niceStep(xMax, 5);
+    for (var tl = 0; tl <= xMax; tl += stL) {
+      ops.push({ t: 'line', x1: X(tl), y1: top, x2: X(tl), y2: bot, lw: 0.3, g: 0.85 });
+      ops.push({ t: 'text', x: X(tl), y: bot + 10, s: String(Math.round(tl)), size: 6.5, align: 'c', g: 0.3 });
+    }
+    ops.push({ t: 'line', x1: px0, y1: top, x2: px0, y2: bot, lw: 0.9 });
+    ops.push({ t: 'line', x1: px0, y1: bot, x2: px0 + pw, y2: bot, lw: 0.9 });
+    ops.push({ t: 'text', x: px0, y: top - 4, s: 'Mn (kN.m)', size: 7 });
+    ops.push({ t: 'text', x: px0 + pw / 2, y: bot + 21, s: 'Lb (mm)', size: 7, align: 'c' });
+    // garis Mp, Mr, Lp, Lr
+    [[Mp, 'Mp=' + numR(Mp, 0)], [Mr, 'Mr=' + numR(Mr, 0)]].forEach(function (g2) {
+      ops.push({ t: 'line', x1: px0, y1: Y(g2[0]), x2: px0 + pw, y2: Y(g2[0]), lw: 0.4, g: 0.55, dash: [2, 3] });
+      ops.push({ t: 'text', x: px0 + pw + 4, y: Y(g2[0]) + 2.3, s: g2[1], size: 6, g: 0.35 });
+    });
+    [[Lp, 'Lp'], [Lr, 'Lr']].forEach(function (g3) {
+      if (g3[0] > xMax) return;
+      ops.push({ t: 'line', x1: X(g3[0]), y1: top, x2: X(g3[0]), y2: bot, lw: 0.5, g: 0.45, dash: [4, 3] });
+      ops.push({ t: 'text', x: X(g3[0]), y: top - 3, s: g3[1] + '=' + numR(g3[0], 0), size: 6, align: 'c', g: 0.35 });
+    });
+    // kurva Mn(Lb)
+    var pts = [];
+    for (var i = 0; i <= 90; i++) {
+      var Lb2 = xMax * i / 90;
+      pts.push([X(Lb2), Y(MnAt(Lb2))]);
+    }
+    ops.push({ t: 'poly', pts: pts, lw: 1.2 });
+    // titik desain (Lb, Mn)
+    F.cross(ops, X(r.Lb), Y(r.Mn), 'Lb=' + numR(r.Lb, 0) + ', Mn=' + numR(r.Mn, 0));
+    var yCap = bot + 32;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Kurva Mn-Lb (LTB ' + tolatin(r.p.name) +
+      ', Cb=' + numR(Cb, 2) + ') - zona: ' + tolatin(f.ltbMode), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Kurva Mn vs Lb - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -975,6 +1038,7 @@
       L.push(rowR('Mn (LTB)', numR(f.Mn_ltb / 1e6, 1) + ' kN.m'));
       if (f.Mn_flb !== undefined && f.flbMode !== 'sayap kompak') L.push(rowR('Mn (FLB ' + tolatin(f.flbMode) + ')', numR(f.Mn_flb / 1e6, 1) + ' kN.m'));
       L.push('');
+      if (r.Lb > 0 && f.Lr > f.Lp) { L.push(figLTB(r)); L.push(''); }
     }
     if (f.section === 'F7') {
       L.push(' TEKUK LOKAL (F7)');
@@ -1012,7 +1076,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

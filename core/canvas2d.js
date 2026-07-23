@@ -72,6 +72,9 @@
       get width() { return cssW; },
       get height() { return cssH; },
       redraw: redraw,
+      // Ukur ulang container + gambar ulang sinkron — dipakai saat container
+      // baru saja di-show (display:none → block) tanpa menunggu ResizeObserver.
+      resize: resizeToContainer,
       destroy: function () {
         destroyed = true;
         if (ro) ro.disconnect();

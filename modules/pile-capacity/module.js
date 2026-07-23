@@ -732,6 +732,67 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — tiang dalam tanah berlapis + profil gesekan selimut fs(z)
+  function figPile(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var yg = 34, cxP = 170;
+    var s = 160 / Math.max(r.Leff, 0.5);
+    function Y(z) { return yg + z * s; }
+    var Dpx = Math.max(10, Math.min(26, r.D * s));
+    var yTip = Y(r.Leff);
+    // muka tanah + hatch
+    ops.push({ t: 'line', x1: 70, y1: yg, x2: 290, y2: yg, lw: 1 });
+    for (var i = 0; i < 12; i++) {
+      var xh = 70 + 220 * i / 11;
+      ops.push({ t: 'line', x1: xh, y1: yg, x2: xh - 6, y2: yg - 6, lw: 0.4, g: 0.6 });
+    }
+    // batas lapis + label jenis
+    r.segs.forEach(function (sg) {
+      ops.push({ t: 'line', x1: 70, y1: Y(sg.bot), x2: 290, y2: Y(sg.bot), lw: 0.4, g: 0.7 });
+      ops.push({ t: 'text', x: 76, y: (Y(sg.top) + Y(sg.bot)) / 2 + 2.3, s: soilName(sg.soil), size: 6, g: 0.4 });
+    });
+    // MAT
+    if (r.Dw >= 0 && r.Dw < r.Leff) {
+      var yw = Y(r.Dw);
+      ops.push({ t: 'line', x1: 70, y1: yw, x2: 290, y2: yw, lw: 0.5, g: 0.45, dash: [5, 3] });
+      ops.push({ t: 'text', x: 286, y: yw - 2, s: 'MAT', size: 5.5, align: 'r', g: 0.4 });
+    }
+    // tiang + beban + Qp
+    ops.push({ t: 'rect', x: cxP - Dpx / 2, y: yg - 14, w: Dpx, h: yTip - yg + 14, lw: 1.1 });
+    F.arrow(ops, cxP, yg - 40, cxP, yg - 18, { lw: 1.2 });
+    ops.push({ t: 'text', x: cxP + 6, y: yg - 28, s: 'Q', size: 7 });
+    F.arrow(ops, cxP, yTip + 22, cxP, yTip + 2, { lw: 1 });
+    ops.push({ t: 'text', x: cxP + 6, y: yTip + 16, s: 'Qp=' + numR(r.Qp, 0) + ' kN', size: 6.5 });
+    // panah gesekan selimut kecil di sisi tiang
+    for (var k = 1; k <= 4; k++) {
+      var yk = yg + (yTip - yg) * k / 5;
+      F.arrow(ops, cxP - Dpx / 2 - 8, yk + 5, cxP - Dpx / 2 - 8, yk - 5, { lw: 0.6, g: 0.45 });
+      F.arrow(ops, cxP + Dpx / 2 + 8, yk + 5, cxP + Dpx / 2 + 8, yk - 5, { lw: 0.6, g: 0.45 });
+    }
+    // dimensi L
+    F.dimV(ops, yg, yTip, 56, '');
+    ops.push({ t: 'text', x: 50, y: (yg + yTip) / 2 + 2.5, s: 'L=' + numR(r.Leff, 1) + ' m', size: 6.5, align: 'r' });
+    /* --- profil fs(z) step (kanan) --- */
+    var fx0 = 330, fw = 130;
+    var fsMax = 1;
+    r.segs.forEach(function (sg) { fsMax = Math.max(fsMax, sg.fs); });
+    ops.push({ t: 'line', x1: fx0, y1: yg, x2: fx0, y2: yTip, lw: 0.8 });
+    r.segs.forEach(function (sg) {
+      var wF = sg.fs / fsMax * fw;
+      ops.push({ t: 'rect', x: fx0, y: Y(sg.top), w: wF, h: (sg.bot - sg.top) * s, fill: true, g: 0.82 });
+      ops.push({ t: 'rect', x: fx0, y: Y(sg.top), w: wF, h: (sg.bot - sg.top) * s, lw: 0.5, g: 0.4 });
+      ops.push({ t: 'text', x: fx0 + wF + 4, y: (Y(sg.top) + Y(sg.bot)) / 2 + 2.3, s: numR(sg.fs, 1), size: 6, g: 0.35 });
+    });
+    ops.push({ t: 'text', x: fx0, y: yg - 8, s: 'fs (kPa) per lapis', size: 6.5, g: 0.3 });
+    var yCap = yTip + 38;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Tiang ' + (r.ptype === 'bored' ? 'bor' : 'pancang') +
+      ' D=' + numR(r.D, 2) + ' m, L=' + numR(r.Leff, 1) + ' m - Qs=' + numR(r.Qs, 0) + ', Qp=' + numR(r.Qp, 0) +
+      ', Q_izin=' + numR(r.Qallow, 0) + ' kN', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Skema tiang & profil fs - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -788,6 +849,8 @@
     L.push(rowR('>> Q_IZIN = Qu/FS' + (r.inclW ? ' - Wp' : ''), numR(r.Qallow, 1) + ' kN'));
     L.push(ruleR('='));
     L.push('');
+    L.push(figPile(r));
+    L.push('');
     var notes = r.warn.slice();
     if (notes.length) {
       L.push(' CATATAN'); L.push(ruleR('-'));
@@ -803,7 +866,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
   function pad(s, n) { s = '' + s; while (s.length < n) s += ' '; return s.slice(0, Math.max(n, s.length)); }
 

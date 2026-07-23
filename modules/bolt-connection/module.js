@@ -517,6 +517,73 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — denah pola baut + grafik kapasitas per baut
+  function figBoltPlan(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var sg = r.sg > 0 ? r.sg : 3 * r.d;
+    var le = r.le > 0 ? r.le : 1.5 * r.d;
+    var edgeV = Math.max(1.5 * r.d, 30);
+    var Wmm = le + Math.max(0, r.nr - 1) * r.s + 3 * r.d;    // pelat: tepi kiri..putus kanan
+    var Hmm = Math.max(0, r.nc - 1) * sg + 2 * edgeV;
+    var sc = Math.min(250 / Wmm, 100 / Hmm);
+    var x0 = 120, y0 = 24;
+    var W = Wmm * sc, H = Hmm * sc;
+    // pelat (tepi kanan putus: dashed)
+    ops.push({ t: 'line', x1: x0, y1: y0, x2: x0 + W, y2: y0, lw: 1 });
+    ops.push({ t: 'line', x1: x0, y1: y0 + H, x2: x0 + W, y2: y0 + H, lw: 1 });
+    ops.push({ t: 'line', x1: x0, y1: y0, x2: x0, y2: y0 + H, lw: 1 });
+    ops.push({ t: 'line', x1: x0 + W, y1: y0, x2: x0 + W, y2: y0 + H, lw: 0.6, g: 0.5, dash: [4, 3] });
+    // baut: kolom i searah beban (dari tepi kiri le + i*s), baris j tegak lurus
+    var rb = Math.max(2.2, r.dh * sc / 2);
+    for (var i = 0; i < r.nr; i++) {
+      for (var j = 0; j < r.nc; j++) {
+        var bx = x0 + (le + i * r.s) * sc;
+        var by = y0 + (edgeV + j * sg) * sc;
+        ops.push({ t: 'circle', cx: bx, cy: by, r: rb, lw: 0.9 });
+        ops.push({ t: 'line', x1: bx - rb - 2, y1: by, x2: bx + rb + 2, y2: by, lw: 0.3, g: 0.5 });
+        ops.push({ t: 'line', x1: bx, y1: by - rb - 2, x2: bx, y2: by + rb + 2, lw: 0.3, g: 0.5 });
+      }
+    }
+    // dimensi le & s (bawah) + g (kanan)
+    var yd = y0 + H + 14;
+    F.dimH(ops, x0, x0 + le * sc, yd, 'le=' + numR(le, 0));
+    if (r.nr > 1) F.dimH(ops, x0 + le * sc, x0 + (le + r.s) * sc, yd, 's=' + numR(r.s, 0));
+    if (r.nc > 1) {
+      F.dimV(ops, y0 + edgeV * sc, y0 + (edgeV + sg) * sc, x0 + W + 12, '');
+      ops.push({ t: 'text', x: x0 + W + 18, y: y0 + (edgeV + sg / 2) * sc + 2.5, s: 'g=' + numR(sg, 0), size: 6.5 });
+    }
+    // panah beban Vu (menarik pelat ke kanan)
+    F.arrow(ops, x0 + W + 6, y0 + H / 2, x0 + W + 40, y0 + H / 2, { lw: 1.2 });
+    ops.push({ t: 'text', x: x0 + W + 22, y: y0 + H / 2 - 6, s: 'Vu=' + numR(r.Vu, 0) + ' kN', size: 6.5 });
+    ops.push({ t: 'text', x: x0 + 6, y: y0 + 10, s: r.n + ' M' + r.d + ' (' + r.gradeLabel.split(' ')[0] + ')', size: 6.5, g: 0.35 });
+    /* --- grafik kapasitas per baut --- */
+    var by2 = yd + 22, bx0 = 205, bw = 200;
+    var rows = [['Geser baut (' + r.m + ' bdg)', r.phiRnv, 0.2]];
+    if (r.bearingOk) {
+      rows.push(['Tumpu tepi', 0.75 * r.rnBrgEdge, 0.45]);
+      if (r.nr > 1) rows.push(['Tumpu dalam', 0.75 * r.rnBrgInner, 0.6]);
+    }
+    var maxV = Math.max(r.rv, 0.01);
+    rows.forEach(function (rw) { maxV = Math.max(maxV, rw[1]); });
+    maxV *= 1.1;
+    rows.forEach(function (rw, i3) {
+      var y = by2 + i3 * 17;
+      ops.push({ t: 'text', x: bx0 - 6, y: y + 8, s: rw[0], size: 6.5, align: 'r' });
+      ops.push({ t: 'rect', x: bx0, y: y, w: rw[1] / maxV * bw, h: 11, fill: true, g: rw[2] });
+      ops.push({ t: 'text', x: bx0 + rw[1] / maxV * bw + 4, y: y + 8, s: numR(rw[1], 1) + ' kN', size: 6.5 });
+    });
+    if (r.rv > 0) {
+      ops.push({ t: 'line', x1: bx0 + r.rv / maxV * bw, y1: by2 - 6, x2: bx0 + r.rv / maxV * bw, y2: by2 + rows.length * 17 + 2, lw: 1, dash: [3, 2] });
+      ops.push({ t: 'text', x: bx0 + r.rv / maxV * bw, y: by2 + rows.length * 17 + 11, s: 'rv=' + numR(r.rv, 1), size: 6, align: 'c' });
+    }
+    var yCap = by2 + rows.length * 17 + 26;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Pola baut ' + r.nr + 'x' + r.nc + ' M' + r.d +
+      ' - phiRn grup = ' + numR(r.phiRge, 1) + ' kN, D/C ' + tolatin(r.gov) + ' = ' + numR(r.govDC, 2), size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Denah pola baut & kapasitas - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -540,6 +607,8 @@
     L.push(rowR('Vu (geser grup)', numR(r.Vu, 1) + ' kN'));
     L.push(rowR('Tu (tarik grup)', numR(r.Tu, 1) + ' kN'));
     L.push(rowR('Per baut rv / rt', numR(r.rv, 1) + ' / ' + numR(r.rt, 1) + ' kN'));
+    L.push('');
+    L.push(figBoltPlan(r));
     L.push('');
     L.push(' GESER & TUMPU (J3.6, J3.10)'); L.push(ruleR('='));
     L.push(rowR('phi*rn geser per baut', numR(r.phiRnv, 1) + ' kN'));
@@ -576,7 +645,7 @@
     L.push(' ' + rep('=', RW));
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {

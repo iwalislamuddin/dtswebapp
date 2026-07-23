@@ -874,6 +874,64 @@
     return lines.length ? lines : [''];
   }
 
+  // Gbr. 1 — potongan DPT kantilever: tekanan aktif, tumpu terfaktor & tulangan
+  function figWallRC(r) {
+    var F = window.CivilReport.fig;
+    var ops = [];
+    var slopeH = r.beta > 0.001 ? r.ws * Math.tan(r.beta * D2R) : 0;
+    var s = Math.min(120 / (r.tf + r.H + slopeH + 0.4), 170 / (r.B + 1.4));
+    var x0 = 116, yb = 158;
+    function X(x) { return x0 + x * s; }
+    function Y(y) { return yb - y * s; }
+    // tapak & stem trapesium
+    ops.push({ t: 'rect', x: X(0), y: Y(r.tf), w: r.B * s, h: r.tf * s, lw: 1.1 });
+    var stem = (r.opsi === 'tegak')
+      ? [[r.toe, r.tf], [r.xb, r.tf], [r.xb, r.tf + r.H], [r.xb - r.bTop, r.tf + r.H]]
+      : [[r.toe, r.tf], [r.xb, r.tf], [r.toe + r.bTop, r.tf + r.H], [r.toe, r.tf + r.H]];
+    ops.push({ t: 'poly', pts: stem.map(function (p) { return [X(p[0]), Y(p[1])]; }), close: true, lw: 1.1 });
+    // tulangan utama (garis tebal sisi tarik): stem muka tanah, toe bawah, heel atas
+    ops.push({ t: 'line', x1: X(r.xb) - 3, y1: Y(r.tf + r.H) + 4, x2: X(r.xb) - 3, y2: Y(0) + 3, lw: 1.3, g: 0.25 });
+    ops.push({ t: 'text', x: X(r.xb) + 4, y: Y(r.tf + r.H * 0.55), s: 'stem D' + r.stem.db + '-' + r.stem.s, size: 6, g: 0.2 });
+    if (r.toe > 0.01) {
+      ops.push({ t: 'line', x1: X(0.03), y1: yb - 4, x2: X(r.toe + r.bBot / 2), y2: yb - 4, lw: 1.3, g: 0.25 });
+      ops.push({ t: 'text', x: X(0) - 4, y: yb - 6, s: 'toe bwh D' + r.toeD.db + '-' + r.toeD.s, size: 5.5, align: 'r', g: 0.25 });
+    }
+    if (r.B - r.xb > 0.01) {
+      ops.push({ t: 'line', x1: X(r.xb - r.bBot / 2), y1: Y(r.tf) + 4, x2: X(r.B - 0.03), y2: Y(r.tf) + 4, lw: 1.3, g: 0.25 });
+      ops.push({ t: 'text', x: X(r.B - 0.03), y: Y(r.tf) - 3, s: 'heel atas D' + r.heelD.db + '-' + r.heelD.s, size: 5.5, align: 'r', g: 0.25 });
+    }
+    // muka tanah urugan & depan
+    var xTopBack = (r.opsi === 'tegak') ? r.xb : r.toe + r.bTop;
+    ops.push({ t: 'line', x1: X(xTopBack), y1: Y(r.tf + r.H), x2: X(r.B + 1.2), y2: Y(r.tf + r.H + slopeH + (r.beta > 0.001 ? 1.2 * Math.tan(r.beta * D2R) : 0)), lw: 0.9, g: 0.3 });
+    if (r.beta > 0.001) ops.push({ t: 'text', x: X(r.B + 0.5), y: Y(r.tf + r.H + slopeH) - 8, s: 'beta=' + numR(r.beta, 0) + 'deg', size: 6, g: 0.35 });
+    ops.push({ t: 'line', x1: X(-0.9), y1: Y(r.D), x2: X(r.toe), y2: Y(r.D), lw: 0.9, g: 0.3 });
+    // bidang semu + segitiga tekanan aktif
+    ops.push({ t: 'line', x1: X(r.B), y1: Y(r.Hp), x2: X(r.B), y2: Y(0), lw: 0.5, g: 0.5, dash: [4, 3] });
+    var wp = 52;
+    ops.push({ t: 'poly', pts: [[X(r.B), Y(r.Hp)], [X(r.B), Y(0)], [X(r.B) + wp, Y(0)]], close: true, fill: true, g: 0.9 });
+    ops.push({ t: 'poly', pts: [[X(r.B), Y(r.Hp)], [X(r.B), Y(0)], [X(r.B) + wp, Y(0)]], close: true, lw: 0.6, g: 0.45 });
+    F.arrow(ops, X(r.B) + wp * 0.55 + 20, Y(r.yPa), X(r.B) + 2, Y(r.yPa), { lw: 1.2 });
+    ops.push({ t: 'text', x: X(r.B) + wp * 0.55 + 24, y: Y(r.yPa) + 2.3, s: 'Pa=' + numR(r.Pa, 1) + ' kN/m', size: 6.5 });
+    // distribusi tumpu TERFAKTOR (qu) di dasar
+    if (isFinite(r.quMax) && r.quMax > 0) {
+      var hq = 18;
+      var hMin = r.triU ? 0 : hq * r.quMin / r.quMax;
+      ops.push({ t: 'poly', pts: [[X(0), yb], [X(r.B), yb], [X(r.B), yb + hMin], [X(0), yb + hq]], close: true, fill: true, g: 0.85 });
+      ops.push({ t: 'poly', pts: [[X(0), yb], [X(r.B), yb], [X(r.B), yb + hMin], [X(0), yb + hq]], close: true, lw: 0.5, g: 0.4 });
+      ops.push({ t: 'text', x: X(0) - 3, y: yb + hq + 8, s: 'qu,max=' + numR(r.quMax, 0), size: 6, align: 'r' });
+      ops.push({ t: 'text', x: X(r.B) + 3, y: yb + hMin + 8, s: 'qu,min=' + numR(r.quMin, 0) + ' kPa', size: 6 });
+    }
+    // dimensi B & H (dim B di bawah blok tumpu + labelnya agar tak bertumpuk)
+    F.dimH(ops, X(0), X(r.B), yb + 42, 'B = ' + numR(r.B, 2) + ' m');
+    F.dimV(ops, Y(r.tf + r.H), Y(r.tf), X(0) - 18, '');
+    ops.push({ t: 'text', x: X(0) - 24, y: Y(r.tf + r.H / 2) + 2.5, s: 'H=' + numR(r.H, 2), size: 6.5, align: 'r' });
+    var yCap = yb + 62;
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Potongan DPT kantilever - FS guling ' + numR(r.FSot, 2) +
+      ', FS geser ' + numR(r.FSsl, 2) + ', qmax ' + numR(r.qmax, 0) + ' kPa', size: 7.5, align: 'c' });
+    return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
+      alt: 'Gbr. 1 Potongan DPT kantilever & tulangan - lihat versi PDF' } };
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -900,6 +958,8 @@
     L.push(rowR('q_izin / k gesekan', numR(r.qall, 0) + ' kPa / ' + numR(r.kf, 2)));
     L.push(rowR("Beton fc' / baja fy", numR(r.fc, 0) + ' / ' + numR(r.fy, 0) + ' MPa'));
     L.push(rowR('Selimut stem / tapak', numR(r.covS, 0) + ' / ' + numR(r.covF, 0) + ' mm'));
+    L.push('');
+    L.push(figWallRC(r));
     L.push('');
     L.push(' STABILITAS (BEBAN LAYAN)');
     L.push(ruleR('='));
@@ -965,7 +1025,7 @@
     L.push(centerR('EDFS Civil Tools ' + APP_VER + '  -  DTS Engineering'));
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
-    return L.map(tolatin);
+    return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
   }
 
   function doDownload(fmt) {
