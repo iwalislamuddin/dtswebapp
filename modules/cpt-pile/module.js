@@ -346,13 +346,14 @@
     var ta = document.createElement('textarea');
     ta.className = 'cp-ta';
     ta.spellcheck = false;
-    ta.value = SAMPLE;
+    var savedTa = UI.stash.load('ta');            // persistensi input: data sondir terakhir
+    ta.value = (savedTa != null) ? savedTa : SAMPLE;
     taWrap.appendChild(ta);
     taWrap.appendChild(UI.el('div', 'ck-field-hint',
       'Format: kedalaman, qc, lalu fs (opsional), dipisah spasi/tab/koma. Baris # dilewati.'));
     form.root.querySelector('.ck-grp').appendChild(taWrap);
     state.ta = ta;
-    state.onTa = function () { update(form.getValues(), results); };
+    state.onTa = function () { UI.stash.save('ta', ta.value); update(form.getValues(), results); };
     ta.addEventListener('input', state.onTa);
 
     var repGrp = UI.el('div', 'ck-grp');

@@ -321,7 +321,11 @@
     }
   }
 
-  function recompute() { if (state.form) update(state.form.getValues(), state.results); }
+  // Dipanggil tiap tabel lapis tanah berubah → sekalian simpan (persistensi input).
+  function recompute() {
+    if (state.UI) state.UI.stash.save('layers', state.layers);
+    if (state.form) update(state.form.getValues(), state.results);
+  }
 
   /* ---------- Render ---------- */
   function render(container) {
@@ -887,7 +891,10 @@
     meta: { id: ID, name: 'Daya Dukung Tiang', category: 'Geoteknik', needsCanvas: true, needsRenderer: false },
 
     mount: function (container, runtime) {
-      state = { UI: runtime.UI, canvas2d: runtime.canvas2d, mouse: null, layers: defaultLayers() };
+      // Pulihkan profil tanah terakhir bila ada (persistensi input per tool).
+      var savedLy = runtime.UI.stash.load('layers');
+      state = { UI: runtime.UI, canvas2d: runtime.canvas2d, mouse: null,
+        layers: (savedLy && savedLy.length) ? savedLy : defaultLayers() };
       render(container);
     },
 

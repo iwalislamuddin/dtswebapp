@@ -240,6 +240,7 @@
       try { activeModule.unmount(); } catch (e) { console.error('unmount error', e); }
     }
     activeModule = null;
+    window.CivilStateScope = null;   // matikan scope persistensi input (ui-kit)
     moduleRoot.innerHTML = '';
   }
 
@@ -268,6 +269,9 @@
       }
       activeModule = mod;
       try {
+        // Scope persistensi input: ui-kit menyimpan/memulihkan nilai form per
+        // tool (sessionStorage) — harus di-set SEBELUM module membangun form.
+        window.CivilStateScope = id;
         mod.mount(moduleRoot, runtime);
         applyHandoff(id, entry);   // isi input bila ada nilai dikirim dari tool lain
       } catch (e) {

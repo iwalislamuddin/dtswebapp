@@ -294,7 +294,10 @@
     state.form = form;
     state.results = results;
 
-    fillSizes('WF', schema[2].value);
+    // Isi daftar ukuran sesuai tipe profil terpulihkan (persistensi input),
+    // lalu terapkan ulang ukuran tersimpan bila masih ada di daftar.
+    fillSizes(form.getValues().ptype || 'WF', schema[2].value);
+    form.restore('psize');
 
     var repGrp = UI.el('div', 'ck-grp');
     repGrp.appendChild(UI.el('h4', null, 'Laporan'));

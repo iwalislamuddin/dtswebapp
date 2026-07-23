@@ -193,6 +193,11 @@
       state.cv.canvas.addEventListener('mouseleave', state.onLeave);
     }
 
+    // Sesuaikan daftar diameter dgn jenis tulangan terpulihkan (persistensi
+    // input), lalu terapkan ulang diameter tersimpan bila masih valid.
+    setBarType(form.getValues().barType);
+    form.restore('db');
+
     syncKtrVisibility(form.getValues());
     update(form.getValues(), results);
   }

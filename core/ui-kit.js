@@ -43,6 +43,29 @@
     });
   }
 
+  /* ============================================================
+     PERSISTENSI INPUT PER TOOL (sessionStorage)
+     Nilai input terakhir tiap tool disimpan sementara agar saat pengguna
+     kembali ke tool yang sama (dalam satu sesi tab) form menampilkan nilai
+     terakhir yang diedit, bukan default. Scope = id tool aktif, di-set shell
+     (window.CivilStateScope) sebelum mount(). buildForm memakai suffix 'form'
+     otomatis; module dengan input kustom (textarea CPT, tabel lapis tanah)
+     pakai CivilUI.stash.load/save dengan suffix sendiri.
+     ============================================================ */
+  function stateKey(suffix) {
+    var scope = window.CivilStateScope;
+    return scope ? 'civiltools-state:' + scope + ':' + (suffix || 'x') : null;
+  }
+  function stashLoad(suffix) {
+    var k = stateKey(suffix); if (!k) return null;
+    try { var raw = sessionStorage.getItem(k); return raw ? JSON.parse(raw) : null; }
+    catch (e) { return null; }   // mode privat / data korup → abaikan
+  }
+  function stashSave(suffix, obj) {
+    var k = stateKey(suffix); if (!k) return;
+    try { sessionStorage.setItem(k, JSON.stringify(obj)); } catch (e) {}
+  }
+
   /* ---------- Number helpers ---------- */
   function fmt(n, dp) {
     if (n === null || n === undefined || isNaN(n)) return '—';
@@ -71,6 +94,14 @@
     var fields = {};      // id -> { get, set, type }
     var root = el('div', 'ck-form');
     var curGroup = null;
+    // Nilai tersimpan dari kunjungan terakhir ke tool ini (scope di-set shell).
+    var saved = stashLoad('form') || {};
+    function savedValid(id, opts) {
+      var v = saved[id];
+      if (v === undefined || v === null) return false;
+      if (opts) return opts.some(function (o) { return String(o.value) === String(v); });
+      return isFinite(v);
+    }
 
     schema.forEach(function (item) {
       if (item.type === 'group') {
@@ -92,17 +123,18 @@
         if (item.min !== undefined) inp.min = item.min;
         if (item.max !== undefined) inp.max = item.max;
         inp.step = (item.step !== undefined) ? item.step : 'any';
-        inp.value = (item.value !== undefined) ? item.value : '';
+        inp.value = savedValid(item.id) ? saved[item.id] : ((item.value !== undefined) ? item.value : '');
         inp.addEventListener('input', function () { emit(item.id); });
         wrap.appendChild(inp);
         fields[item.id] = { type: 'number', get: function () { return parseFloat(inp.value); }, set: function (v) { inp.value = v; }, node: inp };
 
       } else if (item.type === 'select') {
         var sel = el('select', 'ck-select');
+        var selInit = savedValid(item.id, item.options) ? saved[item.id] : item.value;
         item.options.forEach(function (o) {
           var opt = el('option');
           opt.value = o.value; opt.textContent = o.label;
-          if (String(o.value) === String(item.value)) opt.selected = true;
+          if (String(o.value) === String(selInit)) opt.selected = true;
           sel.appendChild(opt);
         });
         sel.addEventListener('change', function () { emit(item.id); });
@@ -111,7 +143,8 @@
 
       } else if (item.type === 'segment') {
         var seg = el('div', 'ck-seg');
-        var val = { v: item.value !== undefined ? item.value : (item.options[0] && item.options[0].value) };
+        var val = { v: savedValid(item.id, item.options) ? saved[item.id]
+          : (item.value !== undefined ? item.value : (item.options[0] && item.options[0].value)) };
         item.options.forEach(function (o) {
           var b = el('button', String(o.value) === String(val.v) ? 'active' : null, o.label);
           b.type = 'button';
@@ -143,17 +176,35 @@
       Object.keys(fields).forEach(function (id) { out[id] = fields[id].get(); });
       return out;
     }
-    function emit(id) { if (onChange) onChange(getValues(), id); }
+    // Simpan SETELAH onChange agar field yang di-set module di dalam handler
+    // (mis. grade → Fy) ikut terekam konsisten.
+    function persist() { stashSave('form', getValues()); }
+    function emit(id) { if (onChange) onChange(getValues(), id); persist(); }
 
     var api = {
       root: root,
       fields: fields,
       getValues: getValues,
+      // Nilai tersimpan mentah — dipakai module utk memulihkan field yang
+      // opsinya diisi dinamis setelah buildForm (mis. ukuran profil baja).
+      saved: saved,
+      // Terapkan ulang nilai tersimpan utk satu field (aman: select/segment
+      // hanya bila opsinya ada). Panggil setelah module mengisi ulang opsi.
+      restore: function (id) {
+        var f = fields[id];
+        if (!f || saved[id] === undefined || saved[id] === null) return;
+        if (f.type === 'select') {
+          var s = String(saved[id]);
+          var ok = Array.prototype.some.call(f.node.options, function (o) { return o.value === s; });
+          if (ok) f.node.value = s;
+        } else { f.set(saved[id]); }
+      },
       setValue: function (id, v) { if (fields[id]) { fields[id].set(v); } },
       // Isi beberapa field sekaligus lalu picu hitung-ulang (dipakai handoff "kirim ke tool lain").
       applyInputs: function (obj) {
         Object.keys(obj).forEach(function (id) { if (fields[id]) fields[id].set(obj[id]); });
         if (onChange) onChange(getValues(), '__handoff__');
+        persist();
       }
     };
     // Modul penerima handoff memanggil buildForm dengan formId → shell bisa isi input via window.CivilForms[id].
@@ -244,6 +295,7 @@
 
   window.CivilUI = {
     toast: toast,
+    stash: { load: stashLoad, save: stashSave },
     roundRect: roundRect,
     disposeObject: disposeObject,
     fmt: fmt,
