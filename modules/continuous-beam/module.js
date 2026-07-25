@@ -31,7 +31,69 @@
   'use strict';
   window.CivilModules = window.CivilModules || {};
   var ID = 'continuous-beam';
-  var GAMMA_C = 24; // kN/m³
+  var GAMMA_C = 24;      // kN/m³
+  var Es = 200000;       // MPa
+
+  var BARS = [10, 13, 16, 19, 22, 25, 29, 32];
+  var STIRRUPS = [8, 10, 13];
+  function barOptions() { return BARS.map(function (v) { return { value: v, label: 'D' + v }; }); }
+  function stirOptions() { return STIRRUPS.map(function (v) { return { value: v, label: 'Ø' + v }; }); }
+
+  function Ab(db) { return Math.PI / 4 * db * db; }
+  function beta1(fc) {
+    if (fc <= 28) return 0.85;
+    if (fc >= 55) return 0.65;
+    return Math.max(0.65, 0.85 - 0.05 * (fc - 28) / 7);
+  }
+  function rhoSlabMin(fy) {
+    // Susut & suhu (Ps. 24.4.3.2) — juga batas minimum lentur pelat 1-arah
+    return fy < 420 ? 0.0020 : Math.max(0.0018 * 420 / fy, 0.0014);
+  }
+
+  /* Desain tulangan tarik penampang persegi terhadap Mu (kN·m).
+     Asumsi terkendali tarik φ=0,90 (SNI 2847 Ps. 21.2.2); diverifikasi εt setelah As dihitung.
+     Rn = Mn/(b·d²) ; ρ = (0.85f'c/fy)·[1−√(1−2Rn/(0.85f'c))]. */
+  function designAs(Mu, b, d, fc, fy) {
+    var o = { Mu: Mu, As: 0, rho: 0, a: 0, c: 0, et: Infinity, tc: true, infeasible: false };
+    if (!(Mu > 0) || !(b > 0) || !(d > 0)) return o;
+    var phi = 0.90;
+    var Rn = (Mu * 1e6 / phi) / (b * d * d);                 // MPa
+    var disc = 1 - 2 * Rn / (0.85 * fc);
+    if (disc < 0) { o.infeasible = true; disc = 0; }          // Rn > kapasitas tulangan-tunggal
+    o.rho = (0.85 * fc / fy) * (1 - Math.sqrt(disc));
+    o.As = o.rho * b * d;
+    o.a = o.As * fy / (0.85 * fc * b);
+    o.c = o.a / beta1(fc);
+    o.et = o.c > 0 ? 0.003 * (d - o.c) / o.c : Infinity;
+    o.tc = o.et >= 0.005;                                     // terkendali tarik → φ=0,90 valid
+    return o;
+  }
+
+  /* Desain tulangan geser (sengkang) terhadap Vu (kN) — SNI 2847:2019 Ps. 22.5 & 9.
+     Vc = 0.17·λ·√f'c·bw·d ; φ=0,75 ; λ=1 (beton normal). */
+  function designShear(Vu, bw, d, fc, fyt, dsDia) {
+    var phi = 0.75, VuN = Vu * 1e3;                          // N
+    var Vc = 0.17 * Math.sqrt(fc) * bw * d;                  // N
+    var o = { phi: phi, Vc: Vc / 1e3, phiVc: phi * Vc / 1e3, VuN: VuN };
+    o.Av = 2 * Ab(dsDia);                                    // sengkang 2 kaki (mm²)
+    var VsReq = VuN / phi - Vc;                              // N
+    o.VsReq = Math.max(0, VsReq) / 1e3;                      // kN
+    o.VsMax = 0.66 * Math.sqrt(fc) * bw * d / 1e3;           // kN — batas Ps. 22.5.1.2
+    o.overMax = VsReq > 0.66 * Math.sqrt(fc) * bw * d;
+    // batas spasi maks (Ps. 9.7.6.2.2): Vs ≤ 0.33√f'c·bw·d → d/2 ; > → d/4
+    o.sMax = (VsReq <= 0.33 * Math.sqrt(fc) * bw * d) ? Math.min(d / 2, 600) : Math.min(d / 4, 300);
+    // Av/s minimum (Ps. 9.6.3.4)
+    o.avMin = Math.max(0.062 * Math.sqrt(fc), 0.35) * bw / fyt;   // mm²/mm
+    var avReq = VsReq > 0 ? (VsReq / (fyt * d)) : 0;              // dari Vs
+    if (VuN <= 0.5 * o.phiVc * 1e3) o.zone = 'none';             // < ½φVc → tak perlu
+    else if (VsReq <= 0) o.zone = 'min';                        // ½φVc..φVc → sengkang minimum
+    else o.zone = 'calc';
+    o.avUse = (o.zone === 'none') ? 0 : Math.max(avReq, o.avMin);
+    var sFromAv = o.avUse > 0 ? o.Av / o.avUse : Infinity;
+    o.sReq = Math.min(sFromAv, o.sMax);
+    o.sPakai = (o.zone === 'none') ? null : Math.max(50, Math.floor(o.sReq / 10) * 10);
+    return o;
+  }
 
   var state = {};
 
@@ -74,7 +136,7 @@
       r.warn.push('qL = ' + r.wL.toFixed(2) + ' > 3·qD = ' + (3 * r.wD).toFixed(2) +
         ' — syarat Ps. 6.5.1(c) TIDAK terpenuhi; metode koefisien tidak boleh dipakai, analisis elastis diperlukan.');
 
-    if (n === 1) { computeSingle(r, v); return r; }
+    if (n === 1) { computeSingle(r, v); if (v.design === 'ya') computeDesign(r, v); return r; }
 
     // ---- metode koefisien (n >= 2) ----
     if (n >= 3) {
@@ -128,7 +190,73 @@
     r.MnegMax = Math.max.apply(null, r.supM);
     r.MposMax = Math.max(r.MposEnd, r.MposInt || 0);
     r.VuMax = r.VFI;
+    if (v.design === 'ya') computeDesign(r, v);
     return r;
+  }
+
+  /* Desain penulangan lentur (balok & pelat) + geser (balok saja). */
+  function computeDesign(r, v) {
+    var fc = v.fc, fy = v.fy, cc = v.cc, db = parseFloat(v.db);
+    var d = { valid: false, fc: fc, fy: fy, cc: cc, db: db, Ab: Ab(db) };
+    r.des = d;
+    if (!(fc > 0) || !(fy > 0) || !(cc >= 0) || !(db > 0)) return;
+
+    var pelat = (r.elem === 'pelat');
+    var bDes = pelat ? 1000 : r.b;                 // pelat: per lajur 1 m
+    var ds = pelat ? 0 : parseFloat(v.ds);
+    var dEff = r.h - cc - ds - db / 2;             // 1 lapis
+    if (!(dEff > 0)) { d.err = 'Tinggi efektif ≤ 0 — periksa h, selimut, atau diameter.'; return; }
+    d.bDes = bDes; d.d = dEff; d.ds = ds;
+
+    // As,min lentur
+    d.AsMin = pelat
+      ? rhoSlabMin(fy) * bDes * r.h                                  // Ps. 7.6.1.1 → 24.4.3.2 (Ag)
+      : Math.max(0.25 * Math.sqrt(fc) / fy, 1.4 / fy) * bDes * dEff; // Ps. 9.6.1.2
+    d.sMaxSlab = pelat ? Math.min(3 * r.h, 450) : null;              // Ps. 7.7.2.3
+
+    // Daftar momen kritis → item desain
+    var items = [];
+    function add(label, Mu, face) {
+      if (!(Mu > 0)) return;
+      var a = designAs(Mu, bDes, dEff, fc, fy);
+      var AsReq = Math.max(a.As, d.AsMin);
+      var it = { label: label, Mu: Mu, face: face, As: a.As, AsReq: AsReq,
+        et: a.et, tc: a.tc, infeasible: a.infeasible, govMin: AsReq > a.As + 1e-6 };
+      if (pelat) {
+        var s = 1000 * d.Ab / AsReq;
+        it.s = Math.max(50, Math.min(Math.floor(s / 10) * 10, d.sMaxSlab));
+        it.AsProv = 1000 * d.Ab / it.s;
+        it.spacingCap = s > d.sMaxSlab;                              // spasi teoretis > batas → batas menentukan
+        it.txt = 'D' + db + '-' + it.s;
+      } else {
+        it.n = Math.max(2, Math.ceil(AsReq / d.Ab));
+        it.AsProv = it.n * d.Ab;
+        it.txt = it.n + ' D' + db;
+      }
+      items.push(it);
+    }
+
+    if (r.n === 1) {
+      add('M+ lapangan', r.Mpos1, 'bawah');
+      add('M− tumpuan jepit', r.MnegJ, 'atas');
+    } else {
+      add('M+ bentang ujung', r.MposEnd, 'bawah');
+      if (r.MposInt !== null) add('M+ bentang dalam', r.MposInt, 'bawah');
+      add('M− tumpuan luar', r.MnegExt, 'atas');
+      add('M− tumpuan dalam-1', r.MnegFI, 'atas');
+      if (r.MnegInt !== null) add('M− tumpuan dalam lain', r.MnegInt, 'atas');
+    }
+    d.items = items;
+    d.anyInfeasible = items.some(function (i) { return i.infeasible; });
+    d.anyNotTC = items.some(function (i) { return !i.tc && !i.infeasible; });
+
+    // Geser — hanya balok
+    if (!pelat) {
+      var fyt = (v.fyt > 0) ? v.fyt : fy;
+      d.fyt = fyt;
+      d.shear = designShear(r.VuMax, r.b, dEff, fc, fyt, ds);
+    }
+    d.valid = true;
   }
 
   function computeSingle(r, v) {
@@ -215,16 +343,29 @@
       { type: 'segment', id: 'm12', label: 'M− tumpuan', value: 'std', options: [
         { value: 'std', label: 'Tabel 6.5.2' }, { value: 'm12', label: '1/12 semua' }] },
       { type: 'select', id: 'tumpuan1', label: 'Tumpuan (1 bentang)', value: 'ss', options: [
-        { value: 'ss', label: 'Sendi – Sendi' }, { value: 'js', label: 'Jepit – Sendi' }, { value: 'jj', label: 'Jepit – Jepit' }] }
+        { value: 'ss', label: 'Sendi – Sendi' }, { value: 'js', label: 'Jepit – Sendi' }, { value: 'jj', label: 'Jepit – Jepit' }] },
+
+      { type: 'group', label: 'Desain Tulangan (SNI 2847:2019)' },
+      { type: 'segment', id: 'design', label: 'Hitung penulangan', value: 'ya', options: [
+        { value: 'ya', label: 'Ya' }, { value: 'tidak', label: 'Tidak' }] },
+      { type: 'number', id: 'fc', label: "f'c — mutu beton", unit: 'MPa', value: 25, min: 10, step: 1 },
+      { type: 'number', id: 'fy', label: 'fy — tul. lentur', unit: 'MPa', value: 420, min: 240, step: 10 },
+      { type: 'number', id: 'cc', label: 'Selimut bersih', unit: 'mm', value: 20, min: 15, step: 5 },
+      { type: 'select', id: 'db', label: 'Ø tul. utama', value: 10, options: barOptions() },
+      { type: 'number', id: 'fyt', label: 'fyt — sengkang', unit: 'MPa', value: 420, min: 240, step: 10 },
+      { type: 'select', id: 'ds', label: 'Ø sengkang', value: 10, options: stirOptions() }
     ];
 
     function syncVisibility(vals) {
       var n = Math.round(vals.n);
       var pelat = vals.elem === 'pelat';
+      var des = vals.design === 'ya';
       var vis = {
         Li: n >= 3, b: !pelat,
         qDs: pelat, qLs: pelat, qDb: !pelat, qLb: !pelat,
-        ujung: n >= 2, m12: n >= 2, tumpuan1: n === 1
+        ujung: n >= 2, m12: n >= 2, tumpuan1: n === 1,
+        fc: des, fy: des, cc: des, db: des,
+        fyt: des && !pelat, ds: des && !pelat
       };
       Object.keys(vis).forEach(function (id) {
         var f = form.fields[id];
@@ -233,8 +374,15 @@
     }
 
     var H_DEF = { pelat: 130, balok: 500 };
+    var CC_DEF = { pelat: 20, balok: 40 };
+    var DB_DEF = { pelat: 10, balok: 16 };
     var form = UI.buildForm(panel, schema, function (vals, changedId) {
-      if (changedId === 'elem') { form.setValue('h', H_DEF[vals.elem]); vals = form.getValues(); }
+      if (changedId === 'elem') {
+        form.setValue('h', H_DEF[vals.elem]);
+        form.setValue('cc', CC_DEF[vals.elem]);
+        form.setValue('db', DB_DEF[vals.elem]);
+        vals = form.getValues();
+      }
       syncVisibility(vals);
       update(vals, results);
     }, ID);
@@ -328,6 +476,8 @@
         'bersebelahan. Redistribusi momen tidak diizinkan (Ps. 6.5.3).'));
     }
 
+    if (r.des) renderDesign(results, r, uM, uV);
+
     if (r.warn.length) {
       results.appendChild(UI.note('Peringatan',
         '<ul style="margin:6px 0 0 16px">' + r.warn.map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>'));
@@ -338,6 +488,60 @@
       'Verifikasi oleh insinyur penanggung jawab.'));
 
     if (state.cv) state.cv.redraw();
+  }
+
+  /* ---------- Panel hasil desain tulangan ---------- */
+  function renderDesign(results, r, uM, uV) {
+    var UI = state.UI, d = r.des, pelat = (r.elem === 'pelat');
+    var uAs = pelat ? ' mm²/m' : ' mm²';
+    if (!d.valid) {
+      results.appendChild(UI.rhead('Desain tulangan'));
+      results.appendChild(UI.note('Periksa input', d.err || 'Lengkapi f\'c, fy, selimut, dan diameter tulangan.'));
+      return;
+    }
+
+    results.appendChild(UI.rhead('Desain tulangan lentur — SNI 2847 Ps. 22 (φ = 0,90)'));
+    results.appendChild(UI.kv('d — tinggi efektif (1 lapis)', UI.fmt(d.d, 0) + ' mm'));
+    results.appendChild(UI.kv('As,min ' + (pelat ? '(susut-suhu, Ps. 24.4.3.2)' : '(Ps. 9.6.1.2)'),
+      UI.fmt(d.AsMin, 0) + uAs));
+    if (pelat) results.appendChild(UI.kv('Spasi maks (min 3h; 450)', UI.fmt(d.sMaxSlab, 0) + ' mm'));
+
+    d.items.forEach(function (it) {
+      var tone = it.infeasible ? 'bad' : (it.tc ? 'ok' : '');
+      results.appendChild(UI.kv(
+        it.label + ' (' + it.face + ') — Mu ' + UI.fmt(it.Mu, 1) + uM,
+        it.txt + '  · As ' + UI.fmt(it.AsReq, 0) + uAs + (it.govMin ? ' (As,min)' : ''),
+        tone));
+    });
+
+    if (!pelat && d.shear) {
+      var s = d.shear;
+      results.appendChild(UI.rhead('Desain geser (sengkang) — Ps. 22.5, Vu ' + UI.fmt(r.VuMax, 1) + uV.trim()));
+      results.appendChild(UI.kv('Vc = 0,17√f\'c·bw·d', UI.fmt(s.Vc, 1) + ' kN'));
+      results.appendChild(UI.kv('φVc (φ=0,75)', UI.fmt(s.phiVc, 1) + ' kN'));
+      results.appendChild(UI.kv('½·φVc', UI.fmt(s.phiVc / 2, 1) + ' kN'));
+      if (s.zone === 'none') {
+        results.appendChild(UI.kv('Kebutuhan', 'Vu ≤ ½φVc — sengkang tidak diperlukan', 'ok'));
+        results.appendChild(UI.kv('Saran praktis', 'Pasang sengkang minimum Ø' + d.ds + ' bila balok utama'));
+      } else {
+        results.appendChild(UI.kv('Vs perlu = Vu/φ − Vc', UI.fmt(s.VsReq, 1) + ' kN' +
+          (s.zone === 'min' ? ' (≤0 → sengkang minimum)' : '')));
+        results.appendChild(UI.kv('Vs maks (0,66√f\'c·bw·d)', UI.fmt(s.VsMax, 1) + ' kN', s.overMax ? 'bad' : 'ok'));
+        results.appendChild(UI.kv('Sengkang Ø' + d.ds + ' 2 kaki (Av ' + UI.fmt(s.Av, 0) + ' mm²)',
+          'spasi ' + s.sPakai + ' mm', s.overMax ? 'bad' : 'ok'));
+        results.appendChild(UI.kv('Spasi maks (Ps. 9.7.6.2.2)', UI.fmt(s.sMax, 0) + ' mm'));
+      }
+    }
+
+    var msg = [];
+    if (d.anyInfeasible) msg.push('Sebagian momen melampaui kapasitas tulangan tunggal (Rn terlalu besar) — perbesar penampang atau pakai tulangan tekan/rangkap.');
+    if (d.anyNotTC) msg.push('Sebagian penampang belum terkendali tarik (εt < 0,005) sehingga φ &lt; 0,90 — hasil As kurang konservatif; perbesar d atau turunkan Mu.');
+    if (d.shear && d.shear.overMax) msg.push('Vs perlu &gt; Vs maks — penampang balok terlalu kecil untuk geser; perbesar bw atau h.');
+    results.appendChild(UI.note('Desain tulangan',
+      'Lentur: penampang persegi tulangan tarik-saja, ρ dari Rn=Mu/(φbd²), asumsi terkendali tarik φ=0,90. ' +
+      (pelat ? 'Pelat dihitung per lajur 1 m; spasi dibulatkan turun ke kelipatan 10 mm ≤ spasi maks. '
+             : 'Balok: jumlah batang 1 lapis (min 2); cek spasi & multi-lapis pada tool Kapasitas Balok. ') +
+      'Geser hanya balok. ' + (msg.length ? '<b>Perhatian:</b> ' + msg.join(' ') : 'Verifikasi tata letak & panjang penyaluran sebelum gambar kerja.')));
   }
 
   /* ================= KANVAS ================= */
@@ -636,6 +840,8 @@
       L.push(' Redistribusi momen tidak diizinkan (Ps. 6.5.3).');
     }
 
+    if (r.des) reportDesign(L, r);
+
     if (r.warn.length) {
       L.push('');
       L.push(' CATATAN');
@@ -648,6 +854,50 @@
     L.push(centerR('Alat bantu; verifikasi oleh insinyur penanggung jawab.'));
     L.push(' ' + rep('=', RW));
     return L.map(function (x) { return typeof x === 'string' ? tolatin(x) : x; });
+  }
+
+  function reportDesign(L, r) {
+    var d = r.des, pelat = (r.elem === 'pelat');
+    var uM = pelat ? ' kNm/m' : ' kNm';
+    var uV = pelat ? ' kN/m' : ' kN';
+    var uAs = pelat ? ' mm2/m' : ' mm2';
+    L.push('');
+    L.push(' DESAIN TULANGAN - SNI 2847:2019');
+    L.push(ruleR('-'));
+    if (!d.valid) {
+      wrapR(' ' + tolatin(d.err || 'Data desain belum lengkap.'), RW).forEach(function (ln) { L.push(ln); });
+      return;
+    }
+    L.push(rowR("f'c / fy", numR(d.fc, 0) + ' / ' + numR(d.fy, 0) + ' MPa'));
+    L.push(rowR('Selimut / Ø utama', numR(d.cc, 0) + ' mm / D' + d.db));
+    if (!pelat) L.push(rowR('fyt / Ø sengkang', numR(d.fyt, 0) + ' MPa / O' + d.ds));
+    L.push(rowR('d tinggi efektif (1 lapis)', numR(d.d, 0) + ' mm'));
+    L.push(rowR('As,min' + (pelat ? ' (susut-suhu)' : ' (Ps.9.6.1.2)'), numR(d.AsMin, 0) + uAs));
+    if (pelat) L.push(rowR('Spasi maks (min 3h;450)', numR(d.sMaxSlab, 0) + ' mm'));
+    L.push('');
+    L.push(' LENTUR  (phi=0.90 ; Rn=Mu/(phi*b*d^2))');
+    L.push(ruleR('.'));
+    d.items.forEach(function (it) {
+      L.push(rowR(it.label + ' (' + it.face + ')', 'Mu ' + numR(it.Mu, 1) + uM));
+      L.push(rowR('  >> ' + it.txt, 'As ' + numR(it.AsReq, 0) + uAs + (it.govMin ? ' (As,min)' : '') +
+        (it.infeasible ? ' [PERBESAR]' : (!it.tc ? ' [et<0.005]' : ''))));
+    });
+    if (!pelat && d.shear) {
+      var s = d.shear;
+      L.push('');
+      L.push(' GESER  (phi=0.75 ; Vu ' + numR(r.VuMax, 1) + uV + ')');
+      L.push(ruleR('.'));
+      L.push(rowR("Vc = 0.17*sqrt(f'c)*bw*d", numR(s.Vc, 1) + ' kN'));
+      L.push(rowR('phiVc / (1/2)phiVc', numR(s.phiVc, 1) + ' / ' + numR(s.phiVc / 2, 1) + ' kN'));
+      if (s.zone === 'none') {
+        L.push(rowR('>> Sengkang', 'Vu <= 1/2 phiVc -> tidak perlu'));
+      } else {
+        L.push(rowR('Vs perlu = Vu/phi - Vc', numR(s.VsReq, 1) + ' kN' + (s.zone === 'min' ? ' (min)' : '')));
+        L.push(rowR("Vs maks 0.66*sqrt(f'c)*bw*d", numR(s.VsMax, 1) + ' kN' + (s.overMax ? ' [LAMPAUI]' : '')));
+        L.push(rowR('>> Sengkang O' + d.ds + ' 2 kaki', 'spasi ' + s.sPakai + ' mm'));
+        L.push(rowR('   Spasi maks (Ps.9.7.6.2.2)', numR(s.sMax, 0) + ' mm'));
+      }
+    }
   }
 
   function doDownload(fmt) {

@@ -108,7 +108,7 @@
         <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
         <div>
           <div class="modal-title" id="about-title">EDFS Civil Tools</div>
-          <div class="modal-ver">v0.5.2 · Alat Bantu Rekayasa Sipil</div>
+          <div class="modal-ver">v0.5.3 · Alat Bantu Rekayasa Sipil</div>
         </div>
       </div>
 
@@ -121,6 +121,11 @@
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
         <div class="modal-relnotes">
+          <div class="rel-ver">v0.5.3 — 2026-07-25</div>
+          <ul class="modal-list">
+            <li><b>Batang Tekan — profil WF baru</b>: ditambahkan WF <b>100×100×6×8</b>, <b>150×150×7×10</b>, dan <b>588×300×12×20</b> (JIS G3192) ke library profil baja bersama — tersedia di semua tool baja.</li>
+            <li><b>Balok/Pelat Menerus — desain penulangan</b>: setelah momen &amp; geser metode koefisien, tool kini <b>mendesain tulangan lentur</b> (balok &amp; pelat 1-arah) untuk tiap momen kritis positif/negatif — As perlu, cek As,min, dan saran susunan batang (balok: n·D; pelat: D-spasi ≤ spasi maks), serta <b>tulangan geser sengkang</b> (khusus balok): Vc, φVc, zona kebutuhan, Vs, batas Vs maks, dan spasi sengkang 2 kaki. Semua masuk ke laporan PDF/teks.</li>
+          </ul>
           <div class="rel-ver">v0.5.2 — 2026-07-23</div>
           <ul class="modal-list">
             <li><b>Input tersimpan per tool</b>: nilai input terakhir tiap tool kini disimpan sementara (selama tab terbuka) dan dipulihkan otomatis saat kembali ke tool yang sama — berlaku untuk semua form di 27 tool, termasuk tipe &amp; ukuran profil baja, jenis &amp; diameter tulangan, data sondir yang ditempel (CPT), dan tabel profil tanah berlapis.</li>
