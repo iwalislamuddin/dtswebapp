@@ -108,7 +108,7 @@
         <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
         <div>
           <div class="modal-title" id="about-title">EDFS Civil Tools</div>
-          <div class="modal-ver">v0.5.3 · Alat Bantu Rekayasa Sipil</div>
+          <div class="modal-ver">v0.6.0 · Alat Bantu Rekayasa Sipil</div>
         </div>
       </div>
 
@@ -121,6 +121,11 @@
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
         <div class="modal-relnotes">
+          <div class="rel-ver">v0.6.0 — 2026-07-27</div>
+          <ul class="modal-list">
+            <li><b>28 tool aktif</b> — tool baru <b>Analisis Balok Baja</b> di kategori Baja.</li>
+            <li><b>Analisis Balok Baja Sederhana</b>: statika balok di atas dua tumpuan (sendi–rol) — reaksi, diagram <b>gaya geser (SFD)</b>, <b>momen lentur (BMD)</b>, dan <b>lendutan</b> dalam satu tampilan interaktif (hover menampilkan V, M &amp; δ di sepanjang bentang). <b>Opsi kantilever kiri &amp; kanan</b> (overhang di luar tumpuan); semua posisi beban diukur dari ujung kiri balok. Beban <b>merata / segitiga / trapesium</b> sebagai patch (w1→w2 dari a1 ke a2) hingga 3 buah + <b>hingga 4 beban terpusat</b> (P, a), opsi berat sendiri profil. Profil <b>WF/UNP/CNP/RHS/SHS</b> dari library baja bersama; lendutan dihitung via integrasi ganda EI·y″ = M(x) dengan syarat batas di kedua tumpuan. Menampilkan Mmaks (termasuk hogging di atas tumpuan), Vmaks, lendutan maks + lokasinya, rasio L/δ, dan tegangan lentur fb = M/Sx — lengkap laporan PDF/teks bergambar.</li>
+          </ul>
           <div class="rel-ver">v0.5.3 — 2026-07-25</div>
           <ul class="modal-list">
             <li><b>Batang Tekan — profil WF baru</b>: ditambahkan WF <b>100×100×6×8</b>, <b>150×150×7×10</b>, dan <b>588×300×12×20</b> (JIS G3192) ke library profil baja bersama — tersedia di semua tool baja.</li>

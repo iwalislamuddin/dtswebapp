@@ -133,6 +133,19 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'steel-beam-analysis',
+    name: 'Analisis Balok Baja',
+    category: 'Baja',
+    icon: 'modules/steel-beam-analysis/icon.svg',
+    entry: 'modules/steel-beam-analysis/module.js',
+    status: 'active',
+    seo: {
+      title: 'Analisis Balok Baja Sederhana — Reaksi, SFD, BMD & Lendutan',
+      desc: 'Analisis statika balok baja di atas dua tumpuan (sendi–rol): reaksi, diagram gaya geser (SFD), momen lentur (BMD) dan lendutan. Beban merata/segitiga/trapesium (w1, w2, a1, a2) + hingga 4 beban terpusat, profil WF/UNP/CNP/RHS/SHS, lendutan via integrasi ganda M/EI, plus Mmaks, Vmaks, δmaks & rasio L/δ.'
+    }
+  },
+
+  {
     id: 'bearing-capacity',
     name: 'Daya Dukung Tanah',
     category: 'Geoteknik',

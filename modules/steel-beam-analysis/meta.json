@@ -1,0 +1,8 @@
+{
+  "id": "steel-beam-analysis",
+  "name": "Analisis Balok Baja",
+  "category": "Baja",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Analisis statika balok baja sederhana (di atas dua tumpuan sendi-rol): reaksi, diagram gaya geser (SFD), momen lentur (BMD), dan lendutan. Beban merata/segitiga/trapesium sebagai patch (q1, q2, a1, a2) plus hingga 4 beban terpusat (P, a). Profil WF/UNP/CNP/RHS/SHS dari library baja bersama; lendutan via integrasi ganda M/EI, E=200000 MPa, lentur sumbu kuat (Ix). Menampilkan Mmaks, Vmaks, lendutan maks & rasio L/δ, tegangan lentur fb=M/Sx."
+}
