@@ -91,6 +91,33 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'footing-design',
+    name: 'Desain Pondasi Tapak',
+    category: 'Beton Bertulang',
+    icon: 'modules/footing-design/icon.svg',
+    entry: 'modules/footing-design/module.js',
+    accepts: { axial: 'P', moment: 'Mx' },  // terima beban dari tool lain bila tersedia
+    status: 'active',
+    seo: {
+      title: 'Desain Pondasi Tapak (Spread Footing) — Stabilitas, Penulangan & Geser Pons (SNI 2847:2019)',
+      desc: 'Desain pondasi telapak beban gabungan (aksial + geser + momen biaksial): stabilitas guling-geser-daya dukung, tekanan tanah sudut & eksentrisitas/kern, tulangan lentur dua arah (spasi kelipatan 25 mm), geser satu-arah & geser pons SNI 2847:2019, lengkap visual 3D distribusi tegangan tanah.'
+    }
+  },
+
+  {
+    id: 'two-way-slab',
+    name: 'Pelat Dua Arah',
+    category: 'Beton Bertulang',
+    icon: 'modules/two-way-slab/icon.svg',
+    entry: 'modules/two-way-slab/module.js',
+    status: 'active',
+    seo: {
+      title: 'Pelat Dua Arah — Penulangan & Lendutan Momen Inersia Efektif (SNI 2847:2019)',
+      desc: 'Desain pelat beton dua arah tertumpu 4 sisi metode jalur silang (Grashof–Marcus) dengan kondisi penjepitan per arah: pembagian beban, momen lapangan-tumpuan, penulangan dua arah (spasi kelipatan 25 mm), dan lendutan maksimum dengan momen inersia efektif (retak) Branson SNI 2847:2019 Ps. 24.2.3.5.'
+    }
+  },
+
+  {
     id: 'steel-tension',
     name: 'Batang Tarik Baja',
     category: 'Baja',

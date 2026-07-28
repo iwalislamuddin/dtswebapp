@@ -1,0 +1,8 @@
+{
+  "id": "footing-design",
+  "name": "Desain Pondasi Tapak",
+  "category": "Beton Bertulang",
+  "needsCanvas": false,
+  "needsRenderer": true,
+  "description": "Desain pondasi telapak (spread footing) untuk beban gabungan aksial + geser + momen biaksial — SNI 2847:2019 & SNI 8460. Stabilitas beban layan (guling, geser dasar μ·N, daya dukung dari tekanan sudut & eksentrisitas/kern), lalu desain struktur beban ultimit (tekanan neto Pu/A): lentur kantilever muka kolom dua arah dengan tulangan spasi kelipatan 25 mm, geser satu-arah di d, dan geser dua-arah/pons (min tiga rumus Ps. 22.6.5). Visual 3D (Three.js): distribusi tegangan tanah bidang-miring linear berwarna biru→merah di bawah tapak, tapak & kolom, plus toggle denah 2D."
+}

@@ -1,0 +1,8 @@
+{
+  "id": "two-way-slab",
+  "name": "Pelat Dua Arah",
+  "category": "Beton Bertulang",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Desain pelat beton dua arah tertumpu 4 sisi — SNI 2847:2019. Metode jalur silang (Grashof–Marcus) dengan kondisi penjepitan per arah (sendi/jepit): pembagian beban lewat kompatibilitas lendutan pusat, momen lapangan & tumpuan tiap arah, penulangan dua arah dengan spasi kelipatan 25 mm ≤ min(2h;450). Lendutan seketika memakai momen inersia efektif (retak) Branson Ps. 24.2.3.5, dibandingkan batas L/240 & L/360. Denah kanvas 2D dengan simbol penjepitan tepi."
+}

@@ -223,8 +223,11 @@
       var it = { label: label, Mu: Mu, face: face, As: a.As, AsReq: AsReq,
         et: a.et, tc: a.tc, infeasible: a.infeasible, govMin: AsReq > a.As + 1e-6 };
       if (pelat) {
-        var s = 1000 * d.Ab / AsReq;
-        it.s = Math.max(50, Math.min(Math.floor(s / 10) * 10, d.sMaxSlab));
+        var s = 1000 * d.Ab / AsReq;                                // spasi teoretis
+        var sPakai = Math.floor(s / 25) * 25;                       // bulatkan turun ke kelipatan 25 mm
+        var sCap = Math.floor(d.sMaxSlab / 25) * 25;                // batas spasi maks (kelipatan 25)
+        if (sPakai > sCap) sPakai = sCap;
+        it.s = Math.max(50, sPakai);
         it.AsProv = 1000 * d.Ab / it.s;
         it.spacingCap = s > d.sMaxSlab;                              // spasi teoretis > batas → batas menentukan
         it.txt = 'D' + db + '-' + it.s;
@@ -539,7 +542,7 @@
     if (d.shear && d.shear.overMax) msg.push('Vs perlu &gt; Vs maks — penampang balok terlalu kecil untuk geser; perbesar bw atau h.');
     results.appendChild(UI.note('Desain tulangan',
       'Lentur: penampang persegi tulangan tarik-saja, ρ dari Rn=Mu/(φbd²), asumsi terkendali tarik φ=0,90. ' +
-      (pelat ? 'Pelat dihitung per lajur 1 m; spasi dibulatkan turun ke kelipatan 10 mm ≤ spasi maks. '
+      (pelat ? 'Pelat dihitung per lajur 1 m; spasi dibulatkan turun ke kelipatan 25 mm ≤ spasi maks. '
              : 'Balok: jumlah batang 1 lapis (min 2); cek spasi & multi-lapis pada tool Kapasitas Balok. ') +
       'Geser hanya balok. ' + (msg.length ? '<b>Perhatian:</b> ' + msg.join(' ') : 'Verifikasi tata letak & panjang penyaluran sebelum gambar kerja.')));
   }
