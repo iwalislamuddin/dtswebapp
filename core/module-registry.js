@@ -24,6 +24,19 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'gable-frame',
+    name: 'Analisis Portal Gable',
+    category: 'Analisis Struktur',
+    icon: 'modules/gable-frame/icon.svg',
+    entry: 'modules/gable-frame/module.js',
+    status: 'active',
+    seo: {
+      title: 'Analisis Portal Gable (Rangka Atap Pelana) — Reaksi, BMD, Geser & Aksial (Metode Kekakuan Matriks)',
+      desc: 'Analisis portal gable satu bentang (2 kolom + 2 rafter miring bertemu di puncak) metode kekakuan langsung rangka bidang: penampang baja (WF/UNP/SHS/RHS/Pipa) untuk kolom & rafter, kemiringan atap α menentukan tinggi puncak, beban gravitasi atap (berat sendiri + merata proyeksi horizontal + terpusat) dan lateral, tumpuan sendi–sendi atau jepit–jepit. Menghasilkan reaksi, diagram momen (BMD), gaya lintang & aksial dengan nilai maks/min, deformasi terskala, plus laporan PDF/teks.'
+    }
+  },
+
+  {
     id: 'development-length',
     name: 'Penyaluran Tul. Tarik',
     category: 'Beton Bertulang',

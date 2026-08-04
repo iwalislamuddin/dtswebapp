@@ -121,9 +121,10 @@
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
         <div class="modal-relnotes">
-          <div class="rel-ver">v0.7.0 — 2026-08-03</div>
+          <div class="rel-ver">v0.7.0 — 2026-08-04</div>
           <ul class="modal-list">
-            <li><b>31 tool aktif</b> — kategori baru <b>Analisis Struktur</b> dengan tool pertama: <b>Analisis Portal Sederhana</b>.</li>
+            <li><b>32 tool aktif</b> — kategori baru <b>Analisis Struktur</b> dengan <b>Analisis Portal Sederhana</b> &amp; <b>Analisis Portal Gable</b>.</li>
+            <li><b>Analisis Portal Gable (Atap Pelana)</b> — rangka portal satu bentang beratap pelana: <b>2 kolom + 2 rafter miring</b> bertemu di puncak (ridge), memakai <b>metode kekakuan langsung (matrix stiffness) rangka bidang</b> — 5 simpul × 3 DOF. Input mengikuti Analisis Portal dengan tambahan <b>kemiringan atap α</b> (menentukan tinggi puncak = H + (L/2)·tan α). Penampang <b>kolom &amp; rafter</b> memakai profil <b>baja</b> (WF/UNP/SHS/RHS/Pipa dari library baja bersama). Beban <b>gravitasi atap</b> (berat sendiri + merata per proyeksi horizontal + hingga 4 beban terpusat) dan <b>lateral</b> di kedua eave; tumpuan <b>sendi–sendi</b> atau <b>jepit–jepit</b>. Output sama dengan Analisis Portal: <b>reaksi</b>, diagram <b>momen (BMD)</b>, <b>gaya lintang</b> &amp; <b>aksial</b> maks/min per batang, <b>deformasi</b> terskala (drift eave, turun puncak, lendutan rafter), dan laporan PDF/teks bergambar.</li>
             <li><b>Analisis Portal Sederhana</b> (2 kolom + 1 balok, satu bentang–satu tingkat) memakai <b>metode kekakuan langsung (matrix stiffness) rangka bidang</b> — 4 simpul × 3 DOF — sehingga satu formulasi menangani semua kasus (tumpuan, goyangan, beban tak simetris) tanpa penanganan khusus. Penampang &amp; material <b>kolom dan balok</b> bisa <b>baja</b> (WF/UNP/SHS/RHS/Pipa dari library baja bersama) atau <b>beton persegi</b> (b×h, E=4700√fc'). Beban <b>gravitasi</b> (berat sendiri + merata + hingga 4 beban terpusat pada balok) dan <b>lateral</b> di puncak kedua kolom; tumpuan <b>sendi–sendi</b> atau <b>jepit–jepit</b>. Output: <b>reaksi</b>, diagram <b>momen (BMD)</b>, <b>gaya lintang</b> &amp; <b>gaya aksial</b> dengan nilai maks/min per batang, <b>deformasi</b> terskala, dan tampilan beban — lengkap laporan PDF/teks bergambar (portal + BMD). Cek keseimbangan ΣV &amp; ΣH ditampilkan otomatis.</li>
           </ul>
           <div class="rel-ver">v0.6.0 — 2026-07-28</div>

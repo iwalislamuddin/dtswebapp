@@ -1,0 +1,8 @@
+{
+  "id": "gable-frame",
+  "name": "Analisis Portal Gable",
+  "category": "Analisis Struktur",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Analisis portal gable (rangka atap pelana) satu bentang: 2 kolom + 2 rafter miring bertemu di puncak (ridge), metode kekakuan langsung (matrix stiffness) rangka bidang: 5 simpul × 3 DOF. Kemiringan atap α menentukan tinggi puncak. Penampang kolom & rafter memakai profil baja (WF/UNP/SHS/RHS/Pipa dari library baja bersama). Beban gravitasi atap (berat sendiri + merata proyeksi horizontal + hingga 4 beban terpusat) dan beban lateral di kedua eave; tumpuan sendi–sendi atau jepit–jepit. Output: reaksi, diagram momen (BMD), gaya lintang & aksial dengan nilai maks/min, deformasi terskala, plus laporan PDF/teks bergambar."
+}
