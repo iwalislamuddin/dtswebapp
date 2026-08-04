@@ -11,6 +11,19 @@
    ============================================================ */
 window.MODULE_REGISTRY = [
   {
+    id: 'portal-frame',
+    name: 'Analisis Portal',
+    category: 'Analisis Struktur',
+    icon: 'modules/portal-frame/icon.svg',
+    entry: 'modules/portal-frame/module.js',
+    status: 'active',
+    seo: {
+      title: 'Analisis Portal Sederhana — Reaksi, BMD, Geser & Aksial (Metode Kekakuan Matriks)',
+      desc: 'Analisis portal satu bentang–satu tingkat (2 kolom + 1 balok) metode kekakuan langsung rangka bidang: penampang baja (WF/UNP/SHS/RHS/Pipa) atau beton persegi untuk kolom & balok, beban gravitasi (berat sendiri + merata + terpusat) dan lateral, tumpuan sendi–sendi atau jepit–jepit. Menghasilkan reaksi, diagram momen (BMD), gaya lintang & aksial dengan nilai maks/min, deformasi terskala, plus laporan PDF/teks.'
+    }
+  },
+
+  {
     id: 'development-length',
     name: 'Penyaluran Tul. Tarik',
     category: 'Beton Bertulang',

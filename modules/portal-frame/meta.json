@@ -1,0 +1,8 @@
+{
+  "id": "portal-frame",
+  "name": "Analisis Portal",
+  "category": "Analisis Struktur",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Analisis portal sederhana satu bentang–satu tingkat (2 kolom + 1 balok) dengan metode kekakuan langsung (matrix stiffness) rangka bidang: 4 simpul × 3 DOF. Penampang & material kolom dan balok bisa baja (WF/UNP/SHS/RHS/Pipa dari library baja bersama) atau beton persegi (b×h, E=4700√fc'). Beban gravitasi (berat sendiri + merata + hingga 4 beban terpusat pada balok) dan beban lateral di puncak kedua kolom; tumpuan sendi–sendi atau jepit–jepit. Output: reaksi, diagram momen (BMD), gaya lintang & aksial dengan nilai maks/min, deformasi terskala, plus laporan PDF/teks bergambar."
+}

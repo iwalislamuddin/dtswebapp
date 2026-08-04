@@ -108,7 +108,7 @@
         <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
         <div>
           <div class="modal-title" id="about-title">EDFS Civil Tools</div>
-          <div class="modal-ver">v0.6.0 · Alat Bantu Rekayasa Sipil</div>
+          <div class="modal-ver">v0.7.0 · Alat Bantu Rekayasa Sipil</div>
         </div>
       </div>
 
@@ -121,6 +121,11 @@
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
         <div class="modal-relnotes">
+          <div class="rel-ver">v0.7.0 — 2026-08-03</div>
+          <ul class="modal-list">
+            <li><b>31 tool aktif</b> — kategori baru <b>Analisis Struktur</b> dengan tool pertama: <b>Analisis Portal Sederhana</b>.</li>
+            <li><b>Analisis Portal Sederhana</b> (2 kolom + 1 balok, satu bentang–satu tingkat) memakai <b>metode kekakuan langsung (matrix stiffness) rangka bidang</b> — 4 simpul × 3 DOF — sehingga satu formulasi menangani semua kasus (tumpuan, goyangan, beban tak simetris) tanpa penanganan khusus. Penampang &amp; material <b>kolom dan balok</b> bisa <b>baja</b> (WF/UNP/SHS/RHS/Pipa dari library baja bersama) atau <b>beton persegi</b> (b×h, E=4700√fc'). Beban <b>gravitasi</b> (berat sendiri + merata + hingga 4 beban terpusat pada balok) dan <b>lateral</b> di puncak kedua kolom; tumpuan <b>sendi–sendi</b> atau <b>jepit–jepit</b>. Output: <b>reaksi</b>, diagram <b>momen (BMD)</b>, <b>gaya lintang</b> &amp; <b>gaya aksial</b> dengan nilai maks/min per batang, <b>deformasi</b> terskala, dan tampilan beban — lengkap laporan PDF/teks bergambar (portal + BMD). Cek keseimbangan ΣV &amp; ΣH ditampilkan otomatis.</li>
+          </ul>
           <div class="rel-ver">v0.6.0 — 2026-07-28</div>
           <ul class="modal-list">
             <li><b>30 tool aktif</b> — 3 tool baru: <b>Analisis Balok Baja</b> (Baja), serta <b>Desain Pondasi Tapak</b> &amp; <b>Pelat Dua Arah</b> (Beton Bertulang).</li>
