@@ -108,7 +108,7 @@
         <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
         <div>
           <div class="modal-title" id="about-title">EDFS Civil Tools</div>
-          <div class="modal-ver">v0.7.0 · Alat Bantu Rekayasa Sipil</div>
+          <div class="modal-ver">v0.7.1 · Alat Bantu Rekayasa Sipil</div>
         </div>
       </div>
 
@@ -121,6 +121,12 @@
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
         <div class="modal-relnotes">
+          <div class="rel-ver">v0.7.1 — 2026-08-06</div>
+          <ul class="modal-list">
+            <li><b>33 tool aktif</b> — tool baru <b>Desain Tangga Beton</b> (Beton Bertulang).</li>
+            <li><b>Slider skala deformasi</b> pada tampilan Deformasi/Lendutan <b>Analisis Portal</b>, <b>Analisis Portal Gable</b>, dan <b>Desain Tangga Beton</b>: atur besar perbesaran bentuk deformasi (% dimensi model) agar tidak terlalu ekstrim — faktor ×N ditampilkan hidup. Kontrol seragam siap dipakai tool berdiagram deformasi berikutnya.</li>
+            <li><b>Desain Tangga Beton</b> dimodelkan sebagai <b>rangka bidang menerus</b> (bordes bawah <b>L₁</b> – flight miring <b>L₂/H</b> – bordes atas <b>L₃</b>, 4 simpul / 3 batang) memakai <b>metode matriks kekakuan (matrix stiffness)</b> — elemen aksial+lentur, ≤4 simpul × 3 DOF. Penampang <b>beton persegi per 1 m lebar</b> (I bruto, Ec=4700√f'c); beban flight per <b>proyeksi horizontal</b> (waist γc·tw + anak tangga γc·R/2 + SDL + LL) diuraikan ke komponen batang miring, sehingga <b>gaya aksial (thrust)</b> dan <b>momen di kink</b> terhitung otomatis. Tumpuan <b>sendi / rol / jepit</b> bebas dipilih di ujung A &amp; B (L₁ atau L₃ boleh 0). Analisis <b>ultimit</b> → penulangan lentur lapangan (M+) &amp; tumpuan/kink (M−) + tulangan bagi susut-suhu (spasi kelipatan 25 mm) + <b>cek geser pelat</b> φVc; analisis <b>layan</b> → <b>lendutan seketika</b> penampang <b>utuh (Ig)</b> vs <b>retak (Ie Branson, Ps. 24.2.3.5)</b> dibanding batas L/360 &amp; L/250. Kanvas interaktif: <b>Model</b> bertangga, <b>Momen/Geser/Aksial</b> terlipat mengikuti rangka, dan <b>bentuk lendutan</b> — lengkap laporan PDF/teks bergambar.</li>
+          </ul>
           <div class="rel-ver">v0.7.0 — 2026-08-04</div>
           <ul class="modal-list">
             <li><b>32 tool aktif</b> — kategori baru <b>Analisis Struktur</b> dengan <b>Analisis Portal Sederhana</b> &amp; <b>Analisis Portal Gable</b>.</li>

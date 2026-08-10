@@ -144,6 +144,19 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'concrete-stair',
+    name: 'Desain Tangga Beton',
+    category: 'Beton Bertulang',
+    icon: 'modules/concrete-stair/icon.svg',
+    entry: 'modules/concrete-stair/module.js',
+    status: 'active',
+    seo: {
+      title: 'Desain Tangga Beton Bertulang — Rangka Bidang Matriks Kekakuan, Penulangan & Cek Lendutan (SNI 2847:2019)',
+      desc: 'Desain tangga beton bertulang dimodelkan sebagai rangka bidang menerus (bordes bawah L₁ – flight miring L₂/H – bordes atas L₃) dengan metode matriks kekakuan (elemen aksial+lentur, ≤4 simpul × 3 DOF): penampang beton persegi per meter (Ec=4700√f\'c), beban flight per proyeksi horizontal diuraikan ke komponen batang miring sehingga gaya aksial/thrust & momen kink terhitung, tumpuan sendi/rol/jepit bebas di kedua ujung. Menghasilkan penulangan lentur lapangan & tumpuan, tulangan bagi, cek geser pelat φVc, serta lendutan seketika penampang utuh (Ig) vs retak (Ie Branson) dibanding L/360 & L/250 — lengkap diagram BMD/geser/aksial terlipat dan bentuk lendutan.'
+    }
+  },
+
+  {
     id: 'steel-tension',
     name: 'Batang Tarik Baja',
     category: 'Baja',

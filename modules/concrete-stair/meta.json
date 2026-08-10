@@ -1,0 +1,8 @@
+{
+  "id": "concrete-stair",
+  "name": "Desain Tangga Beton",
+  "category": "Beton Bertulang",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Desain tangga beton bertulang dimodelkan sebagai rangka bidang menerus (bordes bawah L₁ – flight miring L₂/H – bordes atas L₃) dengan metode matriks kekakuan (elemen aksial+lentur, ≤4 simpul × 3 DOF). Penampang beton persegi per 1 m lebar (I bruto, Ec=4700√f'c); beban flight per proyeksi horizontal (waist γc·tw + anak tangga γc·R/2 + SDL + LL) diuraikan ke komponen batang miring sehingga gaya aksial (thrust) & momen kink terhitung. Tumpuan sendi/rol/jepit bebas di A & B. Analisis ultimit untuk penulangan lentur (lapangan & tumpuan) + tulangan bagi + geser pelat φVc; analisis layan untuk lendutan seketika penampang utuh (Ig) vs retak (Ie Branson) vs L/360 & L/250. Kanvas: model bertangga, BMD/geser/aksial terlipat, dan bentuk lendutan."
+}

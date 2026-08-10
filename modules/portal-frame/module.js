@@ -470,11 +470,19 @@
       b.addEventListener('click', function () {
         state.viewMode = m[0];
         vbtns.forEach(function (bb, k) { bb.classList.toggle('active', modes[k][0] === m[0]); });
+        if (state.defSlider) state.defSlider.show(m[0] === 'D');
         if (state.cv) state.cv.redraw();
       });
       seg.appendChild(b); return b;
     });
     canvasHost.appendChild(seg);
+
+    // ---- slider skala deformasi (tampil hanya di mode Deformasi) ----
+    state.deformPct = 4;
+    state.defSlider = UI.deformSlider(canvasHost, { value: state.deformPct, onInput: function (v) {
+      state.deformPct = v; if (state.cv) state.cv.redraw();
+    } });
+    state.defSlider.show(state.viewMode === 'D');
 
     // ---- kanvas ----
     if (state.canvas2d) {
@@ -770,8 +778,10 @@
     // skala perbesaran otomatis: perpindahan maks → ~8% dimensi rangka
     var dmax = 1e-9;
     r.D.forEach(function (d, i) { if (i % 3 !== 2) dmax = Math.max(dmax, Math.abs(d)); });
-    var target = 0.08 * Math.min(r.Lb, r.H) * 1000;     // mm
+    var pct = (state.deformPct != null ? state.deformPct : 4) / 100;
+    var target = pct * Math.min(r.Lb, r.H) * 1000;      // mm (dikendalikan slider)
     var mag = dmax > EPS ? target / dmax : 0;
+    if (state.defSlider) state.defSlider.setReadout('×' + (mag >= 10 ? Math.round(mag) : mag.toFixed(1)));
 
     r.elems.forEach(function (e) {
       var A = r.nodes[e.ni], B = r.nodes[e.nj];
@@ -959,7 +969,7 @@
     } else if (mode === 'D') {
       var dmax = 1e-9;
       r.D.forEach(function (d, i) { if (i % 3 !== 2) dmax = Math.max(dmax, Math.abs(d)); });
-      var target = 0.08 * Math.min(r.Lb, r.H) * 1000;      // mm
+      var target = ((state.deformPct != null ? state.deformPct : 4) / 100) * Math.min(r.Lb, r.H) * 1000;   // mm
       var mag = dmax > EPS ? target / dmax : 0;
       r.elems.forEach(function (e) {
         var A = nx[e.ni], B = nx[e.nj], dxm = B[0] - A[0], dym = B[1] - A[1], Lm = Math.hypot(dxm, dym);

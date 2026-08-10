@@ -293,8 +293,55 @@
     ctx.restore();
   }
 
+  /* ============================================================
+     SLIDER SKALA DEFORMASI — overlay kanvas reusable
+     Semua tool berdiagram deformasi memakai slider ini agar besar
+     tampilan tak bergantung auto-scale ekstrim. Kontrak seragam:
+       - tool simpan state.deformPct (persen dimensi model, default 4)
+       - drawDeform pakai target = (deformPct/100)·dimModel, mag=target/dmax
+       - slider hanya tampil di mode 'Deformasi' (tool panggil .show(bool))
+       - drawDeform panggil .setReadout('×N') tiap gambar.
+     ============================================================ */
+  function injectDefStyle() {
+    if (document.getElementById('ck-defslider-style')) return;
+    var s = document.createElement('style'); s.id = 'ck-defslider-style';
+    s.textContent =
+      '.ck-defslider{position:absolute;right:12px;top:46px;z-index:4;display:flex;align-items:center;gap:8px;' +
+        'background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 10px;' +
+        'font:600 11px "Space Grotesk",sans-serif;color:var(--ink-dim);box-shadow:0 2px 6px rgba(0,0,0,.12)}' +
+      '.ck-defslider input[type=range]{width:110px;accent-color:var(--amber);cursor:pointer;margin:0}' +
+      '.ck-defslider-val{font:600 11px "JetBrains Mono",monospace;color:var(--ink);min-width:44px;text-align:right}';
+    document.head.appendChild(s);
+  }
+  // deformSlider(host, { value?, min?, max?, step?, label?, onInput(v) }) -> control
+  function deformSlider(host, opts) {
+    opts = opts || {};
+    injectDefStyle();
+    var min = opts.min != null ? opts.min : 0.5;
+    var max = opts.max != null ? opts.max : 20;
+    var step = opts.step != null ? opts.step : 0.5;
+    var val = opts.value != null ? opts.value : 4;
+    var wrap = el('div', 'ck-defslider');
+    var lab = el('span', 'ck-defslider-lab', opts.label || 'Skala');
+    var input = el('input'); input.type = 'range';
+    input.min = min; input.max = max; input.step = step; input.value = val;
+    input.title = 'Skala perbesaran deformasi (% dimensi model)';
+    var read = el('span', 'ck-defslider-val', '');
+    wrap.appendChild(lab); wrap.appendChild(input); wrap.appendChild(read);
+    input.addEventListener('input', function () { if (opts.onInput) opts.onInput(parseFloat(input.value)); });
+    host.appendChild(wrap);
+    return {
+      el: wrap,
+      get: function () { return parseFloat(input.value); },
+      set: function (v) { input.value = v; },
+      setReadout: function (t) { read.textContent = t == null ? '' : t; },
+      show: function (b) { wrap.style.display = b ? '' : 'none'; }
+    };
+  }
+
   window.CivilUI = {
     toast: toast,
+    deformSlider: deformSlider,
     stash: { load: stashLoad, save: stashSave },
     roundRect: roundRect,
     disposeObject: disposeObject,
