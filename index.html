@@ -108,7 +108,7 @@
         <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
         <div>
           <div class="modal-title" id="about-title">EDFS Civil Tools</div>
-          <div class="modal-ver">v0.7.1 · Alat Bantu Rekayasa Sipil</div>
+          <div class="modal-ver">v0.7.2 · Alat Bantu Rekayasa Sipil</div>
         </div>
       </div>
 
@@ -121,6 +121,11 @@
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
         <div class="modal-relnotes">
+          <div class="rel-ver">v0.7.2 — 2026-08-18</div>
+          <ul class="modal-list">
+            <li><b>34 tool aktif</b> — tool baru <b>Slab Komposit + Metal Deck</b> (Beton Bertulang).</li>
+            <li><b>Slab Beton Komposit di Atas Metal Deck</b> (bondek/smartdek) — desain dua tahap mengikuti <b>SNI 2847:2019</b>, <b>SNI 1729:2020</b>, dan prinsip <b>SDI</b>. <b>Tahap konstruksi</b>: dek berperan sebagai <b>bekisting hilang</b> yang memikul beton basah + beban hidup pekerja sendirian — dicek momen ultimit vs kapasitas pabrikan &amp; lendutan ≤ <b>L/180</b> (maks 20 mm, cegah ponding); opsi <b>topangan sementara</b> di tengah bentang menggandakan tumpuan sementara → bentang konstruksi efektif jadi <b>L/2</b> (momen ↓ 4×, lendutan ↓ 16×). <b>Tahap komposit</b>: momen positif memakai dek sebagai <b>tulangan tarik</b> (Ase·fyd, blok tekan 0,85f'c → φMn); <b>tulangan negatif</b> di tumpuan menerus didesain sebagai beton bertulang biasa (dek diabaikan, lebar tekan = Σ lebar bawah rusuk); <b>tulangan susut-suhu</b> pada selimut beton di atas dek (SNI 0,0018; SDI min 0,00075); <b>lendutan</b> penampang transformasi retak (Ie Branson) dibanding L/250 &amp; L/360; serta <b>shear connector</b> (stud headed atau tulangan ulir dilas) untuk aksi komposit / angkur ke balok baja penumpu — Vh = min(gaya leleh dek; tekan beton), Qn per <b>AISC I8</b> dengan faktor dek Rg·Rp. Pilihan profil dengan <b>properti penampang dari tabel katalog Lysaght</b> — <b>Bondek / Bondek II</b> (re-entrant, tinggi 54 mm, rusuk 200 mm, cover 590–600 mm; BMT 0,75/1,0/1,2, fy G550/G500) &amp; <b>Smartdek</b> (profil W, cover efektif 960 mm; BMT 0,70/1,0/1,2) — meliputi Ase, Ix, Zx, titik berat (dcb), fy &amp; massa per BMT (φMn dek konstruksi = 0,9·fy·Zx), semua bisa ditimpa manual. <b>1 / 2 / ≥3 bentang</b>, opsi <b>komposit / non-komposit</b>. Kanvas: <b>Potongan</b> melintang (dimensi utama D/tc/hr/pitch/cover — disederhanakan, lekukan kecil diabaikan) dan <b>Bentang</b> (elevasi tumpuan permanen &amp; topangan sementara + skema momen), lengkap laporan PDF/teks bergambar. <i>Verifikasi akhir dengan Design &amp; Construction Manual pabrikan oleh insinyur penanggung jawab.</i></li>
+          </ul>
           <div class="rel-ver">v0.7.1 — 2026-08-06</div>
           <ul class="modal-list">
             <li><b>33 tool aktif</b> — tool baru <b>Desain Tangga Beton</b> (Beton Bertulang).</li>

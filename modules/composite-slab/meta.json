@@ -1,0 +1,8 @@
+{
+  "id": "composite-slab",
+  "name": "Slab Komposit + Metal Deck",
+  "category": "Beton Bertulang",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Desain slab beton komposit di atas metal deck (bondek/smartdek) — SNI 2847:2019 + SNI 1729:2020 dan prinsip SDI. Dua tahap: (1) konstruksi — dek sebagai bekisting memikul beton basah + beban hidup pekerja, cek momen vs kapasitas pabrikan & lendutan ≤ L/180 (≤20 mm), opsi topangan sementara tengah bentang (Le=L/2); (2) komposit — momen positif dek sebagai tulangan tarik (Ase·fyd), tulangan negatif di tumpuan menerus, tulangan susut-suhu, lendutan Ie retak (Branson) vs L/250 & L/360, serta shear connector (stud headed atau tulangan ulir dilas) ke balok baja. Properti penampang dek dari tabel katalog Lysaght: Bondek/Bondek II (re-entrant 54 mm, rusuk 200 mm, cover 590–600 mm, BMT 0,75/1,0/1,2) & Smartdek (profil W, cover 960 mm, BMT 0,70/1,0/1,2) — Ase, Ix, Zx, dcb, fy & massa per BMT, semua bisa ditimpa manual. 1/2/≥3 bentang, opsi komposit/non-komposit."
+}

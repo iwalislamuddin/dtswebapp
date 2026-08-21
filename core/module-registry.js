@@ -157,6 +157,19 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'composite-slab',
+    name: 'Slab Komposit + Metal Deck',
+    category: 'Beton Bertulang',
+    icon: 'modules/composite-slab/icon.svg',
+    entry: 'modules/composite-slab/module.js',
+    status: 'active',
+    seo: {
+      title: 'Slab Beton Komposit di Atas Metal Deck (Bondek/Smartdek) — Konstruksi, Komposit, Tulangan & Shear Connector (SNI 2847:2019)',
+      desc: 'Desain slab beton komposit di atas metal deck dua tahap: tahap konstruksi dek sebagai bekisting (momen vs kapasitas pabrikan, lendutan beton basah ≤ L/180 ≤ 20 mm, opsi topangan sementara tengah bentang Le=L/2) dan tahap komposit (momen positif dek sebagai tulangan tarik Ase·fyd, tulangan negatif tumpuan menerus, tulangan susut-suhu, lendutan Ie retak Branson vs L/250 & L/360). Properti penampang dek dari tabel katalog Lysaght Bondek/Bondek II (re-entrant 54 mm, rusuk 200 mm) & Smartdek (profil W, cover 960 mm) — Ase, Ix, Zx, dcb, fy & massa per BMT. 1/2/≥3 bentang, opsi komposit/non-komposit, plus shear connector (stud headed atau tulangan ulir dilas) ke balok baja penumpu per SNI 1729:2020/AISC I8.'
+    }
+  },
+
+  {
     id: 'steel-tension',
     name: 'Batang Tarik Baja',
     category: 'Baja',
