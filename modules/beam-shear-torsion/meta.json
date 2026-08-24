@@ -1,0 +1,8 @@
+{
+  "id": "beam-shear-torsion",
+  "name": "Geser & Torsi Balok",
+  "category": "Beton Bertulang",
+  "needsCanvas": true,
+  "needsRenderer": false,
+  "description": "Cek geser + torsi balok beton persegi (SNI 2847:2019): φVc/φVs, torsi batas, φTn, sengkang minimum gabungan (Av+2At)/s, tulangan longitudinal Al, dan rasio kekuatan D/C — dengan diagram penampang, sengkang tertutup & aliran torsi."
+}

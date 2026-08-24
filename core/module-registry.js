@@ -170,6 +170,20 @@ window.MODULE_REGISTRY = [
   },
 
   {
+    id: 'beam-shear-torsion',
+    name: 'Geser & Torsi Balok',
+    category: 'Beton Bertulang',
+    icon: 'modules/beam-shear-torsion/icon.svg',
+    entry: 'modules/beam-shear-torsion/module.js',
+    accepts: { shear: 'Vu', torsion: 'Tu' },  // terima geser/torsi terfaktor bila tersedia
+    status: 'active',
+    seo: {
+      title: 'Geser & Torsi Balok Beton Bertulang — φVn, φTn, Sengkang Minimum & Rasio Kekuatan (SNI 2847:2019)',
+      desc: 'Cek kombinasi geser (Vu) + torsi (Tu) balok beton persegi bertulang sesuai SNI 2847:2019: kapasitas geser φ(Vc+Vs) dengan Vc = 0,17·λ·√f\'c·bw·d & Vs = Av·fyt·d/s (batas Vs,maks 0,66√f\'c·bw·d), torsi batas Tth yang boleh diabaikan, kapasitas torsi φTn = φ·2·Ao·At·fyt·cotθ/s (θ=45°, Ao=0,85·Aoh), cek kecukupan dimensi penampang solid Ps. 22.7.7.1, sengkang minimum gabungan (Av+2At)/s (Ps. 9.6.4.2), tulangan longitudinal torsi Al & Al,min (Ps. 9.6.4.3), spasi maksimum sengkang, plus rasio kekuatan D/C. Input dimensi, mutu material, sengkang tertutup (jumlah kaki), tulangan longitudinal & gaya dalam — lengkap diagram penampang, sengkang tertutup, aliran torsi, dan laporan PDF/teks.'
+    }
+  },
+
+  {
     id: 'steel-tension',
     name: 'Batang Tarik Baja',
     category: 'Baja',

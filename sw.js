@@ -4,7 +4,7 @@
    - Runtime cache: modules/* saat pertama diakses (cache-first, fallback network)
    - Bump CACHE setiap kali core/shell berubah agar SW purge cache lama
    ============================================================ */
-const CACHE = 'civil-tools-v57';
+const CACHE = 'civil-tools-v58';
 
 const PRECACHE = [
   './',
@@ -54,7 +54,8 @@ const PRECACHE = [
   'modules/footing-design/icon.svg',
   'modules/two-way-slab/icon.svg',
   'modules/concrete-stair/icon.svg',
-  'modules/composite-slab/icon.svg'
+  'modules/composite-slab/icon.svg',
+  'modules/beam-shear-torsion/icon.svg'
 ];
 
 self.addEventListener('install', (e) => {

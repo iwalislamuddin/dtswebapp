@@ -108,7 +108,7 @@
         <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
         <div>
           <div class="modal-title" id="about-title">EDFS Civil Tools</div>
-          <div class="modal-ver">v0.7.2 · Alat Bantu Rekayasa Sipil</div>
+          <div class="modal-ver">v0.7.3 · Alat Bantu Rekayasa Sipil</div>
         </div>
       </div>
 
@@ -121,6 +121,11 @@
       <div class="modal-sec">
         <h5>Catatan Rilis</h5>
         <div class="modal-relnotes">
+          <div class="rel-ver">v0.7.3 — 2026-08-21</div>
+          <ul class="modal-list">
+            <li><b>35 tool aktif</b> — tool baru <b>Geser &amp; Torsi Balok</b> (Beton Bertulang).</li>
+            <li><b>Geser &amp; Torsi Balok Beton Bertulang</b> — cek kombinasi <b>geser (Vu) + torsi (Tu)</b> penampang persegi bertulang sesuai <b>SNI 2847:2019</b> (φ = 0,75; sudut rangka batang <b>θ = 45°</b>, cotθ = 1). <b>Geser (Ps. 22.5)</b>: Vc = 0,17·λ·√f'c·bw·d, Vs = Av·fyt·d/s (Av = seluruh kaki sengkang), dibatasi Vs,maks = 0,66·√f'c·bw·d → φVn. <b>Torsi (Ps. 22.7)</b>: torsi batas Tth = 0,083·λ·√f'c·Acp²/pcp (bila Tu &lt; φTth boleh diabaikan), kapasitas φTn = φ·2·Ao·At·fyt·cotθ/s dengan Ao = 0,85·Aoh dari <b>as sengkang tertutup terluar</b> (At = luas satu kaki), serta <b>cek kecukupan dimensi penampang solid</b> √[(Vu/bwd)² + (Tu·ph/1,7Aoh²)²] ≤ φ(Vc/bwd + 0,66√f'c) (Ps. 22.7.7.1). <b>Tulangan minimum &amp; perlu</b>: sengkang gabungan (Av+2At)/s ≥ maks(0,062√f'c·bw/fyt ; 0,35bw/fyt) (Ps. 9.6.4.2), tulangan longitudinal torsi Al = (At/s)·ph·(fyt/fy)·cot²θ dan Al,min (Ps. 9.6.4.3), spasi maks sengkang (geser d/2 atau d/4; torsi ph/8 ≤ 300 mm). Input dimensi, mutu (f'c, fy, fyt, λ), sengkang tertutup dengan <b>jumlah kaki</b>, tulangan longitudinal &amp; gaya dalam terfaktor. Output: <b>φVn, φTn, sengkang minimum, dan rasio kekuatan D/C</b> tiap kontrol. Kanvas menampilkan <b>potongan melintang</b> berdimensi + sengkang tertutup, kaki antara, tulangan longitudinal keliling &amp; <b>aliran torsi</b>, lengkap laporan PDF/teks bergambar. <i>Verifikasi detail pengangkuran sengkang 135° &amp; penyaluran Al oleh insinyur penanggung jawab.</i></li>
+          </ul>
           <div class="rel-ver">v0.7.2 — 2026-08-18</div>
           <ul class="modal-list">
             <li><b>34 tool aktif</b> — tool baru <b>Slab Komposit + Metal Deck</b> (Beton Bertulang).</li>
