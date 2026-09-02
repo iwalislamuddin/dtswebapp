@@ -1,30 +1,52 @@
 /* ============================================================
    Civil Tools — modules/column-pm/module.js  (Tier 3, Three.js / WebGL)
-   Diagram Interaksi P–M Kolom Persegi — UNIAKSIAL & BIAKSIAL — SNI 2847:2019.
-   Permukaan interaksi 3D (P–Mx–My) via kompatibilitas regangan dengan
-   SUMBU NETRAL MIRING (sapuan sudut θ × kedalaman c).
+   Diagram Interaksi P–M Kolom — UNIAKSIAL & BIAKSIAL — SNI 2847:2019.
+   Penampang: PERSEGI, LINGKARAN, L, T. Permukaan interaksi 3D (P–Mx–My)
+   via kompatibilitas regangan dengan SUMBU NETRAL MIRING (sapuan sudut
+   θ × kedalaman c) — mesin hitung generik berbasis POLIGON, berlaku
+   untuk keempat bentuk penampang.
 
    Metode:
+   - Tiap bentuk penampang direpresentasikan sebagai POLIGON (persegi:
+     4 titik; lingkaran: didekati poligon 128 sisi; L/T: poligon 6/8 titik
+     dari dua persegi bergabung) — dipusatkan di SENTROID GEOMETRIS
+     penampang beton bruto (shoelace).
    - Untuk tiap arah sumbu netral θ (0..360°) dan kedalaman c:
-     koordinat kedalaman u(p) = umax − p·n, n = (cosθ, sinθ);
+     koordinat kedalaman u(p) = umax − p·n, n = (cosθ, sinθ) — dicari
+     dari titik-titik POLIGON (berlaku utk poligon cembung maupun cekung
+     karena ekstrem fungsional linear selalu di suatu titik sudut);
      regangan ε(p) = 0,003·(c − u)/c; baja fs = ±fy klem elastis,
      baris dalam blok tekan dikoreksi beton terdesak (fs − 0,85f'c).
    - Blok tegangan persegi: poligon = penampang ∩ {u ≤ a}, a = β1·c
-     (clipping Sutherland–Hodgman); Cc = 0,85·f'c·A_blok di centroid blok.
-   - P = Cc + ΣAs·fs,eff ; Mx = ΣF·y ; My = ΣF·x (terhadap centroid).
+     (clipping Sutherland–Hodgman — bekerja untuk poligon simple apa pun,
+     cembung/cekung, karena clip terhadap SATU halfplane); Cc = 0,85·f'c·A_blok
+     di centroid blok.
+   - P = Cc + ΣAs·fs,eff ; Mx = ΣF·y ; My = ΣF·x (terhadap sentroid).
    - φ dari εt baja tarik terjauh (Tabel 21.2.2): 0,65/0,75 → 0,90
      transisi εty..εty+0,003; plafon aksial φPn ≤ φ·(0,80|0,85)·Po (22.4.2).
    - Cek biaksial: IRIS permukaan desain pada P = Pu → kontur (φMnx, φMny);
      D/C = |Mu| / |Mkap| pada arah β = atan2(Muy, Mux) (metode kontur beban
      eksak dari permukaan — bukan pendekatan Bresler).
+   - Tulangan: Persegi = pola keliling nx×ny (existing). Lingkaran = n
+     batang tersebar merata sudut. L/T = batang WAJIB di tiap sudut
+     poligon inset (d' dari tepi) + disisipi agar spasi keliling ≤ input.
    - Visual 3D: permukaan desain (mesh transparan + meridian/paralel),
      sumbu P/Mx/My, kontur iris di Pu, titik demand; orbit/pan/zoom.
-     Toggle tampilan: permukaan 3D ⇄ penampang kolom (kanvas 2D).
-   - Laporan PDF menyertakan gambar vektor: penampang, kurva P-M
-     uniaksial, dan kontur biaksial di P=Pu (via core/report.js fig ops).
+     Toggle tampilan: permukaan 3D ⇄ penampang kolom (kanvas 2D, generik
+     per bentuk: persegi/lingkaran/poligon L-T).
+   - Laporan PDF menyertakan gambar vektor: penampang (generik per bentuk),
+     kurva P-M uniaksial, dan kontur biaksial di P=Pu (via core/report.js).
+
+   CATATAN PENTING (L/T — penampang tak-simetris): momen dihitung terhadap
+   SENTROID GEOMETRIS beton bruto (bukan sentroid plastis) — pendekatan
+   yang sama seperti banyak software praktis, TAPI untuk penampang
+   tak-simetris titik "aksial murni" tidak persis bebas-momen terhadap
+   sentroid ini. Diberi peringatan eksplisit; verifikasi tambahan
+   disarankan untuk kombinasi beban kritis pada kolom L/T.
 
    TIDAK termasuk: kelangsingan/orde-2 (Ps. 6.6.4 — Mu sudah diperbesar),
-   detail gempa (Ps. 18), penampang non-persegi, tulangan tak-simetris.
+   detail gempa (Ps. 18), tulangan tak-simetris/kustom per-batang (pola
+   masih mengikuti bentuk penampang), sentroid plastis untuk L/T.
    Verifikasi oleh insinyur penanggung jawab.
    ============================================================ */
 (function () {
@@ -38,14 +60,49 @@
   function num(x) { x = parseFloat(x); return isFinite(x) ? x : 0; }
 
   /* ============================================================
-     KALKULASI — kompatibilitas regangan sumbu netral miring
+     GEOMETRI PENAMPANG — poligon generik per bentuk
      ============================================================ */
-  function beta1Of(fc) {
-    if (fc <= 28) return 0.85;
-    return Math.max(0.65, 0.85 - 0.05 * (fc - 28) / 7);
+  function translatePoly(poly, dx, dy) {
+    return poly.map(function (p) { return { x: p.x + dx, y: p.y + dy }; });
+  }
+  // L: dua persegi bergabung — kaki vertikal (lebar tx, tinggi H) + kaki
+  // horizontal (lebar B, tinggi ty), notch dipotong dari sudut kanan-atas.
+  function lRaw(B, H, tx, ty) {
+    return [{ x: 0, y: 0 }, { x: B, y: 0 }, { x: B, y: ty }, { x: tx, y: ty }, { x: tx, y: H }, { x: 0, y: H }];
+  }
+  // T: sayap (lebar B, tebal tf) di atas + badan (lebar bw, tinggi H-tf) di tengah.
+  function tRaw(B, H, bw, tf) {
+    var x0 = (B - bw) / 2, x1 = (B + bw) / 2;
+    return [{ x: x0, y: 0 }, { x: x1, y: 0 }, { x: x1, y: H - tf }, { x: B, y: H - tf },
+            { x: B, y: H }, { x: 0, y: H }, { x: 0, y: H - tf }, { x: x0, y: H - tf }];
+  }
+  function polyBBox(poly) {
+    var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    poly.forEach(function (p) {
+      if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+      if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+    });
+    return { minX: minX, maxX: maxX, minY: minY, maxY: maxY, w: maxX - minX, h: maxY - minY };
   }
 
-  // posisi batang (x,y) relatif centroid — pola keliling simetris
+  // batang WAJIB di tiap sudut poligon inset + disisipi sepanjang tiap sisi
+  // agar spasi ≤ maxSpacing (dipakai utk L & T).
+  function perimeterBars(poly, maxSpacing, Abar) {
+    var bars = [], n = poly.length;
+    for (var i = 0; i < n; i++) {
+      var a = poly[i], b = poly[(i + 1) % n];
+      bars.push({ x: a.x, y: a.y, As: Abar });
+      var dx = b.x - a.x, dy = b.y - a.y, len = Math.sqrt(dx * dx + dy * dy);
+      var nseg = Math.max(1, Math.ceil(len / maxSpacing));
+      for (var k = 1; k < nseg; k++) {
+        var t = k / nseg;
+        bars.push({ x: a.x + dx * t, y: a.y + dy * t, As: Abar });
+      }
+    }
+    return bars;
+  }
+
+  // pola keliling simetris nx×ny (Persegi) — posisi batang (x,y) relatif centroid.
   function barList(b, h, dp, nx, ny, Abar) {
     var bars = [], xe = b / 2 - dp, ye = h / 2 - dp, i;
     nx = Math.max(2, Math.round(nx)); ny = Math.max(2, Math.round(ny));
@@ -62,7 +119,110 @@
     return bars;
   }
 
-  // clip poligon (CCW) terhadap halfplane dot(p,n) >= k  (Sutherland–Hodgman)
+  var CIRC_SIDES = 128;
+
+  // Bangun geometri (poligon beton + batang, sudah dipusatkan di sentroid)
+  // untuk bentuk yang dipilih. geo0.ring(t) -> outline inset sejauh t (dipakai
+  // baik utk gambar sengkang ilustratif maupun keperluan lain).
+  function buildSectionGeometry(v, Abar) {
+    var shape = v.shape || 'rect';
+    var dp = num(v.dp);
+    var out = { shape: shape, valid: true, errors: [] };
+
+    if (shape === 'circle') {
+      var D = num(v.D), ncirc = Math.max(4, Math.round(num(v.ncirc)));
+      if (D <= 0 || dp <= 0 || dp >= D / 2) {
+        out.valid = false; out.errors.push("Lengkapi diameter D dan d' (0 < d' < D/2).");
+        return out;
+      }
+      var poly = [];
+      for (var i = 0; i < CIRC_SIDES; i++) {
+        var a = 2 * Math.PI * i / CIRC_SIDES;
+        poly.push({ x: (D / 2) * Math.cos(a), y: (D / 2) * Math.sin(a) });
+      }
+      var Rb = D / 2 - dp, bars = [];
+      for (var j = 0; j < ncirc; j++) {
+        var ang = Math.PI / 2 + 2 * Math.PI * j / ncirc;
+        bars.push({ x: Rb * Math.cos(ang), y: Rb * Math.sin(ang), As: Abar });
+      }
+      out.poly = poly; out.bars = bars; out.D = D; out.ncirc = ncirc;
+      out.ring = function (t) { return { type: 'circle', r: Math.max(1, D / 2 - t) }; };
+      return out;
+    }
+
+    if (shape === 'L') {
+      var b = num(v.b), h = num(v.h), tx = num(v.tx), ty = num(v.ty);
+      if (b <= 0 || h <= 0 || tx <= 0 || ty <= 0 || tx >= b || ty >= h || dp <= 0 || 2 * dp >= tx || 2 * dp >= ty) {
+        out.valid = false;
+        out.errors.push("Lengkapi B, H, tx, ty, d' (0 < tx < B, 0 < ty < H, d' < tx/2 dan ty/2).");
+        return out;
+      }
+      var rawL = lRaw(b, h, tx, ty), cgL = polyProps(rawL);
+      out.poly = translatePoly(rawL, -cgL.cx, -cgL.cy);
+      var insetL = translatePoly(lRaw(b - 2 * dp, h - 2 * dp, tx - 2 * dp, ty - 2 * dp), dp, dp);
+      out.bars = perimeterBars(translatePoly(insetL, -cgL.cx, -cgL.cy), Math.max(30, num(v.spac) || 200), Abar);
+      out.b = b; out.h = h; out.tx = tx; out.ty = ty;
+      out.ring = function (t) {
+        var rr = translatePoly(lRaw(b - 2 * t, h - 2 * t, tx - 2 * t, ty - 2 * t), t, t);
+        return { type: 'poly', pts: translatePoly(rr, -cgL.cx, -cgL.cy) };
+      };
+      return out;
+    }
+
+    if (shape === 'T') {
+      var Bt = num(v.b), Ht = num(v.h), bw = num(v.bw), tf = num(v.tf);
+      if (Bt <= 0 || Ht <= 0 || bw <= 0 || tf <= 0 || bw >= Bt || tf >= Ht || dp <= 0 || 2 * dp >= bw || 2 * dp >= tf) {
+        out.valid = false;
+        out.errors.push("Lengkapi B, H, bw, tf, d' (0 < bw < B, 0 < tf < H, d' < bw/2 dan tf/2).");
+        return out;
+      }
+      var rawT = tRaw(Bt, Ht, bw, tf), cgT = polyProps(rawT);
+      out.poly = translatePoly(rawT, -cgT.cx, -cgT.cy);
+      var insetT = translatePoly(tRaw(Bt - 2 * dp, Ht - 2 * dp, bw - 2 * dp, tf - 2 * dp), dp, dp);
+      out.bars = perimeterBars(translatePoly(insetT, -cgT.cx, -cgT.cy), Math.max(30, num(v.spac) || 200), Abar);
+      out.b = Bt; out.h = Ht; out.bw = bw; out.tf = tf;
+      out.ring = function (t) {
+        var rr = translatePoly(tRaw(Bt - 2 * t, Ht - 2 * t, bw - 2 * t, tf - 2 * t), t, t);
+        return { type: 'poly', pts: translatePoly(rr, -cgT.cx, -cgT.cy) };
+      };
+      return out;
+    }
+
+    // Persegi (default)
+    var bb = num(v.b), hh = num(v.h);
+    var nx2 = Math.max(2, Math.round(num(v.nx))), ny2 = Math.max(2, Math.round(num(v.ny)));
+    if (bb <= 0 || hh <= 0 || dp <= 0 || dp >= Math.min(bb, hh) / 2) {
+      out.valid = false; out.errors.push("Lengkapi dimensi, material, dan d' (0 < d' < sisi terkecil/2).");
+      return out;
+    }
+    out.poly = [
+      { x: -bb / 2, y: -hh / 2 }, { x: bb / 2, y: -hh / 2 },
+      { x: bb / 2, y: hh / 2 }, { x: -bb / 2, y: hh / 2 }
+    ];
+    out.bars = barList(bb, hh, dp, nx2, ny2, Abar);
+    out.b = bb; out.h = hh; out.nx = nx2; out.ny = ny2;
+    out.ring = null;  // Persegi pakai roundRect ilustratif (lihat drawSection/figSection)
+    return out;
+  }
+
+  function sectionLabel(r) {
+    if (r.shape === 'circle') return 'D' + r.D;
+    if (r.shape === 'L') return 'L ' + r.b + '×' + r.h + ' (tx' + r.tx + '/ty' + r.ty + ')';
+    if (r.shape === 'T') return 'T ' + r.b + '×' + r.h + ' (bw' + r.bw + '/tf' + r.tf + ')';
+    return r.b + '×' + r.h;
+  }
+
+  /* ============================================================
+     KALKULASI — kompatibilitas regangan sumbu netral miring (generik poligon)
+     ============================================================ */
+  function beta1Of(fc) {
+    if (fc <= 28) return 0.85;
+    return Math.max(0.65, 0.85 - 0.05 * (fc - 28) / 7);
+  }
+
+  // clip poligon terhadap halfplane dot(p,n) >= k  (Sutherland–Hodgman) —
+  // berlaku utk poligon simple cembung ATAU cekung (L/T), karena clip
+  // terhadap satu halfplane cembung.
   function clipPoly(poly, nvec, k) {
     var out = [];
     for (var i = 0; i < poly.length; i++) {
@@ -78,7 +238,8 @@
     return out;
   }
 
-  // luas + centroid poligon (shoelace)
+  // luas + centroid poligon (shoelace) — formula centroid orientasi-invarian
+  // (pembagi pakai luas BERTANDA, bukan abs), jadi berlaku CW maupun CCW.
   function polyProps(poly) {
     var A = 0, cx = 0, cy = 0;
     for (var i = 0; i < poly.length; i++) {
@@ -94,10 +255,7 @@
   // satu titik permukaan utk (θ, c). Hasil N & N·mm (Mx thd sumbu-x, My thd sumbu-y).
   function pointAt(theta, c, geo) {
     var n = { x: Math.cos(theta), y: Math.sin(theta) };
-    var corners = [
-      { x: -geo.b / 2, y: -geo.h / 2 }, { x: geo.b / 2, y: -geo.h / 2 },
-      { x: geo.b / 2, y: geo.h / 2 }, { x: -geo.b / 2, y: geo.h / 2 }
-    ];
+    var corners = geo.poly;
     var umax = -Infinity, umin = Infinity;
     corners.forEach(function (p) {
       var d = p.x * n.x + p.y * n.y;
@@ -127,6 +285,30 @@
     return { P: P, Mx: Mx, My: My, epsT: epsT, extent: extent };
   }
 
+  // kedalaman baja tarik terjauh dari serat tekan pada arah θ — generik utk
+  // bentuk & pola tulangan apa pun (menggantikan rumus h-d' khusus persegi).
+  function farthestSteelDepth(theta, geo) {
+    var n = { x: Math.cos(theta), y: Math.sin(theta) };
+    var umax = -Infinity;
+    geo.poly.forEach(function (p) { var d = p.x * n.x + p.y * n.y; if (d > umax) umax = d; });
+    var dt = -Infinity;
+    geo.bars.forEach(function (bar) { var u = umax - (bar.x * n.x + bar.y * n.y); if (u > dt) dt = u; });
+    return dt;
+  }
+
+  // jarak terpendek antar-pusat dua batang mana pun (cek spasi generik utk
+  // bentuk non-persegi, menggantikan cek nx-per-muka yang khusus persegi).
+  function minBarGap(bars) {
+    var m = Infinity;
+    for (var i = 0; i < bars.length; i++)
+      for (var j = i + 1; j < bars.length; j++) {
+        var dx = bars[i].x - bars[j].x, dy = bars[i].y - bars[j].y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < m) m = d;
+      }
+    return m;
+  }
+
   function phiOf(epsT, ety, tie) {
     var lo = tie === 'spiral' ? 0.75 : 0.65;
     if (epsT <= ety) return lo;
@@ -138,32 +320,38 @@
 
   function compute(v) {
     var r = { valid: false, warn: [] };
-    var b = num(v.b), h = num(v.h), dp = num(v.dp);
-    var fc = num(v.fc), fy = num(v.fy);
-    var db = num(v.db), nx = Math.max(2, Math.round(num(v.nx))), ny = Math.max(2, Math.round(num(v.ny)));
+    var shape = v.shape || 'rect';
+    var fc = num(v.fc), fy = num(v.fy), db = num(v.db);
     var tie = v.tie || 'tie';
     var Pu = num(v.Pu), Mux = num(v.Mux), Muy = num(v.Muy);
+    r.shape = shape; r.fc = fc; r.fy = fy; r.db = db; r.tie = tie;
+    r.Pu = Pu; r.Mux = Mux; r.Muy = Muy; r.dp = num(v.dp);
 
-    r.b = b; r.h = h; r.dp = dp; r.fc = fc; r.fy = fy; r.db = db;
-    r.nx = nx; r.ny = ny; r.tie = tie; r.Pu = Pu; r.Mux = Mux; r.Muy = Muy;
-
-    if (b <= 0 || h <= 0 || fc <= 0 || fy <= 0 || db <= 0 || dp <= 0 || dp >= Math.min(b, h) / 2) {
-      r.warn.push('Lengkapi dimensi, material, dan d\' (0 < d\' < sisi terkecil/2).');
+    if (fc <= 0 || fy <= 0 || db <= 0 || num(v.dp) <= 0) {
+      r.warn.push("Lengkapi mutu material, diameter tulangan, dan d'.");
       return r;
     }
 
     var Abar = Math.PI * db * db / 4;
-    var bars = barList(b, h, dp, nx, ny, Abar);
-    var nBars = bars.length;
+    var geo0 = buildSectionGeometry(v, Abar);
+    if (!geo0.valid) {
+      r.warn.push(geo0.errors[0] || 'Lengkapi dimensi penampang.');
+      return r;
+    }
+    ['b', 'h', 'tx', 'ty', 'bw', 'tf', 'D', 'ncirc', 'nx', 'ny'].forEach(function (k) {
+      if (geo0[k] !== undefined) r[k] = geo0[k];
+    });
+
+    var bars = geo0.bars, nBars = bars.length;
     var Ast = nBars * Abar;
-    var Ag = b * h;
+    var Ag = polyProps(geo0.poly).A;
     var rho = Ast / Ag;
     var beta1 = beta1Of(fc);
     var ety = fy / ES;
     r.Abar = Abar; r.nBars = nBars; r.Ast = Ast; r.Ag = Ag; r.rho = rho;
-    r.beta1 = beta1; r.ety = ety; r.bars = bars;
+    r.beta1 = beta1; r.ety = ety; r.bars = bars; r.poly = geo0.poly; r.ring = geo0.ring;
 
-    var geo = { b: b, h: h, fc: fc, fy: fy, beta1: beta1, bars: bars };
+    var geo = { poly: geo0.poly, fc: fc, fy: fy, beta1: beta1, bars: bars };
 
     /* --- titik acuan --- */
     var Po = (0.85 * fc * (Ag - Ast) + fy * Ast) / 1000;
@@ -174,12 +362,10 @@
     r.Pnt = -fy * Ast / 1000; r.phiPnt = 0.9 * r.Pnt;
 
     /* --- permukaan desain: grid θ × c --- */
-    // surf[it][ic] = {Mx, My, P} (kN·m, kN — DESAIN dengan φ + plafon)
-    var surf = [], nomSlice90 = null;
+    var surf = [];
     for (var it = 0; it <= NTH; it++) {
       var th = 2 * Math.PI * it / NTH;
       var row = [];
-      // apex tarik
       row.push({ Mx: 0, My: 0, P: r.phiPnt });
       var ext = pointAt(th, 1, geo).extent;
       for (var ic = 0; ic < NC; ic++) {
@@ -190,18 +376,17 @@
         row.push({ Mx: phi * p.Mx / 1e6, My: phi * p.My / 1e6, P: Pd,
                    nMx: p.Mx / 1e6, nMy: p.My / 1e6, nP: p.P / 1000, phi: phi, c: c });
       }
-      // apex tekan (plafon)
       row.push({ Mx: 0, My: 0, P: r.phiPnMax });
       surf.push(row);
     }
     r.surf = surf;
 
     /* --- nilai kunci uniaksial (θ=90°: tekan sisi +y → lentur thd sumbu-x) --- */
-    var dtX = h / 2 + (h / 2 - dp);                     // jarak serat tekan → baja terjauh
+    var dtX = farthestSteelDepth(Math.PI / 2, geo);
     var cBalX = ECU / (ECU + ety) * dtX;
     var pbX = pointAt(Math.PI / 2, cBalX, geo);
     r.cBalX = cBalX; r.MbalX = pbX.Mx / 1e6; r.PbalX = pbX.P / 1000;
-    var dtY = b / 2 + (b / 2 - dp);
+    var dtY = farthestSteelDepth(0, geo);
     var cBalY = ECU / (ECU + ety) * dtY;
     var pbY = pointAt(0, cBalY, geo);
     r.cBalY = cBalY; r.MbalY = pbY.My / 1e6; r.PbalY = pbY.P / 1000;
@@ -265,9 +450,23 @@
     if (rho < 0.01) r.warn.push('ρg = ' + (rho * 100).toFixed(2) + '% < 1% (Ps. 10.6.1.1) — tambah tulangan.');
     if (rho > 0.08) r.warn.push('ρg = ' + (rho * 100).toFixed(2) + '% > 8% — melampaui batas maksimum.');
     else if (rho > 0.04) r.warn.push('ρg = ' + (rho * 100).toFixed(2) + '% > 4% — sulit di sambungan lewatan (praktik).');
-    var clear = (b - 2 * dp) / Math.max(1, nx - 1) - db;
-    if (nx > 1 && clear < Math.max(40, 1.5 * db))
-      r.warn.push('Spasi bersih antar batang muka lebar ≈ ' + clear.toFixed(0) + ' mm < maks(40, 1,5db) (Ps. 25.2.3).');
+
+    if (shape === 'rect') {
+      var clear = (r.b - 2 * r.dp) / Math.max(1, r.nx - 1) - db;
+      if (r.nx > 1 && clear < Math.max(40, 1.5 * db))
+        r.warn.push('Spasi bersih antar batang muka lebar ≈ ' + clear.toFixed(0) + ' mm < maks(40, 1,5db) (Ps. 25.2.3).');
+    } else {
+      var minGap = minBarGap(bars) - db;
+      if (isFinite(minGap) && minGap < Math.max(40, 1.5 * db))
+        r.warn.push('Spasi bersih antar batang terdekat ≈ ' + minGap.toFixed(0) + ' mm < maks(40, 1,5db) (Ps. 25.2.3) — perbesar spasi maks atau kurangi jumlah batang.');
+    }
+    if (shape === 'circle') {
+      r.warn.push('Penampang lingkaran didekati poligon ' + CIRC_SIDES + ' sisi untuk perhitungan blok tekan — galat luas < 0,1%, memadai.');
+      if (tie === 'spiral' && r.ncirc < 6) r.warn.push('Jumlah batang < 6 untuk pengikat spiral (Ps. 10.7.3.1).');
+      else if (r.ncirc < 4) r.warn.push('Jumlah batang < 4 (Ps. 10.7.3.1).');
+    }
+    if (shape === 'L' || shape === 'T')
+      r.warn.push('Penampang tak-simetris: momen dihitung terhadap SENTROID GEOMETRIS beton bruto (bukan sentroid plastis) — disarankan verifikasi tambahan untuk kombinasi beban kritis pada kolom ' + shape + '.');
     if (dc != null && dc > 1) r.warn.push('D/C = ' + dc.toFixed(2) + ' > 1 — titik beban di LUAR permukaan desain.');
     r.warn.push('Kelangsingan/momen orde-2 TIDAK diperhitungkan — Mux & Muy harus sudah termasuk pembesaran momen (Ps. 6.6.4).');
 
@@ -299,7 +498,8 @@
   }
 
   /* ============================================================
-     SCENE 3D — permukaan interaksi
+     SCENE 3D — permukaan interaksi (generik: hanya bergantung r.surf,
+     tidak menyentuh bentuk penampang sama sekali)
      ============================================================ */
   function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function colHex(name, fallback) { var c = css(name); return c ? new THREE.Color(c) : new THREE.Color(fallback); }
@@ -442,7 +642,17 @@
 
   /* ============================================================
      PENAMPANG 2D — kanvas tampilan alternatif dari permukaan 3D
+     (generik: persegi/lingkaran/L/T)
      ============================================================ */
+  function pathPoly(ctx, pts, cx, cy, s) {
+    ctx.beginPath();
+    pts.forEach(function (p, i) {
+      var X = cx + p.x * s, Y = cy - p.y * s;
+      if (i === 0) ctx.moveTo(X, Y); else ctx.lineTo(X, Y);
+    });
+    ctx.closePath();
+  }
+
   function drawSection(ctx, w, h) {
     var r = state.result;
     var cInk = css('--ink') || '#e8ead8', cDim = css('--ink-dim') || '#acb89b';
@@ -455,39 +665,52 @@
       ctx.fillText('Lengkapi input untuk melihat penampang.', w / 2, h / 2);
       return;
     }
-    var s = Math.min((w - 170) / r.b, (h - 130) / r.h);
+    var bb = polyBBox(r.poly);
+    var s = Math.min((w - 170) / bb.w, (h - 130) / bb.h);
     if (!isFinite(s) || s <= 0) return;
-    var bs = r.b * s, hs = r.h * s;
     var cx = w / 2 - 22, cy = h / 2 + 6;
-    var x0 = cx - bs / 2, y0 = cy - hs / 2;
+    var x0 = cx + bb.minX * s, x1 = cx + bb.maxX * s;
+    var y0 = cy - bb.maxY * s, y1 = cy - bb.minY * s;
 
     // sumbu penampang (x kanan, y atas) — garis pusat dashed
     ctx.save();
     ctx.setLineDash([6, 5]);
     ctx.strokeStyle = cFaint; ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(x0 - 26, cy); ctx.lineTo(x0 + bs + 26, cy);
-    ctx.moveTo(cx, y0 - 26); ctx.lineTo(cx, y0 + hs + 26);
+    ctx.moveTo(x0 - 26, cy); ctx.lineTo(x1 + 26, cy);
+    ctx.moveTo(cx, y0 - 26); ctx.lineTo(cx, y1 + 26);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = cDim;
     ctx.font = '11px "JetBrains Mono", monospace';
-    ctx.textAlign = 'left'; ctx.fillText('x', x0 + bs + 30, cy + 4);
+    ctx.textAlign = 'left'; ctx.fillText('x', x1 + 30, cy + 4);
     ctx.textAlign = 'center'; ctx.fillText('y', cx, y0 - 32);
 
     // beton
     ctx.globalAlpha = 0.13;
     ctx.fillStyle = cSage;
-    ctx.fillRect(x0, y0, bs, hs);
+    pathPoly(ctx, r.poly, cx, cy, s); ctx.fill();
     ctx.globalAlpha = 1;
     ctx.strokeStyle = cInk; ctx.lineWidth = 1.6;
-    ctx.strokeRect(x0, y0, bs, hs);
+    pathPoly(ctx, r.poly, cx, cy, s); ctx.stroke();
 
-    // sengkang (ilustratif — posisi dari d' dan db)
-    var ti = Math.max(3, (r.dp - r.db / 2 - 4) * s);
-    ctx.strokeStyle = cDim; ctx.lineWidth = 1.2;
-    state.UI.roundRect(ctx, x0 + ti, y0 + ti, bs - 2 * ti, hs - 2 * ti, Math.min(7, ti));
-    ctx.stroke();
+    // sengkang (ilustratif — inset dari d' dan db)
+    var tiMM = Math.max(15, r.dp - r.db / 2 - 4);
+    if (r.shape === 'rect') {
+      var bs = r.b * s, hs = r.h * s, tiPx = Math.max(3, tiMM * s);
+      var rx0 = cx - bs / 2, ry0 = cy - hs / 2;
+      ctx.strokeStyle = cDim; ctx.lineWidth = 1.2;
+      state.UI.roundRect(ctx, rx0 + tiPx, ry0 + tiPx, bs - 2 * tiPx, hs - 2 * tiPx, Math.min(7, tiPx));
+      ctx.stroke();
+    } else if (r.shape === 'circle') {
+      var ring = r.ring(tiMM);
+      ctx.strokeStyle = cDim; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(cx, cy, ring.r * s, 0, 2 * Math.PI); ctx.stroke();
+    } else {
+      var ring2 = r.ring(tiMM);
+      ctx.strokeStyle = cDim; ctx.lineWidth = 1.2;
+      pathPoly(ctx, ring2.pts, cx, cy, s); ctx.stroke();
+    }
 
     // tulangan
     var rb = Math.max(3, r.db * s / 2);
@@ -508,41 +731,59 @@
     ctx.fillStyle = cDim;
     ctx.font = '11px "JetBrains Mono", monospace';
 
-    // dimensi b (bawah)
-    var yd = y0 + hs + 30;
-    ctx.beginPath(); ctx.moveTo(x0, yd); ctx.lineTo(x0 + bs, yd); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x0, y0 + hs + 6); ctx.lineTo(x0, yd + 4); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x0 + bs, y0 + hs + 6); ctx.lineTo(x0 + bs, yd + 4); ctx.stroke();
-    tick(x0, yd); tick(x0 + bs, yd);
-    ctx.textAlign = 'center';
-    ctx.fillText('b = ' + r.b, x0 + bs / 2, yd + 15);
+    if (r.shape === 'circle') {
+      // dimensi diameter (garis di bawah)
+      var ydC = y1 + 30;
+      ctx.beginPath(); ctx.moveTo(x0, ydC); ctx.lineTo(x1, ydC); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x0, y1 + 6); ctx.lineTo(x0, ydC + 4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x1, y1 + 6); ctx.lineTo(x1, ydC + 4); ctx.stroke();
+      tick(x0, ydC); tick(x1, ydC);
+      ctx.textAlign = 'center';
+      ctx.fillText('D = ' + r.D, (x0 + x1) / 2, ydC + 15);
+    } else {
+      // dimensi b (bawah)
+      var yd = y1 + 30;
+      ctx.beginPath(); ctx.moveTo(x0, yd); ctx.lineTo(x1, yd); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x0, y1 + 6); ctx.lineTo(x0, yd + 4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x1, y1 + 6); ctx.lineTo(x1, yd + 4); ctx.stroke();
+      tick(x0, yd); tick(x1, yd);
+      ctx.textAlign = 'center';
+      ctx.fillText('b = ' + r.b, (x0 + x1) / 2, yd + 15);
 
-    // dimensi h (kanan)
-    var xd = x0 + bs + 42;
-    ctx.beginPath(); ctx.moveTo(xd, y0); ctx.lineTo(xd, y0 + hs); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x0 + bs + 6, y0); ctx.lineTo(xd + 4, y0); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x0 + bs + 6, y0 + hs); ctx.lineTo(xd + 4, y0 + hs); ctx.stroke();
-    tick(xd, y0); tick(xd, y0 + hs);
-    ctx.save();
-    ctx.translate(xd + 14, y0 + hs / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = 'center';
-    ctx.fillText('h = ' + r.h, 0, 0);
-    ctx.restore();
+      // dimensi h (kanan)
+      var xd = x1 + 42;
+      ctx.beginPath(); ctx.moveTo(xd, y0); ctx.lineTo(xd, y1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x1 + 6, y0); ctx.lineTo(xd + 4, y0); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x1 + 6, y1); ctx.lineTo(xd + 4, y1); ctx.stroke();
+      tick(xd, y0); tick(xd, y1);
+      ctx.save();
+      ctx.translate(xd + 14, (y0 + y1) / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.textAlign = 'center';
+      ctx.fillText('h = ' + r.h, 0, 0);
+      ctx.restore();
+    }
 
-    // leader d' ke batang sudut kiri-atas
-    var bx1 = x0 + r.dp * s, by1 = y0 + r.dp * s;
-    ctx.strokeStyle = cFaint;
-    ctx.beginPath(); ctx.moveTo(bx1, by1); ctx.lineTo(x0 - 18, y0 - 14); ctx.stroke();
-    ctx.fillStyle = cDim;
-    ctx.textAlign = 'right';
-    ctx.fillText("d' = " + r.dp, x0 - 22, y0 - 12);
+    // leader d' -> batang terdekat sudut kiri-atas bounding box
+    var refX = bb.minX, refY = bb.maxY, best = null, bestD = Infinity;
+    r.bars.forEach(function (bar) {
+      var dd = (bar.x - refX) * (bar.x - refX) + (bar.y - refY) * (bar.y - refY);
+      if (dd < bestD) { bestD = dd; best = bar; }
+    });
+    if (best) {
+      var bx1 = cx + best.x * s, by1 = cy - best.y * s;
+      ctx.strokeStyle = cFaint;
+      ctx.beginPath(); ctx.moveTo(bx1, by1); ctx.lineTo(x0 - 18, y0 - 14); ctx.stroke();
+      ctx.fillStyle = cDim;
+      ctx.textAlign = 'right';
+      ctx.fillText("d' = " + r.dp, x0 - 22, y0 - 12);
+    }
 
     // ringkasan bawah
     ctx.textAlign = 'center';
     ctx.fillStyle = cFaint;
     ctx.font = '11px "JetBrains Mono", monospace';
-    ctx.fillText(r.nBars + 'D' + r.db + '  ·  ρg = ' + (r.rho * 100).toFixed(2) + ' %  ·  sengkang ilustratif',
+    ctx.fillText(sectionLabel(r) + '  ·  ' + r.nBars + 'D' + r.db + '  ·  ρg = ' + (r.rho * 100).toFixed(2) + ' %  ·  sengkang ilustratif',
       w / 2, h - 12);
     ctx.restore();
   }
@@ -579,6 +820,28 @@
     document.head.appendChild(s);
   }
 
+  function applyShapeVisibility(shape) {
+    var f = state.form && state.form.fields;
+    if (!f) return;
+    function vis(id, show) {
+      var fld = f[id];
+      if (!fld) return;
+      var wrap = fld.node.closest('.ck-field');
+      if (wrap) wrap.style.display = show ? '' : 'none';
+    }
+    vis('b', shape !== 'circle');
+    vis('h', shape !== 'circle');
+    vis('D', shape === 'circle');
+    vis('tx', shape === 'L');
+    vis('ty', shape === 'L');
+    vis('bw', shape === 'T');
+    vis('tf', shape === 'T');
+    vis('nx', shape === 'rect');
+    vis('ny', shape === 'rect');
+    vis('ncirc', shape === 'circle');
+    vis('spac', shape === 'L' || shape === 'T');
+  }
+
   function render(container) {
     var UI = state.UI;
     injectStyle();
@@ -587,25 +850,40 @@
 
     var panel = UI.el('div', 'ck-panel');
     panel.appendChild(UI.el('h2', null, 'Diagram P–M Kolom'));
-    panel.appendChild(UI.el('div', 'sub', 'Permukaan interaksi 3D aksial–momen dua arah (P–Mx–My) kolom beton ' +
-      'persegi via kompatibilitas regangan sumbu netral miring — SNI 2847:2019. Cek biaksial: iris permukaan ' +
-      'di P = Pu, D/C pada arah momen resultan. Putar: seret · Zoom: roda · Geser: klik-kanan.'));
+    panel.appendChild(UI.el('div', 'sub', 'Permukaan interaksi 3D aksial–momen dua arah (P–Mx–My) kolom beton — ' +
+      'persegi, lingkaran, L, atau T — via kompatibilitas regangan sumbu netral miring, SNI 2847:2019. ' +
+      'Cek biaksial: iris permukaan di P = Pu, D/C pada arah momen resultan. Putar: seret · Zoom: roda · Geser: klik-kanan.'));
     layout.appendChild(panel);
 
     var schema = [
       { type: 'group', label: 'Penampang' },
-      { type: 'number', id: 'b', label: 'Lebar b (sumbu-x)', unit: 'mm', value: 400, min: 150, step: 25 },
-      { type: 'number', id: 'h', label: 'Tinggi h (sumbu-y)', unit: 'mm', value: 400, min: 150, step: 25 },
+      { type: 'segment', id: 'shape', label: 'Bentuk', value: 'rect', options: [
+        { value: 'rect', label: 'Persegi' }, { value: 'circle', label: 'Lingkaran' },
+        { value: 'L', label: 'L' }, { value: 'T', label: 'T' } ] },
+      { type: 'number', id: 'b', label: 'Lebar b / B', unit: 'mm', value: 400, min: 150, step: 25,
+        hint: 'Persegi: lebar penampang. L/T: lebar keseluruhan bounding box.' },
+      { type: 'number', id: 'h', label: 'Tinggi h / H', unit: 'mm', value: 400, min: 150, step: 25,
+        hint: 'Persegi: tinggi penampang. L/T: tinggi keseluruhan bounding box.' },
+      { type: 'number', id: 'D', label: 'Diameter D', unit: 'mm', value: 500, min: 200, step: 25 },
+      { type: 'number', id: 'tx', label: 'Tebal kaki vertikal tx', unit: 'mm', value: 150, min: 80, step: 25,
+        hint: 'Lebar kaki tegak (arah x), diukur dari sisi kiri.' },
+      { type: 'number', id: 'ty', label: 'Tebal kaki horizontal ty', unit: 'mm', value: 150, min: 80, step: 25,
+        hint: 'Tinggi kaki datar (arah y), diukur dari sisi bawah.' },
+      { type: 'number', id: 'bw', label: 'Lebar badan bw', unit: 'mm', value: 200, min: 80, step: 25 },
+      { type: 'number', id: 'tf', label: 'Tebal sayap tf', unit: 'mm', value: 150, min: 80, step: 25,
+        hint: 'Tebal sayap (flange) dari sisi atas.' },
       { type: 'number', id: 'dp', label: "Selimut ke pusat tulangan d'", unit: 'mm', value: 60, min: 30, step: 5, hint: 'cc + Øsengkang + db/2 (≈60 mm untuk cc 40, sengkang 10, D22).' },
 
       { type: 'group', label: 'Material' },
       { type: 'number', id: 'fc', label: "Mutu beton f'c", unit: 'MPa', value: 25, min: 15, step: 1 },
       { type: 'number', id: 'fy', label: 'Mutu baja fy', unit: 'MPa', value: 400, min: 240, step: 10 },
 
-      { type: 'group', label: 'Tulangan (pola keliling simetris)' },
+      { type: 'group', label: 'Tulangan' },
       { type: 'number', id: 'db', label: 'Diameter batang db', unit: 'mm', value: 19, min: 10, step: 1 },
-      { type: 'number', id: 'nx', label: 'Batang per muka lebar (nx)', value: 3, min: 2, step: 1, hint: 'Baris atas & bawah, termasuk sudut.' },
-      { type: 'number', id: 'ny', label: 'Batang per muka tinggi (ny)', value: 3, min: 2, step: 1, hint: 'Termasuk sudut. Total = 2nx + 2(ny−2).' },
+      { type: 'number', id: 'nx', label: 'Batang per muka lebar (nx)', value: 3, min: 2, step: 1, hint: 'Persegi — baris atas & bawah, termasuk sudut.' },
+      { type: 'number', id: 'ny', label: 'Batang per muka tinggi (ny)', value: 3, min: 2, step: 1, hint: 'Persegi — termasuk sudut. Total = 2nx + 2(ny−2).' },
+      { type: 'number', id: 'ncirc', label: 'Jumlah batang keliling', value: 8, min: 6, step: 1, hint: 'Lingkaran — tersebar merata keliling (≥6 utk spiral, ≥4 utk sengkang ikat).' },
+      { type: 'number', id: 'spac', label: 'Spasi maksimum keliling', unit: 'mm', value: 200, min: 50, step: 25, hint: 'L/T — batang sudut selalu ditempatkan; sisi disisipi agar spasi ≤ nilai ini.' },
       { type: 'segment', id: 'tie', label: 'Pengikat', value: 'tie', options: [
         { value: 'tie', label: 'Sengkang ikat (0,80Po)' }, { value: 'spiral', label: 'Spiral (0,85Po)' } ] },
 
@@ -703,6 +981,7 @@
   /* ---------- panel hasil ---------- */
   function update(vals, results) {
     var UI = state.UI;
+    applyShapeVisibility(vals.shape || 'rect');
     var r = compute(vals);
     state.result = r;
     results.innerHTML = '';
@@ -716,7 +995,7 @@
     }
 
     var biax = Math.abs(r.Muy) > 0.001 && Math.abs(r.Mux) > 0.001;
-    state.cap.set(r.b + '×' + r.h + ' · ' + r.nBars + 'D' + r.db +
+    state.cap.set(sectionLabel(r) + ' · ' + r.nBars + 'D' + r.db +
       (r.dc != null ? ' · D/C ' + r.dc.toFixed(2) + (biax ? ' (biaksial)' : '') : ''));
 
     if (r.dc != null)
@@ -736,6 +1015,7 @@
       ]));
 
     results.appendChild(UI.rhead('Penampang & tulangan'));
+    results.appendChild(UI.kv('Bentuk', sectionLabel(r)));
     results.appendChild(UI.kv('Ag / Ast', UI.fmt(r.Ag, 0) + ' / ' + UI.fmt(r.Ast, 0) + ' mm²'));
     results.appendChild(UI.kv('Jumlah batang / ρg', r.nBars + 'D' + r.db + ' / ' + (r.rho * 100).toFixed(2) + ' %',
       (r.rho >= 0.01 && r.rho <= 0.08) ? 'ok' : 'bad'));
@@ -771,9 +1051,11 @@
       'SNI 2847:2019 — kompatibilitas regangan (εcu 0,003, blok persegi β1) dengan <b>sumbu netral miring</b> ' +
       '(sapuan 48 sudut × 34 kedalaman): blok tekan di-clip poligon eksak, baja elastoplastis ±fy + koreksi beton ' +
       'terdesak. φ Tabel 21.2.2, plafon 0,80/0,85·Po (Ps. 22.4.2). <b>Cek biaksial dari permukaan eksak</b> ' +
-      '(iris P=Pu, kontur beban) — lebih akurat daripada pendekatan resiprokal Bresler. Pola tulangan keliling ' +
-      'simetris. <b>TIDAK termasuk</b>: kelangsingan (Ps. 6.6.4 — Mu sudah diperbesar), detail gempa (Ps. 18), ' +
-      'penampang non-persegi. Verifikasi oleh insinyur penanggung jawab.'));
+      '(iris P=Pu, kontur beban) — lebih akurat daripada pendekatan resiprokal Bresler. <b>Penampang: persegi, ' +
+      'lingkaran (poligon 128 sisi), L, atau T</b> — tulangan persegi pola keliling nx×ny, lingkaran merata sudut, ' +
+      'L/T di tiap sudut + disisipi sesuai spasi maks. Untuk L/T, momen dihitung thd sentroid geometris beton bruto ' +
+      '(bukan sentroid plastis). <b>TIDAK termasuk</b>: kelangsingan (Ps. 6.6.4 — Mu sudah diperbesar), detail gempa ' +
+      '(Ps. 18), tulangan tak-simetris/kustom per-batang. Verifikasi oleh insinyur penanggung jawab.'));
 
     rebuild(r);
     if (state.sec) state.sec.redraw();
@@ -782,7 +1064,7 @@
   /* ============================================================
      LAPORAN monospace
      ============================================================ */
-  var APP_VER = 'v0.5.1', RW = 62;
+  var APP_VER = 'v0.7.4', RW = 62;
   function rep(c, n) { return n > 0 ? new Array(n + 1).join(c) : ''; }
   function ruleR(c) { return ' ' + rep(c || '-', RW); }
   function centerR(t) { var s = Math.max(0, Math.floor((RW - t.length) / 2)); return ' ' + rep(' ', s) + t; }
@@ -836,32 +1118,58 @@
   }
 
   // Gbr. 1 — penampang kolom (beton, sengkang ilustratif, tulangan, dimensi)
+  // — generik: persegi/lingkaran/L/T.
   function figSection(r) {
     var ops = [];
-    var s = Math.min(230 / r.b, 140 / r.h);
-    var bs = r.b * s, hs = r.h * s;
+    var bb = polyBBox(r.poly);
+    var s = Math.min(230 / bb.w, 140 / bb.h);
+    var bs = bb.w * s, hs = bb.h * s;
     var cx = 264, y0 = 22, x0 = cx - bs / 2, cyc = y0 + hs / 2;
+    function PX(x) { return x0 + (x - bb.minX) * s; }
+    function PY(y) { return y0 + (bb.maxY - y) * s; }
     // sumbu penampang
     ops.push({ t: 'line', x1: x0 - 18, y1: cyc, x2: x0 + bs + 18, y2: cyc, lw: 0.4, g: 0.6, dash: [4, 3] });
     ops.push({ t: 'line', x1: cx, y1: y0 - 14, x2: cx, y2: y0 + hs + 14, lw: 0.4, g: 0.6, dash: [4, 3] });
     ops.push({ t: 'text', x: x0 + bs + 21, y: cyc + 2.5, s: 'x', size: 7, g: 0.4 });
     ops.push({ t: 'text', x: cx + 4, y: y0 - 8, s: 'y', size: 7, g: 0.4 });
     // beton + sengkang
-    ops.push({ t: 'rect', x: x0, y: y0, w: bs, h: hs, lw: 1.1 });
-    var ti = Math.max(3, (r.dp - r.db / 2 - 4) * s);
-    ops.push({ t: 'rect', x: x0 + ti, y: y0 + ti, w: bs - 2 * ti, h: hs - 2 * ti, lw: 0.7, g: 0.45 });
+    var tiMM = Math.max(15, r.dp - r.db / 2 - 4);
+    if (r.shape === 'circle') {
+      ops.push({ t: 'circle', cx: cx, cy: cyc, r: (bb.w / 2) * s, lw: 1.1 });
+      ops.push({ t: 'circle', cx: cx, cy: cyc, r: Math.max(2, (bb.w / 2 - tiMM) * s), lw: 0.7, g: 0.45 });
+    } else {
+      ops.push({ t: 'poly', pts: r.poly.map(function (p) { return [PX(p.x), PY(p.y)]; }), close: true, lw: 1.1 });
+      if (r.shape === 'rect') {
+        var ti = Math.max(3, tiMM * s);
+        ops.push({ t: 'rect', x: x0 + ti, y: y0 + ti, w: bs - 2 * ti, h: hs - 2 * ti, lw: 0.7, g: 0.45 });
+      } else {
+        var ring = r.ring(tiMM);
+        ops.push({ t: 'poly', pts: ring.pts.map(function (p) { return [PX(p.x), PY(p.y)]; }), close: true, lw: 0.7, g: 0.45 });
+      }
+    }
     // tulangan
     var rb = Math.max(1.8, r.db * s / 2);
     r.bars.forEach(function (bar) {
-      ops.push({ t: 'circle', cx: cx + bar.x * s, cy: cyc - bar.y * s, r: rb, fill: true });
+      ops.push({ t: 'circle', cx: PX(bar.x), cy: PY(bar.y), r: rb, fill: true });
     });
     // dimensi & leader d'
-    dimHOps(ops, x0, x0 + bs, y0 + hs + 24, 'b = ' + r.b);
-    dimVOps(ops, y0, y0 + hs, x0 + bs + 36, 'h = ' + r.h);
-    ops.push({ t: 'line', x1: x0 + r.dp * s, y1: y0 + r.dp * s, x2: x0 - 20, y2: y0 - 8, lw: 0.5, g: 0.4 });
-    ops.push({ t: 'text', x: x0 - 22, y: y0 - 8, s: "d' = " + r.dp, size: 6.5, align: 'r', g: 0.2 });
+    if (r.shape === 'circle') {
+      dimHOps(ops, x0, x0 + bs, y0 + hs + 24, 'D = ' + r.D);
+    } else {
+      dimHOps(ops, x0, x0 + bs, y0 + hs + 24, 'b = ' + r.b);
+      dimVOps(ops, y0, y0 + hs, x0 + bs + 36, 'h = ' + r.h);
+    }
+    var refX = bb.minX, refY = bb.maxY, best = null, bestD = Infinity;
+    r.bars.forEach(function (bar) {
+      var dd = (bar.x - refX) * (bar.x - refX) + (bar.y - refY) * (bar.y - refY);
+      if (dd < bestD) { bestD = dd; best = bar; }
+    });
+    if (best) {
+      ops.push({ t: 'line', x1: PX(best.x), y1: PY(best.y), x2: x0 - 20, y2: y0 - 8, lw: 0.5, g: 0.4 });
+      ops.push({ t: 'text', x: x0 - 22, y: y0 - 8, s: "d' = " + r.dp, size: 6.5, align: 'r', g: 0.2 });
+    }
     var yCap = y0 + hs + 40;
-    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Penampang kolom ' + r.b + 'x' + r.h +
+    ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Penampang kolom ' + tolatin(sectionLabel(r)) +
       ' - ' + r.nBars + 'D' + r.db + ' (sengkang ilustratif)', size: 7.5, align: 'c' });
     return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
       alt: 'Gbr. 1 Penampang kolom - lihat versi PDF' } };
@@ -967,6 +1275,12 @@
       alt: 'Gbr. 3 Kontur kapasitas biaksial - lihat versi PDF' } };
   }
 
+  function tulanganDesc(r) {
+    if (r.shape === 'rect') return r.nBars + 'D' + r.db + ' (nx=' + r.nx + ', ny=' + r.ny + ')';
+    if (r.shape === 'circle') return r.nBars + 'D' + r.db + ' (melingkar, n=' + r.ncirc + ')';
+    return r.nBars + 'D' + r.db + ' (keliling, sudut + spasi maks)';
+  }
+
   function buildReport(r) {
     var now = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var dt = now.getFullYear() + '-' + p2(now.getMonth() + 1) + '-' + p2(now.getDate()) + ' ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
@@ -978,9 +1292,12 @@
     L.push(rowR('Permukaan interaksi P-Mx-My (strain compat.)', dt));
     L.push('');
     L.push(' PENAMPANG & MATERIAL'); L.push(ruleR('-'));
-    L.push(rowR('b x h / d\'', r.b + ' x ' + r.h + ' / ' + r.dp + ' mm'));
+    if (r.shape === 'circle') L.push(rowR("D / d'", r.D + ' / ' + r.dp + ' mm'));
+    else if (r.shape === 'L') L.push(rowR("B x H (tx/ty) / d'", r.b + ' x ' + r.h + ' (' + r.tx + '/' + r.ty + ') / ' + r.dp + ' mm'));
+    else if (r.shape === 'T') L.push(rowR("B x H (bw/tf) / d'", r.b + ' x ' + r.h + ' (' + r.bw + '/' + r.tf + ') / ' + r.dp + ' mm'));
+    else L.push(rowR("b x h / d'", r.b + ' x ' + r.h + ' / ' + r.dp + ' mm'));
     L.push(rowR("f'c / fy", r.fc + ' / ' + r.fy + ' MPa'));
-    L.push(rowR('Tulangan', r.nBars + 'D' + r.db + ' (nx=' + r.nx + ', ny=' + r.ny + ')'));
+    L.push(rowR('Tulangan', tulanganDesc(r)));
     L.push(rowR('Ast / rho_g', numR(r.Ast, 0) + ' mm2 / ' + numR(r.rho * 100, 2) + ' %'));
     L.push(rowR('beta1 / Pengikat', numR(r.beta1, 3) + ' / ' + (r.tie === 'spiral' ? 'spiral' : 'sengkang ikat')));
     L.push('');
@@ -1039,7 +1356,8 @@
     var lines = buildReport(r);
     var d = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var stamp = d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate());
-    var base = 'Kolom-PM-Biaksial_' + r.b + 'x' + r.h + '_' + r.nBars + 'D' + r.db + '_' + stamp;
+    var dimTag = r.shape === 'circle' ? ('D' + r.D) : (r.b + 'x' + r.h);
+    var base = 'Kolom-PM-Biaksial_' + r.shape + '_' + dimTag + '_' + r.nBars + 'D' + r.db + '_' + stamp;
     if (fmt === 'pdf') { window.CivilReport.downloadPDF(base + '.pdf', lines); UI.toast('Report PDF diunduh', 'info'); }
     else { window.CivilReport.downloadText(base + '.txt', lines); UI.toast('Report teks diunduh', 'info'); }
   }

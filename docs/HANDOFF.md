@@ -392,6 +392,43 @@ se-arah 140,6 (kontur membulat < uniaksial 160 — perilaku benar) → D/C 1,28 
 nol console error; canvas tetap 1 saat pindah tool. ✓ BELUM: kelangsingan 6.6.4, Ps. 18, penampang non-persegi.
 ⚠️ Laporan mencantumkan sampel kontur kapasitas di P=Pu (bukan lagi sampel kurva 2D).
 
+### Revisi #16 — Penampang Persegi/Lingkaran/L/T ✅ SELESAI (2026-09-02) — v0.7.4
+
+**Diputuskan: revisi `column-pm` yang sudah ada (bukan tool baru khusus lingkaran)** — mesin hitung sudah generik
+berbasis poligon (clip Sutherland-Hodgman + shoelace), jadi menambah bentuk penampang menghasilkan lebih banyak
+nilai daripada duplikasi mesin permukaan 3D di modul terpisah.
+- **Mesin generik**: `pointAt()` sekarang membaca `geo.poly` (array titik) alih-alih menghitung corner dari b/h —
+  berlaku sama utk poligon cembung (persegi/lingkaran) maupun cekung (L/T), karena ekstrem proyeksi linear & clip
+  Sutherland-Hodgman terhadap satu halfplane valid utk poligon simple apa pun. `farthestSteelDepth(theta,geo)`
+  generik menggantikan rumus h−d' khusus persegi (menghitung ke bar TERJAUH aktual pada arah manapun, exact match
+  utk rect: h−d').
+- **Lingkaran**: didekati poligon **128 sisi** (Ag galat ≈0,04% thd luas eksak — divalidasi live: D500 → Ag 196.271
+  vs eksak 196.350). Tulangan **n batang merata sudut** (mulai 90°), min 6 utk spiral / 4 utk sengkang ikat (Ps. 10.7.3.1).
+- **L & T**: poligon 6/8 titik dari dua persegi gabung (`lRaw`/`tRaw`), dipusatkan di **sentroid geometris** (shoelace,
+  formula centroid orientasi-invarian). Inset poligon (utk batang & sengkang ilustratif) pakai trik "kecilkan tiap
+  dimensi 2×offset lalu geser (offset,offset)" — berlaku krn kedua bentuk adalah union persegi rectilinear seragam
+  tebal dinding. Tulangan: **wajib di tiap sudut poligon inset** + disisipi sepanjang sisi agar spasi ≤ input
+  (`perimeterBars`). Divalidasi live: L 400×400(tx150/ty150) → Ag 97.500 (=400×150+150×250 tepat); T 400×400(bw200/tf150)
+  → Ag 110.000 (=400×150+200×250 tepat); **MbalX≠MbalY utk T** (218 vs 156 kN·m — asimetri atas/bawah tertangkap benar).
+- ⚠️ **Keterbatasan didokumentasikan eksplisit** (peringatan otomatis muncul di hasil L/T): momen dihitung thd
+  **sentroid geometris beton bruto**, BUKAN sentroid plastis — utk penampang tak-simetris titik "aksial murni" tidak
+  persis bebas-momen thd sentroid ini (apex permukaan tetap dipaksa ke Mx=My=0 sbg penyederhanaan, sama seperti pola
+  lama utk persegi/lingkaran yg memang simetris sehingga pendekatan ini eksak utknya).
+- **Cek spasi generik** (`minBarGap`, jarak terpendek antar-pusat batang mana pun) menggantikan cek nx-per-muka utk
+  bentuk non-persegi (persegi tetap pakai formula lama, tak berubah, demi konsistensi angka tervalidasi sebelumnya).
+- **2D & PDF generik**: `drawSection`/`figSection` gambar outline via `pathPoly`/op `poly` (bukan `fillRect`) utk
+  L/T, `arc`/op `circle` utk lingkaran; dimensi & leader d' pakai bounding-box + bar-terdekat-sudut (generik, exact
+  match visual utk persegi krn bounding box = b×h persis). `sectionLabel(r)` bangun caption per bentuk.
+  Form: field shape-spesifik (`D`,`ncirc`,`tx`,`ty`,`bw`,`tf`,`spac`) disembunyikan/ditampilkan via
+  `.closest('.ck-field').style.display` (pola sama seperti Kz/Lz di steel-compression), dipanggil tiap `update()`.
+- **Tervalidasi live** (fresh origin, port di-bump 2× hindari SW death-loop dev): keempat bentuk switch mulus tanpa
+  reload, nol console error, PDF (`figSection`+`buildReport`) generate sukses tiap bentuk, guard invalid (dp terlalu
+  besar utk kaki L) menampilkan pesan bersih tanpa exception. Rect **byte-for-byte reproduksi angka lama** (400×400
+  8D19 → Po 4259, D/C 0,94 — identik dgn validasi presisi di atas), memastikan refactor tidak regresi.
+  SW cache **v58 → v59**. `APP_VER 'v0.7.4'`.
+- **TIDAK termasuk (baru)**: sentroid plastis L/T (lihat keterbatasan di atas), tulangan kustom per-batang (posisi
+  bebas) — pola tulangan tetap mengikuti bentuk penampang (keliling/merata/sudut+spasi).
+
 **#17 Debit Banjir Rasional** (`rational-method`, **Hidraulika & Hidrologi — kategori BARU**) — Q=0,00278·C·i·A;
 tc Kirpich 0,0195L^0,77·S^−0,385 atau manual; i Mononobe (R24/24)(24/tc)^⅔; preset C tutupan lahan. Kanvas: kurva
 intensitas + titik tc. Validasi: A10 C0,7 R24=120 L800 ΔH8 → tc 19,7 mnt, i 87,3, Q 1,699 m³/s. ✓
