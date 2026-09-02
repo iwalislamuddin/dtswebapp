@@ -26,12 +26,19 @@ python -m http.server 5188
 > Gunakan `http://localhost:5188`. Saat di-deploy via `https://` hal ini tidak pernah terjadi.
 
 > Service worker meng-cache agresif. Saat mengembangkan, naikkan `CACHE` di `sw.js`
-> dan/atau hard-reload (Ctrl+Shift+R). Cache versi saat ini: **civil-tools-v15**.
+> dan/atau hard-reload (Ctrl+Shift+R). Versi cache sekarang dilihat di `sw.js`
+> (`const CACHE = 'civil-tools-vNN'`) — **wajib dinaikkan tiap rilis**.
 
 ## Deploy (cPanel)
 
-Upload seluruh isi folder `civil-tools/` ke `public_html` (atau subfolder). Tidak ada build/compile.
-`start_url` dan `scope` di `manifest.json` memakai path relatif (`./`), jadi aman di subfolder.
+Prosedur baku lengkap (paket zip, upload, verifikasi live) ada di
+**[`docs/DEPLOY.md`](docs/DEPLOY.md)**.
+
+Ringkas: upload berkas **publik saja** (`index.html`, `sw.js`, `manifest.json`,
+`sitemap.xml`, `robots.txt`, `.htaccess`, `assets/`, `core/`, `modules/`,
+`favicon/`) ke document root subdomain, overwrite di tempat. **Bukan** `.git/`,
+`.claude/`, `docs/`, atau file `*.md`. Tidak ada build/compile. `start_url` &
+`scope` di `manifest.json` memakai path relatif (`./`), jadi aman di subfolder.
 
 ---
 
