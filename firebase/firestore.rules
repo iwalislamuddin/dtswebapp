@@ -1,0 +1,51 @@
+// ============================================================
+// Civil Tools — Firestore Security Rules
+// Tempel isi file ini ke Firebase Console > Firestore Database > Rules,
+// lalu klik "Publish". File ini TIDAK ikut ter-deploy ke cPanel (bukan
+// aset runtime) — murni referensi & sumber kebenaran untuk rules yang
+// dipasang manual di Firebase Console.
+//
+// Prinsip keamanan inti (jangan dilonggarkan):
+//   - `premium` di dalam users/{uid} TIDAK PERNAH bisa ditulis client,
+//     baik oleh pemilik dokumen maupun user lain. Hanya Cloud Function
+//     (Admin SDK, melewati rules ini sepenuhnya) yang boleh mengubahnya
+//     — itulah yang membuat status premium tidak bisa dipalsukan dari
+//     browser/console manapun.
+//   - orders/{orderId}: client boleh baca order miliknya sendiri (untuk
+//     menampilkan status "menunggu pembayaran" dsb), tapi TIDAK PERNAH
+//     boleh menulis/mengubahnya — order dibuat & diubah status hanya
+//     oleh Cloud Function (createSnapTransaction & midtransWebhook).
+// ============================================================
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      // Izinkan client membuat/memperbarui field profil miliknya sendiri
+      // (email, displayName) tapi TIDAK PERNAH field `premium` — baik saat
+      // create maupun update, `premium` wajib sama dengan sebelumnya (atau,
+      // untuk dokumen baru, wajib berbentuk default non-aktif).
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.premium.active == false
+        && request.resource.data.premium.plan == null;
+
+      allow update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.premium == resource.data.premium;
+
+      allow delete: if false;
+
+      match /savedWorks/{workId} {
+        allow read, write, delete: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    match /orders/{orderId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+      // Tidak ada `allow write` di sini sama sekali -> hanya Cloud Function
+      // (Admin SDK) yang bisa create/update dokumen order.
+    }
+  }
+}

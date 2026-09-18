@@ -75,6 +75,25 @@
       window.gtag('config', id, { send_page_view: false });
     })();
   </script>
+
+  <!-- Firebase (Auth + Firestore) — akun & status premium. GANTI value di
+       bawah dengan config project Firebase Anda (Console > Project Settings
+       > General > "Your apps" > SDK setup and configuration). Selama masih
+       placeholder ("GANTI..."), fitur akun nonaktif diam-diam (lihat
+       core/auth.js) — aman di-deploy sebelum project Firebase dibuat. -->
+  <script>
+    window.FIREBASE_CONFIG = {
+      apiKey: 'GANTI_DENGAN_API_KEY',
+      authDomain: 'GANTI.firebaseapp.com',
+      projectId: 'GANTI',
+      storageBucket: 'GANTI.appspot.com',
+      messagingSenderId: 'GANTI',
+      appId: 'GANTI'
+    };
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
   <div id="app">
@@ -87,10 +106,16 @@
       </div>
       <div class="nav-list" id="nav-list"><!-- diisi shell.js --></div>
       <div class="nav-foot">
-        <button class="iconbtn wide" id="about-btn" title="Tentang aplikasi">ⓘ Tentang</button>
-        <div class="theme-menu" id="theme-menu">
-          <button class="iconbtn" id="theme-toggle" title="Pilih tema" aria-haspopup="true" aria-expanded="false">☾ Tema</button>
-          <div class="theme-pop" id="theme-pop" role="menu" aria-label="Pilih tema"><!-- diisi shell.js --></div>
+        <div class="nav-foot-row">
+          <button class="iconbtn wide" id="about-btn" title="Tentang aplikasi">ⓘ Tentang</button>
+          <div class="theme-menu" id="theme-menu">
+            <button class="iconbtn" id="theme-toggle" title="Pilih tema" aria-haspopup="true" aria-expanded="false">☾ Tema</button>
+            <div class="theme-pop" id="theme-pop" role="menu" aria-label="Pilih tema"><!-- diisi shell.js --></div>
+          </div>
+        </div>
+        <div class="acct-menu" id="acct-menu">
+          <button class="iconbtn wide acct-btn" id="acct-btn" aria-haspopup="true" aria-expanded="false">👤 Masuk</button>
+          <div class="acct-pop" id="acct-pop" role="menu" aria-label="Akun"><!-- diisi shell.js --></div>
         </div>
       </div>
     </nav>
@@ -217,11 +242,65 @@
     </div>
   </div>
 
+  <!-- Masuk / Daftar -->
+  <div class="modal-ov" id="auth-ov">
+    <div class="modal auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <button class="modal-x" id="auth-close" aria-label="Tutup">×</button>
+      <div class="modal-hd">
+        <img class="logo" src="favicon/edfs-mark.svg" alt="EDFS" width="40" height="43">
+        <div>
+          <div class="modal-title" id="auth-title">Masuk / Daftar</div>
+          <div class="modal-ver">Simpan pekerjaan &amp; unduh laporan PDF</div>
+        </div>
+      </div>
+
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" id="auth-tab-signin" type="button" role="tab">Masuk</button>
+        <button class="auth-tab" id="auth-tab-signup" type="button" role="tab">Daftar</button>
+      </div>
+
+      <form class="auth-form" id="auth-form" novalidate>
+        <label class="auth-label">Email
+          <input class="auth-input" id="auth-email" type="email" required autocomplete="email">
+        </label>
+        <label class="auth-label">Kata Sandi
+          <input class="auth-input" id="auth-password" type="password" required autocomplete="current-password" minlength="6">
+        </label>
+        <div class="auth-err" id="auth-err" hidden></div>
+        <button class="auth-submit" id="auth-submit" type="submit">Masuk</button>
+      </form>
+
+      <div class="auth-or"><span>atau</span></div>
+      <button class="auth-google" id="auth-google" type="button">Lanjutkan dengan Google</button>
+    </div>
+  </div>
+
+  <!-- Bridging Premium (paywall) -->
+  <div class="modal-ov" id="paywall-ov">
+    <div class="modal paywall-modal" role="dialog" aria-modal="true" aria-labelledby="paywall-title">
+      <button class="modal-x" id="paywall-close" aria-label="Tutup">×</button>
+      <div class="modal-hd">
+        <span class="paywall-ico">★</span>
+        <div>
+          <div class="modal-title" id="paywall-title">Fitur Premium</div>
+          <div class="modal-ver">EDFS Civil Tools</div>
+        </div>
+      </div>
+      <p class="paywall-msg" id="paywall-msg">Fitur ini butuh langganan Premium.</p>
+      <ul class="paywall-list">
+        <li>Simpan pekerjaan &amp; buka kembali kapan saja, lintas perangkat</li>
+        <li>Unduh laporan PDF siap dokumentasi, tanpa batas</li>
+      </ul>
+      <button class="paywall-cta" id="paywall-cta" type="button">Lihat Paket Berlangganan</button>
+    </div>
+  </div>
+
   <!-- Three.js r128 (dipakai module 3D; aman di-load walau tool pertama non-3D) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <!-- Core runtime + registry + shell (urutan penting) -->
   <script src="core/ui-kit.js"></script>
+  <script src="core/auth.js"></script>
   <script src="core/canvas2d.js"></script>
   <script src="core/report.js"></script>
   <script src="core/steel-profiles.js"></script>

@@ -441,6 +441,58 @@
     if (a) a.addEventListener('click', function (e) { e.preventDefault(); navigate(''); });
   }
 
+  /* ---------- Akun (login/daftar) + badge status premium ---------- */
+  // Logika Firebase ada di core/auth.js (window.CivilAuth) — shell.js hanya
+  // mengurus tampilan tombol nav-foot & popover kecil, sama seperti pola
+  // theme-menu. Kalau fitur akun belum dikonfigurasi (CivilAuth.enabled()
+  // false), tombol tetap tampil tapi klik cukup membuka toast info.
+  function initAuthUI() {
+    var CA = window.CivilAuth;
+    var acctMenu = document.getElementById('acct-menu');
+    var acctBtn = document.getElementById('acct-btn');
+    var acctPop = document.getElementById('acct-pop');
+    if (!acctBtn || !acctPop) return;
+
+    function openPop() { acctPop.classList.add('show'); acctBtn.setAttribute('aria-expanded', 'true'); }
+    function closePop() { acctPop.classList.remove('show'); acctBtn.setAttribute('aria-expanded', 'false'); }
+
+    function renderPop(user) {
+      acctPop.innerHTML = '';
+      if (!user) return;
+      var mail = UI.el('div', 'acct-mail', user.email || '');
+      var out = UI.el('button', 'acct-item');
+      out.type = 'button';
+      out.textContent = 'Keluar';
+      out.addEventListener('click', function () { closePop(); if (CA) CA.signOut(); });
+      acctPop.appendChild(mail);
+      acctPop.appendChild(out);
+    }
+
+    acctBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var user = CA && CA.getUser();
+      if (!user) { if (CA) CA.openLogin(); return; }
+      if (acctPop.classList.contains('show')) closePop(); else openPop();
+    });
+    document.addEventListener('click', function (e) {
+      if (acctMenu && !acctMenu.contains(e.target)) closePop();
+    });
+
+    if (CA) CA.onChange(function (user, premium) {
+      closePop();
+      if (user) {
+        var label = user.email ? user.email.split('@')[0] : 'Akun';
+        acctBtn.textContent = (premium && premium.active ? '★ ' : '👤 ') + label;
+        acctBtn.classList.toggle('premium', !!(premium && premium.active));
+        renderPop(user);
+      } else {
+        acctBtn.textContent = '👤 Masuk';
+        acctBtn.classList.remove('premium');
+        acctPop.innerHTML = '';
+      }
+    });
+  }
+
   /* ---------- Boot ---------- */
   renderNav();
   hydrateIcons();
@@ -448,6 +500,7 @@
   initCollapse();
   initAbout();
   initHomeLink();
+  initAuthUI();
   // Back-compat: tautan/PWA lama memakai "#id". Bila datang dengan hash dan
   // path masih root, konversi ke URL bersih "/id" tanpa menambah history.
   (function migrateHash() {
