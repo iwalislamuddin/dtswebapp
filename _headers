@@ -1,0 +1,16 @@
+# Cloudflare Pages / Netlify — header cache, setara blok <IfModule mod_headers.c>
+# di .htaccess. index.html/sw.js/manifest.json WAJIB selalu revalidasi (app
+# update file di tempat tanpa hash nama, mengandalkan bump versi SW), aset
+# lain boleh cache pendek + revalidasi cepat.
+/index.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+/manifest.json
+  Cache-Control: no-cache
+/*.css
+  Cache-Control: public, max-age=3600, must-revalidate
+/*.js
+  Cache-Control: public, max-age=3600, must-revalidate
+/*.svg
+  Cache-Control: public, max-age=3600, must-revalidate

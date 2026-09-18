@@ -9,3 +9,6 @@ desktop.ini
 # Logs & temp
 *.log
 *.tmp
+
+# Build staging untuk Cloudflare Pages/Netlify (scripts/cf-build.sh)
+dist/

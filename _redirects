@@ -1,0 +1,6 @@
+# Cloudflare Pages / Netlify — SPA fallback (setara mod_rewrite di .htaccess
+# untuk cPanel/Apache). File statis yang benar-benar ada (assets/, core/,
+# modules/, favicon/, sitemap.xml, dst.) tetap disajikan apa adanya secara
+# otomatis oleh platform SEBELUM aturan di bawah dicek — baris ini hanya
+# menangkap rute SPA (mis. /beam-flexure) yang tidak punya file fisik.
+/*  /index.html  200
