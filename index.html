@@ -93,9 +93,22 @@
       appId: '1:385859186606:web:bc85a6cb82b39e0204223f'
     };
   </script>
+
+  <!-- Midtrans Snap — checkout berlangganan. clientKey memang publik (dipakai
+       di browser); yang rahasia adalah SERVER KEY, dan itu hanya ada di Cloud
+       Functions. production:false = sandbox (kartu uji), true = uang sungguhan.
+       Selama clientKey masih "GANTI...", tombol berlangganan memberi info saja.
+       snap.js sendiri dimuat saat dibutuhkan (lihat core/billing.js). -->
+  <script>
+    window.MIDTRANS_CONFIG = {
+      clientKey: 'GANTI_DENGAN_CLIENT_KEY',
+      production: false
+    };
+  </script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
 </head>
 <body>
   <div id="app">
@@ -305,6 +318,41 @@
     </div>
   </div>
 
+  <!-- Pratinjau laporan (non-premium) — gambar resolusi rendah, teks tak bisa disalin -->
+  <div class="modal-ov" id="preview-ov">
+    <div class="modal preview-modal" role="dialog" aria-modal="true" aria-labelledby="preview-title">
+      <button class="modal-x" id="preview-close" aria-label="Tutup">×</button>
+      <div class="modal-hd">
+        <span class="preview-ico">☷</span>
+        <div>
+          <div class="modal-title" id="preview-title">Pratinjau Laporan</div>
+          <div class="modal-ver" id="preview-info"></div>
+        </div>
+      </div>
+      <div class="preview-pages" id="preview-pages"><!-- diisi core/report.js --></div>
+      <button class="preview-cta" id="preview-cta" type="button">★ Unduh PDF — Lihat Paket Premium</button>
+    </div>
+  </div>
+
+  <!-- Paket berlangganan (Midtrans Snap) -->
+  <div class="modal-ov" id="sub-ov">
+    <div class="modal sub-modal" role="dialog" aria-modal="true" aria-labelledby="sub-title">
+      <button class="modal-x" id="sub-close" aria-label="Tutup">×</button>
+      <div class="modal-hd">
+        <span class="sub-ico">★</span>
+        <div>
+          <div class="modal-title" id="sub-title">Premium EDFS Civil Tools</div>
+          <div class="modal-ver">Semua tool tetap gratis — Premium untuk simpan &amp; unduh PDF</div>
+        </div>
+      </div>
+      <p class="sub-msg" id="sub-msg"></p>
+      <div class="sub-plans" id="sub-plans"><!-- diisi core/billing.js --></div>
+      <div class="sub-status" id="sub-status" hidden></div>
+      <p class="sub-fine">Pembayaran diproses Midtrans (kartu, VA bank, e-wallet, QRIS).
+        Langganan tidak diperpanjang otomatis — tidak ada tagihan berulang.</p>
+    </div>
+  </div>
+
   <!-- Bridging Premium (paywall) -->
   <div class="modal-ov" id="paywall-ov">
     <div class="modal paywall-modal" role="dialog" aria-modal="true" aria-labelledby="paywall-title">
@@ -339,6 +387,7 @@
   <script src="core/module-registry.js"></script>
   <script src="assets/shell.js"></script>
   <script src="core/works.js"></script>
+  <script src="core/billing.js"></script>
 
   <script>
     if ('serviceWorker' in navigator) {

@@ -874,8 +874,8 @@
     var d = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var stamp = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate());
     var base = 'BalokBaja_' + vals.ptype + '_' + stamp;
-    if (fmt === 'pdf') { window.CivilReport.downloadPDF(base + '.pdf', lines); UI.toast('Report PDF diunduh', 'info'); }
-    else { window.CivilReport.downloadText(base + '.txt', lines); UI.toast('Report teks diunduh', 'info'); }
+    if (fmt === 'pdf') { if (window.CivilReport.downloadPDF(base + '.pdf', lines)) UI.toast('Report PDF diunduh', 'info'); }
+    else { if (window.CivilReport.downloadText(base + '.txt', lines)) UI.toast('Report teks diunduh', 'info'); }
   }
 
   window.CivilModules[ID] = {

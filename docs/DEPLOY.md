@@ -39,7 +39,12 @@ assets/  core/  modules/  favicon/
 ```
 
 **JANGAN sertakan** (bukan aset runtime): `.git/`, `.claude/`, `.gitignore`,
-`README.md`, `ARCHITECTURE.md`, `docs/`.
+`README.md`, `ARCHITECTURE.md`, `docs/`, `firebase/`, `functions/`,
+`firebase.json`, `.firebaserc`.
+
+> `functions/` (Cloud Functions pembayaran) TIDAK pernah ikut ke hosting statis —
+> ia di-deploy terpisah ke Firebase: `firebase deploy --only functions`. Lihat
+> [MONETIZATION.md §6](MONETIZATION.md).
 
 > `.htaccess` **wajib** ikut — dialah SPA fallback yang membuat deep-link
 > `/beam-shear-torsion` & reload halaman tidak 404. Letaknya di **document root**
@@ -138,4 +143,6 @@ Workers → *Update* / *Unregister*, atau hard-reload `Ctrl+Shift+R`.
 - **HTTPS paksa** opsional — blok redirect di `.htaccess` (baris `RewriteCond
   %{HTTPS} off`) bisa diaktifkan setelah SSL subdomain terpasang.
 - Riwayat rilis app ada di modal **Tentang** (`index.html`). Rilis terakhir yang
-  disiapkan: **v0.7.3 / SW civil-tools-v58 / 35 tool aktif**.
+  disiapkan: **v0.7.3 / SW civil-tools-v58 / 35 tool aktif**. Di repo saat ini SW
+  sudah di `civil-tools-v63` (akun, Simpan Pekerjaan, gating PDF) — nomor versi
+  app di modal Tentang belum dinaikkan, tentukan saat menyiapkan rilis berikutnya.

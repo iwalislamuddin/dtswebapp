@@ -37,7 +37,7 @@
   function escPdf(s) { return ascii(s).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)'); }
   function isFig(x) { return x && typeof x === 'object' && x.fig; }
 
-  function downloadText(filename, lines) {
+  function downloadTextRaw(filename, lines) {
     var out = [];
     lines.forEach(function (ln) {
       if (isFig(ln)) { if (ln.fig.alt) out.push(' [' + ascii(ln.fig.alt) + ']'); }
@@ -45,22 +45,30 @@
     });
     var text = out.join('\r\n');              // CRLF — autentik DOS
     saveBlob(filename, new Blob([text], { type: 'text/plain;charset=utf-8' }));
+    return true;
   }
 
-  function buildPDF(lines) {
-    var FS = 9, LEAD = 11.5, X = 42, YTOP = 744, YBOT = 46;   // top margin ~= side margin (42)
-    var perPage = Math.max(1, Math.floor((YTOP - YBOT) / LEAD));
+  /* --- Geometri halaman: dipakai bersama oleh PDF (vektor) & pratinjau (kanvas) --- */
+  var PAGE_W = 612, PAGE_H = 792;
+  var FS = 9, LEAD = 11.5, X = 42, YTOP = 744, YBOT = 46;   // top margin ~= side margin (42)
+  var PER_PAGE = Math.max(1, Math.floor((YTOP - YBOT) / LEAD));
 
-    /* --- paginasi berbasis slot: string = 1 slot, figure = fig.h slot --- */
+  /* --- paginasi berbasis slot: string = 1 slot, figure = fig.h slot --- */
+  function paginate(lines) {
     var pages = [], cur = [], used = 0;
     for (var i = 0; i < lines.length; i++) {
       var it = lines[i];
-      var slots = isFig(it) ? Math.min(perPage, Math.max(1, Math.ceil(it.fig.h || 6))) : 1;
-      if (used + slots > perPage && cur.length) { pages.push(cur); cur = []; used = 0; }
+      var slots = isFig(it) ? Math.min(PER_PAGE, Math.max(1, Math.ceil(it.fig.h || 6))) : 1;
+      if (used + slots > PER_PAGE && cur.length) { pages.push(cur); cur = []; used = 0; }
       cur.push({ item: it, slots: slots });
       used += slots;
     }
     if (cur.length || !pages.length) pages.push(cur);
+    return pages;
+  }
+
+  function buildPDF(lines) {
+    var pages = paginate(lines);
     var numPages = pages.length;
 
     function fnum(n) { n = Math.round(n * 100) / 100; return (isFinite(n) ? n : 0).toString(); }
@@ -166,16 +174,58 @@
     return header + body + xref + trailer;
   }
 
-  function downloadPDF(filename, lines) {
+  function downloadPDFRaw(filename, lines) {
     try {
       var pdf = buildPDF(lines);
       saveBlob(filename, new Blob([pdf], { type: 'application/pdf' }));
       return true;
     } catch (e) {
       console.error('PDF gagal, fallback ke teks:', e);
-      downloadText(filename.replace(/\.pdf$/i, '.txt'), lines);
+      downloadTextRaw(filename.replace(/\.pdf$/i, '.txt'), lines);
       return false;
     }
+  }
+
+  /* ============================================================
+     GATING PREMIUM — satu-satunya titik pagar unduhan laporan.
+     35 module memanggil downloadPDF/downloadText dari sini, jadi aturan
+     unduh cukup ditentukan di file ini (tak ada module yang tahu soal
+     premium). Non-premium: laporan tetap dihitung penuh, tapi disajikan
+     sebagai PRATINJAU GAMBAR resolusi rendah (teks tak bisa disalin) dan
+     tombol unduh di dalamnya membuka paket berlangganan.
+
+     Nilai kembali (true = berkas benar-benar terunduh) dipakai module
+     untuk memutuskan menampilkan toast "diunduh" atau tidak.
+     ============================================================ */
+  function isPremium() {
+    var A = window.CivilAuth;
+    return !!(A && A.isPremium && A.isPremium());
+  }
+
+  // Pagar hanya berlaku bila berlangganan memang BISA dibeli: akun aktif
+  // (config Firebase terisi) DAN pembayaran terkonfigurasi (config Midtrans
+  // terisi). Selama salah satunya masih placeholder, unduhan tetap gratis
+  // untuk semua — supaya situs aman di-deploy di keadaan setengah jadi dan
+  // tidak pernah mengunci fitur yang belum ada cara membukanya.
+  function paywallActive() {
+    var A = window.CivilAuth, B = window.CivilBilling;
+    return !!(A && A.enabled && A.enabled() && B && B.enabled && B.enabled());
+  }
+
+  function gated(lines) {
+    if (!paywallActive() || isPremium()) return false;
+    openPreview(lines);
+    return true;
+  }
+
+  function downloadPDF(filename, lines) {
+    if (gated(lines)) return false;
+    return downloadPDFRaw(filename, lines);
+  }
+
+  function downloadText(filename, lines) {
+    if (gated(lines)) return false;
+    return downloadTextRaw(filename, lines);
   }
 
   /* ============================================================
@@ -225,8 +275,153 @@
     if (lab) ops.push({ t: 'text', x: x + 6, y: y - 3, s: lab, size: 6, g: g || 0 });
   }
 
+  /* ============================================================
+     PRATINJAU LAPORAN (kanvas → gambar resolusi rendah)
+     Dipakai untuk pengguna non-premium: laporan dirender ulang di kanvas
+     memakai geometri halaman yang sama persis dengan PDF (612×792 pt,
+     Courier 9pt, lead 11,5pt) lalu disajikan sebagai <img>. Karena berupa
+     gambar, teksnya tidak bisa diseleksi/disalin, dan resolusinya (±100 DPI)
+     sengaja jauh di bawah PDF vektor — cukup untuk memastikan hasil
+     hitungan, tidak cukup untuk dokumentasi.
+     ============================================================ */
+  var PREVIEW_SCALE = 1.35;          // px per pt (≈ 97 DPI)
+  var PREVIEW_MAX_PAGES = 12;
+
+  function grayCss(g) {
+    var v = Math.round(Math.max(0, Math.min(1, (g === undefined ? 0 : g))) * 255);
+    return 'rgb(' + v + ',' + v + ',' + v + ')';
+  }
+
+  function figCanvas(ctx, fig, x0, yTop, sc) {
+    function PX(x) { return (x0 + x) * sc; }
+    function PY(y) { return (yTop + y) * sc; }
+    (fig.ops || []).forEach(function (o) {
+      if (!o) return;
+      var col = grayCss(o.g);
+      var lw = ((o.lw !== undefined) ? o.lw : 0.8) * sc;
+
+      if (o.t === 'text') {
+        var size = (o.size || 8) * sc;
+        ctx.font = size + 'px "Courier New", Courier, monospace';
+        ctx.fillStyle = col;
+        var txt = ascii(o.s);
+        var tx = PX(o.x);
+        if (o.align === 'c') tx -= ctx.measureText(txt).width / 2;
+        else if (o.align === 'r') tx -= ctx.measureText(txt).width;
+        ctx.fillText(txt, tx, PY(o.y));
+        return;
+      }
+
+      ctx.save();
+      ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw;
+      ctx.setLineDash((o.dash && o.dash.length) ? o.dash.map(function (d) { return d * sc; }) : []);
+      ctx.beginPath();
+      if (o.t === 'line') {
+        ctx.moveTo(PX(o.x1), PY(o.y1)); ctx.lineTo(PX(o.x2), PY(o.y2)); ctx.stroke();
+      } else if (o.t === 'rect') {
+        ctx.rect(PX(o.x), PY(o.y), o.w * sc, o.h * sc);
+        if (o.fill) ctx.fill(); else ctx.stroke();
+      } else if (o.t === 'poly' && o.pts && o.pts.length > 1) {
+        ctx.moveTo(PX(o.pts[0][0]), PY(o.pts[0][1]));
+        for (var j = 1; j < o.pts.length; j++) ctx.lineTo(PX(o.pts[j][0]), PY(o.pts[j][1]));
+        if (o.close) ctx.closePath();
+        if (o.fill) ctx.fill(); else ctx.stroke();
+      } else if (o.t === 'circle') {
+        ctx.arc(PX(o.cx), PY(o.cy), o.r * sc, 0, Math.PI * 2);
+        if (o.fill) ctx.fill(); else ctx.stroke();
+      }
+      ctx.restore();
+    });
+  }
+
+  function pageCanvas(pageItems, sc) {
+    var cv = document.createElement('canvas');
+    cv.width = Math.round(PAGE_W * sc);
+    cv.height = Math.round(PAGE_H * sc);
+    var ctx = cv.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.textBaseline = 'alphabetic';
+
+    var y = YTOP;
+    pageItems.forEach(function (e) {
+      if (isFig(e.item)) {
+        figCanvas(ctx, e.item.fig, X, PAGE_H - (y + FS), sc);
+        y -= e.slots * LEAD;
+      } else {
+        ctx.font = (FS * sc) + 'px "Courier New", Courier, monospace';
+        ctx.fillStyle = '#000';
+        ctx.fillText(ascii(String(e.item)), X * sc, (PAGE_H - y) * sc);
+        y -= LEAD;
+      }
+    });
+
+    // Penanda pratinjau di margin bawah — jelas ini bukan laporan final.
+    ctx.font = (7 * sc) + 'px "Courier New", Courier, monospace';
+    ctx.fillStyle = '#999';
+    ctx.fillText('PRATINJAU - EDFS Civil Tools - unduh PDF untuk versi penuh',
+      X * sc, (PAGE_H - 28) * sc);
+    return cv;
+  }
+
+  /* ---------- Modal pratinjau (#preview-ov, markup di index.html) ---------- */
+  function openPreview(lines) {
+    var ov = document.getElementById('preview-ov');
+    if (!ov) {                                  // markup tak ada → jangan diam-diam gagal
+      if (window.CivilAuth) window.CivilAuth.openPaywall({ intent: 'pdf' });
+      return;
+    }
+    var host = document.getElementById('preview-pages');
+    var info = document.getElementById('preview-info');
+    var pages = paginate(lines);
+    var shown = Math.min(pages.length, PREVIEW_MAX_PAGES);
+
+    host.innerHTML = '';
+    for (var i = 0; i < shown; i++) {
+      var img = new Image();
+      img.src = pageCanvas(pages[i], PREVIEW_SCALE).toDataURL('image/png');
+      img.alt = 'Pratinjau laporan halaman ' + (i + 1);
+      img.draggable = false;
+      host.appendChild(img);
+    }
+    if (info) {
+      info.textContent = pages.length + ' halaman' +
+        (shown < pages.length ? ' (' + shown + ' halaman pertama ditampilkan)' : '') +
+        ' · pratinjau resolusi rendah, teks tidak dapat disalin';
+    }
+    ov.classList.add('show');
+  }
+
+  function closePreview() {
+    var ov = document.getElementById('preview-ov');
+    if (ov) ov.classList.remove('show');
+    var host = document.getElementById('preview-pages');
+    if (host) host.innerHTML = '';             // lepas gambar besar dari memori
+  }
+
+  function wirePreview() {
+    var ov = document.getElementById('preview-ov');
+    if (!ov) return;
+    var closeBtn = document.getElementById('preview-close');
+    var cta = document.getElementById('preview-cta');
+    if (closeBtn) closeBtn.addEventListener('click', closePreview);
+    ov.addEventListener('click', function (e) { if (e.target === ov) closePreview(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && ov.classList.contains('show')) closePreview();
+    });
+    if (cta) cta.addEventListener('click', function () {
+      closePreview();
+      if (window.CivilBilling) window.CivilBilling.openPlans('pdf');
+      else if (window.CivilAuth) window.CivilAuth.openPaywall({ intent: 'pdf' });
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wirePreview);
+  else wirePreview();
+
   window.CivilReport = {
     downloadText: downloadText, downloadPDF: downloadPDF,
+    // Dipakai fitur premium/pratinjau; module tak perlu menyentuh ini.
+    preview: openPreview, closePreview: closePreview,
     fig: { niceStep: niceStep, dimH: dimH, dimV: dimV, arrow: arrow, cross: cross }
   };
 })();

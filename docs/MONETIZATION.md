@@ -93,9 +93,99 @@ Belum ada cara membeli premium, jadi aktifkan manual untuk akun sendiri:
    sendiri) dan dari perangkat/browser lain dengan akun yang sama.
 6. Hapus: klik × sekali (berubah jadi "Hapus?"), klik lagi untuk konfirmasi.
 
-## 6. Yang menyusul (belum dikerjakan)
+## 6. Fase C — Berlangganan (Midtrans Snap) & gating PDF
 
-- **Fase C** — Integrasi **Midtrans Snap** (perlu akun Midtrans + upgrade Firebase ke plan **Blaze** untuk Cloud Functions), gating nyata `core/report.js` (PDF premium, unduh teks dinonaktifkan).
-- **Fase D** — Halaman lead-gen/cross-sell (`modules/promo-dts/`).
+Kode Fase C sudah ada di repo. Yang tersisa: langkah akun/deploy di bawah.
+
+### Harga paket (sumber kebenaran ada di server)
+
+| Paket | Harga | Setara / bulan |
+|---|---|---|
+| 1 bulan | Rp 14.000 | Rp 14.000 |
+| 3 bulan | Rp 39.000 | Rp 13.000 (hemat 7%) |
+| 12 bulan | Rp 129.000 | Rp 10.750 (hemat 23%) |
+
+Harga tertulis di **dua** tempat dan wajib diubah bersamaan:
+`functions/index.js` (`PLANS` — dipakai server saat menagih) dan
+`core/billing.js` (`PLANS` — hanya tampilan). Browser tidak pernah mengirim
+nominal; ia hanya mengirim `planId`.
+
+### Apa yang berubah untuk pengguna
+
+- **Unduh PDF / teks** kini premium. Non-premium yang menekan tombol unduh tetap
+  mendapat laporannya — dihitung penuh — tapi sebagai **pratinjau gambar
+  resolusi rendah** (±100 DPI, teks tidak bisa diseleksi/disalin, ada penanda
+  "PRATINJAU" di tiap halaman), dengan tombol menuju paket berlangganan.
+  Seluruh perhitungan, diagram, dan hasil di layar tetap gratis.
+- Pratinjau dirender ulang di kanvas memakai geometri halaman yang sama dengan
+  PDF (612×792 pt, Courier 9pt), jadi yang dilihat persis yang akan diunduh.
+- Catatan: unduh **.txt** tidak dimatikan total seperti rencana awal, melainkan
+  ikut dipagari premium. Alasannya celah bypass-nya tertutup sama rapat (teks
+  hanya keluar untuk pelanggan), sementara pelanggan tetap dapat format mentah
+  yang berguna. Untuk mematikannya total, ubah `downloadText` di
+  `core/report.js` agar selalu memanggil `openPreview`.
+
+### Alur uang (kenapa tidak bisa dipalsukan)
+
+1. Browser memanggil callable `createSnapTransaction` dengan `planId` saja.
+2. Cloud Function membaca harga dari tabelnya sendiri, membuat `orders/{orderId}`
+   berstatus `pending`, lalu meminta Snap token ke Midtrans dengan **server key**
+   yang tidak pernah dikirim ke browser.
+3. Popup Snap terbuka; pengguna membayar (kartu, VA, e-wallet, QRIS).
+4. Midtrans memanggil `midtransWebhook`. Function memverifikasi signature
+   SHA-512, mencocokkan nominal dengan order, lalu memperpanjang
+   `users/{uid}.premium` — satu-satunya penulis field itu (client dilarang oleh
+   rules). Idempoten: notifikasi berulang tidak menambah masa aktif dua kali,
+   dan perpanjangan menambah dari sisa masa aktif, bukan menghanguskannya.
+5. Browser mengetahui premium menyala lewat listener Firestore yang sudah ada.
+
+### Langkah setup (manual, oleh pemilik project)
+
+1. **Upgrade Firebase ke plan Blaze** — Console > ⚙ > Usage and billing >
+   Details & settings > Modify plan. Butuh kartu; di volume kecil praktis tetap
+   gratis (ada kuota gratis bulanan), tapi pasang **budget alert** mis. Rp 50.000.
+2. **Daftar Midtrans** di [midtrans.com](https://midtrans.com) → mulai dari
+   **Sandbox** (Dashboard punya toggle Sandbox/Production). Ambil **Server Key**
+   dan **Client Key** di Settings > Access Keys.
+3. Isi `window.MIDTRANS_CONFIG` di `index.html`: `clientKey` (Client Key sandbox),
+   `production: false`.
+4. Pasang secret & deploy functions dari root repo:
+
+   ```bash
+   npm --prefix functions install
+   firebase login
+   firebase functions:secrets:set MIDTRANS_SERVER_KEY
+   firebase functions:secrets:set MIDTRANS_CLIENT_KEY
+   firebase deploy --only functions
+   ```
+
+   (`firebase.json` & `.firebaserc` sudah ada di repo; keduanya beserta folder
+   `functions/` TIDAK ikut ter-publish ke hosting statis — `scripts/cf-build.sh`
+   dan daftar zip di [DEPLOY.md](DEPLOY.md) memakai whitelist.)
+5. Salin URL `midtransWebhook` yang tercetak saat deploy → Midtrans Dashboard >
+   Settings > Configuration > **Payment Notification URL** (isi juga di tab
+   Production nanti). Biarkan Finish/Unfinish/Error URL kosong — Snap popup
+   tidak memakai redirect.
+6. Deploy rules sekalian bila belum: `firebase deploy --only firestore:rules`.
+
+### Uji coba (sandbox, tanpa uang sungguhan)
+
+- Buka tool → **Download PDF** → pratinjau muncul → **Lihat Paket Premium** →
+  pilih paket → popup Snap.
+- Kartu uji Midtrans: **4811 1111 1111 1114**, CVV `123`, kedaluwarsa bulan/tahun
+  mana pun di masa depan, OTP `112233`.
+- Setelah bayar: cek `orders/{orderId}.status` = `paid`, dan
+  `users/{uid}.premium.active` = `true` dengan `expiresAt` sesuai paket. Tombol
+  akun & Pekerjaan Saya berubah beraksen oranye tanpa perlu reload.
+- Uji idempotensi: di Midtrans Dashboard, kirim ulang notifikasi order yang sama
+  → `expiresAt` tidak boleh bertambah lagi.
+- Naik ke produksi: ganti `production: true` + client key produksi di
+  `index.html`, set ulang secret dengan server key produksi, deploy ulang.
+
+## 7. Yang menyusul (belum dikerjakan)
+
+- **Fase D** — Halaman lead-gen/cross-sell (`modules/promo-dts/`), kategori nav
+  baru "DTS Engineering".
+- Tampilan sisa masa aktif langganan di popover akun (mis. "Premium s/d 21 Okt 2026").
 
 Detail arsitektur & data model lengkap: lihat memory project / plan file monetisasi.

@@ -210,6 +210,38 @@ body{
 .work-del.confirm{border-color:var(--bad); color:var(--bad); font-size:11.5px; font-weight:600}
 .work-del:disabled{opacity:.5; cursor:not-allowed}
 
+/* ---------- Pratinjau laporan (non-premium) ---------- */
+.preview-modal{width:min(780px,100%)}
+.preview-ico{width:40px; height:43px; flex:none; display:grid; place-items:center; font-size:24px; color:var(--amber)}
+.preview-pages{display:flex; flex-direction:column; gap:10px; max-height:58vh; overflow-y:auto; padding:10px;
+  background:var(--bg2); border:1px solid var(--line); border-radius:10px; margin-bottom:16px}
+/* Gambar, bukan teks: tidak bisa diseleksi/disalin & tidak bisa di-drag keluar. */
+.preview-pages img{display:block; width:100%; height:auto; border:1px solid var(--line2); border-radius:4px;
+  background:#fff; user-select:none; -webkit-user-select:none; -webkit-user-drag:none; pointer-events:none}
+.preview-cta{width:100%; font-family:inherit; font-size:13.5px; font-weight:600; color:var(--bg);
+  background:var(--amber); border:0; border-radius:8px; padding:12px; cursor:pointer; transition:.12s}
+.preview-cta:hover{filter:brightness(1.08)}
+
+/* ---------- Paket berlangganan (Midtrans Snap) ---------- */
+.sub-modal{width:min(560px,100%)}
+.sub-ico{width:40px; height:43px; flex:none; display:grid; place-items:center; font-size:26px; color:var(--amber)}
+.sub-msg{font-size:13.5px; line-height:1.6; color:var(--ink-dim); margin-bottom:16px}
+.sub-plans{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px}
+.sub-plan{position:relative; display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:14px 8px;
+  font-family:inherit; color:var(--ink); cursor:pointer; transition:.12s}
+.sub-plan:hover{border-color:var(--amber)}
+.sub-plan:disabled{opacity:.55; cursor:not-allowed}
+.sub-plan.best{border-color:var(--amber)}
+.sub-plan .sp-dur{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint)}
+.sub-plan .sp-price{font-size:15px; font-weight:600; color:var(--ink)}
+.sub-plan .sp-per{font-size:10.5px; color:var(--ink-faint)}
+.sub-plan .sp-note{margin-top:4px; font-size:10px; font-weight:600; color:var(--amber)}
+.sub-status{font-size:12.5px; line-height:1.6; color:var(--ink-dim); background:var(--bg2);
+  border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:12px}
+.sub-status.bad{border-color:var(--bad); color:var(--bad)}
+.sub-fine{font-size:11.5px; line-height:1.6; color:var(--ink-faint)}
+
 /* ---------- Modal bridging Premium (paywall) ---------- */
 .paywall-modal{width:min(420px,100%)}
 .paywall-ico{width:40px; height:43px; flex:none; display:grid; place-items:center; font-size:26px; color:var(--amber)}
@@ -415,4 +447,6 @@ body{
   /* Kolom sempit: nama pekerjaan & tombol Simpan ditumpuk agar placeholder utuh */
   .works-save-row{flex-direction:column}
   .works-btn{padding:11px}
+  .sub-plans{grid-template-columns:1fr}
+  .sub-plan{flex-direction:row; justify-content:space-between; align-items:baseline; padding:12px 14px}
 }

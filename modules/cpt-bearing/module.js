@@ -530,8 +530,8 @@
     var d = new Date(), p2 = function (x) { return (x < 10 ? '0' : '') + x; };
     var stamp = d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate());
     var base = 'CPT-Dangkal_B' + r.B + '_Df' + r.Df + '_' + stamp;
-    if (fmt === 'pdf') { window.CivilReport.downloadPDF(base + '.pdf', lines); UI.toast('Report PDF diunduh', 'info'); }
-    else { window.CivilReport.downloadText(base + '.txt', lines); UI.toast('Report teks diunduh', 'info'); }
+    if (fmt === 'pdf') { if (window.CivilReport.downloadPDF(base + '.pdf', lines)) UI.toast('Report PDF diunduh', 'info'); }
+    else { if (window.CivilReport.downloadText(base + '.txt', lines)) UI.toast('Report teks diunduh', 'info'); }
   }
 
   /* ============================================================

@@ -741,8 +741,8 @@
     var dd = new Date(), p = function (x) { return (x < 10 ? '0' : '') + x; };
     var stamp = dd.getFullYear() + p(dd.getMonth() + 1) + p(dd.getDate());
     var base = 'TanggaBeton_L' + numR(r.Ltot, 1) + '_' + stamp;
-    if (fmt === 'pdf') { window.CivilReport.downloadPDF(base + '.pdf', lines); UI.toast('Report PDF diunduh', 'info'); }
-    else { window.CivilReport.downloadText(base + '.txt', lines); UI.toast('Report teks diunduh', 'info'); }
+    if (fmt === 'pdf') { if (window.CivilReport.downloadPDF(base + '.pdf', lines)) UI.toast('Report PDF diunduh', 'info'); }
+    else { if (window.CivilReport.downloadText(base + '.txt', lines)) UI.toast('Report teks diunduh', 'info'); }
   }
 
   /* ================= KONTRAK MODULE ================= */

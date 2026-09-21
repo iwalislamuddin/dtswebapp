@@ -50,12 +50,30 @@
     });
   }
 
+  // Satu-satunya tempat status premium diterjemahkan: dokumen boleh bilang
+  // active=true, tapi kalau expiresAt sudah lewat, seluruh app harus melihatnya
+  // sebagai tidak aktif (webhook server tetap sumber kebenaran saat bayar).
+  function normalizePremium(raw) {
+    var p = raw || {};
+    var exp = p.expiresAt;
+    var ms = null;
+    if (exp && typeof exp.toDate === 'function') ms = exp.toDate().getTime();
+    else if (exp) { var t = new Date(exp).getTime(); ms = isNaN(t) ? null : t; }
+    var expired = (ms !== null) && (ms < Date.now());
+    return {
+      active: !!p.active && !expired,
+      plan: p.plan || null,
+      expiresAt: ms !== null ? new Date(ms) : null,
+      lastOrderId: p.lastOrderId || null
+    };
+  }
+
   function watchUserDoc(uid) {
     if (userDocUnsub) { userDocUnsub(); userDocUnsub = null; }
     if (!firestoreDb || !uid) return;
     userDocUnsub = firestoreDb.collection('users').doc(uid).onSnapshot(function (snap) {
       var d = snap.data() || {};
-      premiumState = d.premium || { active: false, plan: null, expiresAt: null, lastOrderId: null };
+      premiumState = normalizePremium(d.premium);
       notify();
     }, function (err) { console.error('CivilAuth: gagal memantau status premium', err); });
   }
@@ -239,15 +257,17 @@
       if (e.key === 'Escape' && ov.classList.contains('show')) close();
     });
 
-    // CTA "Lihat Paket Berlangganan": halaman/checkout subscription dibangun
-    // di Fase C (Midtrans). Sampai saat itu, tombol ini cukup beri info.
+    // CTA "Lihat Paket Berlangganan" -> modal paket (core/billing.js).
+    var lastIntent = 'pdf';
     if (ctaBtn) ctaBtn.addEventListener('click', function () {
       close();
-      if (UI) UI.toast('Halaman berlangganan segera hadir', 'info');
+      if (window.CivilBilling) window.CivilBilling.openPlans(lastIntent);
+      else if (UI) UI.toast('Halaman berlangganan belum siap', 'bad');
     });
 
     openPaywallImpl = function (opts) {
       opts = opts || {};
+      lastIntent = opts.intent === 'save' ? 'save' : 'pdf';
       if (msgEl) {
         msgEl.textContent = opts.intent === 'save'
           ? 'Simpan pekerjaan adalah fitur Premium — berlangganan untuk menyimpan & memulihkan kalkulasi kapan saja, lintas perangkat.'
