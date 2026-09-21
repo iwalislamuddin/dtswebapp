@@ -37,6 +37,8 @@ Dikembangkan oleh: PT. DTS Engineering (Iwal). Referensi visual/kode: `staad-vie
 │   ├── ui-kit.js                  # Helper UI reusable: toast(), form generator, hero/kv/note result builder, disposeObject()
 │   ├── canvas2d.js                # Tier 2 — helper kanvas 2D hi-DPI: setup, auto-resize, redraw sinkron, repaint saat ganti tema, dispose
 │   ├── report.js                  # Generator laporan monospace (DOS-style): unduh PDF (font Courier, tanpa library) atau teks .txt
+│   ├── auth.js                     # Akun (Firebase Auth) + status premium — SATU-SATUNYA file yang init Firebase (window.CivilAuth)
+│   ├── works.js                    # Fitur premium "Simpan Pekerjaan": snapshot stash sessionStorage ↔ Firestore savedWorks (window.CivilWorks)
 │   ├── steel-profiles.js          # Library DB profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) — dipakai bersama tool baja (window.SteelProfiles / runtime.steel)
 │   ├── renderer.js                # Tier 3 — factory shared THREE.WebGLRenderer + resize handling (belum ada sampai tool 3D pertama)
 │   └── orbit-controls.js          # Tier 3 — custom OrbitCtrl (di-extract dari staad-viewer.html, dipakai ulang oleh semua module 3D)

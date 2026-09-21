@@ -207,6 +207,11 @@
         persist();
       }
     };
+    // Rekam nilai awal sekali (default atau hasil pulihan) supaya fitur
+    // "Simpan Pekerjaan" punya sesuatu untuk disimpan walau pengguna belum
+    // mengubah satu field pun. Perubahan berikutnya tetap lewat persist().
+    persist();
+
     // Modul penerima handoff memanggil buildForm dengan formId → shell bisa isi input via window.CivilForms[id].
     if (formId) { window.CivilForms = window.CivilForms || {}; window.CivilForms[formId] = api; }
     return api;

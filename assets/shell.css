@@ -180,6 +180,36 @@ body{
 .auth-google{width:100%; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink); background:var(--bg2); border:1px solid var(--line); border-radius:8px; padding:11px; cursor:pointer; transition:.12s}
 .auth-google:hover{border-color:var(--amber); color:var(--amber)}
 
+/* ---------- Pekerjaan Saya (simpan/buka pekerjaan — Premium) ---------- */
+.works-nav{width:100%}
+.works-nav .st{color:var(--amber)}
+.works-nav.premium{border-color:var(--amber); color:var(--amber)}
+.works-modal{width:min(520px,100%)}
+.works-ico{width:40px; height:43px; flex:none; display:grid; place-items:center; font-size:26px; color:var(--amber)}
+.works-save{background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:14px}
+.works-save-hd{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:9px}
+.works-save-hd b{color:var(--amber); font-weight:500}
+.works-save-row{display:flex; gap:8px}
+.works-save-row .auth-input{flex:1; min-width:0; background:var(--panel-solid)}
+.works-btn{flex:none; font-family:inherit; font-size:13px; font-weight:600; color:var(--bg); background:var(--amber); border:0; border-radius:8px; padding:0 18px; cursor:pointer; transition:.12s}
+.works-btn:hover{filter:brightness(1.08)}
+.works-btn:disabled{opacity:.55; cursor:not-allowed}
+.works-update{width:100%; margin-top:8px; font-family:inherit; font-size:12.5px; color:var(--ink-dim); background:transparent; border:1px solid var(--line); border-radius:8px; padding:8px; cursor:pointer; transition:.12s}
+.works-update:hover{border-color:var(--amber); color:var(--amber)}
+.works-hint{font-size:12.5px; line-height:1.6; color:var(--ink-dim); background:var(--bg2); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:14px}
+.works-list{display:flex; flex-direction:column; gap:6px; max-height:46vh; overflow-y:auto}
+.works-empty{font-size:12.5px; line-height:1.6; color:var(--ink-faint); text-align:center; padding:18px 10px}
+.work-item{display:flex; align-items:stretch; gap:6px}
+.work-open{flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; text-align:left; background:transparent; border:1px solid var(--line); border-radius:8px; padding:9px 12px; cursor:pointer; font-family:inherit; transition:.12s}
+.work-open:hover{border-color:var(--amber); background:var(--bg2)}
+.work-item.active .work-open{border-color:var(--amber)}
+.work-name{font-size:13px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.work-meta{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-faint); letter-spacing:.03em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.work-del{flex:none; background:transparent; border:1px solid var(--line); border-radius:8px; color:var(--ink-faint); font-family:inherit; font-size:15px; line-height:1; padding:0 11px; cursor:pointer; transition:.12s}
+.work-del:hover{border-color:var(--bad); color:var(--bad)}
+.work-del.confirm{border-color:var(--bad); color:var(--bad); font-size:11.5px; font-weight:600}
+.work-del:disabled{opacity:.5; cursor:not-allowed}
+
 /* ---------- Modal bridging Premium (paywall) ---------- */
 .paywall-modal{width:min(420px,100%)}
 .paywall-ico{width:40px; height:43px; flex:none; display:grid; place-items:center; font-size:26px; color:var(--amber)}
@@ -382,4 +412,7 @@ body{
   #app.collapsed .nav-head{justify-content:flex-start; padding:12px 16px}
   .ck-layout, .ck-layout.wide-form{grid-template-columns:1fr; grid-template-rows:auto 1fr; overflow-y:auto}
   .ck-panel{border-right:0; border-bottom:1px solid var(--line)}
+  /* Kolom sempit: nama pekerjaan & tombol Simpan ditumpuk agar placeholder utuh */
+  .works-save-row{flex-direction:column}
+  .works-btn{padding:11px}
 }

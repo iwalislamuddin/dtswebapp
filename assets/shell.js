@@ -358,6 +358,21 @@
     activate(id);
   }
 
+  /* ---------- API shell untuk fitur lintas-tool (core/works.js) ---------- */
+  // openTool(id, {force:true}) memaksa mount ulang walau tool itu sedang aktif
+  // — dipakai "Simpan Pekerjaan" setelah menulis ulang state ke sessionStorage,
+  // supaya form dibangun ulang dari state yang baru dipulihkan.
+  function openTool(id, opts) {
+    if (opts && opts.force && activeId === id) { unmountActive(); activeId = null; }
+    navigate(id);
+  }
+
+  window.CivilShell = {
+    navigate: navigate,
+    openTool: openTool,
+    currentId: function () { return activeId; }
+  };
+
   /* ---------- Theme dropdown (klik → 4 pilihan → apply) ---------- */
   function initTheme() {
     var THEMES = [

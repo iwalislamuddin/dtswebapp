@@ -115,6 +115,7 @@
             <div class="theme-pop" id="theme-pop" role="menu" aria-label="Pilih tema"><!-- diisi shell.js --></div>
           </div>
         </div>
+        <button class="iconbtn wide works-nav" id="works-btn" title="Pekerjaan tersimpan (Premium)"><span class="st">★</span> Pekerjaan Saya</button>
         <div class="acct-menu" id="acct-menu">
           <button class="iconbtn wide acct-btn" id="acct-btn" aria-haspopup="true" aria-expanded="false">👤 Masuk</button>
           <div class="acct-pop" id="acct-pop" role="menu" aria-label="Akun"><!-- diisi shell.js --></div>
@@ -277,6 +278,33 @@
     </div>
   </div>
 
+  <!-- Pekerjaan Saya (simpan/buka pekerjaan tersimpan — Premium) -->
+  <div class="modal-ov" id="works-ov">
+    <div class="modal works-modal" role="dialog" aria-modal="true" aria-labelledby="works-title">
+      <button class="modal-x" id="works-close" aria-label="Tutup">×</button>
+      <div class="modal-hd">
+        <span class="works-ico">★</span>
+        <div>
+          <div class="modal-title" id="works-title">Pekerjaan Saya</div>
+          <div class="modal-ver">Tersimpan di akun — bisa dibuka lintas perangkat</div>
+        </div>
+      </div>
+
+      <div class="works-save" id="works-save" hidden>
+        <div class="works-save-hd">Simpan pekerjaan dari <b id="works-save-tool"></b></div>
+        <div class="works-save-row">
+          <input class="auth-input" id="works-name" type="text" maxlength="60" autocomplete="off"
+                 placeholder="Nama pekerjaan (mis. Balok B1 Lantai 2)">
+          <button class="works-btn" id="works-save-btn" type="button">Simpan</button>
+        </div>
+        <button class="works-update" id="works-update-btn" type="button" hidden></button>
+      </div>
+      <div class="works-hint" id="works-hint" hidden></div>
+
+      <div class="works-list" id="works-list"><!-- diisi core/works.js --></div>
+    </div>
+  </div>
+
   <!-- Bridging Premium (paywall) -->
   <div class="modal-ov" id="paywall-ov">
     <div class="modal paywall-modal" role="dialog" aria-modal="true" aria-labelledby="paywall-title">
@@ -310,6 +338,7 @@
   <script src="core/renderer.js"></script>
   <script src="core/module-registry.js"></script>
   <script src="assets/shell.js"></script>
+  <script src="core/works.js"></script>
 
   <script>
     if ('serviceWorker' in navigator) {

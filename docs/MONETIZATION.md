@@ -56,9 +56,45 @@ Setelah ketiga langkah ini + config diisi, reload situs — tombol **"👤 Masuk
 - Login dengan Google → cek juga dokumen `users/{uid}` terbuat.
 - Belum ada perubahan pada fitur kalkulator/unduh PDF apa pun di fase ini — itu menyusul di Fase B & C.
 
-## 5. Yang menyusul (belum dikerjakan)
+## 5. Fase B — "Simpan Pekerjaan" (kode selesai, menunggu Firestore aktif)
 
-- **Fase B** — "Simpan Pekerjaan" (Firestore `savedWorks` subcollection, panel "Pekerjaan Saya").
+Kode Fase B sudah ada di repo: [`core/works.js`](../core/works.js) + tombol nav
+**★ Pekerjaan Saya** + panel `#works-ov`. Nol perubahan di `modules/*`.
+
+**Cara kerjanya.** Tiap tool sudah menulis nilai formnya ke sessionStorage lewat
+`CivilUI.stash` (kunci `civiltools-state:{toolId}:{suffix}`). `works.js` memotret
+SEMUA kunci milik tool aktif, menyimpannya sebagai satu string JSON di
+`users/{uid}/savedWorks/{workId}.stateJson`, lalu saat dibuka kembali menulis
+kunci-kunci itu balik ke sessionStorage dan meminta shell mount ulang tool
+(`CivilShell.openTool(id, {force:true})`). Karena berbasis prefiks, tool dengan
+stash tambahan (`cpt-bearing`/`cpt-pile` → `ta`, `pile-capacity` → `layers`) ikut
+tersimpan otomatis tanpa daftar khusus. Satu perubahan kecil di `core/ui-kit.js`:
+`buildForm` kini merekam nilai awal sekali saat form dibangun, supaya pekerjaan
+tetap bisa disimpan walau pengguna belum mengubah satu field pun.
+
+**Gate**: guest → modal Masuk; sudah masuk tapi belum premium → modal bridging;
+premium → panel terbuka.
+
+### Cara menguji Fase B sebelum pembayaran ada (Fase C)
+
+Belum ada cara membeli premium, jadi aktifkan manual untuk akun sendiri:
+
+1. Login di situs → Firebase Console > Firestore > koleksi `users` → buka dokumen
+   dengan uid Anda.
+2. Edit field `premium`: set `active` = `true` (boleh isi `plan` = `"manual"`).
+   Rules memang melarang *client* menulis field ini — tapi edit lewat Console
+   memakai hak admin, jadi diizinkan.
+3. Reload situs: tombol akun & **★ Pekerjaan Saya** berubah jadi aksen oranye,
+   panel bisa dibuka.
+4. Buka sebuah tool → ubah beberapa input → **★ Pekerjaan Saya** → beri nama →
+   **Simpan**. Cek dokumen baru di `users/{uid}/savedWorks`.
+5. Ubah input jadi nilai lain → buka panel → klik pekerjaan tadi → form harus
+   kembali ke nilai yang tersimpan. Coba juga dari tool lain (harus pindah tool
+   sendiri) dan dari perangkat/browser lain dengan akun yang sama.
+6. Hapus: klik × sekali (berubah jadi "Hapus?"), klik lagi untuk konfirmasi.
+
+## 6. Yang menyusul (belum dikerjakan)
+
 - **Fase C** — Integrasi **Midtrans Snap** (perlu akun Midtrans + upgrade Firebase ke plan **Blaze** untuk Cloud Functions), gating nyata `core/report.js` (PDF premium, unduh teks dinonaktifkan).
 - **Fase D** — Halaman lead-gen/cross-sell (`modules/promo-dts/`).
 
