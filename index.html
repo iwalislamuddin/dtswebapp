@@ -76,19 +76,21 @@
     })();
   </script>
 
-  <!-- Firebase (Auth + Firestore) — akun & status premium. GANTI value di
-       bawah dengan config project Firebase Anda (Console > Project Settings
-       > General > "Your apps" > SDK setup and configuration). Selama masih
-       placeholder ("GANTI..."), fitur akun nonaktif diam-diam (lihat
-       core/auth.js) — aman di-deploy sebelum project Firebase dibuat. -->
+  <!-- Firebase (Auth + Firestore) — akun & status premium. Config project
+       "edfs-civil-tools-e3a59" (Console > Project Settings > General >
+       "Your apps"). apiKey Firebase memang publik by design (identifier,
+       bukan rahasia) — keamanan sesungguhnya ada di Firestore Rules
+       (firebase/firestore.rules) + daftar Authorized domains di Console.
+       Bila value dikembalikan ke placeholder "GANTI...", fitur akun
+       nonaktif diam-diam (lihat core/auth.js). -->
   <script>
     window.FIREBASE_CONFIG = {
-      apiKey: 'GANTI_DENGAN_API_KEY',
-      authDomain: 'GANTI.firebaseapp.com',
-      projectId: 'GANTI',
-      storageBucket: 'GANTI.appspot.com',
-      messagingSenderId: 'GANTI',
-      appId: 'GANTI'
+      apiKey: 'AIzaSyACRDWhFc_voJQqp7kulcVrCvSMFgvqrZY',
+      authDomain: 'edfs-civil-tools-e3a59.firebaseapp.com',
+      projectId: 'edfs-civil-tools-e3a59',
+      storageBucket: 'edfs-civil-tools-e3a59.firebasestorage.app',
+      messagingSenderId: '385859186606',
+      appId: '1:385859186606:web:bc85a6cb82b39e0204223f'
     };
   </script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
