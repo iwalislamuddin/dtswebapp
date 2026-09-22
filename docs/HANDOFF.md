@@ -3,6 +3,27 @@
 Ringkasan pengembangan sampai **rilis v0.1.0** (2026-07-10). Dokumen ini untuk melanjutkan
 pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
+> ## ▶ MULAI DARI SINI (status per 2026-09-22)
+>
+> **Monetisasi Fase A–C SELESAI di repo dan terverifikasi langsung di sandbox:**
+> akun (Firebase Auth), Simpan Pekerjaan (Firestore), paywall unduhan laporan
+> dengan pratinjau gambar, dan berlangganan Midtrans Snap — pembayaran sandbox
+> mengaktifkan premium otomatis lewat webhook, idempoten, harga ditentukan server.
+> Infrastruktur hidup: project `edfs-civil-tools-e3a59` (Blaze), 3 Cloud Functions
+> di `asia-southeast2`, Midtrans Merchant `M099838` (sandbox).
+>
+> **Yang live di `tools.dtsengineering.co.id` masih build lama (≈ v0.5.1)** —
+> belum ada akun, belum ada paywall. Versi di modal Tentang masih v0.7.3.
+>
+> **Daftar pekerjaan berikutnya, dikelompokkan per tingkat urgensi, ada di
+> [`MONETIZATION.md` §7](MONETIZATION.md).** Baca itu dulu sebelum menyentuh
+> apa pun — ada satu jebakan P0: deploy ke produksi tanpa menambahkan domain ke
+> Firebase Authorized domains akan mematikan unduhan PDF untuk semua orang.
+>
+> Runbook: [`MONETIZATION.md`](MONETIZATION.md) (setup & uji bayar) ·
+> [`DEPLOY.md`](DEPLOY.md) (rilis statis) ·
+> [`DOMAIN_MIGRATION.md`](DOMAIN_MIGRATION.md) (rencana pindah domain).
+
 ## Apa yang sudah jadi
 
 **Shell & infrastruktur**

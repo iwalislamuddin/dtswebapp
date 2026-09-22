@@ -216,10 +216,75 @@ premium melihat tombol "★ Berlangganan Premium" di tempat yang sama.
   client key produksi di `index.html`, dan kedua secret di-set ulang dengan key
   produksi — lalu `firebase deploy --only functions`.
 
-## 7. Yang menyusul (belum dikerjakan)
+## 7. Papan kerja berikutnya (per 2026-09-22)
 
-- **Fase D** — Halaman lead-gen/cross-sell (`modules/promo-dts/`), kategori nav
-  baru "DTS Engineering".
-- Tampilan sisa masa aktif langganan di popover akun (mis. "Premium s/d 21 Okt 2026").
+Fase A–C selesai **di repo** dan terverifikasi di sandbox. Yang live di
+`tools.dtsengineering.co.id` masih build lama (≈ v0.5.1) — belum ada akun,
+belum ada paywall. Daftar di bawah urut menurut apa yang memblok apa.
+
+### 🔴 P0 — Wajib beres SEBELUM deploy berikutnya
+
+Ketiganya satu paket: deploy tanpa salah satunya membuat situs lebih buruk
+daripada sekarang.
+
+1. **Tambahkan `tools.dtsengineering.co.id` ke Firebase Auth > Settings >
+   Authorized domains.** Ini bukan sekadar "nanti juga bisa": paywall menyala
+   otomatis begitu `MIDTRANS_CONFIG` terisi (sudah terisi di repo). Kalau
+   domain produksi belum diizinkan, login gagal (`auth/unauthorized-domain`)
+   → tidak ada yang bisa jadi premium → **semua unduhan PDF berubah jadi
+   pratinjau untuk semua orang**. Regresi total. Verifikasi: buka situs
+   produksi, klik Masuk, pastikan login Google berhasil.
+2. **Naikkan versi app ke v0.8.0 + tulis catatan rilis** di modal Tentang
+   (`index.html`). Angkanya sendiri kosmetik, tapi modal Tentang adalah
+   satu-satunya changelog yang dilihat pengguna, dan versi di sana masih
+   **v0.7.3 (21 Agu 2026)** — tertinggal dua siklus (revisi Tool #16 P–M kolom,
+   lalu akun + Simpan Pekerjaan + paywall). Menerbitkan paywall tanpa memberi
+   tahu apa yang berubah = gelombang pertanyaan pengguna. Bump *minor*
+   (0.7.x → 0.8.0) karena ini fitur baru, bukan perbaikan.
+   Catatan: **SW cache tidak menunggu ini** — sudah di `civil-tools-v64` dan
+   itu yang mengurus invalidasi cache; nomor versi app murni komunikasi.
+3. **Deploy backlog v0.5.1 → v0.8.0 ke cPanel** (whitelist di
+   [DEPLOY.md](DEPLOY.md); `functions/`, `firebase/`, `firebase.json`,
+   `.firebaserc` TIDAK ikut). Sesudahnya uji di domain asli: login, simpan
+   pekerjaan, unduh PDF sebagai non-premium (harus pratinjau).
+
+### 🟠 P1 — Segera setelah live
+
+4. **Midtrans produksi.** Perlu verifikasi bisnis dulu. Saat lolos, tiga hal
+   berubah bersamaan: `MIDTRANS_IS_PRODUCTION = true` di `functions/index.js`,
+   `production: true` + client key produksi di `index.html`, dan kedua secret
+   di-set ulang (`--data-file`, jangan prompt) lalu `firebase deploy --only functions`.
+   Daftarkan juga Payment Notification URL di tab **Production** Midtrans —
+   setelan sandbox tidak terbawa.
+5. **Satu transaksi produksi sungguhan** (paket 1 bulan, Rp 14.000, dari akun
+   pribadi) sebagai uji asap sebelum diumumkan. Refund manual bila perlu.
+6. **Budget alert** di Google Cloud Billing (mis. Rp 50.000/bulan) — Blaze
+   sudah aktif, dan tanpa alert tidak ada rem kalau ada lonjakan aneh.
+7. **Bersihkan data uji**: order `pending` sisa pengujian, dan premium sandbox
+   di akun `iwal@` (s/d 22 Des 2026) & `finance@` (s/d 22 Okt 2026).
+
+### 🟡 P2 — Peningkatan produk (tidak memblok apa pun)
+
+8. **Fase D** — halaman lead-gen/cross-sell `modules/promo-dts/` + kategori nav
+   "DTS Engineering" (jasa konsultasi + ebook seri SAP2000).
+9. **Halaman harga publik** (mis. `/premium`) — saat ini paket hanya terlihat
+   di dalam modal, jadi tidak bisa diindeks Google maupun dibagikan tautannya.
+10. **Riwayat pembelian** di panel akun (baca `orders` milik sendiri — rules
+    sudah mengizinkan).
+11. **Pengingat kedaluwarsa** H-7 dan tanda terima via email (Firebase Extension
+    "Trigger Email" atau fungsi kecil + SMTP).
+
+### ⚪ P3 — Utang teknis & kebersihan
+
+12. `firebase-functions` v6 → v7 (CLI sudah memperingatkan "outdated"), plus
+    `npm audit` di `functions/` (8 moderate saat dipasang).
+13. **App Check** untuk Firestore & callable — mencegah penyalahgunaan endpoint
+    dari luar aplikasi (disarankan sendiri oleh Console).
+14. Keputusan **domain + migrasi Cloudflare Pages** (`docs/DOMAIN_MIGRATION.md`)
+    masih menggantung. Kalau domain berubah, Authorized domains (P0 no.1) dan
+    URL kanonik harus diubah lagi — mengerjakannya lebih awal menghemat satu
+    putaran.
+15. Matikan unduh `.txt` sepenuhnya bila kelak dianggap perlu (satu baris di
+    `core/report.js`, lihat §6).
 
 Detail arsitektur & data model lengkap: lihat memory project / plan file monetisasi.

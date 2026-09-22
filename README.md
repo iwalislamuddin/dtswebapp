@@ -58,6 +58,8 @@ core/
   report.js                Generator laporan monospace → PDF (Courier, tanpa library) / .txt
   auth.js                  Akun login/daftar (Firebase Auth) + status premium — window.CivilAuth
   works.js                 "Simpan Pekerjaan" (premium): state tool ↔ Firestore — window.CivilWorks
+  billing.js               Paket & checkout Midtrans Snap — window.CivilBilling
+functions/                 Cloud Functions pembayaran (deploy TERPISAH ke Firebase, bukan ke hosting statis)
   steel-profiles.js        Library DB profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) — dipakai semua tool baja
 modules/
   development-length/      Tool #1 — Panjang Penyaluran Tulangan Tarik (SNI 2847:2019)
