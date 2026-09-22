@@ -471,15 +471,37 @@
     function openPop() { acctPop.classList.add('show'); acctBtn.setAttribute('aria-expanded', 'true'); }
     function closePop() { acctPop.classList.remove('show'); acctBtn.setAttribute('aria-expanded', 'false'); }
 
-    function renderPop(user) {
+    function fmtTgl(d) {
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function renderPop(user, premium) {
       acctPop.innerHTML = '';
       if (!user) return;
-      var mail = UI.el('div', 'acct-mail', user.email || '');
+      acctPop.appendChild(UI.el('div', 'acct-mail', user.email || ''));
+
+      // Masa aktif + jalan berlangganan/perpanjang. Tanpa ini, pelanggan yang
+      // sudah premium tak punya pintu untuk memperpanjang sebelum kedaluwarsa.
+      var B = window.CivilBilling;
+      var aktif = !!(premium && premium.active);
+      if (aktif && premium.expiresAt) {
+        acctPop.appendChild(UI.el('div', 'acct-note', '★ Premium s/d ' + fmtTgl(premium.expiresAt)));
+      }
+      if (B && B.enabled()) {
+        var buy = UI.el('button', 'acct-item');
+        buy.type = 'button';
+        buy.textContent = aktif ? 'Perpanjang Premium' : '★ Berlangganan Premium';
+        buy.addEventListener('click', function () {
+          closePop();
+          B.openPlans(aktif ? 'renew' : 'pdf');
+        });
+        acctPop.appendChild(buy);
+      }
+
       var out = UI.el('button', 'acct-item');
       out.type = 'button';
       out.textContent = 'Keluar';
       out.addEventListener('click', function () { closePop(); if (CA) CA.signOut(); });
-      acctPop.appendChild(mail);
       acctPop.appendChild(out);
     }
 
@@ -499,7 +521,7 @@
         var label = user.email ? user.email.split('@')[0] : 'Akun';
         acctBtn.textContent = (premium && premium.active ? '★ ' : '👤 ') + label;
         acctBtn.classList.toggle('premium', !!(premium && premium.active));
-        renderPop(user);
+        renderPop(user, premium);
       } else {
         acctBtn.textContent = '👤 Masuk';
         acctBtn.classList.remove('premium');

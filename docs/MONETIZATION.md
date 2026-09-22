@@ -95,7 +95,12 @@ Belum ada cara membeli premium, jadi aktifkan manual untuk akun sendiri:
 
 ## 6. Fase C — Berlangganan (Midtrans Snap) & gating PDF
 
-Kode Fase C sudah ada di repo. Yang tersisa: langkah akun/deploy di bawah.
+**Status: SELESAI & TERVERIFIKASI LANGSUNG (22 Sep 2026).** Pembayaran sandbox
+paket 3 bulan mengaktifkan premium sepenuhnya otomatis: Snap → webhook Midtrans
+→ `orders/{id}.status = paid` → `users/{uid}.premium.expiresAt` maju 3 bulan,
+tanpa campur tangan manual. Idempotensi diuji (notifikasi sama dikirim 3×:
+`activated`, lalu `already-paid`, `already-paid`) dan notifikasi bersignature
+palsu memakai order ID asli ditolak tanpa mengubah apa pun.
 
 ### Harga paket (sumber kebenaran ada di server)
 
@@ -124,6 +129,16 @@ nominal; ia hanya mengirim `planId`.
   hanya keluar untuk pelanggan), sementara pelanggan tetap dapat format mentah
   yang berguna. Untuk mematikannya total, ubah `downloadText` di
   `core/report.js` agar selalu memanggil `openPreview`.
+
+### Perpanjangan
+
+Pelanggan yang masih aktif tetap bisa membeli lagi — itu perpanjangan, bukan
+pembelian ulang. Pintunya ada di **popover akun** (klik tombol akun di kiri
+bawah): baris "★ Premium s/d <tanggal>" + tombol **Perpanjang Premium**. Modal
+paket menjelaskan bahwa masa baru ditambahkan dari tanggal kedaluwarsa yang ada,
+dan `midtransWebhook` memang menghitungnya begitu (`base = expiresAt bila masih
+berlaku, selain itu now`) — tidak ada sisa hari yang hangus. Pengguna yang belum
+premium melihat tombol "★ Berlangganan Premium" di tempat yang sama.
 
 ### Alur uang (kenapa tidak bisa dipalsukan)
 

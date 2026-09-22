@@ -41,12 +41,24 @@
 
   var snapLoading = null;                    // Promise pemuatan snap.js (sekali saja)
   var busy = false;
+  var awaitingPayment = false;               // true setelah popup Snap selesai dibayar
+  var expiryAtOpen = null;                   // masa aktif saat modal dibuka (ms) — pembanding
 
   function UIk() { return window.CivilUI; }
   function CA() { return window.CivilAuth; }
   function toast(msg, kind) { if (UIk()) UIk().toast(msg, kind); }
 
   function rupiah(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+
+  function expiryMs() {
+    var A = CA(), p = A && A.getPremium && A.getPremium();
+    var e = p && p.expiresAt;
+    return (e && e.getTime) ? e.getTime() : 0;
+  }
+
+  function tanggal(d) {
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
 
   function enabled() {
     var A = CA();
@@ -125,12 +137,14 @@
         window.snap.pay(data.token, {
           onSuccess: function () {
             setBusy(false);
+            awaitingPayment = true;
             setStatus('Pembayaran diterima — mengaktifkan Premium…');
             // Aktivasi dilakukan webhook di server; listener Firestore di
             // core/auth.js yang akan memberi tahu saat premium menyala.
           },
           onPending: function () {
             setBusy(false);
+            awaitingPayment = true;
             setStatus('Pembayaran belum selesai — Premium aktif otomatis begitu pembayaran terkonfirmasi.');
           },
           onError: function () {
@@ -179,27 +193,41 @@
       var A = CA();
       if (!A || !A.enabled()) { toast('Fitur akun belum aktif', 'bad'); return; }
       if (!A.getUser()) { A.openLogin(); return; }
-      if (A.isPremium()) { toast('Premium Anda sudah aktif', 'info'); return; }
       if (!configured) {
         toast('Pembayaran belum dikonfigurasi', 'bad');
         return;
       }
+      // Sudah premium tetap boleh membeli — itu PERPANJANGAN. Server menambahkan
+      // masa baru dari sisa yang ada (lihat midtransWebhook), jadi tidak ada
+      // hari yang hangus. Tanpa jalur ini, pelanggan aktif tak punya cara
+      // memperpanjang sebelum masa berlakunya habis.
+      var p = A.getPremium();
+      var aktif = A.isPremium() && p && p.expiresAt;
       if (msgEl) {
-        msgEl.textContent = intent === 'save'
-          ? 'Simpan pekerjaan di akun Anda dan buka lagi kapan saja, lintas perangkat.'
-          : 'Unduh laporan PDF vektor siap dokumentasi — tanpa batas, di semua tool.';
+        msgEl.textContent = aktif
+          ? 'Premium Anda aktif sampai ' + tanggal(p.expiresAt) + '. Paket yang dibeli sekarang ' +
+            'ditambahkan dari tanggal itu — tidak ada sisa hari yang hangus.'
+          : (intent === 'save'
+            ? 'Simpan pekerjaan di akun Anda dan buka lagi kapan saja, lintas perangkat.'
+            : 'Unduh laporan PDF vektor siap dokumentasi — tanpa batas, di semua tool.');
       }
+      awaitingPayment = false;
+      expiryAtOpen = expiryMs();
       setStatus('');
       renderPlans();
       ov.classList.add('show');
     };
     closeImpl = close;
 
-    // Premium menyala (webhook sudah masuk) saat modal terbuka -> tutup & beri tahu.
+    // Tutup otomatis hanya bila (a) kita memang sedang menunggu hasil bayar dan
+    // (b) masa aktif benar-benar bertambah — bukan sekadar "sudah premium".
+    // Tanpa syarat kedua, modal perpanjangan akan menutup diri saat dibuka.
     if (CA()) CA().onChange(function (user, premium) {
-      if (premium && premium.active && ov.classList.contains('show')) {
+      if (!awaitingPayment || !ov.classList.contains('show')) return;
+      if (premium && premium.active && expiryMs() > (expiryAtOpen || 0)) {
+        awaitingPayment = false;
         close();
-        toast('Premium aktif — terima kasih!', 'info');
+        toast(expiryAtOpen ? 'Premium diperpanjang — terima kasih!' : 'Premium aktif — terima kasih!', 'info');
       }
     });
   }
