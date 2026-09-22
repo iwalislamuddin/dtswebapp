@@ -141,33 +141,42 @@ nominal; ia hanya mengirim `planId`.
 
 ### Langkah setup (manual, oleh pemilik project)
 
-1. **Upgrade Firebase ke plan Blaze** — Console > ⚙ > Usage and billing >
-   Details & settings > Modify plan. Butuh kartu; di volume kecil praktis tetap
-   gratis (ada kuota gratis bulanan), tapi pasang **budget alert** mis. Rp 50.000.
-2. **Daftar Midtrans** di [midtrans.com](https://midtrans.com) → mulai dari
-   **Sandbox** (Dashboard punya toggle Sandbox/Production). Ambil **Server Key**
-   dan **Client Key** di Settings > Access Keys.
-3. Isi `window.MIDTRANS_CONFIG` di `index.html`: `clientKey` (Client Key sandbox),
-   `production: false`.
-4. Pasang secret & deploy functions dari root repo:
+1. ✅ **Upgrade Firebase ke plan Blaze** — sudah dilakukan (22 Sep 2026).
+   Pasang **budget alert** (Console > ⚙ > Usage and billing > Budgets & alerts),
+   mis. Rp 50.000/bulan, supaya tidak ada kejutan tagihan.
+2. ✅ **Daftar Midtrans** — sudah (Merchant ID `M099838`, mode **Sandbox**).
+3. ✅ **Client Key sandbox** sudah terisi di `window.MIDTRANS_CONFIG`
+   (`index.html`), `production: false`.
+4. ✅ **`npm --prefix functions install`** — sudah dijalankan; `functions/node_modules`
+   ada di mesin lokal (tidak ikut git).
+5. ⏳ **Pasang secret & deploy functions.** Semua perintah dijalankan dari
+   **root repo** (`D:\dts homepage app\civil-tools`) di PowerShell/Terminal biasa
+   — bukan dari dalam `functions/`, karena `firebase.json` ada di root.
 
    ```bash
-   npm --prefix functions install
+   npm install -g firebase-tools
    firebase login
    firebase functions:secrets:set MIDTRANS_SERVER_KEY
    firebase functions:secrets:set MIDTRANS_CLIENT_KEY
    firebase deploy --only functions
    ```
 
-   (`firebase.json` & `.firebaserc` sudah ada di repo; keduanya beserta folder
+   `functions:secrets:set` akan **meminta nilainya lewat prompt** — tempel key di
+   situ. Jangan pernah menaruh **Server Key** di dalam berkas repo mana pun;
+   tempatnya hanya di Secret Manager. (Client Key beda urusan: memang publik.)
+
+   Deploy pertama akan meminta izin mengaktifkan beberapa API Google Cloud
+   (Cloud Build, Artifact Registry, Cloud Run, Secret Manager, Cloud Scheduler)
+   — jawab **yes**.
+
+   `firebase.json` & `.firebaserc` sudah ada di repo; keduanya beserta folder
    `functions/` TIDAK ikut ter-publish ke hosting statis — `scripts/cf-build.sh`
-   dan daftar zip di [DEPLOY.md](DEPLOY.md) memakai whitelist.)
-5. Salin URL `midtransWebhook` yang tercetak saat deploy → Midtrans Dashboard >
+   dan daftar zip di [DEPLOY.md](DEPLOY.md) memakai whitelist.
+6. ⏳ Salin URL `midtransWebhook` yang tercetak saat deploy → Midtrans Dashboard >
    Settings > Configuration > **Payment Notification URL** (isi juga di tab
    Production nanti). Biarkan Finish/Unfinish/Error URL kosong — Snap popup
    tidak memakai redirect.
-6. Deploy rules sekalian bila belum: `firebase deploy --only firestore:rules`.
-
+7. ⏳ Deploy rules bila belum pernah: `firebase deploy --only firestore:rules`.
 ### Uji coba (sandbox, tanpa uang sungguhan)
 
 - Buka tool → **Download PDF** → pratinjau muncul → **Lihat Paket Premium** →
@@ -179,8 +188,10 @@ nominal; ia hanya mengirim `planId`.
   akun & Pekerjaan Saya berubah beraksen oranye tanpa perlu reload.
 - Uji idempotensi: di Midtrans Dashboard, kirim ulang notifikasi order yang sama
   → `expiresAt` tidak boleh bertambah lagi.
-- Naik ke produksi: ganti `production: true` + client key produksi di
-  `index.html`, set ulang secret dengan server key produksi, deploy ulang.
+- Naik ke produksi, tiga hal harus berubah bersamaan:
+  `MIDTRANS_IS_PRODUCTION = true` di `functions/index.js`, `production: true` +
+  client key produksi di `index.html`, dan kedua secret di-set ulang dengan key
+  produksi — lalu `firebase deploy --only functions`.
 
 ## 7. Yang menyusul (belum dikerjakan)
 

@@ -26,7 +26,7 @@
 const crypto = require('crypto');
 const { onCall, onRequest, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule } = require('firebase-functions/v2/scheduler');
-const { defineSecret, defineString } = require('firebase-functions/params');
+const { defineSecret } = require('firebase-functions/params');
 const logger = require('firebase-functions/logger');
 const admin = require('firebase-admin');
 const midtransClient = require('midtrans-client');
@@ -37,10 +37,15 @@ const { FieldValue, Timestamp } = admin.firestore;
 
 const REGION = 'asia-southeast2';                       // Jakarta
 
+// Kunci rahasia — TIDAK PERNAH ada di repo. Disimpan di Secret Manager:
+//   firebase functions:secrets:set MIDTRANS_SERVER_KEY
 const MIDTRANS_SERVER_KEY = defineSecret('MIDTRANS_SERVER_KEY');
 const MIDTRANS_CLIENT_KEY = defineSecret('MIDTRANS_CLIENT_KEY');
-// 'true' = uang sungguhan. Default sandbox supaya salah setel tidak menagih siapa pun.
-const MIDTRANS_PRODUCTION = defineString('MIDTRANS_PRODUCTION', { default: 'false' });
+
+// SAKELAR SANDBOX / PRODUKSI. false = kartu uji, tidak ada uang berpindah.
+// Saat naik produksi: ubah ke true DI SINI, set ulang kedua secret dengan key
+// produksi, deploy ulang, dan samakan `production: true` di index.html.
+const MIDTRANS_IS_PRODUCTION = false;
 
 /* ---------- Sumber kebenaran harga (samakan dengan core/billing.js) ---------- */
 const PLANS = {
@@ -51,7 +56,7 @@ const PLANS = {
 
 function snapClient() {
   return new midtransClient.Snap({
-    isProduction: MIDTRANS_PRODUCTION.value() === 'true',
+    isProduction: MIDTRANS_IS_PRODUCTION,
     serverKey: MIDTRANS_SERVER_KEY.value(),
     clientKey: MIDTRANS_CLIENT_KEY.value()
   });
