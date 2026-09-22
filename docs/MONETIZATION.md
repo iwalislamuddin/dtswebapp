@@ -176,6 +176,14 @@ nominal; ia hanya mengirim `planId`.
    Settings > Configuration > **Payment Notification URL** (isi juga di tab
    Production nanti). Biarkan Finish/Unfinish/Error URL kosong — Snap popup
    tidak memakai redirect.
+
+   > Tombol **Test notification URL** di dashboard mengirim payload dengan
+   > `order_id` contoh (`payment_notif_test_...`) yang tentu saja tidak ada di
+   > Firestore. Karena itu webhook sengaja membalas **200 untuk semua payload
+   > yang tidak bisa diproses** (order tak dikenal, signature tidak cocok,
+   > payload tak lengkap) dan hanya menyisakan 5xx untuk error internal yang
+   > memang layak dikirim ulang. Keamanannya tetap: premium hanya berubah bila
+   > signature sah **dan** order ada **dan** nominal cocok.
 7. ⏳ Deploy rules bila belum pernah: `firebase deploy --only firestore:rules`.
 ### Uji coba (sandbox, tanpa uang sungguhan)
 

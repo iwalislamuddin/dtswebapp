@@ -135,8 +135,19 @@ exports.midtransWebhook = onRequest(
     const statusCode = b.status_code;
     const grossAmount = b.gross_amount;
 
+    // BALAS 200 UNTUK APA PUN YANG TIDAK BISA KITA PROSES.
+    // Midtrans menganggap balasan non-2xx sebagai kegagalan: tombol "Test
+    // notification URL" di dashboard jadi merah, dan notifikasi asli terus
+    // dikirim ulang percuma. Yang penting: status premium HANYA berubah bila
+    // signature sah DAN ordernya ada DAN nominalnya cocok — jadi membalas 200
+    // di sini tidak melonggarkan keamanan sedikit pun, hanya sopan santun
+    // protokol. 5xx sengaja disisakan untuk error internal, supaya notifikasi
+    // yang gagal kita proses memang dikirim ulang oleh Midtrans.
     if (!orderId || !statusCode || !grossAmount || !b.signature_key) {
-      res.status(400).send('Payload tidak lengkap'); return;
+      logger.info('Webhook diabaikan: payload tidak lengkap (kemungkinan ping tes)', {
+        orderId: orderId || null
+      });
+      res.status(200).send('OK (diabaikan: payload tidak lengkap)'); return;
     }
 
     // Signature Midtrans: sha512(order_id + status_code + gross_amount + serverKey)
@@ -144,8 +155,8 @@ exports.midtransWebhook = onRequest(
       .update(`${orderId}${statusCode}${grossAmount}${MIDTRANS_SERVER_KEY.value()}`)
       .digest('hex');
     if (expected !== b.signature_key) {
-      logger.warn('Webhook signature tidak cocok', { orderId });
-      res.status(403).send('Invalid signature'); return;
+      logger.warn('Webhook diabaikan: signature tidak cocok', { orderId });
+      res.status(200).send('OK (diabaikan: signature tidak cocok)'); return;
     }
 
     const trxStatus = b.transaction_status;
@@ -212,10 +223,9 @@ exports.midtransWebhook = onRequest(
       });
 
       logger.info('Webhook diproses', { orderId, trxStatus, result });
-      // 404 hanya untuk order yang benar-benar tak dikenal; sisanya 200 supaya
-      // Midtrans berhenti mengirim ulang notifikasi yang sudah kita tangani.
-      if (result === 'unknown-order') { res.status(404).send('Order tidak ditemukan'); return; }
-      res.status(200).send('OK');
+      // Termasuk 'unknown-order': order uji dari dashboard Midtrans (order_id
+      // contoh seperti payment_notif_test_...) memang tidak ada di Firestore.
+      res.status(200).send('OK (' + result + ')');
     } catch (err) {
       logger.error('Webhook gagal diproses', { orderId, err: String(err) });
       res.status(500).send('Error');       // biar Midtrans mengirim ulang
