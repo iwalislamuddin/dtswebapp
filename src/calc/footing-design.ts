@@ -8,7 +8,7 @@
 //   geser pons di d/2 (min 3 persamaan ACI 22.6.5).
 // Asumsi: tapak kaku, tekanan tanah linear, faktor beban rata-rata LF; tanpa pasif/kohesi pada cek geser.
 
-import { barArea, beta1, flexuralRn, oneWayVc, punchingVc, rhoFromRn, rhoShrinkage } from './shared/concrete'
+import { oneWayVc, punchingVc, stripDesign } from './shared/concrete'
 import { numFinite as num, type NumLike } from './shared/num'
 
 export interface FootingInput {
@@ -131,33 +131,6 @@ export interface FootingResult {
   desOk?: boolean
 }
 
-interface AsDesign {
-  Mu: number
-  As: number
-  rho: number
-  a: number
-  c: number
-  et: number
-  tc: boolean
-  infeasible: boolean
-}
-
-/** Tulangan tarik per meter lebar (b = 1000 mm) untuk Mu (kNm/m). */
-function designAsPerM(Mu: number, d: number, fc: number, fy: number): AsDesign {
-  const o: AsDesign = { Mu, As: 0, rho: 0, a: 0, c: 0, et: Infinity, tc: true, infeasible: false }
-  const b = 1000
-  if (!(Mu > 0) || !(d > 0)) return o
-  const { disc, rho } = rhoFromRn(flexuralRn(Mu * 1e6, 0.9, b, d), fc, fy)
-  if (disc < 0) o.infeasible = true
-  o.rho = rho
-  o.As = rho * b * d
-  o.a = (o.As * fy) / (0.85 * fc * b)
-  o.c = o.a / beta1(fc)
-  o.et = o.c > 0 ? (0.003 * (d - o.c)) / o.c : Infinity
-  o.tc = o.et >= 0.005
-  return o
-}
-
 /** Lentur & geser kantilever satu arah (span, colDim, e dalam m; quavg kPa; dEff mm). Sisi menentukan. */
 function cantilever(span: number, colDim: number, e: number, quavg: number, dEff: number) {
   const arm = span / 2 - colDim / 2
@@ -182,19 +155,11 @@ function cantilever(span: number, colDim: number, e: number, quavg: number, dEff
 }
 
 function designDir(cant: { arm: number; Mu: number; Vu: number }, dEff: number, fc: number, fy: number, db: number, h: number): FlexureDirection {
-  const a = designAsPerM(cant.Mu, dEff, fc, fy)
-  const AsMin = rhoShrinkage(fy) * 1000 * h // susut-suhu pada penampang bruto
-  const AsReq = Math.max(a.As, AsMin)
-  const Ab = barArea(db)
-  const sTeo = (1000 * Ab) / AsReq
-  let s = Math.floor(sTeo / 25) * 25
-  const sMax = Math.floor(Math.min(3 * h, 450) / 25) * 25
-  if (s > sMax) s = sMax
-  if (s < 50) s = 50
+  const st = stripDesign(cant.Mu, dEff, fc, fy, db, h, 3)
   return {
-    arm: cant.arm, Mu: cant.Mu, Vu: cant.Vu, et: a.et, tc: a.tc, infeasible: a.infeasible, AsFlex: a.As,
-    AsMin, AsReq, govMin: AsReq > a.As + 1e-6, spacingCap: sTeo > Math.min(3 * h, 450),
-    s, sMax: Math.min(3 * h, 450), AsProv: (1000 * Ab) / s, db,
+    arm: cant.arm, Mu: cant.Mu, Vu: cant.Vu, et: st.et, tc: st.tc, infeasible: st.infeasible, AsFlex: st.As,
+    AsMin: st.AsMin, AsReq: st.AsReq, govMin: st.govMin, spacingCap: st.spacingCap, s: st.s, sMax: st.sMax,
+    AsProv: st.AsProv, db,
   }
 }
 

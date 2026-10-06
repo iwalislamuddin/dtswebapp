@@ -110,8 +110,9 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
             **kelompok geoteknik lengkap**
       - [x] Struktur bawah: `footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`
             (+ `shared/concrete.ts`, `shared/retaining.ts`) — 2026-10-07
-      - [ ] Beton: `development-length`, `beam-flexure`, `beam-shear-torsion`, `column-pm`, `min-reinforcement`,
-            `continuous-beam`, `two-way-slab`, `composite-slab`, `concrete-stair`
+      - [x] Beton gelombang 1: `development-length`, `beam-flexure`, `beam-shear-torsion`, `min-reinforcement`,
+            `two-way-slab` (+ `rhoMinBeam`, `stripDesign` di `shared/concrete.ts`) — 2026-10-07
+      - [ ] Beton gelombang 2: `column-pm`, `continuous-beam`, `composite-slab`, `concrete-stair`
       - [ ] Baja (port `core/steel-profiles.js` → `shared/` dulu): `steel-tension`, `steel-compression`,
             `steel-flexure`, `steel-beam-analysis`, `base-plate`
       - [ ] Sambungan: `bolt-connection`, `weld-connection`, `anchor-bolt-group`
@@ -132,12 +133,16 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **[Anda]** Daftar tool yang isinya ingin diubah (disampaikan pemilik 2026-10-07, rinciannya menyusul)
 - [ ] `footing-design` → **`shallow-foundation`** dan `pile-cap` → **`deep-foundation`** (+ redirect 301), tab
       Settlement opsional — spesifikasi: [TOOL-REVISIONS.md](TOOL-REVISIONS.md) §1–3
-- [ ] **Pustaka Data** (tanah, profil lapis, CPT, N-SPT, material) — usulan & 3 keputusan terbuka:
-      [TOOL-REVISIONS.md](TOOL-REVISIONS.md) §4
+- [ ] **Library Data** (Premium; tanah, profil lapis, CPT, N-SPT, material; nama + deskripsi, tanpa proyek) —
+      [TOOL-REVISIONS.md](TOOL-REVISIONS.md) §4 (keputusan 2026-10-07)
+- [ ] Profil baja: ganti sumber ke tabel JIS EDFS Matrix (perubahan angka sadar) — TOOL-REVISIONS.md §4
 - [ ] `retaining-concrete`: cabang tekanan tumpu terfaktor segitiga ke arah heel tidak tercapai oleh kasus uji
       (dinding nyata praktis tak mencapainya) — tambahkan uji langsung saat fungsi tumpu terfaktor dirapikan
 - [ ] `settlement`: derajat konsolidasi melompat kecil di U ≈ 60% (batas cabang Tv = 0,2827; rumus log memberi
       59,66% di sana) — geser batas ke Tv ≈ 0,286 agar kontinu
+- β1 disatukan ke versi Tabel 22.2.2.4.3 (0,65 untuk f'c ≥ 55 MPa) di `shared/concrete.ts`. Modul lama tapak,
+  pelat dua arah, dinding beton, kolom P-M, pelat komposit, tangga memakai rumus tanpa batas itu → β1 0,657 pada
+  55 ≤ f'c < 56 MPa; kini 0,65 (perbedaan hanya di rentang itu, di luar kasus golden)
 - Sudah diselaraskan saat port (tidak memengaruhi angka hasil): penanda φ > 50° Terzaghi yang bocor antar
   perhitungan (`bearing-capacity`); parser CPT `cpt-bearing` kini mengonversi satuan kolom fs seperti `cpt-pile`
   (fs tidak dipakai di hitungan fondasi dangkal)

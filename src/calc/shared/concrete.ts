@@ -1,9 +1,14 @@
 // Rumus beton bertulang bersama — SNI 2847:2019 (≈ ACI 318-14/19). Satuan N, mm, MPa kecuali disebut lain.
 // Dipakai tapak (footing-design), pile cap, dinding penahan beton; tool beton lain menyusul.
 
-/** β1 blok tegangan persegi ekuivalen (Ps. 22.2.2.4.3). */
+/**
+ * β1 blok tegangan persegi ekuivalen (Tabel 22.2.2.4.3): 0,85 (f'c ≤ 28), linear, 0,65 (f'c ≥ 55).
+ * Beberapa modul lama tidak memakai batas f'c ≥ 55 (rumus memberi 0,657 di 55 MPa); disatukan ke versi tabel.
+ */
 export function beta1(fc: number): number {
-  return fc <= 28 ? 0.85 : Math.max(0.65, 0.85 - (0.05 * (fc - 28)) / 7)
+  if (fc <= 28) return 0.85
+  if (fc >= 55) return 0.65
+  return Math.max(0.65, 0.85 - (0.05 * (fc - 28)) / 7)
 }
 
 /** Rasio tulangan susut-suhu pelat terhadap penampang bruto (Ps. 24.4.3.2). */
@@ -49,4 +54,74 @@ export function punchingVc(
   const v3 = 0.083 * (2 + (alphaS * d) / b0) * sq
   const vc = Math.min(v1, v2, v3)
   return { vc, gov: vc === v1 ? 'basic' : vc === v2 ? 'beta' : 'alpha' }
+}
+
+/** Modulus elastisitas baja tulangan (MPa). */
+export const ES = 200000
+
+/** ρ minimum balok lentur max(0,25√f'c/fy; 1,4/fy) (Ps. 9.6.1.2). */
+export function rhoMinBeam(fc: number, fy: number): number {
+  return Math.max((0.25 * Math.sqrt(fc)) / fy, 1.4 / fy)
+}
+
+/** Hasil desain tulangan satu arah per meter lebar pelat/tapak. */
+export interface StripDesign {
+  /** kNm/m */
+  Mu: number
+  /** As lentur perlu (mm²/m). */
+  As: number
+  rho: number
+  a: number
+  c: number
+  et: number
+  /** Terkendali tarik (εt ≥ 0,005). */
+  tc: boolean
+  /** Rn melebihi kapasitas penampang (diskriminan < 0, dipakai ρ maksimum rumus). */
+  infeasible: boolean
+  /** As susut-suhu pada penampang bruto (mm²/m). */
+  AsMin: number
+  AsReq: number
+  govMin: boolean
+  /** Spasi terpasang (mm, kelipatan 25, 50 ≤ s ≤ sMax). */
+  s: number
+  /** Batas spasi absolut min(k·h, 450) (mm). */
+  sMax: number
+  /** Spasi teoretis melebihi batas. */
+  spacingCap: boolean
+  AsProv: number
+  db: number
+}
+
+/**
+ * Tulangan lentur per meter (b = 1000) untuk Mu (kNm/m): As perlu dari Rn, minimum susut-suhu, spasi kelipatan
+ * 25 mm ≤ min(sMaxFactor·h, 450). Mu ≤ muMin → hanya tulangan minimum.
+ */
+export function stripDesign(
+  Mu: number, d: number, fc: number, fy: number, db: number, h: number, sMaxFactor: number, muMin = 0,
+): StripDesign {
+  const b = 1000
+  let As = 0, rho = 0, a = 0, c = 0, et = Infinity, tc = true, infeasible = false
+  if (Mu > muMin && d > 0) {
+    const sol = rhoFromRn(flexuralRn(Mu * 1e6, 0.9, b, d), fc, fy)
+    infeasible = sol.disc < 0
+    rho = sol.rho
+    As = rho * b * d
+    a = (As * fy) / (0.85 * fc * b)
+    c = a / beta1(fc)
+    et = c > 0 ? (0.003 * (d - c)) / c : Infinity
+    tc = et >= 0.005
+  }
+  const AsMin = rhoShrinkage(fy) * 1000 * h
+  const AsReq = Math.max(As, AsMin)
+  const Ab = barArea(db)
+  const sTeo = (1000 * Ab) / AsReq
+  const sMax = Math.min(sMaxFactor * h, 450)
+  let s = Math.floor(sTeo / 25) * 25
+  const sCap = Math.floor(sMax / 25) * 25
+  if (s > sCap) s = sCap
+  if (s < 50) s = 50
+  return {
+    Mu, As, rho, a, c, et, tc, infeasible, AsMin, AsReq, govMin: AsReq > As + 1e-6,
+    s, sMax, spacingCap: sTeo > sMax, AsProv: (1000 * Ab) / s, db,
+  }
 }

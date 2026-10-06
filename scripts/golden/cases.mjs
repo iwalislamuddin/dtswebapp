@@ -70,6 +70,20 @@ const rsBase = {
 }
 const rs = (name, over) => ({ name, args: [{ ...rsBase, ...over }] })
 
+const ldBase = { fc: 25, fy: 420, barType: 'ulir', db: 19, psit: 1.0, psie: 1.0, lambda: 1.0, cb: 40, ktrMode: 'zero', Atr: 0, s: 100, n: 1 }
+const ld = (name, over) => ({ name, args: [{ ...ldBase, ...over }] })
+const bfBase = { fc: 25, fy: 420, b: 300, h: 500, cc: 40, ds: 10, n1: 3, db1: 19, nLay: 1, sv: 25, doubly: 'no', n2: 2, db2: 16 }
+const bf = (name, over) => ({ name, args: [{ ...bfBase, ...over }] })
+const bstBase = {
+  fc: 25, fy: 420, fyt: 420, lam: 1.0, b: 300, h: 500, cc: 40, ds: 10, nLegs: 2, s: 100,
+  nTop: 2, dbTop: 16, nBot: 2, dbBot: 19, nSide: 2, dbSide: 13, Vu: 150, Tu: 25,
+}
+const bst = (name, over) => ({ name, args: [{ ...bstBase, ...over }] })
+const mrBase = { elem: 'balok', fc: 25, fy: 420, fyt: 420, b: 300, h: 500, D: 500, B: 1800, L: 1800, cc: 40, db: 19, tieType: 'ikat', ds: 10, dsp: 10, arah: 'satu' }
+const mr = (name, over) => ({ name, args: [{ ...mrBase, ...over }] })
+const twBase = { Lx: 4, Ly: 5, h: 140, condX: 'ff', condY: 'ff', qDL: 1.2, qLL: 2.5, fc: 25, fy: 420, cc: 20, db: 10 }
+const tw = (name, over) => ({ name, args: [{ ...twBase, ...over }] })
+
 export const CASES = {
   'bearing-capacity': [
     bearing('default (HANDOFF: Terzaghi qu 1373)', {}),
@@ -327,5 +341,100 @@ export const CASES = {
     rs('H 0', { H: 0 }),
     rs('gammaW 0', { gammaW: 0 }),
     rs('heel negatif', { heel: -1 }),
+  ],
+  'development-length': [
+    ld('default D19 (HANDOFF 560 mm)', {}),
+    ld('polos 19 (HANDOFF 1110 mm)', { barType: 'polos', db: 19 }),
+    ld('polos 8', { barType: 'polos', db: 8 }),
+    ld('D25 (psi s 1,0)', { db: 25 }),
+    ld('fy 550 (psi g 1,15)', { fy: 550 }),
+    ld('fy 600 (psi g 1,3)', { fy: 600 }),
+    ld('psi t x psi e dibatasi 1,7', { psit: 1.3, psie: 1.5 }),
+    ld('beton ringan', { lambda: 0.75 }),
+    ld('fc 80 (akar dibatasi 8,3)', { fc: 80 }),
+    ld('Ktr dihitung', { ktrMode: 'calc', Atr: 157, s: 100, n: 3 }),
+    ld('rasio dibatasi 2,5', { cb: 80, ktrMode: 'calc', Atr: 400, s: 50, n: 1 }),
+    ld('ld minimum 300', { db: 10, cb: 60, fy: 280 }),
+    ld('ld tepat di bawah 300', { db: 10, cb: 60, fy: 440 }),
+    ld('select sebagai teks', { db: '22', psit: '1.3', psie: '1.2', lambda: '1' }),
+    ld('fc 0', { fc: 0 }),
+    ld('cb 0', { cb: 0 }),
+  ],
+  'beam-flexure': [
+    bf('default 3D19 (HANDOFF phiMn 132,6)', {}),
+    bf('over-reinforced 8D25 (HANDOFF phi 0,65)', { n1: 8, db1: 25, nLay: 2 }),
+    bf('2 lapis', { n1: 6, db1: 22, nLay: 2 }),
+    bf('3 lapis, lapis > batang', { n1: 2, nLay: 3 }),
+    bf('rangkap', { doubly: 'yes', n1: 5, db1: 22, nLay: 2 }),
+    bf('rangkap, baja tekan belum leleh', { doubly: 'yes', n1: 3, db1: 16, n2: 3, db2: 22 }),
+    bf('transisi', { n1: 5, db1: 25, nLay: 2 }),
+    bf('di bawah As,min', { n1: 1, db1: 10, h: 700 }),
+    bf('tidak muat satu lapis', { n1: 6, db1: 25 }),
+    bf('spasi bersih kurang', { n1: 5, db1: 22 }),
+    bf('fc 40', { fc: 40 }),
+    bf('fc 60', { fc: 60 }),
+    bf('sv kosong -> 25', { n1: 6, nLay: 2, sv: 0 }),
+    bf('select sebagai teks', { ds: '10', db1: '22', nLay: '2', n1: 4 }),
+    bf('tinggi efektif <= 0', { h: 60 }),
+    bf('n1 0', { n1: 0 }),
+  ],
+  'beam-shear-torsion': [
+    bst('default', {}),
+    bst('torsi diabaikan', { Tu: 2 }),
+    bst('tanpa torsi', { Tu: 0 }),
+    bst('geser besar, Vs > Vs,maks', { s: 40, nLegs: 4, ds: 13, Vu: 500 }),
+    bst('penampang tidak cukup', { Vu: 400, Tu: 80 }),
+    bst('spasi terlalu besar', { s: 300 }),
+    bst('Vs > 0,33 (spasi d/4)', { s: 60, ds: 13, nLegs: 4 }),
+    bst('balok tinggi, d/4 > 300', { b: 400, h: 1300, ds: 13, nLegs: 4, s: 80, nBot: 4, dbBot: 25, nSide: 4, Vu: 600, Tu: 0 }),
+    bst('Al tidak cukup', { Tu: 45, nSide: 0, dbTop: 13, dbBot: 13 }),
+    bst('samping ganjil', { nSide: 3 }),
+    bst('samping negatif', { nSide: -2 }),
+    bst('beton ringan', { lam: 0.75 }),
+    bst('fc 80 (akar dibatasi)', { fc: 80 }),
+    bst('select sebagai teks', { ds: '13', nLegs: '3', nTop: '3', dbTop: '19', lam: '0.85' }),
+    bst('d <= 0', { h: 60, cc: 20 }),
+    bst('inti <= 0', { b: 80, cc: 40 }),
+    bst('nBot 1 tidak valid', { nBot: 1 }),
+  ],
+  'min-reinforcement': [
+    mr('balok default', {}),
+    mr('balok fc 40 (akar menentukan)', { fc: 40 }),
+    mr('balok sempit (spasi kurang)', { b: 150, db: 25, h: 900 }),
+    mr('balok tinggi > 900', { h: 1000 }),
+    mr('balok d <= 0', { h: 40 }),
+    mr('kolom persegi', { elem: 'kolom-p' }),
+    mr('kolom persegi pipih', { elem: 'kolom-p', b: 300, h: 800, db: 13 }),
+    mr('kolom persegi tulangan besar', { elem: 'kolom-p', b: 250, h: 250, db: 36, ds: 10 }),
+    mr('kolom lingkaran ikat', { elem: 'kolom-l' }),
+    mr('kolom lingkaran spiral', { elem: 'kolom-l', tieType: 'spiral' }),
+    mr('spiral pitch > 75', { elem: 'kolom-l', tieType: 'spiral', D: 300, dsp: 13 }),
+    mr('spiral pitch < 25', { elem: 'kolom-l', tieType: 'spiral', D: 1200, dsp: 8, fc: 50 }),
+    mr('spiral fyt > 700', { elem: 'kolom-l', tieType: 'spiral', fyt: 800 }),
+    mr('spiral pitch bersih 75-80', { elem: 'kolom-l', tieType: 'spiral', D: 300, dsp: 13, fyt: 380 }),
+    mr('kolom lingkaran kecil (rb <= 0)', { elem: 'kolom-l', D: 100, cc: 40 }),
+    mr('kolom lingkaran tulangan besar', { elem: 'kolom-l', db: 36, ds: 10 }),
+    mr('pelat satu arah', { elem: 'pelat', h: 120, db: 10 }),
+    mr('pelat dua arah fy 280', { elem: 'pelat', h: 150, db: 10, fy: 280, arah: 'dua' }),
+    mr('pelat rapat', { elem: 'pelat', h: 400, db: 8 }),
+    mr('pile cap', { elem: 'pilecap', h: 800 }),
+    mr('pile cap tebal', { elem: 'pilecap', h: 1000 }),
+    mr('fc 0', { fc: 0 }),
+    mr('pile cap B 0', { elem: 'pilecap', B: 0 }),
+  ],
+  'two-way-slab': [
+    tw('default jepit-jepit', {}),
+    tw('sendi-sendi', { condX: 'ss', condY: 'ss' }),
+    tw('jepit-sendi', { condX: 'fp', condY: 'fp' }),
+    tw('campuran', { condX: 'ss', condY: 'fp' }),
+    tw('Ly < Lx ditukar', { Lx: 5, Ly: 4, condX: 'ss', condY: 'ff' }),
+    tw('Ly/Lx > 2', { Lx: 3, Ly: 7 }),
+    tw('beban 1,4D menentukan', { qLL: 0, qDL: 3 }),
+    tw('bentang besar (retak, lendutan)', { Lx: 7, Ly: 8, condX: 'ss', condY: 'ss', qLL: 5 }),
+    tw('pelat tipis tak layak', { h: 80, Lx: 8, Ly: 9, qDL: 10, qLL: 15, condX: 'ss', condY: 'ss' }),
+    tw('fc 40', { fc: 40 }),
+    tw('tinggi efektif <= 0', { h: 20, cc: 20 }),
+    tw('nilai string', { Lx: '4.5', db: '13', h: '150' }),
+    tw('Lx 0', { Lx: 0 }),
   ],
 }

@@ -1,4 +1,4 @@
-# Revisi isi tool & Pustaka Data
+# Revisi isi tool & Library Data
 
 Permintaan pemilik (2026-10-07). Dikerjakan **setelah semua tool di-port** ke `src/calc` (1:1, golden test) dan shell
 React tersedia — lihat urutan di [TODO.md](TODO.md). Perhitungan lama yang sudah di-port menjadi bahan dasar;
@@ -10,7 +10,7 @@ Perhitungan & desain pondasi tapak dalam satu tool:
 
 | Bagian | Isi | Bahan dari `src/calc` |
 |---|---|---|
-| Daya dukung tanah | qu/q_izin Terzaghi/Meyerhof/Vesic; parameter tanah diambil dari Pustaka Data atau diisi langsung | `bearing-capacity.ts` (dipanggil langsung, bukan salin angka) |
+| Daya dukung tanah | qu/q_izin Terzaghi/Meyerhof/Vesic; parameter tanah diambil dari Library Data atau diisi langsung | `bearing-capacity.ts` (dipanggil langsung, bukan salin angka) |
 | Tekanan dasar & stabilitas | tekanan sudut biaksial, kern/uplift, guling | `footing-design.ts` |
 | Tahanan lateral (sliding) | gesekan dasar μ·N **+ adhesi & pasif** (sekarang hanya μ·N) | `footing-design.ts`, `shared/retaining.ts` (pola Pp) |
 | Geser 1 & 2 arah | satu arah di d, pons di d/2 | `footing-design.ts`, `shared/concrete.ts` |
@@ -45,17 +45,22 @@ efisiensi grup & settlement kelompok yang dipakai.
   tautan & indeks Google tidak putus; pekerjaan tersimpan (`tools.saved_works.tool_id`) dimigrasi bila sudah ada.
 - `retaining-concrete`, `retaining-stone`: **tidak diubah** (keputusan pemilik).
 
-## 4. Pustaka Data (simpan data yang dipakai ulang)
+## 4. Library Data (simpan data yang dipakai ulang)
 
 Tujuan: data yang sama (tanah, sondir, N-SPT, material) tidak diinput berulang di tool berbeda.
 
-**Usulan penempatan**
-- **Menu `File > Pustaka Data…`** — dialog pengelola: daftar per jenis, tambah/ubah/hapus/duplikat, impor
+**Keputusan pemilik (2026-10-07)**
+- Istilah **"Library"** dipakai di semua bahasa (termasuk UI Bahasa Indonesia) — bukan "Pustaka".
+- **Fitur Premium** (seperti Save). Free User tetap bisa melihat & menghapus item miliknya, seperti pekerjaan
+  tersimpan; Guest tidak punya Library.
+- **Tanpa pengelompokan proyek**: tiap item cukup **nama + deskripsi singkat** (nama proyek boleh ditulis di
+  salah satunya).
+
+**Penempatan**
+- **Menu `File > Library Data…`** — dialog pengelola: daftar per jenis, cari, tambah/ubah/hapus/duplikat, impor
   (tempel dari Excel/CSV) & ekspor.
-- **Di setiap kartu input yang relevan** — tombol kecil `Pustaka ▾`: *Ambil dari pustaka* / *Simpan ke pustaka*.
-  Ini yang paling sering dipakai; dialog `File` untuk mengelola.
-- Bukan di `Setting`: `Setting` sebaiknya untuk preferensi aplikasi (tema, satuan, format angka), bukan data
-  teknik.
+- **Di setiap kartu input yang relevan** — tombol `Library ▾`: *Ambil dari Library* / *Simpan ke Library*.
+- `Setting` hanya untuk preferensi aplikasi (tema, satuan, format angka).
 
 **Jenis data awal**
 
@@ -68,15 +73,19 @@ Tujuan: data yang sama (tanah, sondir, N-SPT, material) tidak diinput berulang d
 | Material beton & tulangan | f'c, Ec, fy, fyt | tool beton, tapak, pile cap, dinding |
 | Mutu baja | Fy, Fu | tool baja & sambungan |
 
-**Penyimpanan (usulan)**
-- Tabel `tools.library_items` (user_id, kind, name, data jsonb, created_at/updated_at), RLS pemilik — pola sama
-  dengan `tools.saved_works`, plus batas jumlah per user.
-- Item pustaka **disalin** ke input tool saat diambil (bukan referensi hidup), sehingga pekerjaan tersimpan tetap
-  sama walau item pustaka diubah kemudian.
+**Penyimpanan**
+- Tabel `tools.library_items` (id, user_id, kind, name, description, data jsonb, created_at/updated_at): RLS
+  baca/hapus pemilik, tulis pemilik + `platform.has_premium()`, batas jumlah per user — pola `tools.saved_works`.
+- Item disalin ke input tool saat diambil (bukan referensi hidup), sehingga pekerjaan tersimpan tidak ikut berubah.
 
-**Perlu keputusan pemilik**
-1. Pustaka Data termasuk **Premium** (seperti Save) atau **gratis** untuk akun Free? Guest tanpa akun: tidak ada,
-   atau sementara di browser saja?
-2. Perlu pengelompokan **Proyek** (pustaka + pekerjaan tersimpan per proyek)? Lebih rapi untuk konsultan, tetapi
-   menambah satu lapis UI. Bisa ditambahkan belakangan bila skema disiapkan (`project_id` opsional).
-3. Material/mutu baja dibagi dengan **EDFS Matrix** (pustaka di level platform) atau khusus Civil Tools dulu?
+**Hubungan dengan EDFS Matrix** (dicek 2026-10-07 di repo Matrix)
+- Matrix punya **data referensi bawaan**, bukan library milik user: tabel profil baja JIS
+  (`frontend/src/model/steel/jis.json` + `library.ts`, dibangun dari tabel standar oleh
+  `tools/section_library/build_jis.py`, lihat `docs/SECTIONS.md` di repo Matrix) dan preset material
+  (`model/materialPresets.ts`: mutu beton termasuk konversi K, BJ37/41/…).
+- Rekomendasi: saat port kelompok baja, **pakai tabel JIS Matrix sebagai sumber** profil baja Civil Tools
+  (nilai tabel standar, lebih akurat daripada `core/steel-profiles.js` yang sebagian dihitung dari geometri
+  sudut tajam) — disalin dulu, kelak dijadikan paket bersama bila ada aplikasi ketiga. Angka tool baja akan
+  bergeser sedikit → dikerjakan sebagai perubahan sadar (acuan golden diperbarui), bukan bagian port 1:1.
+- Library Data milik user (tabel di atas) khusus Civil Tools dulu; bisa dinaikkan ke level platform bila Matrix
+  kelak juga butuh.

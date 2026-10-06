@@ -1,0 +1,672 @@
+[
+ {
+  "name": "default D19 (HANDOFF 560 mm)",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.1052631578947367,
+   "ldBase": 551.3454545454547,
+   "ld": 551.3454545454547,
+   "ldMin": false,
+   "ldRound": 560,
+   "ldbratio": 29.018181818181827
+  }
+ },
+ {
+  "name": "polos 19 (HANDOFF 1110 mm)",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "polos",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [],
+   "valid": true,
+   "polos": true,
+   "polosFactor": 2,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.1052631578947367,
+   "ldBase": 551.3454545454547,
+   "ld": 1102.6909090909094,
+   "ldMin": false,
+   "ldRound": 1110,
+   "ldbratio": 58.03636363636365
+  }
+ },
+ {
+  "name": "polos 8",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "polos",
+    "db": 8,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 8,
+   "cb": 40,
+   "ok": true,
+   "warn": [
+    "(cb+Ktr)/db dibatasi 2,5 (Ps. 25.4.2.4)."
+   ],
+   "valid": true,
+   "polos": true,
+   "polosFactor": 2,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.5,
+   "ldBase": 195.4909090909091,
+   "ld": 390.9818181818182,
+   "ldMin": false,
+   "ldRound": 400,
+   "ldbratio": 48.872727272727275
+  }
+ },
+ {
+  "name": "D25 (psi s 1,0)",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 25,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 25,
+   "cb": 40,
+   "ok": true,
+   "warn": [],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 1,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 1.6,
+   "ldBase": 1193.1818181818182,
+   "ld": 1193.1818181818182,
+   "ldMin": false,
+   "ldRound": 1200,
+   "ldbratio": 47.72727272727273
+  }
+ },
+ {
+  "name": "fy 550 (psi g 1,15)",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 550,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1.15,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.1052631578947367,
+   "ldBase": 830.3000000000001,
+   "ld": 830.3000000000001,
+   "ldMin": false,
+   "ldRound": 840,
+   "ldbratio": 43.7
+  }
+ },
+ {
+  "name": "fy 600 (psi g 1,3)",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 600,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1.3,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.1052631578947367,
+   "ldBase": 1023.9272727272729,
+   "ld": 1023.9272727272729,
+   "ldMin": false,
+   "ldRound": 1030,
+   "ldbratio": 53.8909090909091
+  }
+ },
+ {
+  "name": "psi t x psi e dibatasi 1,7",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1.3,
+    "psie": 1.5,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [
+    "Produk ψt·ψe dibatasi 1,7 (Ps. 25.4.2.5)."
+   ],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1.3,
+   "psie": 1.5,
+   "psite": 1.7,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.1052631578947367,
+   "ldBase": 937.2872727272729,
+   "ld": 937.2872727272729,
+   "ldMin": false,
+   "ldRound": 940,
+   "ldbratio": 49.3309090909091
+  }
+ },
+ {
+  "name": "beton ringan",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 0.75,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 0.75,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.1052631578947367,
+   "ldBase": 735.1272727272726,
+   "ld": 735.1272727272726,
+   "ldMin": false,
+   "ldRound": 740,
+   "ldbratio": 38.69090909090909
+  }
+ },
+ {
+  "name": "fc 80 (akar dibatasi 8,3)",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 80,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [
+    "√f'c dibatasi 8,3 MPa (Ps. 25.4.1.4)."
+   ],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 8.3,
+   "Ktr": 0,
+   "ratio": 2.1052631578947367,
+   "ldBase": 332.1358159912376,
+   "ld": 332.1358159912376,
+   "ldMin": false,
+   "ldRound": 340,
+   "ldbratio": 17.480832420591454
+  }
+ },
+ {
+  "name": "Ktr dihitung",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "calc",
+    "Atr": 157,
+    "s": 100,
+    "n": 3
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [
+    "(cb+Ktr)/db dibatasi 2,5 (Ps. 25.4.2.4)."
+   ],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 20.933333333333334,
+   "ratio": 2.5,
+   "ldBase": 464.2909090909091,
+   "ld": 464.2909090909091,
+   "ldMin": false,
+   "ldRound": 470,
+   "ldbratio": 24.436363636363637
+  }
+ },
+ {
+  "name": "rasio dibatasi 2,5",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 80,
+    "ktrMode": "calc",
+    "Atr": 400,
+    "s": 50,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 80,
+   "ok": true,
+   "warn": [
+    "(cb+Ktr)/db dibatasi 2,5 (Ps. 25.4.2.4)."
+   ],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 320,
+   "ratio": 2.5,
+   "ldBase": 464.2909090909091,
+   "ld": 464.2909090909091,
+   "ldMin": false,
+   "ldRound": 470,
+   "ldbratio": 24.436363636363637
+  }
+ },
+ {
+  "name": "ld minimum 300",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 280,
+    "barType": "ulir",
+    "db": 10,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 60,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 10,
+   "cb": 60,
+   "ok": true,
+   "warn": [
+    "(cb+Ktr)/db dibatasi 2,5 (Ps. 25.4.2.4)."
+   ],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.5,
+   "ldBase": 162.90909090909088,
+   "ld": 300,
+   "ldMin": true,
+   "ldRound": 300,
+   "ldbratio": 30
+  }
+ },
+ {
+  "name": "ld tepat di bawah 300",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 440,
+    "barType": "ulir",
+    "db": 10,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 60,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 10,
+   "cb": 60,
+   "ok": true,
+   "warn": [
+    "(cb+Ktr)/db dibatasi 2,5 (Ps. 25.4.2.4)."
+   ],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 0.8,
+   "psig": 1.15,
+   "lambda": 1,
+   "psit": 1,
+   "psie": 1,
+   "psite": 1,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 2.5,
+   "ldBase": 294.4,
+   "ld": 300,
+   "ldMin": true,
+   "ldRound": 300,
+   "ldbratio": 30
+  }
+ },
+ {
+  "name": "select sebagai teks",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "ulir",
+    "db": "22",
+    "psit": "1.3",
+    "psie": "1.2",
+    "lambda": "1",
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 22,
+   "cb": 40,
+   "ok": true,
+   "warn": [],
+   "valid": true,
+   "polos": false,
+   "polosFactor": 1,
+   "psis": 1,
+   "psig": 1,
+   "lambda": 1,
+   "psit": 1.3,
+   "psie": 1.2,
+   "psite": 1.56,
+   "sqrtfc": 5,
+   "Ktr": 0,
+   "ratio": 1.8181818181818181,
+   "ldBase": 1441.4400000000003,
+   "ld": 1441.4400000000003,
+   "ldMin": false,
+   "ldRound": 1450,
+   "ldbratio": 65.52000000000001
+  }
+ },
+ {
+  "name": "fc 0",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 0,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 40,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 40,
+   "ok": true,
+   "warn": [],
+   "valid": false
+  }
+ },
+ {
+  "name": "cb 0",
+  "fn": "compute",
+  "args": [
+   {
+    "fc": 25,
+    "fy": 420,
+    "barType": "ulir",
+    "db": 19,
+    "psit": 1,
+    "psie": 1,
+    "lambda": 1,
+    "cb": 0,
+    "ktrMode": "zero",
+    "Atr": 0,
+    "s": 100,
+    "n": 1
+   }
+  ],
+  "output": {
+   "db": 19,
+   "cb": 0,
+   "ok": true,
+   "warn": [],
+   "valid": false
+  }
+ }
+]
