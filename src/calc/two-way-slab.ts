@@ -6,7 +6,7 @@
 //   Jalur tepi memakai M/3 (ACI 314R-16 Ps. 7.9.2). Lendutan dengan Ie Branson (Ps. 24.2.3.5), Ec = 4700√f'c.
 // Ly/Lx ≤ 2; pendekatan (puntir pelat diabaikan).
 
-import { ES, stripDesign, type StripDesign } from './shared/concrete'
+import { effectiveInertia, stripDesign, type EffectiveInertia, type StripDesign } from './shared/concrete'
 import { numFinite as num, type NumLike } from './shared/num'
 
 const GAMMA_C = 24
@@ -35,15 +35,6 @@ export interface TwoWaySlabInput {
 export interface StripMoments {
   Mpos: number
   Mneg: number
-}
-
-export interface EffectiveInertia {
-  Ig: number
-  Mcr: number
-  Ma: number
-  Ie: number
-  Icr: number
-  cracked: boolean
 }
 
 export interface TwoWaySlabResult {
@@ -105,25 +96,6 @@ export function stripMoments(cond: EdgeCondition, w: number, Lm: number): StripM
   if (cond === 'ff') return { Mpos: wl2 / 24, Mneg: wl2 / 12 }
   if (cond === 'fp') return { Mpos: (9 * wl2) / 128, Mneg: wl2 / 8 }
   return { Mpos: wl2 / 8, Mneg: 0 }
-}
-
-/** Icr penampang retak (transformasi) per meter. */
-function crackedInertia(As: number, d: number, fc: number): number {
-  const Ec = 4700 * Math.sqrt(fc), n = Math.max(1, ES / Ec), b = 1000
-  const rn = (n * As) / (b * d)
-  const kd = (Math.sqrt(rn * rn + 2 * rn) - rn) * d
-  return (b * kd * kd * kd) / 3 + n * As * (d - kd) * (d - kd)
-}
-
-/** Momen inersia efektif Branson per meter. */
-function effectiveInertia(Ma: number, As: number, d: number, fc: number, h: number): EffectiveInertia {
-  const Ig = (1000 * h * h * h) / 12
-  const fr = 0.62 * Math.sqrt(fc), yt = h / 2
-  const Mcr = (fr * Ig) / yt / 1e6 // kNm/m
-  if (Ma <= Mcr || As <= 0) return { Ig, Mcr, Ma, Ie: Ig, Icr: Ig, cracked: false }
-  const Icr = crackedInertia(As, d, fc)
-  const ratio = Math.pow(Mcr / Ma, 3)
-  return { Ig, Mcr, Ma, Icr, Ie: Math.min(Ig, ratio * Ig + (1 - ratio) * Icr), cracked: true }
 }
 
 export function computeTwoWaySlab(v: TwoWaySlabInput): TwoWaySlabResult {

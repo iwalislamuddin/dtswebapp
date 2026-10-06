@@ -6,7 +6,8 @@
 // Modul lama adalah IIFE; fungsinya privat. Sumbernya dijalankan di sandbox vm dengan satu baris tambahan
 // sebelum penutup IIFE yang mengekspos fungsi bernama di EXPOSED — file modul tidak diubah. Kasus memanggil
 // `compute` kecuali menyebut `fn`. Argumen { $parse: [teks, satuan] } diganti hasil parseCPT() modul itu
-// sendiri sebelum dipanggil. Hasil disimpan di src/calc/__golden__/<id>.json: [{ name, fn, args, output }].
+// sendiri sebelum dipanggil. `omit: [kunci]` membuang field hasil yang identik dengan kasus lain (tidak
+// dibandingkan). Hasil disimpan di src/calc/__golden__/<id>.json: [{ name, fn, args, output }].
 // Jalankan ulang HANYA bila kasus ditambah; modul lama adalah acuan yang dibekukan.
 
 import fs from 'node:fs'
@@ -45,10 +46,16 @@ for (const [id, cases] of Object.entries(CASES)) {
   if (only.length && !only.includes(id)) continue
   const mod = loadModule(id)
   const resolve = (a) => (a && a.$parse ? mod.parseCPT(...a.$parse) : a)
-  const rows = cases.map(({ name, fn = 'compute', args }) => {
+  const rows = cases.map(({ name, fn = 'compute', args, omit = [] }) => {
     const real = plain(args.map(resolve))
-    return { name, fn, args: real, output: plain(mod[fn](...plain(real))) }
+    const output = plain(mod[fn](...plain(real)))
+    for (const k of omit) delete output[k] // field berulang yang sudah diverifikasi kasus lain (tidak dibandingkan)
+    return { name, fn, args: real, output }
   })
-  fs.writeFileSync(path.join(OUT, `${id}.json`), JSON.stringify(rows, null, 1) + '\n')
+  // Acuan besar (mis. permukaan interaksi) ditulis ringkas, angka 12 digit signifikan (galat relatif ≤ 5e-13,
+  // jauh di bawah toleransi pembanding 1e-9) agar repo tidak membengkak.
+  const pretty = JSON.stringify(rows, null, 1)
+  const compact = () => JSON.stringify(rows, (_k, x) => (typeof x === 'number' ? Number(x.toPrecision(12)) : x))
+  fs.writeFileSync(path.join(OUT, `${id}.json`), (pretty.length > 500_000 ? compact() : pretty) + '\n')
   console.log(`${id}: ${rows.length} kasus`)
 }

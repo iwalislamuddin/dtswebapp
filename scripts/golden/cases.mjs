@@ -84,6 +84,28 @@ const mr = (name, over) => ({ name, args: [{ ...mrBase, ...over }] })
 const twBase = { Lx: 4, Ly: 5, h: 140, condX: 'ff', condY: 'ff', qDL: 1.2, qLL: 2.5, fc: 25, fy: 420, cc: 20, db: 10 }
 const tw = (name, over) => ({ name, args: [{ ...twBase, ...over }] })
 
+const pmBase = {
+  shape: 'rect', b: 400, h: 400, D: 500, tx: 150, ty: 150, bw: 200, tf: 150, dp: 60, fc: 25, fy: 400, db: 19,
+  nx: 3, ny: 3, ncirc: 8, spac: 200, tie: 'tie', Pu: 1200, Mux: 150, Muy: 0,
+}
+const pm = (name, over) => ({ name, args: [{ ...pmBase, ...over }] })
+// Beban berbeda pada penampang default: permukaan sama dengan kasus default → tidak disimpan ulang.
+const pmLoad = (name, over) => ({ ...pm(name, over), omit: ['surf'] })
+
+const cbBase = {
+  elem: 'pelat', n: 4, L: 4, Li: 4, bsup: 300, b: 300, h: 130, qDs: 1.5, qLs: 3, qDb: 15, qLb: 10,
+  ujung: 'spandrel', m12: 'std', tumpuan1: 'ss', design: 'ya', fc: 25, fy: 420, cc: 20, db: 10, fyt: 420, ds: 10,
+}
+const cb = (name, over) => ({ name, args: [{ ...cbBase, ...over }] })
+const csBase = {
+  L: 3, D: 120, spans: '2', prop: 'none', composite: 'comp', profile: 'heavy', bmt: '0.75', fc: 25, fy: 420,
+  SDL: 1.5, LL: 2.5, cLL: 1.0, cover: 20, db: '10', dbSt: '8', dbBot: '10',
+  hr: 54, Ase: 1259, ye: 15.3, Ideck: 479800, Mcap: 6.19, fyd: 550, bc: 600, conType: 'stud', ds: '19', fuS: 450,
+}
+const cs = (name, over) => ({ name, args: [{ ...csBase, ...over }] })
+const stBase = { L1: 1.2, L2: 2.52, L3: 1.2, H: 1.8, R: 175, tw: 150, supA: 'sendi', supB: 'rol', SDL: 1.5, LL: 3.0, fc: 25, fy: 420, cc: 20, db: 13 }
+const st = (name, over) => ({ name, args: [{ ...stBase, ...over }] })
+
 export const CASES = {
   'bearing-capacity': [
     bearing('default (HANDOFF: Terzaghi qu 1373)', {}),
@@ -436,5 +458,83 @@ export const CASES = {
     tw('tinggi efektif <= 0', { h: 20, cc: 20 }),
     tw('nilai string', { Lx: '4.5', db: '13', h: '150' }),
     tw('Lx 0', { Lx: 0 }),
+  ],
+  'column-pm': [
+    pm('default persegi uniaksial', {}),
+    pmLoad('persegi biaksial', { Muy: 100 }),
+    pm('persegi persegi panjang, tulangan banyak', { b: 300, h: 600, nx: 2, ny: 5, db: 22, Mux: 250, Muy: 40 }),
+    pm('persegi spiral', { tie: 'spiral' }),
+    pmLoad('persegi Pu melebihi plafon', { Pu: 4000 }),
+    pmLoad('persegi tarik melampaui', { Pu: -900 }),
+    pmLoad('persegi tanpa momen', { Mux: 0, Muy: 0 }),
+    pmLoad('persegi D/C > 1', { Mux: 300, Muy: 200 }),
+    pm('persegi rho < 1%', { nx: 2, ny: 2, db: 13 }),
+    pm('persegi rho > 4%, spasi rapat', { nx: 6, ny: 6, db: 25 }),
+    pm('lingkaran', { shape: 'circle', Mux: 120, Muy: 60 }),
+    pm('lingkaran spiral 5 batang', { shape: 'circle', tie: 'spiral', ncirc: 5 }),
+    pm('L', { shape: 'L', b: 500, h: 500, Mux: 80, Muy: 50 }),
+    pm('T', { shape: 'T', b: 600, h: 500, Mux: 120, Muy: -40 }),
+    pm('fc 40', { fc: 40, Muy: 60 }),
+    pm('dp terlalu besar', { dp: 250 }),
+    pm('L tx >= B', { shape: 'L', tx: 450 }),
+    pm('fc 0', { fc: 0 }),
+  ],
+  'continuous-beam': [
+    cb('default pelat 4 bentang', {}),
+    cb('pelat 2 bentang', { n: 2 }),
+    cb('pelat 3 bentang, bentang dalam beda > 20%', { n: 3, Li: 5.5 }),
+    cb('pelat ujung bebas', { ujung: 'bebas' }),
+    cb('pelat ujung kolom', { ujung: 'kolom' }),
+    cb('pelat opsi 1/12, bentang > 3 m', { m12: 'm12' }),
+    cb('pelat bentang <= 3 m', { L: 3, Li: 3, n: 5 }),
+    cb('pelat beban hidup > 3D', { qLs: 15 }),
+    cb('pelat tebal minimum menentukan', { h: 200, qLs: 1, L: 3, Li: 3 }),
+    cb('pelat tak layak', { h: 80, qLs: 20, L: 6, Li: 6 }),
+    cb('balok 3 bentang', { elem: 'balok', n: 3, h: 500 }),
+    cb('balok geser tinggi', { elem: 'balok', n: 4, h: 400, qDb: 60, qLb: 50, db: 19, ds: 10, L: 6, Li: 6 }),
+    cb('balok geser kecil (zona tanpa sengkang)', { elem: 'balok', n: 2, h: 700, qDb: 1, qLb: 0, L: 3, Li: 3 }),
+    cb('balok Vu tepat di bawah setengah phiVc', { elem: 'balok', n: 2, h: 700, qDb: 23, qLb: 0, L: 3, Li: 3 }),
+    cb('balok fyt 0 -> fy', { elem: 'balok', n: 3, h: 500, fyt: 0 }),
+    cb('1 bentang sendi-sendi', { n: 1 }),
+    cb('1 bentang jepit-sendi balok', { n: 1, elem: 'balok', h: 500, tumpuan1: 'js' }),
+    cb('1 bentang jepit-jepit', { n: 1, tumpuan1: 'jj' }),
+    cb('n > 12', { n: 15 }),
+    cb('tanpa desain', { design: 'tidak' }),
+    cb('desain d <= 0', { h: 30 }),
+    cb('desain fc 0', { fc: 0 }),
+    cb('bentang bersih <= 0', { L: 0.2 }),
+    cb('balok b 0', { elem: 'balok', b: 0 }),
+    cb('select sebagai teks', { db: '13', ds: '8', elem: 'balok', h: 450 }),
+  ],
+  'composite-slab': [
+    cs('default Bondek 2 bentang', {}),
+    cs('1 bentang', { spans: '1' }),
+    cs('3 bentang', { spans: '3' }),
+    cs('topangan tengah', { prop: 'mid' }),
+    cs('non-komposit', { composite: 'noncomp' }),
+    cs('non-komposit 1 bentang', { composite: 'noncomp', spans: '1', L: 2.5 }),
+    cs('Smartdek', { profile: 'light', hr: 50, Ase: 890, ye: 26, Ideck: 409375, Mcap: 8.4, fyd: 550, bc: 500 }),
+    cs('bentang panjang (lendutan, kapasitas konstruksi)', { L: 4.5, LL: 5 }),
+    cs('konektor tulangan ulir', { conType: 'rebar', fuS: 420 }),
+    cs('D terlalu tipis', { D: 60 }),
+    cs('Mcap 0', { Mcap: 0 }),
+    cs('fc 35', { fc: 35 }),
+    cs('L 0', { L: 0 }),
+  ],
+  'concrete-stair': [
+    st('default sendi-rol dengan dua bordes', {}),
+    st('tanpa bordes', { L1: 0, L3: 0 }),
+    st('tanpa bordes atas', { L3: 0 }),
+    st('jepit-jepit', { supA: 'jepit', supB: 'jepit' }),
+    st('sendi-sendi', { supA: 'sendi', supB: 'sendi' }),
+    st('jepit-rol', { supA: 'jepit', supB: 'rol' }),
+    // rol-rol (mekanisme) membuat modul lama crash — diuji langsung di concrete-stair.test.ts.
+    st('panjang, beban besar (retak)', { L1: 2, L2: 3.6, L3: 2, H: 2.4, LL: 4.79, tw: 140 }),
+    st('waist tebal', { tw: 250 }),
+    st('waist tipis (batas spasi tulangan bagi)', { tw: 100, db: 10 }),
+    st('d <= 0', { tw: 20, cc: 20 }),
+    st('L negatif -> 0', { L1: -1 }),
+    st('fc 40', { fc: 40 }),
+    st('R 0', { R: 0 }),
   ],
 }

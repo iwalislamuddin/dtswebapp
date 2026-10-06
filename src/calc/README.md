@@ -39,6 +39,10 @@ npm test && npm run typecheck && npm run lint
 
 Uji mutasi bila ragu: ubah satu konstanta di port, test harus gagal.
 
+Acuan besar (> 500 KB, mis. permukaan interaksi P–M) ditulis ringkas dengan 12 digit signifikan. Kasus yang hanya
+mengganti beban pada penampang yang sama boleh memakai `omit: ['surf']` agar data identik tidak disimpan ulang.
+Bila modul lama crash pada suatu input, jangan rekam kasusnya: perbaiki di port, uji langsung, dan catat di TODO.
+
 Catatan: tool baja memakai `window.SteelProfiles` (`core/steel-profiles.js`). Library itu perlu di-port ke
 `shared/steel-profiles.ts` lebih dulu, dan `scripts/golden/extract.mjs` perlu memuat `core/steel-profiles.js`
 ke sandbox sebelum modulnya.

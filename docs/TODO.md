@@ -112,7 +112,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
             (+ `shared/concrete.ts`, `shared/retaining.ts`) — 2026-10-07
       - [x] Beton gelombang 1: `development-length`, `beam-flexure`, `beam-shear-torsion`, `min-reinforcement`,
             `two-way-slab` (+ `rhoMinBeam`, `stripDesign` di `shared/concrete.ts`) — 2026-10-07
-      - [ ] Beton gelombang 2: `column-pm`, `continuous-beam`, `composite-slab`, `concrete-stair`
+      - [x] Beton gelombang 2: `column-pm`, `continuous-beam`, `composite-slab`, `concrete-stair`
+            (+ `crackedInertia`, `effectiveInertia` di `shared/concrete.ts`) — 2026-10-07 — **kelompok beton lengkap**
       - [ ] Baja (port `core/steel-profiles.js` → `shared/` dulu): `steel-tension`, `steel-compression`,
             `steel-flexure`, `steel-beam-analysis`, `base-plate`
       - [ ] Sambungan: `bolt-connection`, `weld-connection`, `anchor-bolt-group`
@@ -140,6 +141,8 @@ terpisah yang memperbarui acuan golden secara sadar.
       (dinding nyata praktis tak mencapainya) — tambahkan uji langsung saat fungsi tumpu terfaktor dirapikan
 - [ ] `settlement`: derajat konsolidasi melompat kecil di U ≈ 60% (batas cabang Tv = 0,2827; rumus log memberi
       59,66% di sana) — geser batas ke Tv ≈ 0,286 agar kontinu
+- `concrete-stair`: tumpuan rol-rol (mekanisme) membuat build lama **crash** (solusi layan null tidak dicek); port
+  melaporkan "Struktur tidak stabil" — diuji langsung, kasus ini dikeluarkan dari golden
 - β1 disatukan ke versi Tabel 22.2.2.4.3 (0,65 untuk f'c ≥ 55 MPa) di `shared/concrete.ts`. Modul lama tapak,
   pelat dua arah, dinding beton, kolom P-M, pelat komposit, tangga memakai rumus tanpa batas itu → β1 0,657 pada
   55 ≤ f'c < 56 MPa; kini 0,65 (perbedaan hanya di rentang itu, di luar kasus golden)

@@ -90,16 +90,20 @@ export interface StripDesign {
   spacingCap: boolean
   AsProv: number
   db: number
+  /** Lebar & tinggi efektif desain (mm). */
+  b: number
+  d: number
 }
 
 /**
- * Tulangan lentur per meter (b = 1000) untuk Mu (kNm/m): As perlu dari Rn, minimum susut-suhu, spasi kelipatan
- * 25 mm ≤ min(sMaxFactor·h, 450). Mu ≤ muMin → hanya tulangan minimum.
+ * Tulangan lentur selebar b (default 1000 mm) untuk Mu (kNm per lebar b): As perlu dari Rn, minimum ρmin·b·h
+ * (default susut-suhu), spasi kelipatan 25 mm ≤ min(sMaxFactor·h, 450). Mu ≤ muMin → hanya tulangan minimum.
  */
 export function stripDesign(
   Mu: number, d: number, fc: number, fy: number, db: number, h: number, sMaxFactor: number, muMin = 0,
+  opts: { b?: number; rhoMin?: number } = {},
 ): StripDesign {
-  const b = 1000
+  const b = opts.b ?? 1000
   let As = 0, rho = 0, a = 0, c = 0, et = Infinity, tc = true, infeasible = false
   if (Mu > muMin && d > 0) {
     const sol = rhoFromRn(flexuralRn(Mu * 1e6, 0.9, b, d), fc, fy)
@@ -111,10 +115,10 @@ export function stripDesign(
     et = c > 0 ? (0.003 * (d - c)) / c : Infinity
     tc = et >= 0.005
   }
-  const AsMin = rhoShrinkage(fy) * 1000 * h
+  const AsMin = (opts.rhoMin ?? rhoShrinkage(fy)) * b * h
   const AsReq = Math.max(As, AsMin)
   const Ab = barArea(db)
-  const sTeo = (1000 * Ab) / AsReq
+  const sTeo = (b * Ab) / AsReq
   const sMax = Math.min(sMaxFactor * h, 450)
   let s = Math.floor(sTeo / 25) * 25
   const sCap = Math.floor(sMax / 25) * 25
@@ -122,6 +126,35 @@ export function stripDesign(
   if (s < 50) s = 50
   return {
     Mu, As, rho, a, c, et, tc, infeasible, AsMin, AsReq, govMin: AsReq > As + 1e-6,
-    s, sMax, spacingCap: sTeo > sMax, AsProv: (1000 * Ab) / s, db,
+    s, sMax, spacingCap: sTeo > sMax, AsProv: (b * Ab) / s, db, b, d,
   }
+}
+
+/** Momen inersia penampang retak transformasi (mm⁴) selebar b dengan As pada d. */
+export function crackedInertia(As: number, d: number, fc: number, b = 1000): { Icr: number; n: number; kd: number } {
+  const Ec = 4700 * Math.sqrt(fc), n = Math.max(1, ES / Ec)
+  const rn = (n * As) / (b * d)
+  const kd = (Math.sqrt(rn * rn + 2 * rn) - rn) * d
+  return { Icr: (b * kd * kd * kd) / 3 + n * As * (d - kd) * (d - kd), n, kd }
+}
+
+export interface EffectiveInertia {
+  Ig: number
+  /** kNm/m */
+  Mcr: number
+  Ma: number
+  Ie: number
+  Icr: number
+  cracked: boolean
+}
+
+/** Momen inersia efektif Branson (Ps. 24.2.3.5) per meter pelat setebal h; fr = 0,62√f'c. */
+export function effectiveInertia(Ma: number, As: number, d: number, fc: number, h: number): EffectiveInertia {
+  const Ig = (1000 * h * h * h) / 12
+  const fr = 0.62 * Math.sqrt(fc), yt = h / 2
+  const Mcr = (fr * Ig) / yt / 1e6
+  if (Ma <= Mcr || As <= 0) return { Ig, Mcr, Ma, Ie: Ig, Icr: Ig, cracked: false }
+  const Icr = crackedInertia(As, d, fc).Icr
+  const ratio = Math.pow(Mcr / Ma, 3)
+  return { Ig, Mcr, Ma, Icr, Ie: Math.min(Ig, ratio * Ig + (1 - ratio) * Icr), cracked: true }
 }
