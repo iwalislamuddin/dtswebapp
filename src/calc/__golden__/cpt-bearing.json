@@ -1,0 +1,3059 @@
+[
+ {
+  "name": "default pasir",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "qc̄ = 1.4 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 1372.9310000000003,
+   "sigv0": 17,
+   "Kd": 1.22,
+   "qaNet": 96.47860723200002,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 113.47860723200002,
+   "dc": 0
+  }
+ },
+ {
+  "name": "pasir B > 1,2",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 2,
+    "L": 3,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "qc̄ = 1.6 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 2,
+   "L": 3,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 1618.09725,
+   "sigv0": 17,
+   "Kd": 1.165,
+   "qaNet": 99.72090637162498,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 116.72090637162498,
+   "dc": 0
+  }
+ },
+ {
+  "name": "pasir B tepat 1,2",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.2,
+    "L": 1.2,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "qc̄ = 1.3 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.2,
+   "L": 1.2,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 1262.6061875000003,
+   "sigv0": 17,
+   "Kd": 1.275,
+   "qaNet": 107.32152593750003,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 124.32152593750003,
+   "dc": 0
+  }
+ },
+ {
+  "name": "pasir Kd dibatasi 1,33",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1,
+    "L": 1.5,
+    "Df": 3,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1,
+   "L": 1.5,
+   "Df": 3,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 3505.877375000001,
+   "sigv0": 51,
+   "Kd": 1.33,
+   "qaNet": 310.85446058333343,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 361.85446058333343,
+   "dc": 0
+  }
+ },
+ {
+  "name": "qc dalam MPa",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "mpa",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 500,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 1000,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 2000,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 4000,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 8000,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "qc̄ = 1.8 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 500,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 1000,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 2000,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 4000,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 8000,
+     "fs": null
+    }
+   ],
+   "nPts": 5,
+   "zMax": 5,
+   "qcb": 1833.3333333333333,
+   "sigv0": 17,
+   "Kd": 1.22,
+   "qaNet": 128.832,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 145.832,
+   "dc": 0
+  }
+ },
+ {
+  "name": "lempung",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "clay",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Penurunan KONSOLIDASI lempung tidak dihitung di sini — sering menentukan; cek dengan tool Penurunan Fondasi.",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "clay",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ],
+   "nPts": 7,
+   "zMax": 8,
+   "qcb": 465.815875,
+   "sigv0": 17,
+   "su": 32.058276785714284,
+   "dfb": 0.6666666666666666,
+   "qult": 217.9962821428571,
+   "qaNet": 72.66542738095237,
+   "method": "su = (qc̄−σv0)/Nk + Skempton",
+   "qaGross": 89.66542738095237,
+   "dc": 0
+  }
+ },
+ {
+  "name": "lempung Df/B dibatasi 2,5",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1,
+    "L": 1.5,
+    "Df": 4,
+    "gamma": 17,
+    "soil": "clay",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Penurunan KONSOLIDASI lempung tidak dihitung di sini — sering menentukan; cek dengan tool Penurunan Fondasi.",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1,
+   "L": 1.5,
+   "Df": 4,
+   "gamma": 17,
+   "soil": "clay",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ],
+   "nPts": 7,
+   "zMax": 8,
+   "qcb": 735.4987500000001,
+   "sigv0": 68,
+   "su": 47.67848214285715,
+   "dfb": 2.5,
+   "qult": 405.2670982142858,
+   "qaNet": 135.08903273809526,
+   "method": "su = (qc̄−σv0)/Nk + Skempton",
+   "qaGross": 203.08903273809526,
+   "dc": 0
+  }
+ },
+ {
+  "name": "lempung su negatif -> 0",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 200,
+    "soil": "clay",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Penurunan KONSOLIDASI lempung tidak dihitung di sini — sering menentukan; cek dengan tool Penurunan Fondasi.",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 200,
+   "soil": "clay",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ],
+   "nPts": 7,
+   "zMax": 8,
+   "qcb": 465.815875,
+   "sigv0": 200,
+   "su": 18.986848214285715,
+   "dfb": 0.6666666666666666,
+   "qult": 129.11056785714285,
+   "qaNet": 43.036855952380954,
+   "method": "su = (qc̄−σv0)/Nk + Skempton",
+   "qaGross": 243.03685595238096,
+   "dc": 0
+  }
+ },
+ {
+  "name": "lempung Nk 0 -> 14, FS 0 -> 3",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "clay",
+    "Nk": 0,
+    "FS": 0,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Penurunan KONSOLIDASI lempung tidak dihitung di sini — sering menentukan; cek dengan tool Penurunan Fondasi.",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "clay",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ],
+   "nPts": 7,
+   "zMax": 8,
+   "qcb": 465.815875,
+   "sigv0": 17,
+   "su": 32.058276785714284,
+   "dfb": 0.6666666666666666,
+   "qult": 217.9962821428571,
+   "qaNet": 72.66542738095237,
+   "method": "su = (qc̄−σv0)/Nk + Skempton",
+   "qaGross": 89.66542738095237,
+   "dc": 0
+  }
+ },
+ {
+  "name": "lempung qc tinggi",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "clay",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Penurunan KONSOLIDASI lempung tidak dihitung di sini — sering menentukan; cek dengan tool Penurunan Fondasi.",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "clay",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 1372.9310000000003,
+   "sigv0": 17,
+   "su": 96.85221428571431,
+   "dfb": 0.6666666666666666,
+   "qult": 658.5950571428573,
+   "qaNet": 219.53168571428577,
+   "method": "su = (qc̄−σv0)/Nk + Skempton",
+   "qaGross": 236.53168571428577,
+   "dc": 0
+  }
+ },
+ {
+  "name": "pasir qc rendah",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "qc̄ = 0.5 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 294.1995,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 392.266,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 588.399,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 686.4655,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 882.5985000000001,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 1176.798,
+     "fs": null
+    }
+   ],
+   "nPts": 7,
+   "zMax": 8,
+   "qcb": 465.815875,
+   "sigv0": 17,
+   "Kd": 1.22,
+   "qaNet": 32.733813168,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 49.733813168,
+   "dc": 0
+  }
+ },
+ {
+  "name": "L < B dipakai B",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "qc̄ = 1.4 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 1372.9310000000003,
+   "sigv0": 17,
+   "Kd": 1.22,
+   "qaNet": 96.47860723200002,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 113.47860723200002,
+   "dc": 0
+  }
+ },
+ {
+  "name": "melampaui data terdalam",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 11,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Zona pengaruh Df+B = 12.5 m melampaui data terdalam (12.0 m) — qc di bawahnya diekstrapolasi konstan. Tambah data bila ada.",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 11,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 17161.637499999993,
+   "sigv0": 187,
+   "Kd": 1.33,
+   "qaNet": 1314.7187255999995,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 1501.7187255999995,
+   "dc": 0
+  }
+ },
+ {
+  "name": "beban kerja aman",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 50
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "qc̄ = 1.4 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 50,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 1372.9310000000003,
+   "sigv0": 17,
+   "Kd": 1.22,
+   "qaNet": 96.47860723200002,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 113.47860723200002,
+   "dc": 0.5182496040781982
+  }
+ },
+ {
+  "name": "beban kerja melampaui",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 500
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "qc̄ = 1.4 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual.",
+    "D/C = 5.18 > 1 — beban kerja melampaui daya dukung izin."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 500,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16,
+   "zMax": 12,
+   "qcb": 1372.9310000000003,
+   "sigv0": 17,
+   "Kd": 1.22,
+   "qaNet": 96.47860723200002,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 113.47860723200002,
+   "dc": 5.182496040781983
+  }
+ },
+ {
+  "name": "data berantakan",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0.5,
+     "qc": 980.6650000000001,
+     "fs": -1
+    },
+    {
+     "z": 1,
+     "qc": 1961.3300000000002,
+     "fs": 0.1
+    },
+    {
+     "z": 3,
+     "qc": 3922.6600000000003,
+     "fs": 0.2
+    },
+    {
+     "z": 4,
+     "qc": 5883.990000000001,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
+    "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0.5,
+     "qc": 980.6650000000001,
+     "fs": -1
+    },
+    {
+     "z": 1,
+     "qc": 1961.3300000000002,
+     "fs": 0.1
+    },
+    {
+     "z": 3,
+     "qc": 3922.6600000000003,
+     "fs": 0.2
+    },
+    {
+     "z": 4,
+     "qc": 5883.990000000001,
+     "fs": null
+    }
+   ],
+   "nPts": 4,
+   "zMax": 4,
+   "qcb": 2696.8287500000006,
+   "sigv0": 17,
+   "Kd": 1.22,
+   "qaNet": 189.51154992000002,
+   "method": "Meyerhof (1956) — penurunan 25 mm",
+   "qult": null,
+   "qaGross": 206.51154992000002,
+   "dc": 0
+  }
+ },
+ {
+  "name": "tanpa data",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   []
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Tempel data CPT (z & qc per baris) terlebih dulu."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [],
+   "nPts": 0
+  }
+ },
+ {
+  "name": "B 0 tidak valid",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 0,
+    "L": 1.5,
+    "Df": 1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi B > 0 dan Df ≥ 0."
+   ],
+   "B": 0,
+   "L": 1.5,
+   "Df": 1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16
+  }
+ },
+ {
+  "name": "Df negatif tidak valid",
+  "fn": "compute",
+  "args": [
+   {
+    "unit": "kgcm2",
+    "B": 1.5,
+    "L": 1.5,
+    "Df": -1,
+    "gamma": 17,
+    "soil": "sand",
+    "Nk": 14,
+    "FS": 3,
+    "qw": 0
+   },
+   [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ]
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi B > 0 dan Df ≥ 0."
+   ],
+   "B": 1.5,
+   "L": 1.5,
+   "Df": -1,
+   "gamma": 17,
+   "soil": "sand",
+   "Nk": 14,
+   "FS": 3,
+   "qw": 0,
+   "pts": [
+    {
+     "z": 0,
+     "qc": 490.33250000000004,
+     "fs": null
+    },
+    {
+     "z": 0.5,
+     "qc": 784.532,
+     "fs": null
+    },
+    {
+     "z": 1,
+     "qc": 980.6650000000001,
+     "fs": null
+    },
+    {
+     "z": 1.5,
+     "qc": 1176.798,
+     "fs": null
+    },
+    {
+     "z": 2,
+     "qc": 1470.9975000000002,
+     "fs": null
+    },
+    {
+     "z": 2.5,
+     "qc": 1961.3300000000002,
+     "fs": null
+    },
+    {
+     "z": 3,
+     "qc": 2745.862,
+     "fs": null
+    },
+    {
+     "z": 3.5,
+     "qc": 3432.3275000000003,
+     "fs": null
+    },
+    {
+     "z": 4,
+     "qc": 4412.9925,
+     "fs": null
+    },
+    {
+     "z": 4.5,
+     "qc": 5393.6575,
+     "fs": null
+    },
+    {
+     "z": 5,
+     "qc": 6864.655000000001,
+     "fs": null
+    },
+    {
+     "z": 6,
+     "qc": 8825.985,
+     "fs": null
+    },
+    {
+     "z": 7,
+     "qc": 10787.315,
+     "fs": null
+    },
+    {
+     "z": 8,
+     "qc": 12748.645,
+     "fs": null
+    },
+    {
+     "z": 10,
+     "qc": 14709.975,
+     "fs": null
+    },
+    {
+     "z": 12,
+     "qc": 17651.97,
+     "fs": null
+    }
+   ],
+   "nPts": 16
+  }
+ }
+]

@@ -9,3 +9,9 @@ export function num(v: NumLike | null | undefined): number {
 export const D2R = Math.PI / 180
 
 export const deg2rad = (deg: number): number => (deg * Math.PI) / 180
+
+/** Seperti num(), tetapi ±Infinity juga dianggap 0 (perilaku parser tool CPT lama). */
+export function numFinite(v: NumLike | null | undefined): number {
+  const n = typeof v === 'number' ? v : parseFloat(v ?? '')
+  return Number.isFinite(n) ? n : 0
+}

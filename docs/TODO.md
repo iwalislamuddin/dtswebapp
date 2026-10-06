@@ -105,7 +105,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
       HANDOFF; fungsi bersama di `src/calc/shared/`. Panduan: [`src/calc/README.md`](../src/calc/README.md).
       35 tool (`_template` tidak dihitung):
       - [x] Geoteknik: `bearing-capacity`, `pile-capacity` (+ `shared/geotech.ts`) — 2026-10-07
-      - [ ] Geoteknik: `settlement`, `cpt-bearing`, `cpt-pile`, `lateral-broms`, `py-analysis`
+      - [x] Geoteknik: `settlement`, `cpt-bearing`, `cpt-pile` (+ `shared/cpt.ts`) — 2026-10-07
+      - [ ] Geoteknik: `lateral-broms`, `py-analysis`
       - [ ] Struktur bawah: `footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`
       - [ ] Beton: `development-length`, `beam-flexure`, `beam-shear-torsion`, `column-pm`, `min-reinforcement`,
             `continuous-beam`, `two-way-slab`, `composite-slab`, `concrete-stair`
@@ -120,6 +121,18 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
       pre-render HTML per rute (title/description/canonical) untuk SEO
 - [ ] **[Claude]** Laporan (Detail + Download PDF/.txt) dari satu sumber data per tool; PDF tetap tanpa library
 - [ ] **[Claude]** Lint + test di CI (GitHub Actions), pola Matrix
+
+### Perbaikan isi tool — SETELAH semua tool selesai di-port
+
+Port dibuat 1:1 (golden test). Perubahan rumus/perilaku dikumpulkan di sini lalu dikerjakan sebagai commit
+terpisah yang memperbarui acuan golden secara sadar.
+
+- [ ] **[Anda]** Daftar tool yang isinya ingin diubah (disampaikan pemilik 2026-10-07, rinciannya menyusul)
+- [ ] `settlement`: derajat konsolidasi melompat kecil di U ≈ 60% (batas cabang Tv = 0,2827; rumus log memberi
+      59,66% di sana) — geser batas ke Tv ≈ 0,286 agar kontinu
+- Sudah diselaraskan saat port (tidak memengaruhi angka hasil): penanda φ > 50° Terzaghi yang bocor antar
+  perhitungan (`bearing-capacity`); parser CPT `cpt-bearing` kini mengonversi satuan kolom fs seperti `cpt-pile`
+  (fs tidak dipakai di hitungan fondasi dangkal)
 
 ## Tahap 4 — Akun & Save versi Supabase (di shell React)
 

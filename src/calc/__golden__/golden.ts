@@ -4,6 +4,7 @@
 
 export interface GoldenCase {
   name: string
+  fn: string
   args: unknown[]
   output: unknown
 }

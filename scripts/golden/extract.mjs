@@ -3,10 +3,11 @@
 //   npm run golden                 # semua tool di cases.mjs
 //   npm run golden -- pile-capacity
 //
-// Modul lama adalah IIFE; compute() bersifat privat. Sumbernya dijalankan di sandbox vm dengan satu baris
-// tambahan sebelum penutup IIFE yang mengekspos compute — file modul tidak diubah. Hasil disimpan di
-// src/calc/__golden__/<id>.json: [{ name, args, output }]. Jalankan ulang HANYA bila kasus ditambah;
-// modul lama adalah acuan yang dibekukan, jadi output untuk kasus yang sama tidak boleh berubah.
+// Modul lama adalah IIFE; fungsinya privat. Sumbernya dijalankan di sandbox vm dengan satu baris tambahan
+// sebelum penutup IIFE yang mengekspos fungsi bernama di EXPOSED — file modul tidak diubah. Kasus memanggil
+// `compute` kecuali menyebut `fn`. Argumen { $parse: [teks, satuan] } diganti hasil parseCPT() modul itu
+// sendiri sebelum dipanggil. Hasil disimpan di src/calc/__golden__/<id>.json: [{ name, fn, args, output }].
+// Jalankan ulang HANYA bila kasus ditambah; modul lama adalah acuan yang dibekukan.
 
 import fs from 'node:fs'
 import path from 'node:path'
@@ -17,17 +18,22 @@ import { CASES } from './cases.mjs'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 const OUT = path.join(ROOT, 'src', 'calc', '__golden__')
 
-function loadCompute(id) {
+const EXPOSED = ['compute', 'parseCPT']
+
+function loadModule(id) {
   const file = path.join(ROOT, 'modules', id, 'module.js')
   const src = fs.readFileSync(file, 'utf8')
   const end = src.lastIndexOf('})();')
   if (end < 0) throw new Error(`${id}: penutup IIFE tidak ditemukan`)
-  const hooked = src.slice(0, end) + ';globalThis.__golden = { compute: compute };\n' + src.slice(end)
+  // eval langsung di dalam IIFE membaca fungsi privat; nama yang tidak ada dilewati.
+  const hook = `;globalThis.__golden = {}; ${JSON.stringify(EXPOSED)}.forEach(function (n) {
+    try { globalThis.__golden[n] = eval(n) } catch (e) {} });\n`
+  const hooked = src.slice(0, end) + hook + src.slice(end)
   const sandbox = { Math, JSON, console, window: {} }
   sandbox.globalThis = sandbox
   vm.createContext(sandbox)
   vm.runInContext(hooked, sandbox, { filename: file })
-  return sandbox.__golden.compute
+  return sandbox.__golden
 }
 
 // Salinan data murni (lewat JSON) — buang fungsi, NaN/Infinity jadi null seperti JSON.
@@ -37,8 +43,12 @@ fs.mkdirSync(OUT, { recursive: true })
 const only = process.argv.slice(2)
 for (const [id, cases] of Object.entries(CASES)) {
   if (only.length && !only.includes(id)) continue
-  const compute = loadCompute(id)
-  const rows = cases.map(({ name, args }) => ({ name, args, output: plain(compute(...plain(args))) }))
+  const mod = loadModule(id)
+  const resolve = (a) => (a && a.$parse ? mod.parseCPT(...a.$parse) : a)
+  const rows = cases.map(({ name, fn = 'compute', args }) => {
+    const real = plain(args.map(resolve))
+    return { name, fn, args: real, output: plain(mod[fn](...plain(real))) }
+  })
   fs.writeFileSync(path.join(OUT, `${id}.json`), JSON.stringify(rows, null, 1) + '\n')
   console.log(`${id}: ${rows.length} kasus`)
 }

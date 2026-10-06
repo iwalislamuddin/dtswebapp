@@ -1,6 +1,7 @@
 [
  {
   "name": "default (HANDOFF: Qu 527,4, Q_izin 211)",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -166,6 +167,7 @@
  },
  {
   "name": "SPT di lapis 3 (HANDOFF 882 kN)",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -331,6 +333,7 @@
  },
  {
   "name": "L 8, ujung di lapis 2 (HANDOFF 116 kN)",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -484,6 +487,7 @@
  },
  {
   "name": "persegi",
+  "fn": "compute",
   "args": [
    {
     "shape": "square",
@@ -649,6 +653,7 @@
  },
  {
   "name": "bor baja",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -814,6 +819,7 @@
  },
  {
   "name": "kurangi berat sendiri",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -979,6 +985,7 @@
  },
  {
   "name": "L melebihi profil",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -1145,6 +1152,7 @@
  },
  {
   "name": "MAT di permukaan",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -1310,6 +1318,7 @@
  },
  {
   "name": "MAT negatif -> 0",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -1475,6 +1484,7 @@
  },
  {
   "name": "MAT di bawah profil",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -1641,6 +1651,7 @@
  },
  {
   "name": "ujung di lempung",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -1782,6 +1793,7 @@
  },
  {
   "name": "ujung di lempung SPT",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -1923,6 +1935,7 @@
  },
  {
   "name": "fs dibatasi 120 kPa",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -2089,6 +2102,7 @@
  },
  {
   "name": "Decourt dilewati (N kosong)",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -2245,6 +2259,7 @@
  },
  {
   "name": "lempung psi > 1",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -2386,6 +2401,7 @@
  },
  {
   "name": "tiang pendek L/D < 4",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -2528,6 +2544,7 @@
  },
  {
   "name": "satu lapis pasir",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -2633,6 +2650,7 @@
  },
  {
   "name": "FS 0 -> 2,5",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -2799,6 +2817,7 @@
  },
  {
   "name": "D 0 tidak valid",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -2849,6 +2868,7 @@
  },
  {
   "name": "L 0 tidak valid",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",
@@ -2899,6 +2919,7 @@
  },
  {
   "name": "tanpa lapis",
+  "fn": "compute",
   "args": [
    {
     "shape": "circular",

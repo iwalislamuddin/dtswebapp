@@ -19,16 +19,19 @@ arah UI: [docs/UI.md](../../docs/UI.md).
    — golden test memastikannya (angka toleransi relatif 1e-9, teks persis). Perbaikan rumus atau perubahan
    perilaku dikerjakan **sesudahnya** sebagai commit terpisah yang memperbarui acuan golden secara sadar.
    Pengecualian yang boleh: bug keadaan global (mis. `ngTerz._cap` lama yang bocor antar panggilan) diganti fungsi
-   murni.
+   murni, dan dua salinan yang sedikit berbeda disatukan ke `shared/` bila perbedaannya tidak memengaruhi hasil
+   hitungan (mis. parser CPT). Catat di TODO bagian "Perbaikan isi tool".
 2. **Rumus yang muncul di dua tool atau lebih → `shared/`**, lalu kedua tool memakainya.
-3. Input menerima `NumLike` (angka atau teks form) dan di-parse dengan `num()` seperti build lama.
+3. Input menerima `NumLike` (angka atau teks form) dan di-parse dengan `num()` seperti build lama (`numFinite()`
+   bila modul lama memakai `isFinite`).
 4. Hasil berupa union `{ valid: false; warn }` | `{ valid: true; … }`.
 5. Tanpa akses `window`, `document`, `sessionStorage`, atau waktu/acak — fungsi deterministik.
 
 ## Langkah per tool
 
 ```bash
-# 1. tambahkan kasus di scripts/golden/cases.mjs (default form, kasus HANDOFF, tiap cabang, input tak valid)
+# 1. tambahkan kasus di scripts/golden/cases.mjs (default form, kasus HANDOFF, tiap cabang, nilai tepat di
+#    batas cabang, input tak valid). Fungsi selain compute: { fn }; data CPT: { $parse: [teks, satuan] }
 npm run golden -- <tool-id>        # rekam acuan dari modul lama
 # 2. tulis src/calc/<tool-id>.ts + <tool-id>.test.ts (pola bearing-capacity / pile-capacity)
 npm test && npm run typecheck && npm run lint

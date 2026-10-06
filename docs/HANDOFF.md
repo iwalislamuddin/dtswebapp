@@ -19,7 +19,8 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 > ulang). Tahap 3 kini = mesin hitung `src/calc/` dengan *golden test* terhadap `compute()` modul lama + shell
 > React baru sesuai **[`UI.md`](UI.md)** (gaya Windows ala Matrix tanpa Ribbon, aksen `#566246`, tab Input/Detail).
 > Sudah: tooling (`package.json`, Vitest, oxlint), harness `scripts/golden/`, port `bearing-capacity` &
-> `pile-capacity` + `shared/geotech.ts` (54 test lulus). **Lanjut: port tool berikutnya** — daftar di TODO
+> `pile-capacity` + `shared/geotech.ts`; lalu `settlement`, `cpt-bearing`, `cpt-pile` + `shared/cpt.ts`
+> (131 test lulus, 5/35 tool). **Lanjut: port tool berikutnya** — daftar di TODO
 > Tahap 3, resep di [`src/calc/README.md`](../src/calc/README.md).
 >
 > **Arah berubah: Civil Tools diselaraskan dengan platform Edifisia.**
