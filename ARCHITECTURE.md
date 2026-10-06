@@ -2,7 +2,7 @@
 
 ## 1. Ringkasan Proyek
 
-Kumpulan mini-app engineering sipil dalam satu shell aplikasi (mirip pola Geo5), diakses lewat navigasi kiri, dengan area kerja tengah–kanan. Setiap tool adalah **module** independen yang di-mount/unmount ke dalam shell. Tidak ada build step — semua file adalah HTML/CSS/JS murni, siap upload langsung via cPanel ke `public_html`. Berjalan sebagai PWA (installable, offline-capable untuk shell + module yang sudah pernah dibuka).
+Kumpulan mini-app engineering sipil dalam satu shell aplikasi (mirip pola Geo5), diakses lewat navigasi kiri, dengan area kerja tengah–kanan. Setiap tool adalah **module** independen yang di-mount/unmount ke dalam shell. Tidak ada build step — semua file adalah HTML/CSS/JS murni, siap di-publish apa adanya (kini cPanel; sasaran Cloudflare Pages `tools.edifisia.com`). Akun & hak akses mengikuti platform Edifisia (Supabase) — lihat [`docs/PLATFORM.md`](docs/PLATFORM.md). Berjalan sebagai PWA (installable, offline-capable untuk shell + module yang sudah pernah dibuka).
 
 Dikembangkan oleh: PT. DTS Engineering (Iwal). Referensi visual/kode: `staad-viewer.html` (palet warna, custom OrbitControls, Three.js r128 via cdnjs, font Space Grotesk + JetBrains Mono).
 
@@ -37,15 +37,18 @@ Dikembangkan oleh: PT. DTS Engineering (Iwal). Referensi visual/kode: `staad-vie
 │   ├── ui-kit.js                  # Helper UI reusable: toast(), form generator, hero/kv/note result builder, disposeObject()
 │   ├── canvas2d.js                # Tier 2 — helper kanvas 2D hi-DPI: setup, auto-resize, redraw sinkron, repaint saat ganti tema, dispose
 │   ├── report.js                  # Generator laporan monospace (DOS-style): unduh PDF (font Courier, tanpa library) atau teks .txt
-│   ├── auth.js                     # Akun (Firebase Auth) + status premium — SATU-SATUNYA file yang init Firebase (window.CivilAuth)
-│   ├── works.js                    # Fitur premium "Simpan Pekerjaan": snapshot stash sessionStorage ↔ Firestore savedWorks (window.CivilWorks)
-│   ├── billing.js                  # Paket berlangganan + checkout Midtrans Snap (window.CivilBilling)
+│   ├── auth.js                     # Akun + status Premium (window.CivilAuth). Kini Firebase Auth → akan diganti Supabase Auth +
+│   │                               #   platform.premium_status() (docs/PLATFORM.md)
+│   ├── works.js                    # Fitur premium "Simpan Pekerjaan": snapshot stash sessionStorage ↔ Firestore savedWorks
+│   │                               #   (window.CivilWorks) → akan ke tabel Supabase tools.saved_works (RLS + has_premium)
+│   ├── billing.js                  # Kini checkout Midtrans Snap (window.CivilBilling) → akan jadi tautan beli di edifisia.com
 │   ├── steel-profiles.js          # Library DB profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) — dipakai bersama tool baja (window.SteelProfiles / runtime.steel)
 │   ├── renderer.js                # Tier 3 — factory shared THREE.WebGLRenderer + resize handling (belum ada sampai tool 3D pertama)
 │   └── orbit-controls.js          # Tier 3 — custom OrbitCtrl (di-extract dari staad-viewer.html, dipakai ulang oleh semua module 3D)
 │
-├── functions/                     # Cloud Functions (createSnapTransaction, midtransWebhook, expirePremium)
-│                                  # DEPLOY TERPISAH: firebase deploy --only functions — tidak pernah ikut hosting statis
+├── functions/                     # Cloud Functions Firebase (createSnapTransaction, midtransWebhook, expirePremium)
+│                                  # AKAN DIHAPUS — pembayaran pindah ke webhook platform Edifisia (docs/PLATFORM.md)
+├── supabase/migrations/           # (rencana) migrasi skema `tools` milik repo ini — diterapkan ke DB, bukan ke hosting
 │
 └── modules/
     ├── anchor-bolt-group/

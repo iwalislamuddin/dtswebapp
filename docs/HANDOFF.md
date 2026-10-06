@@ -3,26 +3,39 @@
 Ringkasan pengembangan sampai **rilis v0.1.0** (2026-07-10). Dokumen ini untuk melanjutkan
 pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
-> ## ▶ MULAI DARI SINI (status per 2026-09-22)
+> ## ▶ MULAI DARI SINI (status per 2026-10-06)
 >
-> **Monetisasi Fase A–C SELESAI di repo dan terverifikasi langsung di sandbox:**
-> akun (Firebase Auth), Simpan Pekerjaan (Firestore), paywall unduhan laporan
-> dengan pratinjau gambar, dan berlangganan Midtrans Snap — pembayaran sandbox
-> mengaktifkan premium otomatis lewat webhook, idempoten, harga ditentukan server.
-> Infrastruktur hidup: project `edfs-civil-tools-e3a59` (Blaze), 3 Cloud Functions
-> di `asia-southeast2`, Midtrans Merchant `M099838` (sandbox).
+> **Sesi 2026-10-06 ditutup.** Hasil: semua keputusan Tahap 0 diambil (kecuali React vs vanilla TS),
+> project Supabase di-rename `edifisia-dev` / `edifisia-prod`, Redirect URLs & Site URL beres,
+> **login Google aktif di Supabase dev & prod** (project Google Cloud `Edifisia`, diuji di dev).
+> Belum ada kode yang diubah. **Lanjut: Tahap 2 (skema `tools`) di [`TODO.md`](TODO.md).**
 >
-> **Yang live di `tools.dtsengineering.co.id` masih build lama (≈ v0.5.1)** —
-> belum ada akun, belum ada paywall. Versi di modal Tentang masih v0.7.3.
+> **Arah berubah: Civil Tools diselaraskan dengan platform Edifisia.**
+> Diputuskan 2026-10-06: **Firebase dibuang**, akun & hak akses pindah ke
+> **Supabase** (project yang sama dengan EDFS Matrix, skema `platform` sudah live),
+> dan domain produksi menjadi **`tools.edifisia.com`** (Cloudflare Pages).
+> Satu Edifisia Premium membuka semua aplikasi; trial 7 hari; beli di `edifisia.com`.
+> Dikerjakan bersama **rombak mayor UI di atas Vite** (zero build ditinggalkan). Semua tool
+> tetap gratis; Premium hanya Save + Download Report; maks 50 pekerjaan/user; login Google.
+> Rencana lengkap & urutan kerja:
+> **[`PLATFORM.md`](PLATFORM.md)** — baca itu dulu.
 >
-> **Daftar pekerjaan berikutnya, dikelompokkan per tingkat urgensi, ada di
-> [`MONETIZATION.md` §7](MONETIZATION.md).** Baca itu dulu sebelum menyentuh
-> apa pun — ada satu jebakan P0: deploy ke produksi tanpa menambahkan domain ke
-> Firebase Authorized domains akan mematikan unduhan PDF untuk semua orang.
+> Kondisi kode di `main` saat ini: monetisasi Fase A–C versi **Firebase** (akun,
+> Simpan Pekerjaan Firestore, paywall unduhan dengan pratinjau, Midtrans Snap)
+> masih ada dan berfungsi di sandbox, tetapi **akan diganti**. Mekanisme snapshot
+> stash (`works.js`) dan titik gating (`report.js`) dipertahankan.
 >
-> Runbook: [`MONETIZATION.md`](MONETIZATION.md) (setup & uji bayar) ·
-> [`DEPLOY.md`](DEPLOY.md) (rilis statis) ·
-> [`DOMAIN_MIGRATION.md`](DOMAIN_MIGRATION.md) (rencana pindah domain).
+> ⚠️ **Jangan deploy build `main` ke produksi apa adanya**: paywall Firebase menyala
+> otomatis karena `MIDTRANS_CONFIG` terisi. Lihat [`PLATFORM.md` §7](PLATFORM.md).
+>
+> Yang live di `tools.dtsengineering.co.id` (cPanel) masih ≈ v0.5.1, tanpa akun.
+>
+> Daftar kerja per tahap (siapa mengerjakan apa): **[`TODO.md`](TODO.md)**.
+>
+> Runbook: [`PLATFORM.md`](PLATFORM.md) (rencana aktif) ·
+> [`DOMAIN_MIGRATION.md`](DOMAIN_MIGRATION.md) (Cloudflare Pages + `tools.edifisia.com`) ·
+> [`DEPLOY.md`](DEPLOY.md) (cPanel, warisan) ·
+> [`MONETIZATION.md`](MONETIZATION.md) (arsip Fase A–C Firebase).
 
 ## Apa yang sudah jadi
 

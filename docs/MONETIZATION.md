@@ -1,5 +1,17 @@
 # Monetisasi — Freemium (Simpan Pekerjaan + Unduh PDF)
 
+> **⚠️ ARSIP — digantikan 2026-10-06.** Firebase dibuang; akun, Premium, dan
+> pembelian Civil Tools pindah ke platform Edifisia (Supabase, satu Edifisia
+> Premium untuk semua aplikasi, trial 7 hari, beli di `edifisia.com`). Harga di
+> dokumen ini (Rp 14/39/129 rb) **tidak berlaku lagi**. Rencana aktif:
+> **[PLATFORM.md](PLATFORM.md)**.
+>
+> Dokumen ini disimpan sebagai catatan bagaimana Fase A–C dibangun, karena
+> mekanisme yang tidak bergantung Firebase dipertahankan: snapshot stash
+> (§5), titik gating dan pratinjau di `core/report.js` (§6), serta pelajaran
+> webhook Midtrans (§6 langkah 6, `--data-file` untuk secret). Langkah setup
+> Firebase dan papan kerja §7 **jangan dikerjakan lagi**.
+
 Runbook implementasi & setup untuk fitur akun/premium. Rencana lengkap (arsitektur,
 data model, rasionale) ada di percakapan/plan file terkait — dokumen ini fokus ke
 **langkah setup yang harus dilakukan manual oleh pemilik project** (bukan lewat kode),
@@ -216,7 +228,12 @@ premium melihat tombol "★ Berlangganan Premium" di tempat yang sama.
   client key produksi di `index.html`, dan kedua secret di-set ulang dengan key
   produksi — lalu `firebase deploy --only functions`.
 
-## 7. Papan kerja berikutnya (per 2026-09-22)
+## 7. Papan kerja berikutnya (per 2026-09-22) — USANG
+
+> Seluruh daftar di bawah digantikan oleh [PLATFORM.md §5](PLATFORM.md) (2026-10-06).
+> Yang masih relevan sudah dibawa ke sana: jangan deploy paywall Firebase,
+> bump ke v0.8.0 saat rilis, Midtrans produksi (kini lewat webhook platform),
+> riwayat pembelian & pengingat kedaluwarsa (kini tugas platform).
 
 Fase A–C selesai **di repo** dan terverifikasi di sandbox. Yang live di
 `tools.dtsengineering.co.id` masih build lama (≈ v0.5.1) — belum ada akun,

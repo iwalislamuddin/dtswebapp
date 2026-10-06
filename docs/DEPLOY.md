@@ -1,5 +1,15 @@
 # Deploy Runbook — EDFS Civil Tools (cPanel)
 
+> **Status 2026-10-06: runbook warisan.** Produksi akan pindah ke
+> **`tools.edifisia.com` di Cloudflare Pages** (deploy otomatis dari `git push`,
+> lihat [DOMAIN_MIGRATION.md](DOMAIN_MIGRATION.md)). Setelah itu cPanel hanya
+> dipakai untuk redirect 301 dari `tools.dtsengineering.co.id`. Daftar berkas
+> publik (§1) dan checklist versi (§0) tetap berlaku — `scripts/cf-build.sh`
+> memakai whitelist yang sama.
+>
+> ⚠️ Jangan deploy `main` apa adanya: paywall Firebase menyala otomatis
+> ([PLATFORM.md §7](PLATFORM.md)).
+
 Prosedur baku menaikkan rilis ke hosting produksi
 **`https://tools.dtsengineering.co.id`** (subdomain di cPanel, document root =
 folder subdomain, mis. `public_html/tools/` atau document root khusus subdomain).
@@ -40,11 +50,11 @@ assets/  core/  modules/  favicon/
 
 **JANGAN sertakan** (bukan aset runtime): `.git/`, `.claude/`, `.gitignore`,
 `README.md`, `ARCHITECTURE.md`, `docs/`, `firebase/`, `functions/`,
-`firebase.json`, `.firebaserc`.
+`firebase.json`, `.firebaserc`, `supabase/`.
 
-> `functions/` (Cloud Functions pembayaran) TIDAK pernah ikut ke hosting statis —
-> ia di-deploy terpisah ke Firebase: `firebase deploy --only functions`. Lihat
-> [MONETIZATION.md §6](MONETIZATION.md).
+> `functions/`, `firebase/`, `firebase.json`, `.firebaserc` adalah sisa stack
+> Firebase yang akan dihapus ([PLATFORM.md §4](PLATFORM.md)). `supabase/`
+> (migrasi skema `tools`) diterapkan ke database, bukan ke hosting.
 
 > `.htaccess` **wajib** ikut — dialah SPA fallback yang membuat deep-link
 > `/beam-shear-torsion` & reload halaman tidak 404. Letaknya di **document root**
@@ -144,5 +154,6 @@ Workers → *Update* / *Unregister*, atau hard-reload `Ctrl+Shift+R`.
   %{HTTPS} off`) bisa diaktifkan setelah SSL subdomain terpasang.
 - Riwayat rilis app ada di modal **Tentang** (`index.html`). Rilis terakhir yang
   disiapkan: **v0.7.3 / SW civil-tools-v58 / 35 tool aktif**. Di repo saat ini SW
-  sudah di `civil-tools-v63` (akun, Simpan Pekerjaan, gating PDF) — nomor versi
-  app di modal Tentang belum dinaikkan, tentukan saat menyiapkan rilis berikutnya.
+  sudah di `civil-tools-v64` (akun, Simpan Pekerjaan, gating PDF versi Firebase).
+  Rilis berikutnya direncanakan **v0.8.0** bersama penyelarasan platform Edifisia
+  dan rombak UI ([PLATFORM.md](PLATFORM.md)).

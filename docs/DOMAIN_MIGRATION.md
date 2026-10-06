@@ -1,90 +1,87 @@
-# Migrasi Domain + Hosting — cPanel → Domain Sendiri + Cloudflare Pages
+# Migrasi Domain + Hosting — cPanel → `tools.edifisia.com` (Cloudflare Pages)
 
 Runbook untuk pindah dari `tools.dtsengineering.co.id` (subdomain, hosting cPanel
-manual) ke domain sendiri di **Cloudflare Pages** (deploy otomatis dari `git push`).
+manual) ke **`tools.edifisia.com`** di **Cloudflare Pages** (deploy otomatis dari
+`git push`).
 
-**Kenapa sekarang:** data Search Console (dicek 2026-09-17) menunjukkan domain
-lama baru punya 13 impression / 0 klik dalam 6 bulan, dan cuma halaman depan yang
-pernah tampil di Google (36 halaman tool belum pernah ter-index sama sekali) —
-jadi nyaris tidak ada SEO equity yang perlu "dilindungi" dengan redirect map
-rumit. Ini momen termurah untuk pindah.
+**Domain final diputuskan 2026-10-06: `tools.edifisia.com`**, sebagai bagian dari
+penyelarasan dengan platform Edifisia ([PLATFORM.md](PLATFORM.md)). Pilihan lama
+`edfs.web.id` dibatalkan. Alasan subdomain `edifisia.com`: otoritas SEO terkumpul
+di satu brand, satu DNS/SSL, dan sesi login bisa dibagi lewat cookie
+`.edifisia.com` dengan EDFS Matrix (`matrix.edifisia.com`).
 
-Langkah 1–4 di bawah **harus dilakukan manual oleh Anda** (buat akun/beli domain
-tidak bisa dilakukan asisten AI). Langkah 5 ("Kode yang perlu diubah") saya
-kerjakan begitu domain final sudah aktif.
+**Kenapa pindah sekarang:** data Search Console (dicek 2026-09-17) menunjukkan
+domain lama baru punya 13 impression / 0 klik dalam 6 bulan, dan cuma halaman
+depan yang pernah tampil di Google (36 halaman tool belum pernah ter-index) —
+nyaris tidak ada SEO equity yang perlu "dilindungi" dengan redirect map rumit.
+
+Langkah 1–4 di bawah **dilakukan manual oleh pemilik akun**. Langkah 5 dikerjakan
+di repo.
 
 ---
 
-## 1. Pilih & daftarkan nama domain
+## 1. Domain — ✅ sudah ada
 
-**Soal `edfs.web.id` yang sudah dipikirkan:** ini pilihan yang valid — pendek,
-sesuai brand, dan Anda sudah terbiasa proses registrasinya. Satu hal teknis untuk
-dipertimbangkan (bukan pembatal, sekadar info): domain `.id`/`.web.id` diperlakukan
-Google sebagai **country-targeted ke Indonesia** secara otomatis (ccTLD). Karena
-target utama memang tetap user Indonesia (versi English yang direncanakan pun
-terutama untuk kebutuhan **laporan** user Indonesia, bukan akuisisi audiens
-internasional) — ini **tidak masalah** untuk kasus Anda. Baru jadi pertimbangan
-serius kalau suatu saat target audiens internasional jadi prioritas utama (bukan
-bonus) — silakan pakai `edfs.web.id` dengan tenang untuk rencana saat ini.
+`edifisia.com` sudah dimiliki dan DNS-nya di Cloudflare (dipakai
+`matrix.edifisia.com`). Tidak perlu registrasi baru; cukup subdomain `tools`.
 
-Alternatif nama (kalau mau bandingkan dulu sebelum memutuskan), semua dicek
-ketersediaan saat registrasi nanti — bukan garansi tersedia:
-- `edfs.web.id` — pilihan awal Anda, brand-first, singkat.
-- `edfscivil.web.id` / `edfstools.web.id` — brand + kata kunci produk, sedikit lebih jelas untuk orang yang belum kenal brand.
-- `civiltools.id` — murni deskriptif, tapi domain generik populer begini kemungkinan lebih mahal/sudah diambil, dan `.id` (bukan `.web.id`) butuh dokumen usaha lebih lengkap.
+## 2. Buat project Cloudflare Pages + hubungkan repo
 
-Registrar lokal ber-akreditasi PANDI untuk `.web.id`: Niagahoster, Rumahweb,
-Domainesia, Dewaweb — siapkan KTP (atau NPWP badan usaha PT. DTS Engineering
-kalau mau atas nama perusahaan, lebih pas untuk brand ini).
+Akun Cloudflare sudah ada (dipakai Matrix).
 
-## 2. Buat akun Cloudflare + hubungkan repo
-
-1. Daftar di [dash.cloudflare.com](https://dash.cloudflare.com) (gratis).
-2. **Workers & Pages > Create > Pages > Connect to Git** → pilih repo `iwalislamuddin/dtswebapp` (perlu otorisasi GitHub App Cloudflare ke akun/organisasi GitHub Anda).
-3. Konfigurasi build:
+1. **Workers & Pages > Create > Pages > Connect to Git** → repo `iwalislamuddin/dtswebapp`.
+2. Konfigurasi build:
    - **Build command:** `bash scripts/cf-build.sh`
    - **Build output directory:** `dist`
-   - **Root directory:** biarkan default (root repo)
-4. Deploy pertama akan jalan otomatis — cek hasilnya di URL sementara `*.pages.dev` yang diberikan Cloudflare (situs sudah hidup di sini sebelum domain custom dipasang, bagus untuk uji coba dulu).
+   - **Root directory:** default (root repo)
+3. Deploy pertama jalan otomatis — uji dulu di URL sementara `*.pages.dev`.
 
-Skrip `scripts/cf-build.sh` (sudah saya siapkan di repo) menyalin **hanya berkas
-publik** yang sama seperti daftar di [docs/DEPLOY.md](DEPLOY.md) — `docs/`,
-`.claude/`, `firebase/`, `README.md`, `ARCHITECTURE.md` TIDAK ikut ter-publish.
-File `_redirects` (SPA fallback, pengganti `.htaccess` rewrite) dan `_headers`
-(cache-control, pengganti blok `mod_headers` di `.htaccess`) juga sudah dibuat
-di root repo — otomatis ikut tersalin ke `dist/` oleh skrip.
+`scripts/cf-build.sh` menyalin **hanya berkas publik** (whitelist sama seperti
+[DEPLOY.md](DEPLOY.md)) — `docs/`, `.claude/`, `firebase/`, `functions/`,
+`supabase/`, `README.md`, `ARCHITECTURE.md` TIDAK ikut ter-publish. `_redirects`
+(SPA fallback, pengganti `.htaccess`) dan `_headers` (cache-control) ikut tersalin.
 
-## 3. Pasang domain custom di Cloudflare Pages
+> **Pelajaran dari Matrix:** Browser Cache TTL di zona Cloudflare **menimpa**
+> `Cache-Control` dari `_headers`. Pastikan setelan zona `edifisia.com`
+> (Caching > Configuration > Browser Cache TTL) = *Respect Existing Headers*,
+> supaya `sw.js` / `index.html` tetap `no-cache`.
 
-1. Di project Pages yang baru dibuat → **Custom domains > Set up a domain** → masukkan domain dari langkah 1.
-2. Cloudflare akan minta DNS domain itu dikelola oleh Cloudflare (ubah nameserver di registrar ke nameserver Cloudflare yang ditampilkan), ATAU kalau domain didaftarkan lewat registrar lain dan tidak mau pindah nameserver, tambahkan CNAME manual sesuai instruksi yang muncul.
-3. HTTPS otomatis terpasang oleh Cloudflare (Universal SSL) — biasanya aktif dalam beberapa menit sampai ~24 jam setelah DNS propagasi.
+## 3. Pasang domain custom
+
+1. Project Pages → **Custom domains > Set up a domain** → `tools.edifisia.com`.
+2. Karena zona `edifisia.com` sudah di Cloudflare, record CNAME dibuat otomatis.
+3. HTTPS (Universal SSL) aktif otomatis dalam beberapa menit.
 
 ## 4. Setelah domain baru hidup — jangan lupa
 
-- **Google Search Console**: tambah **Property baru** untuk domain baru (properti lama untuk `tools.dtsengineering.co.id` biarkan saja, tidak perlu dihapus — datanya tetap berguna sebagai riwayat). Submit sitemap baru.
-- **Google Analytics 4**: property yang sama boleh dipakai lagi — cukup pastikan tidak ada domain-lock yang menolak hit dari domain baru (default GA4 tidak mengunci per-domain, jadi biasanya otomatis jalan begitu `index.html` yang baru di-deploy).
-- **Firebase Auth** (fitur akun yang sedang dibangun, Fase A): tambahkan domain baru ke **Authentication > Settings > Authorized domains** — WAJIB sebelum login/Google sign-in bisa jalan di domain baru.
-- Domain lama `tools.dtsengineering.co.id` boleh tetap hidup sebagai **redirect 301** ke domain baru (bukan dimatikan mendadak) — supaya link yang sudah beredar di LinkedIn/bookmark PWA tidak mati total. Bisa diatur lewat `.htaccess` di cPanel lama: `RewriteRule ^(.*)$ https://DOMAIN-BARU/$1 [R=301,L]`.
+- **Google Search Console**: tambah property untuk `tools.edifisia.com` (atau
+  Domain property `edifisia.com` yang mencakup semua subdomain), submit sitemap baru.
+  Property lama biarkan sebagai riwayat.
+- **Google Analytics 4**: property yang sama (`G-2MDVZFKNSE`) tetap dipakai.
+- **Supabase Auth** (pengganti Firebase Authorized domains): tambahkan
+  `https://tools.edifisia.com` ke **Authentication > URL Configuration > Redirect URLs**
+  di project production (dan `http://localhost:*` di development) — wajib sebelum
+  login/reset password jalan di domain baru.
+- Domain lama `tools.dtsengineering.co.id` tetap hidup sebagai **redirect 301**
+  (path dipertahankan), supaya link LinkedIn/bookmark PWA tidak mati. Di cPanel lama,
+  `.htaccess`: `RewriteRule ^(.*)$ https://tools.edifisia.com/$1 [R=301,L]`.
+  Catatan: PWA yang sudah terpasang dari domain lama tidak ikut pindah origin;
+  pengguna perlu memasang ulang dari domain baru.
 
-## 5. Kode yang perlu diubah (saya kerjakan setelah domain final dikonfirmasi)
+## 5. Kode yang perlu diubah
 
-Checklist internal — **jangan dikerjakan sebelum domain benar-benar aktif**,
-supaya tidak bolak-balik ubah dua kali:
+Dikerjakan sekali, saat `tools.edifisia.com` sudah aktif di Pages:
 
-- [ ] `assets/shell.js` — konstanta `SITE` (dipakai canonical URL & Open Graph)
-- [ ] `index.html` — semua `<meta property="og:...">`, `<link rel="canonical">`, JSON-LD `url`
-- [ ] `sitemap.xml` — 37 `<loc>` ganti domain
-- [ ] `manifest.json` — `start_url`/`scope` bila memakai absolute URL
+- [ ] `assets/shell.js` — konstanta `SITE` → `https://tools.edifisia.com`
+- [ ] `index.html` — `<link rel="canonical">`, semua `og:`/`twitter:` URL, JSON-LD `url`
+- [ ] `sitemap.xml` — semua `<loc>` ganti domain
+- [ ] `manifest.json` — cek `start_url`/`scope` (kini relatif `./`, aman)
 - [ ] `robots.txt` — baris `Sitemap:`
-- [ ] `docs/DEPLOY.md` — update jadi runbook Cloudflare (bukan lagi cPanel manual) atau simpan cPanel sbg fallback opsional
-- [ ] Bump versi SW (`sw.js` `CACHE`) sekali lagi setelah semua URL berubah
+- [ ] `docs/DEPLOY.md` — jadi runbook Cloudflare Pages; cPanel hanya untuk redirect domain lama
+- [ ] Bump versi SW (`sw.js` `CACHE`) setelah semua URL berubah
 
 ## 6. Di luar scope migrasi ini — versi English
 
-Rencana versi English (untuk kebutuhan laporan PDF berbahasa Inggris bagi user
-Indonesia, dengan user internasional sebagai bonus) **belum digarap di sini** —
-ini keputusan arsitektur terpisah (mis. toggle bahasa di `core/report.js` untuk
-output laporan vs. UI multibahasa penuh) yang lebih baik direncanakan sendiri
-setelah migrasi domain & fitur premium (Fase A–D monetisasi) selesai, supaya
-tidak menumpuk terlalu banyak perubahan sekaligus.
+Rencana versi English (laporan PDF berbahasa Inggris untuk user Indonesia, user
+internasional sebagai bonus) direncanakan terpisah setelah penyelarasan platform
+dan rombak UI selesai.

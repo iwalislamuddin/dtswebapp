@@ -3,9 +3,10 @@
 Alat bantu rekayasa sipil dalam satu aplikasi terpasang (**PWA**) — kumpulan mini-app perhitungan
 teknik sipil berbasis SNI, dengan visual dan laporan siap dokumentasi.
 
-Dikembangkan oleh **Iwal · Edifisia · PT. DTS Engineering**.
+Dikembangkan oleh **Iwal · Edifisia · PT. DTS Engineering**. Bagian dari platform **Edifisia**
+(satu akun & satu Edifisia Premium bersama EDFS Matrix) — rencana penyelarasan: [`docs/PLATFORM.md`](docs/PLATFORM.md).
 
-- **Zero build step** — HTML/CSS/JS murni. Deploy = upload isi folder ini ke `public_html` (cPanel).
+- **Zero build step** — HTML/CSS/JS murni. Produksi: `tools.edifisia.com` di Cloudflare Pages (rencana, lihat `docs/DOMAIN_MIGRATION.md`); saat ini masih cPanel `tools.dtsengineering.co.id`.
 - **Modular** — tambah tool = tambah 1 folder di `modules/` + 1 baris di `core/module-registry.js`. Shell tidak pernah diubah.
 - **PWA** — installable, offline-capable (service worker).
 
@@ -29,7 +30,10 @@ python -m http.server 5188
 > dan/atau hard-reload (Ctrl+Shift+R). Versi cache sekarang dilihat di `sw.js`
 > (`const CACHE = 'civil-tools-vNN'`) — **wajib dinaikkan tiap rilis**.
 
-## Deploy (cPanel)
+## Deploy
+
+> Sasaran: Cloudflare Pages (`tools.edifisia.com`, deploy dari `git push`) —
+> [`docs/DOMAIN_MIGRATION.md`](docs/DOMAIN_MIGRATION.md). Prosedur cPanel di bawah adalah warisan.
 
 Prosedur baku lengkap (paket zip, upload, verifikasi live) ada di
 **[`docs/DEPLOY.md`](docs/DEPLOY.md)**.
@@ -56,10 +60,10 @@ core/
   ui-kit.js                toast, form generator, hero/kv/note, disposeObject
   canvas2d.js              Helper kanvas 2D (hi-DPI, auto-resize, repaint saat ganti tema)
   report.js                Generator laporan monospace → PDF (Courier, tanpa library) / .txt
-  auth.js                  Akun login/daftar (Firebase Auth) + status premium — window.CivilAuth
-  works.js                 "Simpan Pekerjaan" (premium): state tool ↔ Firestore — window.CivilWorks
-  billing.js               Paket & checkout Midtrans Snap — window.CivilBilling
-functions/                 Cloud Functions pembayaran (deploy TERPISAH ke Firebase, bukan ke hosting statis)
+  auth.js                  Akun + status Premium — window.CivilAuth (kini Firebase; akan diganti Supabase platform)
+  works.js                 "Simpan Pekerjaan" (premium) — window.CivilWorks (kini Firestore; akan ke tools.saved_works)
+  billing.js               Paket & checkout — window.CivilBilling (kini Midtrans Snap; akan jadi tautan beli edifisia.com)
+functions/, firebase/      Sisa stack Firebase — AKAN DIHAPUS (docs/PLATFORM.md §4)
   steel-profiles.js        Library DB profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) — dipakai semua tool baja
 modules/
   development-length/      Tool #1 — Panjang Penyaluran Tulangan Tarik (SNI 2847:2019)
