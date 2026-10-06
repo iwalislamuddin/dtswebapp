@@ -35,7 +35,8 @@ rename 2026-10-06.
       (mungkin sudah diset saat Matrix)
 - [ ] ⚠️ **Jangan pasang custom domain `tools.edifisia.com` dulu** — build `main` masih memuat paywall Firebase
       yang aktif otomatis. Domain dipasang di Tahap 6
-- [ ] **[Claude]** `X-Robots-Tag: noindex` untuk host `*.pages.dev` agar URL sementara tidak terindeks
+- [x] **[Claude]** `X-Robots-Tag: noindex` untuk host `*.pages.dev` agar URL sementara tidak terindeks
+      (`_headers`, 2026-10-06) → **[Anda]** setelah deploy pertama cek: DevTools > Network > dokumen → header ada
 
 **Login Google** (satu kali untuk semua aplikasi Edifisia — Matrix ikut memakai)
 - [x] **[Anda]** Google Cloud: **project baru `Edifisia`** (jangan pakai project Firebase `edfs-civil-tools-e3a59`,
@@ -70,14 +71,27 @@ rename 2026-10-06.
 
 ## Tahap 2 — Database: skema `tools` di Supabase
 
-- [ ] **[Claude]** Folder `supabase/` + migrasi `tools.saved_works` (RLS: baca/hapus pemilik; tulis pemilik +
-      `platform.has_premium()`; trigger `updated_at`; trigger batas **50** per user)
-- [ ] **[Claude]** `tests/tools_test.sql` + runner (pola repo platform, transaksi selalu di-rollback)
-- [ ] **[Anda]** Jalankan di **development** (Sydney): `supabase.cmd db push --db-url "<session pooler dev>"`
-      lalu test. Password DB tetap di tangan Anda — jangan ditempel ke chat
-- [ ] **[Anda]** Supabase dev > Settings > Data API > **Exposed schemas**: tambah `tools`
-- [ ] **[Anda]** Kirim ke Claude: **Project URL + anon/publishable key** dev dan prod (keduanya publik,
-      aman di repo). **Jangan** kirim `service_role` key
+- [x] **[Claude]** Folder `supabase/` + migrasi `tools.saved_works` (RLS: baca/hapus pemilik; tulis pemilik +
+      `platform.has_premium()`; trigger `updated_at`; trigger batas **50** per user) — 2026-10-06
+- [x] **[Claude]** `tests/tools_test.sql` + runner (pola repo platform, transaksi selalu di-rollback) — lulus di
+      Postgres lokal (PGlite + skema platform asli + tiruan `auth`); 12 mutasi sengaja, 10 tertangkap, 2 sisanya
+      tetap aman karena lapisan lain (RLS select / with check)
+- [x] **[Claude]** `scripts/db_migrate.py` — **pengganti `supabase db push`** (riwayat CLI milik repo platform;
+      push dari repo ini akan ditolak). Riwayat di `tools.schema_migrations`. Lihat PLATFORM.md §2
+- [x] **[Anda]** ✅ 2026-10-07 diterapkan & lulus. Jalankan di **development** (Sydney), di PowerShell (password tetap di tangan Anda, jangan ke chat):
+      ```
+      pip install psycopg2-binary
+      $env:DATABASE_URL = "<session pooler dev>"
+      python tests/run.py                    # migrasi + test, rollback — harus "semua lulus"
+      python scripts/db_migrate.py --dry-run
+      python scripts/db_migrate.py
+      python tests/run.py --applied
+      Remove-Item Env:DATABASE_URL
+      ```
+- [x] **[Anda]** Cek trial user Google dev (sisa Tahap 1) — 2026-10-07: akun Google punya baris `trial` 7 hari ✅
+- [x] **[Anda]** Supabase dev > Settings > Data API > **Exposed schemas**: tambah `tools` — 2026-10-07
+- [x] **[Anda]** Kirim ke Claude: **Project URL + anon/publishable key** dev dan prod — 2026-10-07, dicatat di
+      PLATFORM.md §2 (Konfigurasi klien)
 
 ## Tahap 3 — Migrasi ke Vite (tanpa mengubah tampilan)
 
@@ -117,7 +131,8 @@ rename 2026-10-06.
 
 - [ ] **[Claude]** URL kanonik → `https://tools.edifisia.com` (DOMAIN_MIGRATION.md §5), sitemap, robots,
       catatan rilis v0.8.0 di modal Tentang
-- [ ] **[Anda]** Supabase **production**: `db push` migrasi `tools` + test, Exposed schemas `tools`
+- [ ] **[Anda]** Supabase **production**: `scripts/db_migrate.py` + `tests/run.py --applied` (Session pooler prod),
+      Exposed schemas `tools`
 - [ ] **[Anda]** Cloudflare Pages > Custom domains > `tools.edifisia.com` (CNAME & SSL otomatis)
 - [ ] **[Bersama]** Uji asap di domain asli: login email & Google, simpan, buka, unduh PDF Premium & non-Premium
 - [ ] **[Anda]** Google Search Console: **Domain property `edifisia.com`** (verifikasi TXT di DNS Cloudflare)

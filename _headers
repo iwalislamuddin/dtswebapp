@@ -14,3 +14,9 @@
   Cache-Control: public, max-age=3600, must-revalidate
 /*.svg
   Cache-Control: public, max-age=3600, must-revalidate
+
+# URL sementara Cloudflare Pages (*.pages.dev) jangan diindeks mesin pencari —
+# hanya domain produksi tools.edifisia.com yang boleh muncul di hasil pencarian.
+# Deployment preview (<hash>.<project>.pages.dev) sudah otomatis noindex oleh Cloudflare.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex

@@ -10,6 +10,12 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 > **login Google aktif di Supabase dev & prod** (project Google Cloud `Edifisia`, diuji di dev).
 > Belum ada kode yang diubah. **Lanjut: Tahap 2 (skema `tools`) di [`TODO.md`](TODO.md).**
 >
+> **Tahap 2 SELESAI (2026-10-07):** `tools.saved_works` diterapkan di **dev** dan test lulus, skema `tools`
+> di-expose, trial akun Google terkonfirmasi, URL + publishable key dev/prod tercatat di PLATFORM.md §2.
+> Header `noindex` untuk `*.pages.dev` dipasang. Prod menyusul di Tahap 6. Catatan: repo ini **tidak** memakai
+> `supabase db push` (bentrok riwayat dengan repo platform) — pakai `scripts/db_migrate.py`, lihat PLATFORM.md §2.
+> **Berikutnya: Tahap 3 (Vite)** — perlu keputusan React+TS vs vanilla TS dulu.
+>
 > **Arah berubah: Civil Tools diselaraskan dengan platform Edifisia.**
 > Diputuskan 2026-10-06: **Firebase dibuang**, akun & hak akses pindah ke
 > **Supabase** (project yang sama dengan EDFS Matrix, skema `platform` sudah live),

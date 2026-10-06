@@ -71,34 +71,44 @@ demi SEO dan konversi.
 
 ### Skema `tools` (migrasi di repo ini)
 
-Rencana awal, disempurnakan saat implementasi:
+Terimplementasi (2026-10-06): [`supabase/migrations/20261006000000_tools_saved_works.sql`](../supabase/migrations/20261006000000_tools_saved_works.sql).
 
-```sql
-create schema tools;
-
-create table tools.saved_works (
-  id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null references auth.users(id) on delete cascade,
-  tool_id     text not null,
-  name        text not null check (length(name) between 1 and 120),
-  state_json  jsonb not null,          -- snapshot stash sessionStorage, sama seperti Fase B
-  created_at  timestamptz not null default now(),
-  updated_at  timestamptz not null default now()
-);
-
-alter table tools.saved_works enable row level security;
--- baca & hapus: pemilik
--- insert & update: pemilik DAN platform.has_premium()
-```
+`tools.saved_works`: `id`, `user_id` (default `auth.uid()`, cascade saat akun dihapus), `tool_id`
+(slug modul), `name` (sudah di-trim, 1–120), `state_json` (objek JSON snapshot stash, ≤ 256 KB),
+`created_at`, `updated_at` (trigger).
 
 - **Save ditegakkan di database** (RLS memanggil `platform.has_premium()`), jadi tidak
-  bisa diakali dari browser.
+  bisa diakali dari browser. Baca & hapus: pemilik. Simpan baru & timpa: pemilik + Premium.
+- Hak per kolom: klien hanya mengisi `tool_id, name, state_json` (insert) dan `name, state_json`
+  (update); `id`, `user_id`, waktu diisi database. `anon` tidak punya akses.
+- **Maksimal 50 pekerjaan per user**, ditegakkan trigger `before insert` (kunci advisory per user
+  agar simpan bersamaan tidak lolos). Galat membawa `hint = 'saved_works_limit'` — UI mendeteksi
+  lewat hint itu, bukan teks pesan. Menimpa tetap boleh saat penuh.
 - Skema `tools` perlu ditambahkan ke *Exposed schemas* Data API Supabase (Matrix
   tidak perlu karena backend-nya memakai koneksi langsung).
-- Migrasi disimpan di `supabase/migrations/` repo ini, alurnya sama dengan repo
-  platform: development → test → production.
-- **Maksimal 50 pekerjaan per user**, ditegakkan trigger `before insert` (pesan
-  galat jelas untuk UI), agar tabel tidak dipakai sebagai penyimpanan bebas.
+- Alur: development → test → production. **Tidak memakai `supabase db push`**: riwayat CLI
+  (`supabase_migrations.schema_migrations`) milik repo platform, dan CLI menolak push bila riwayat
+  remote berisi versi yang tak ada di folder lokal. Repo ini memakai `scripts/db_migrate.py` dengan
+  riwayat sendiri di `tools.schema_migrations`. Test: `tests/run.py` (selalu rollback).
+
+```bash
+pip install psycopg2-binary
+DATABASE_URL=postgresql://... python tests/run.py                  # migrasi + test, rollback (sebelum diterapkan)
+DATABASE_URL=postgresql://... python scripts/db_migrate.py --dry-run
+DATABASE_URL=postgresql://... python scripts/db_migrate.py
+DATABASE_URL=postgresql://... python tests/run.py --applied        # test saja, rollback
+```
+
+**Konfigurasi klien** (publik, aman di repo; dipakai `supabase-js` di Tahap 4). `service_role`/secret key
+TIDAK PERNAH masuk repo.
+
+| | Project URL | Publishable key |
+|---|---|---|
+| dev (`edifisia-dev`, Sydney) | `https://djfkyyibydwyplgzexwz.supabase.co` | `sb_publishable_lEIKRrtGZAIB3-1eeTNYYg_I5Ey5JZV` |
+| prod (`edifisia-prod`, Singapore) | `https://tqxkqxtijubcracpmlav.supabase.co` | `sb_publishable_vZKpECd2_uAwnmtv9ixXZw_Q9rqmGt6` |
+
+`DATABASE_URL` = string koneksi *Session pooler* (dashboard Supabase > Connect), password
+di-percent-encode. Set di terminal sendiri, jangan ke repo/chat.
 
 ### Catatan jujur soal gating PDF
 
