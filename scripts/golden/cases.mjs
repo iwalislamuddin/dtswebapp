@@ -48,6 +48,28 @@ const pyBase = {
 }
 const py = (name, over) => ({ name, args: [{ ...pyBase, ...over }] })
 
+const footBase = {
+  P: 900, Mx: 60, My: 40, Hx: 30, Hy: 20, LF: 1.5, L: 2.5, B: 2.5, tf: 500, Df: 1.5, c1: 400, c2: 400,
+  fc: 25, fy: 420, qa: 200, mu: 0.5, gc: 24, gs: 18, cc: 75, db: 16,
+}
+const foot = (name, over) => ({ name, args: [{ ...footBase, ...over }] })
+const capBase = {
+  mode: 'pu', Pu: 4000, Mux: 0, Muy: 0, Q: 1200, n: 4, dp: 400, s: 1200, ov: 400, cx: 500, cy: 500, h: 800, cov: 75,
+  fc: 30, fy: 420, db: 25,
+}
+const cap = (name, over) => ({ name, args: [{ ...capBase, ...over }] })
+const rcBase = {
+  opsi: 'tegak', H: 3, bTop: 0.25, bBot: 0.4, tf: 0.4, toe: 0.8, heel: 1.5, D: 0.8, gamma1: 18, phi1: 30, beta: 0, q: 10,
+  gamma2: 18, phi2: 28, c2: 10, qall: 150, kf: 0.67, passive: 'tidak', gammaC: 24, fc: 25, fy: 420, dbMain: 16, dbDist: 13,
+  coverS: 50, coverF: 75, FSot: 2, FSsl: 1.5, Lwall: 10,
+}
+const rc = (name, over) => ({ name, args: [{ ...rcBase, ...over }] })
+const rsBase = {
+  opsi: 'tegak', H: 3, bTop: 0.5, bBot: 1.8, tf: 0.6, toe: 0.3, heel: 0.3, D: 0.8, gamma1: 18, phi1: 30, beta: 0, q: 10,
+  gamma2: 18, phi2: 28, c2: 10, qall: 150, kf: 0.67, passive: 'tidak', gammaW: 22, FSot: 2, FSsl: 1.5, Lwall: 10,
+}
+const rs = (name, over) => ({ name, args: [{ ...rsBase, ...over }] })
+
 export const CASES = {
   'bearing-capacity': [
     bearing('default (HANDOFF: Terzaghi qu 1373)', {}),
@@ -211,5 +233,99 @@ export const CASES = {
     py('lempung eps50 0', { eps50: 0 }),
     py('pasir kpy 0', { soil: 'sand', kpy: 0 }),
     py('D 0', { D: 0 }),
+  ],
+  'footing-design': [
+    foot('default', {}),
+    foot('tanpa momen & geser (SF tak hingga)', { Mx: 0, My: 0, Hx: 0, Hy: 0 }),
+    foot('uplift (eksentrisitas besar)', { Mx: 400, My: 300 }),
+    foot('daya dukung terlampaui', { P: 1500 }),
+    foot('guling & geser < 1,5', { P: 100, Mx: 150, Hx: 120, Hy: 80 }),
+    foot('kolom lebih besar dari tapak', { c1: 3000 }),
+    foot('tinggi efektif <= 0', { tf: 80 }),
+    foot('fc > 28 (beta1)', { fc: 40 }),
+    foot('fc 27,5 (batas beta1)', { fc: 27.5 }),
+    foot('fy < 420 (rho susut 0,002)', { fy: 280 }),
+    foot('fy 550 (rho susut)', { fy: 550 }),
+    foot('lentur tak layak (Rn besar)', { P: 9000, tf: 200, qa: 5000 }),
+    foot('tulangan minimum menentukan', { P: 200, tf: 800 }),
+    foot('kolom pipih (vc2 menentukan)', { c1: 1200, c2: 200, L: 3, B: 2 }),
+    foot('kolom besar tapak tipis (vc3)', { c1: 1600, c2: 1600, L: 3, B: 3, tf: 300 }),
+    foot('persegi panjang', { L: 3.5, B: 2, My: 120 }),
+    foot('Df < tf (tanpa timbunan)', { Df: 0.3 }),
+    foot('LF, gc, gs kosong -> default', { LF: 0, gc: 0, gs: 0 }),
+    foot('nilai string dari form', { P: '900', db: '19', L: '2.4' }),
+    foot('P 0 tidak valid', { P: 0 }),
+    foot('qa 0 tidak valid', { qa: 0 }),
+  ],
+  'pile-cap': [
+    cap('default 4 tiang', {}),
+    cap('2 tiang', { n: 2, Pu: 1800 }),
+    cap('3 tiang', { n: 3, Pu: 2700 }),
+    cap('5 tiang', { n: 5, Pu: 5000 }),
+    cap('6 tiang', { n: 6, Pu: 6000, s: 1100 }),
+    cap('momen biaksial', { Mux: 400, Muy: 600 }),
+    cap('2 tiang dengan Mux (tak ditahan)', { n: 2, Pu: 1500, Mux: 200, Muy: 150 }),
+    cap('tiang tertarik', { Pu: 500, Muy: 900 }),
+    cap('mode kapasitas', { mode: 'kapasitas' }),
+    cap('mode kapasitas Q 0', { mode: 'kapasitas', Q: 0 }),
+    cap('spasi kecil & overhang kecil', { s: 800, ov: 200 }),
+    cap('kolom persegi panjang', { cx: 800, cy: 400 }),
+    cap('poer tipis (lentur tak layak)', { h: 400, Pu: 12000 }),
+    cap('fy < 420', { fy: 280 }),
+    cap('2 batang cukup (nBar minimum)', { n: 2, Pu: 300, s: 1000, ov: 300, h: 400, db: 36, fy: 550 }),
+    cap('lentur tak layak (Rn besar)', { h: 450, Pu: 30000 }),
+    cap('tulangan minimum menentukan', { Pu: 400, h: 1200 }),
+    cap('nilai select string', { n: '3', db: '19', Pu: 2500 }),
+    cap('tebal terlalu kecil (d <= 0)', { h: 100, cov: 75 }),
+    cap('Pu 0 tidak valid', { Pu: 0 }),
+    cap('dp 0 tidak valid', { dp: 0 }),
+  ],
+  'retaining-concrete': [
+    rc('default', {}),
+    rc('opsi miring', { opsi: 'miring' }),
+    rc('lereng beta 15', { beta: 15 }),
+    rc('opsi miring + lereng', { opsi: 'miring', beta: 12 }),
+    rc('tahanan pasif', { passive: 'ya' }),
+    rc('tanpa toe', { toe: 0 }),
+    rc('tanpa heel', { heel: 0, toe: 1.5 }),
+    rc('stem prismatik', { bBot: 0.25 }),
+    rc('tinggi, tidak aman', { H: 6, heel: 1, toe: 0.3 }),
+    rc('resultan di luar B/6 (segitiga)', { H: 5, heel: 0.6, toe: 0.4, q: 20 }),
+    rc('resultan ke arah heel', { H: 1, heel: 3, toe: 0, q: 0 }),
+    rc('dinding guling (xbar <= 0)', { H: 8, toe: 0, heel: 0, bBot: 0.3, bTop: 0.2, tf: 0.3, q: 50 }),
+    rc('lereng curam ke heel', { H: 0.6, heel: 4, toe: 0, tf: 0.3, q: 0, beta: 25, phi1: 40 }),
+    rc('stem tipis (lentur tak layak)', { H: 6, bBot: 0.2, bTop: 0.15 }),
+    rc('spasi < 50', { H: 5, bBot: 0.3, bTop: 0.2, dbMain: 10 }),
+    rc('fc 35, fy 280', { fc: 35, fy: 280 }),
+    rc('qall 0 (lewati)', { qall: 0 }),
+    rc('kf tak valid -> 0,67', { kf: 1.5 }),
+    rc('selimut kosong -> default', { coverS: 0, coverF: 0 }),
+    rc('FS minimum kosong, L dinding 0', { FSot: 0, FSsl: 0, Lwall: 0 }),
+    rc('beta >= phi1', { beta: 30 }),
+    rc('bBot < bTop', { bBot: 0.2 }),
+    rc('H 0', { H: 0 }),
+    rc('phi1 0', { phi1: 0 }),
+    rc('fc 0', { fc: 0 }),
+    rc('toe negatif', { toe: -0.1 }),
+  ],
+  'retaining-stone': [
+    rs('default', {}),
+    rs('opsi miring', { opsi: 'miring' }),
+    rs('lereng beta 15', { beta: 15 }),
+    rs('opsi miring + lereng', { opsi: 'miring', beta: 12 }),
+    rs('tahanan pasif', { passive: 'ya' }),
+    rs('e sedikit di atas B/6', { bBot: 1.45 }),
+    rs('tidak aman (badan ramping)', { bBot: 0.9, bTop: 0.4, H: 4 }),
+    rs('resultan di luar B/6', { bBot: 1.2, bTop: 0.4, toe: 0, heel: 0, q: 20 }),
+    rs('dinding guling (xbar <= 0)', { H: 8, bBot: 0.6, bTop: 0.3, toe: 0, heel: 0, tf: 0.3, q: 50, gammaW: 15 }),
+    rs('resultan ke arah heel', { H: 1, heel: 2.5, toe: 0, q: 0, bBot: 0.5 }),
+    rs('qall 0', { qall: 0 }),
+    rs('kf tak valid', { kf: 0 }),
+    rs('FS minimum kosong', { FSot: 0, FSsl: 0, Lwall: 0 }),
+    rs('beta >= phi1', { beta: 31 }),
+    rs('bBot < bTop', { bBot: 0.4 }),
+    rs('H 0', { H: 0 }),
+    rs('gammaW 0', { gammaW: 0 }),
+    rs('heel negatif', { heel: -1 }),
   ],
 }

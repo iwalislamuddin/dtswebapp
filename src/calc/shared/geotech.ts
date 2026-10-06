@@ -71,3 +71,15 @@ export function effectiveStressAt(z: number, layers: readonly SoilLayerWeight[],
 export function rankineKp(phi: number): number {
   return Math.pow(Math.tan(Math.PI / 4 + phi / 2), 2)
 }
+
+/**
+ * Koefisien tekanan tanah aktif Rankine dengan urugan miring β (derajat):
+ * Ka = cosβ·(cosβ − √(cos²β − cos²φ)) / (cosβ + √(cos²β − cos²φ)); β ≈ 0 → tan²(45° − φ/2).
+ */
+export function rankineKaSloped(phiDeg: number, betaDeg: number): number {
+  const phi = phiDeg * (Math.PI / 180), beta = betaDeg * (Math.PI / 180)
+  const cb = Math.cos(beta), cp = Math.cos(phi)
+  if (betaDeg <= 0.001) return Math.pow(Math.tan(Math.PI / 4 - phi / 2), 2)
+  const s = Math.sqrt(Math.max(0, cb * cb - cp * cp))
+  return (cb * (cb - s)) / (cb + s)
+}

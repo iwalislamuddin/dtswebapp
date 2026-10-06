@@ -20,7 +20,9 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 > React baru sesuai **[`UI.md`](UI.md)** (gaya Windows ala Matrix tanpa Ribbon, aksen `#566246`, tab Input/Detail).
 > Sudah: tooling (`package.json`, Vitest, oxlint), harness `scripts/golden/`, port `bearing-capacity` &
 > `pile-capacity` + `shared/geotech.ts`; lalu `settlement`, `cpt-bearing`, `cpt-pile` + `shared/cpt.ts`
-> (131 test lulus, 5/35 tool); lalu `lateral-broms`, `py-analysis` — **geoteknik lengkap, 7/35 tool, 167 test**. **Lanjut: port tool berikutnya** — daftar di TODO
+> (131 test lulus, 5/35 tool); lalu `lateral-broms`, `py-analysis` — **geoteknik lengkap, 7/35 tool, 167 test**.
+> Lalu struktur bawah (`footing-design`, `pile-cap`, dinding penahan) + `shared/concrete.ts`, `shared/retaining.ts`
+> — **11/35 tool, 255 test**. Revisi tapak/pile cap → shallow/deep-foundation & Pustaka Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md). **Lanjut: port tool berikutnya** — daftar di TODO
 > Tahap 3, resep di [`src/calc/README.md`](../src/calc/README.md).
 >
 > **Arah berubah: Civil Tools diselaraskan dengan platform Edifisia.**

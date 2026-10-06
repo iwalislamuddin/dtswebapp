@@ -108,7 +108,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
       - [x] Geoteknik: `settlement`, `cpt-bearing`, `cpt-pile` (+ `shared/cpt.ts`) — 2026-10-07
       - [x] Geoteknik: `lateral-broms`, `py-analysis` (+ `rankineKp` di `shared/geotech.ts`) — 2026-10-07 —
             **kelompok geoteknik lengkap**
-      - [ ] Struktur bawah: `footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`
+      - [x] Struktur bawah: `footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`
+            (+ `shared/concrete.ts`, `shared/retaining.ts`) — 2026-10-07
       - [ ] Beton: `development-length`, `beam-flexure`, `beam-shear-torsion`, `column-pm`, `min-reinforcement`,
             `continuous-beam`, `two-way-slab`, `composite-slab`, `concrete-stair`
       - [ ] Baja (port `core/steel-profiles.js` → `shared/` dulu): `steel-tension`, `steel-compression`,
@@ -129,6 +130,12 @@ Port dibuat 1:1 (golden test). Perubahan rumus/perilaku dikumpulkan di sini lalu
 terpisah yang memperbarui acuan golden secara sadar.
 
 - [ ] **[Anda]** Daftar tool yang isinya ingin diubah (disampaikan pemilik 2026-10-07, rinciannya menyusul)
+- [ ] `footing-design` → **`shallow-foundation`** dan `pile-cap` → **`deep-foundation`** (+ redirect 301), tab
+      Settlement opsional — spesifikasi: [TOOL-REVISIONS.md](TOOL-REVISIONS.md) §1–3
+- [ ] **Pustaka Data** (tanah, profil lapis, CPT, N-SPT, material) — usulan & 3 keputusan terbuka:
+      [TOOL-REVISIONS.md](TOOL-REVISIONS.md) §4
+- [ ] `retaining-concrete`: cabang tekanan tumpu terfaktor segitiga ke arah heel tidak tercapai oleh kasus uji
+      (dinding nyata praktis tak mencapainya) — tambahkan uji langsung saat fungsi tumpu terfaktor dirapikan
 - [ ] `settlement`: derajat konsolidasi melompat kecil di U ≈ 60% (batas cabang Tv = 0,2827; rumus log memberi
       59,66% di sana) — geser batas ke Tv ≈ 0,286 agar kontinu
 - Sudah diselaraskan saat port (tidak memengaruhi angka hasil): penanda φ > 50° Terzaghi yang bocor antar
