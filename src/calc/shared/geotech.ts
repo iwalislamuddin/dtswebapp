@@ -66,3 +66,8 @@ export function effectiveStressAt(z: number, layers: readonly SoilLayerWeight[],
   }
   return s
 }
+
+/** Koefisien tekanan tanah pasif Rankine Kp = tan²(45° + φ/2). φ dalam radian. */
+export function rankineKp(phi: number): number {
+  return Math.pow(Math.tan(Math.PI / 4 + phi / 2), 2)
+}

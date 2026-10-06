@@ -41,6 +41,13 @@ const cptPile = (name, over, text = CPT_PILE_SAMPLE) => {
   return { name, args: [v, { $parse: [text, v.unit] }] }
 }
 
+const bromsBase = { soil: 'clay', head: 'free', D: 500, L: 10, e: 0, My: 800, cu: 50, phi: 32, gam: 9 }
+const broms = (name, over) => ({ name, args: [{ ...bromsBase, ...over }] })
+const pyBase = {
+  soil: 'clay', head: 'free', H: 200, M: 0, e: 0, D: 600, L: 15, E: 25000, gam: 8, cu: 40, eps50: 0.01, phi: 33, kpy: 16,
+}
+const py = (name, over) => ({ name, args: [{ ...pyBase, ...over }] })
+
 export const CASES = {
   'bearing-capacity': [
     bearing('default (HANDOFF: Terzaghi qu 1373)', {}),
@@ -168,5 +175,41 @@ export const CASES = {
     cptPile('tanpa data', {}, ''),
     cptPile('D 0 tidak valid', { D: 0 }),
     cptPile('L 0 tidak valid', { Lp: 0 }),
+  ],
+  'lateral-broms': [
+    broms('default lempung bebas', {}),
+    broms('lempung bebas pendek', { L: 3, My: 5000 }),
+    broms('lempung jepit panjang', { head: 'fixed' }),
+    broms('lempung jepit pendek', { head: 'fixed', L: 3, My: 5000 }),
+    broms('lempung jepit pendek, momen kepala > My', { head: 'fixed', L: 4, My: 300 }),
+    broms('lempung dengan e', { e: 1.5 }),
+    broms('lempung L <= 1,5D', { L: 0.7 }),
+    broms('lempung cu 0', { cu: 0 }),
+    broms('pasir bebas panjang', { soil: 'sand' }),
+    broms('pasir bebas pendek', { soil: 'sand', L: 2, My: 5000 }),
+    broms('pasir jepit panjang', { soil: 'sand', head: 'fixed' }),
+    broms('pasir jepit pendek', { soil: 'sand', head: 'fixed', L: 2, My: 5000 }),
+    broms('pasir jepit pendek, momen kepala > My', { soil: 'sand', head: 'fixed', L: 3, My: 250 }),
+    broms('pasir dengan e, My besar (bisection melebar)', { soil: 'sand', e: 2, My: 200000 }),
+    broms('pasir phi 0', { soil: 'sand', phi: 0 }),
+    broms('pasir gam 0', { soil: 'sand', gam: 0 }),
+    broms('D 0', { D: 0 }),
+    broms('e negatif', { e: -1 }),
+    broms('My 0', { My: 0 }),
+  ],
+  'py-analysis': [
+    py('default lempung bebas', {}),
+    py('lempung jepit', { head: 'fixed' }),
+    py('lempung dengan M & e', { M: 100, e: 1 }),
+    py('lempung beban besar (plastis)', { H: 900 }),
+    py('lempung tiang pendek', { L: 4, H: 150 }),
+    py('pasir bebas', { soil: 'sand' }),
+    py('pasir jepit', { soil: 'sand', head: 'fixed' }),
+    py('pasir phi 40, beban besar', { soil: 'sand', phi: 40, H: 800 }),
+    py('pasir tiang kecil kaku rendah', { soil: 'sand', D: 300, E: 10000, H: 60 }),
+    py('H 0', { H: 0 }),
+    py('lempung eps50 0', { eps50: 0 }),
+    py('pasir kpy 0', { soil: 'sand', kpy: 0 }),
+    py('D 0', { D: 0 }),
   ],
 }

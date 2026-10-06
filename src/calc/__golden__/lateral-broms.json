@@ -1,0 +1,663 @@
+[
+ {
+  "name": "default lempung bebas",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": 0,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "clay",
+   "head": "free",
+   "D": 0.5,
+   "L": 10,
+   "e": 0,
+   "My": 800,
+   "cu": 50,
+   "k": 225,
+   "Hshort": 772.1672858286378,
+   "fShort": 3.431854603682835,
+   "rot": 7.090927301841417,
+   "Hlong": 454.5288801972998,
+   "short": false,
+   "Hu": 454.5288801972998,
+   "mode": "Tiang panjang — leleh lentur tiang",
+   "f": 2.0201283564324437,
+   "zmax": 2.7701283564324437,
+   "Mmax": 800.0000000000001,
+   "dcMom": 1.0000000000000002
+  }
+ },
+ {
+  "name": "lempung bebas pendek",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "free",
+    "D": 500,
+    "L": 3,
+    "e": 0,
+    "My": 5000,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "clay",
+   "head": "free",
+   "D": 0.5,
+   "L": 3,
+   "e": 0,
+   "My": 5000,
+   "cu": 50,
+   "k": 225,
+   "Hshort": 140.2231322551444,
+   "fShort": 0.6232139211339751,
+   "rot": 2.1866069605669876,
+   "Hlong": 1340.712342193405,
+   "short": true,
+   "Hu": 140.2231322551444,
+   "mode": "Tiang pendek — kegagalan tanah",
+   "f": 0.6232139211339751,
+   "zmax": 1.3732139211339751,
+   "Mmax": 148.86185323456658,
+   "dcMom": 0.029772370646913317
+  }
+ },
+ {
+  "name": "lempung jepit panjang",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "fixed",
+    "D": 500,
+    "L": 10,
+    "e": 0,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "clay",
+   "head": "fixed",
+   "D": 0.5,
+   "L": 10,
+   "e": 0,
+   "My": 800,
+   "cu": 50,
+   "k": 225,
+   "Hshort": 2081.25,
+   "MfixShort": 11186.71875,
+   "Hlong": 696.3953996294495,
+   "short": false,
+   "Hu": 696.3953996294495,
+   "mode": "Tiang panjang — leleh lentur tiang",
+   "f": 3.095090665019775,
+   "zmax": 3.845090665019775,
+   "Mmax": 1599.9999999999995,
+   "dcMom": 1.9999999999999993
+  }
+ },
+ {
+  "name": "lempung jepit pendek",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "fixed",
+    "D": 500,
+    "L": 3,
+    "e": 0,
+    "My": 5000,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "clay",
+   "head": "fixed",
+   "D": 0.5,
+   "L": 3,
+   "e": 0,
+   "My": 5000,
+   "cu": 50,
+   "k": 225,
+   "Hshort": 506.25,
+   "MfixShort": 949.21875,
+   "Hlong": 1959.271748596569,
+   "short": true,
+   "Hu": 506.25,
+   "mode": "Tiang pendek — kegagalan tanah",
+   "f": 2.25,
+   "zmax": 3,
+   "Mmax": 949.21875,
+   "Mhead": 949.21875,
+   "dcMom": 0.18984375
+  }
+ },
+ {
+  "name": "lempung jepit pendek, momen kepala > My",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "fixed",
+    "D": 500,
+    "L": 4,
+    "e": 0,
+    "My": 300,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "clay",
+   "head": "fixed",
+   "D": 0.5,
+   "L": 4,
+   "e": 0,
+   "My": 300,
+   "cu": 50,
+   "k": 225,
+   "Hshort": 731.25,
+   "MfixShort": 1736.71875,
+   "Hlong": 377.580085662505,
+   "short": false,
+   "Hu": 377.580085662505,
+   "mode": "Tiang panjang — leleh lentur tiang",
+   "f": 1.6781337140555777,
+   "zmax": 2.4281337140555777,
+   "Mmax": 600.0000000000001,
+   "dcMom": 2.0000000000000004
+  }
+ },
+ {
+  "name": "lempung dengan e",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": 1.5,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "clay",
+   "head": "free",
+   "D": 0.5,
+   "L": 10,
+   "e": 1.5,
+   "My": 800,
+   "cu": 50,
+   "k": 225,
+   "Hshort": 634.9080193147238,
+   "fShort": 2.82181341917655,
+   "rot": 6.785906709588275,
+   "Hlong": 278.790803079687,
+   "short": false,
+   "Hu": 278.790803079687,
+   "mode": "Tiang panjang — leleh lentur tiang",
+   "f": 1.23907023590972,
+   "zmax": 1.98907023590972,
+   "Mmax": 799.9999999999998,
+   "dcMom": 0.9999999999999997
+  }
+ },
+ {
+  "name": "lempung L <= 1,5D",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "free",
+    "D": 500,
+    "L": 0.7,
+    "e": 0,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [
+    "L harus > 1,5·D (zona reaksi nol atas)."
+   ],
+   "valid": false,
+   "soil": "clay",
+   "head": "free",
+   "D": 0.5,
+   "L": 0.7,
+   "e": 0,
+   "My": 800
+  }
+ },
+ {
+  "name": "lempung cu 0",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": 0,
+    "My": 800,
+    "cu": 0,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": false,
+   "soil": "clay",
+   "head": "free",
+   "D": 0.5,
+   "L": 10,
+   "e": 0,
+   "My": 800
+  }
+ },
+ {
+  "name": "pasir bebas panjang",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "sand",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": 0,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "sand",
+   "head": "free",
+   "D": 0.5,
+   "L": 10,
+   "e": 0,
+   "My": 800,
+   "phi": 32,
+   "gam": 9,
+   "Kp": 3.254588303299862,
+   "Hshort": 732.2823682424689,
+   "fShort": 5.769991334482227,
+   "Hlong": 316.2791960096632,
+   "short": false,
+   "Hu": 316.2791960096632,
+   "mode": "Tiang panjang — leleh lentur tiang",
+   "f": 3.7920249424186014,
+   "zmax": 3.7920249424186014,
+   "Mmax": 799.9588462245089,
+   "dcMom": 0.9999485577806361
+  }
+ },
+ {
+  "name": "pasir bebas pendek",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "sand",
+    "head": "free",
+    "D": 500,
+    "L": 2,
+    "e": 0,
+    "My": 5000,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "sand",
+   "head": "free",
+   "D": 0.5,
+   "L": 2,
+   "e": 0,
+   "My": 5000,
+   "phi": 32,
+   "gam": 9,
+   "Kp": 3.254588303299862,
+   "Hshort": 29.29129472969876,
+   "fShort": 1.1539982668964455,
+   "Hlong": 1073.1422767638785,
+   "short": true,
+   "Hu": 29.29129472969876,
+   "mode": "Tiang pendek — kegagalan tanah",
+   "f": 1.1539982668964455,
+   "zmax": 1.1539982668964455,
+   "Mmax": 22.54600293660131,
+   "dcMom": 0.004509200587320262
+  }
+ },
+ {
+  "name": "pasir jepit panjang",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "sand",
+    "head": "fixed",
+    "D": 500,
+    "L": 10,
+    "e": 0,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "sand",
+   "head": "fixed",
+   "D": 0.5,
+   "L": 10,
+   "e": 0,
+   "My": 800,
+   "phi": 32,
+   "gam": 9,
+   "Kp": 3.254588303299862,
+   "Hshort": 2196.8471047274074,
+   "MfixShort": 14645.647364849383,
+   "Hlong": 502.06192846139567,
+   "short": false,
+   "Hu": 502.06192846139567,
+   "mode": "Tiang panjang — leleh lentur tiang",
+   "f": 4.77765204667959,
+   "zmax": 4.77765204667959,
+   "Mmax": 1599.917692449017,
+   "dcMom": 1.9998971155612713
+  }
+ },
+ {
+  "name": "pasir jepit pendek",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "sand",
+    "head": "fixed",
+    "D": 500,
+    "L": 2,
+    "e": 0,
+    "My": 5000,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "sand",
+   "head": "fixed",
+   "D": 0.5,
+   "L": 2,
+   "e": 0,
+   "My": 5000,
+   "phi": 32,
+   "gam": 9,
+   "Kp": 3.254588303299862,
+   "Hshort": 87.87388418909629,
+   "MfixShort": 117.16517891879505,
+   "Hlong": 1703.5071790465304,
+   "short": true,
+   "Hu": 87.87388418909629,
+   "mode": "Tiang pendek — kegagalan tanah",
+   "f": 1.9987836301110733,
+   "zmax": 1.9987836301110733,
+   "Mmax": 117.16517891879505,
+   "Mhead": 117.16517891879505,
+   "dcMom": 0.02343303578375901
+  }
+ },
+ {
+  "name": "pasir jepit pendek, momen kepala > My",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "sand",
+    "head": "fixed",
+    "D": 500,
+    "L": 3,
+    "e": 0,
+    "My": 250,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [
+    "Momen jepit kepala (395 kNm) > My — sendi plastis terbentuk di kepala; kasus \"panjang\" yang menentukan."
+   ],
+   "valid": true,
+   "soil": "sand",
+   "head": "fixed",
+   "D": 0.5,
+   "L": 3,
+   "e": 0,
+   "My": 250,
+   "phi": 32,
+   "gam": 9,
+   "Kp": 3.254588303299862,
+   "Hshort": 197.71623942546663,
+   "MfixShort": 395.43247885093325,
+   "Hlong": 231.20149483998983,
+   "short": true,
+   "Hu": 197.71623942546663,
+   "mode": "Tiang pendek — kegagalan tanah",
+   "f": 2.99817544516661,
+   "zmax": 2.99817544516661,
+   "Mmax": 395.43247885093325,
+   "Mhead": 395.43247885093325,
+   "dcMom": 1.581729915403733
+  }
+ },
+ {
+  "name": "pasir dengan e, My besar (bisection melebar)",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "sand",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": 2,
+    "My": 200000,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "soil": "sand",
+   "head": "free",
+   "D": 0.5,
+   "L": 10,
+   "e": 2,
+   "My": 200000,
+   "phi": 32,
+   "gam": 9,
+   "Kp": 3.254588303299862,
+   "Hshort": 610.2353068687241,
+   "fShort": 5.267257350842086,
+   "Hlong": 11564.210868237786,
+   "short": true,
+   "Hu": 610.2353068687241,
+   "mode": "Tiang pendek — kegagalan tanah",
+   "f": 5.267257350842086,
+   "zmax": 5.267257350842086,
+   "Mmax": 3364.38630643784,
+   "dcMom": 0.0168219315321892
+  }
+ },
+ {
+  "name": "pasir phi 0",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "sand",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": 0,
+    "My": 800,
+    "cu": 50,
+    "phi": 0,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": false,
+   "soil": "sand",
+   "head": "free",
+   "D": 0.5,
+   "L": 10,
+   "e": 0,
+   "My": 800
+  }
+ },
+ {
+  "name": "pasir gam 0",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "sand",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": 0,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 0
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": false,
+   "soil": "sand",
+   "head": "free",
+   "D": 0.5,
+   "L": 10,
+   "e": 0,
+   "My": 800
+  }
+ },
+ {
+  "name": "D 0",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "free",
+    "D": 0,
+    "L": 10,
+    "e": 0,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": false,
+   "soil": "clay",
+   "head": "free"
+  }
+ },
+ {
+  "name": "e negatif",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": -1,
+    "My": 800,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": false,
+   "soil": "clay",
+   "head": "free"
+  }
+ },
+ {
+  "name": "My 0",
+  "fn": "compute",
+  "args": [
+   {
+    "soil": "clay",
+    "head": "free",
+    "D": 500,
+    "L": 10,
+    "e": 0,
+    "My": 0,
+    "cu": 50,
+    "phi": 32,
+    "gam": 9
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": false,
+   "soil": "clay",
+   "head": "free"
+  }
+ }
+]

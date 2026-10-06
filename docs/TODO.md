@@ -106,7 +106,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
       35 tool (`_template` tidak dihitung):
       - [x] Geoteknik: `bearing-capacity`, `pile-capacity` (+ `shared/geotech.ts`) — 2026-10-07
       - [x] Geoteknik: `settlement`, `cpt-bearing`, `cpt-pile` (+ `shared/cpt.ts`) — 2026-10-07
-      - [ ] Geoteknik: `lateral-broms`, `py-analysis`
+      - [x] Geoteknik: `lateral-broms`, `py-analysis` (+ `rankineKp` di `shared/geotech.ts`) — 2026-10-07 —
+            **kelompok geoteknik lengkap**
       - [ ] Struktur bawah: `footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`
       - [ ] Beton: `development-length`, `beam-flexure`, `beam-shear-torsion`, `column-pm`, `min-reinforcement`,
             `continuous-beam`, `two-way-slab`, `composite-slab`, `concrete-stair`
