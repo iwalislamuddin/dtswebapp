@@ -153,14 +153,16 @@ Mekanisme yang tidak bergantung pada Firebase tetap dipakai:
    di `index.html`.
 6. **Domain & hosting**: Cloudflare Pages + `tools.edifisia.com`
    ([DOMAIN_MIGRATION.md](DOMAIN_MIGRATION.md) §5).
-7. **Migrasi ke Vite**: shell + `core/*` jadi modul ES, 36 tool di-*lazy load* per
+7. **Fondasi React + `src/calc`** (diubah 2026-10-07): perhitungan 36 tool dikeluarkan ke
+   `src/calc/` (TypeScript murni, fungsi bersama di `src/calc/shared/`) dengan *golden test*
+   terhadap `compute()` build lama; shell React baru sesuai [UI.md](UI.md); tool di-*lazy load* per
    rute (`import()` → satu chunk per tool), Three.js dari npm, PWA lewat
    `vite-plugin-pwa` (pengganti `sw.js` manual + bump `CACHE`). Output `dist/`
    menggantikan `scripts/cf-build.sh`.
    **Peluang SEO:** pre-render HTML statis per rute (`/beam-flexure` dst., dengan
    title/description/canonical sendiri) saat build — 36 halaman tool belum pernah
    terindeks Google karena semuanya kini satu `index.html` yang diisi JavaScript.
-8. **Rombak UI** di atas Vite + lapisan akun yang baru.
+8. **36 tool ditulis ulang langsung di UI baru** di atas `src/calc` (tanpa lapisan jembatan ke modul lama).
 
 ## 5. Urutan kerja
 
@@ -170,16 +172,17 @@ Daftar centang rinci per tahap: [TODO.md](TODO.md).
 |---|---|---|
 | 1 | Cloudflare Pages (tanpa custom domain), Google OAuth di Supabase | — (paralel) |
 | 2 | Skema `tools` + RLS + test (rollback) di Supabase development | Platform (sudah live) |
-| 3 | Migrasi ke Vite **tanpa mengubah tampilan** (36 tool tetap jalan, regresi nol) | — |
-| 4 | Akun & Save versi Supabase di atas Vite, Firebase dicabut | 2, 3 |
-| 5 | Rombak UI | 4 |
+| 3 | Fondasi React + `src/calc` (golden test vs build lama) + shell UI baru | — |
+| 4 | Akun & Save versi Supabase di shell React | 2, 3 |
+| 5 | 36 tool di UI baru, build lama + Firebase dicabut | 3, 4 |
 | 6 | Production: skema `tools`, domain `tools.edifisia.com`, rilis **v0.8.0** | 1, 5 |
 | 7 | Redirect 301 dari `tools.dtsengineering.co.id`, pensiunkan Firebase & cPanel | 6 |
 | 8 | Sesi lintas subdomain bersama Matrix | Halaman akun `edifisia.com` |
 
 Vite dikerjakan **sebelum** Supabase supaya `supabase-js` langsung dipasang dari npm,
-tidak dua kali (CDN dulu lalu npm). Migrasi Vite dipisah dari rombak UI agar
-regresi hitungan 36 tool terdeteksi sebelum tampilan berubah.
+tidak dua kali (CDN dulu lalu npm). Rencana awal (bungkus 36 tool lama di Vite, baru rombak UI)
+diganti 2026-10-07 karena berarti tiap tool dikerjakan dua kali; pengaman regresi hitungan kini
+*golden test* `src/calc` terhadap `compute()` build lama, sebelum UI mana pun ditulis.
 
 Halaman beli dan webhook pembayaran adalah pekerjaan **platform** (Fase 2
 masterplan), bukan repo ini. Sampai ada, tombol beli Civil Tools disembunyikan
@@ -208,5 +211,4 @@ kosongkan `MIDTRANS_CONFIG` di `index.html` (paywall mati, semua unduhan bebas).
 
 - Harga dan durasi paket Edifisia Premium (platform).
 - Masa tenggang setelah expired (platform, cukup di `premium_status`).
-- Framework UI di atas Vite: React + TypeScript seperti Matrix (disarankan, komponen
-  akun bisa dibagi) atau vanilla TS.
+- ~~Framework UI~~ → **React + TypeScript** seperti Matrix (diputuskan 2026-10-07).

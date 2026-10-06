@@ -18,8 +18,7 @@ Penanda pelaksana: **[Anda]** = manual di dashboard/akun (tidak bisa dikerjakan 
 - [x] **Semua tool gratis**; Premium hanya **Save** dan **Download Report**
 - [x] Batas **50** pekerjaan tersimpan per user
 - [x] **Login Google** diaktifkan (berlaku juga untuk Matrix)
-- [ ] **[Anda]** Framework di atas Vite: React + TypeScript seperti Matrix (disarankan) atau vanilla TS —
-      cukup diputuskan sebelum Tahap 3
+- [x] Framework di atas Vite: **React + TypeScript** seperti Matrix (2026-10-07)
 
 ## Tahap 1 — Hosting & OAuth (bisa mulai sekarang, paralel)
 
@@ -93,39 +92,56 @@ rename 2026-10-06.
 - [x] **[Anda]** Kirim ke Claude: **Project URL + anon/publishable key** dev dan prod — 2026-10-07, dicatat di
       PLATFORM.md §2 (Konfigurasi klien)
 
-## Tahap 3 — Migrasi ke Vite (tanpa mengubah tampilan)
+## Tahap 3 — Fondasi React + mesin hitung `src/calc`
 
-- [ ] **[Claude]** Scaffold Vite (+ framework pilihan Tahap 0) di root repo; `index.html` jadi entry Vite
-- [ ] **[Claude]** `core/*` + `assets/shell.js` jadi modul ES; `window.Civil*` dipertahankan sementara sebagai
-      jembatan agar 36 `modules/*/module.js` tetap jalan
-- [ ] **[Claude]** Tool di-*lazy load* per rute (`import()`, satu chunk per tool); Three.js dari npm
-- [ ] **[Claude]** PWA lewat `vite-plugin-pwa` (pengganti `sw.js` manual + bump `CACHE`); prompt update seperti Matrix
-- [ ] **[Claude]** Pre-render HTML per rute (title/description/canonical per tool) untuk SEO
-- [ ] **[Claude]** Uji regresi: angka hasil tiap tool sama dengan build lama (kasus default), PDF tetap valid
+Urutan diubah 2026-10-07: tool **tidak** dibungkus dulu lalu ditulis ulang (kerja dua kali). Perhitungan dikeluarkan
+ke `src/calc/` (TypeScript murni, tanpa UI) dengan *golden test* terhadap build lama, lalu tiap tool langsung
+ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
+
+- [x] **[Claude]** Tooling: `package.json` (React + TS + Vite + Vitest + oxlint, versi seperti Matrix), `tsconfig`
+- [x] **[Claude]** Harness golden: `scripts/golden/extract.mjs` menjalankan `compute()` modul lama atas daftar
+      kasus → `src/calc/__golden__/*.json`; test TS wajib sama (toleransi relatif 1e-9)
+- [ ] **[Claude]** Port perhitungan per tool ke `src/calc/<tool>.ts` + golden test + kasus hitung tangan dari
+      HANDOFF; fungsi bersama di `src/calc/shared/`. Panduan: [`src/calc/README.md`](../src/calc/README.md).
+      35 tool (`_template` tidak dihitung):
+      - [x] Geoteknik: `bearing-capacity`, `pile-capacity` (+ `shared/geotech.ts`) — 2026-10-07
+      - [ ] Geoteknik: `settlement`, `cpt-bearing`, `cpt-pile`, `lateral-broms`, `py-analysis`
+      - [ ] Struktur bawah: `footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`
+      - [ ] Beton: `development-length`, `beam-flexure`, `beam-shear-torsion`, `column-pm`, `min-reinforcement`,
+            `continuous-beam`, `two-way-slab`, `composite-slab`, `concrete-stair`
+      - [ ] Baja (port `core/steel-profiles.js` → `shared/` dulu): `steel-tension`, `steel-compression`,
+            `steel-flexure`, `steel-beam-analysis`, `base-plate`
+      - [ ] Sambungan: `bolt-connection`, `weld-connection`, `anchor-bolt-group`
+      - [ ] Analisis struktur: `portal-frame`, `gable-frame`
+      - [ ] Umum & hidraulika: `load-combo`, `wind-load`, `rational-method`, `open-channel`, `pipe-flow`
+- [ ] **[Claude]** Shell React sesuai UI.md: menu bar File/Help, navigasi kiri, header, tab Input/Detail, tema
+      Light/Dark (token `[data-theme]`, aksen `#566246`, tipografi Matrix)
+- [ ] **[Claude]** Routing path `/{tool}` + lazy load per tool; PWA `vite-plugin-pwa` (prompt update seperti Matrix);
+      pre-render HTML per rute (title/description/canonical) untuk SEO
+- [ ] **[Claude]** Laporan (Detail + Download PDF/.txt) dari satu sumber data per tool; PDF tetap tanpa library
 - [ ] **[Claude]** Lint + test di CI (GitHub Actions), pola Matrix
-- [ ] **[Anda]** Cloudflare Pages: ganti build command → `npm ci && npm run build`, output `dist`,
-      env `NODE_VERSION` sesuai Matrix
-- [ ] **[Claude]** Hapus `scripts/cf-build.sh`, `.htaccess`; perbarui README/ARCHITECTURE (bukan lagi zero build)
 
-## Tahap 4 — Akun & Save versi Supabase
+## Tahap 4 — Akun & Save versi Supabase (di shell React)
 
 - [ ] **[Claude]** Lapisan akun: `@supabase/supabase-js`, email + password + **Google**, status dari
       `platform.premium_status()`; "Daftar"/"Lupa password" → `edifisia.com` (sementara: dialog lokal, seperti Matrix)
-- [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (snapshot stash dipertahankan); Free User buka & hapus
-      saja; pesan jelas saat batas 50 tercapai
+- [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (`state_json` = objek input tool); Free User buka & hapus
+      saja; pesan jelas saat batas 50 tercapai (hint `saved_works_limit`)
 - [ ] **[Claude]** Status "Trial/Premium s/d …", peringatan ≤ 7 hari; tombol beli disembunyikan selama
       `PREMIUM_URL` belum ada
-- [ ] **[Claude]** Gating unduh PDF/.txt di satu titik (`report`) mengacu status Supabase; pratinjau tetap
-- [ ] **[Claude]** Hapus `functions/`, `firebase/`, `firebase.json`, `.firebaserc`, `core/billing.js` (Snap),
-      config Firebase/Midtrans di `index.html`
+- [ ] **[Claude]** Gating Download Report di satu titik mengacu status Supabase; tab Detail tetap terbuka
 - [ ] **[Claude]** Uji empat akun: Guest, Premium/trial, Free User (trial habis), Premium expired — email & Google
 - [ ] **[Anda]** Siapkan akun uji di dev; grant/expire manual lewat SQL `platform.grant_premium` (README platform)
 
-## Tahap 5 — Rombak UI
+## Tahap 5 — 36 tool di UI baru
 
-- [ ] **[Bersama]** Arah desain (mockup 1–2 layar kunci) disepakati sebelum coding
-- [ ] **[Claude]** Implementasi shell baru + penyesuaian 36 tool
-- [ ] **[Claude]** Verifikasi tiap tool di browser (hitung, kanvas, PDF, simpan/buka), konsol bersih
+- [ ] **[Bersama]** Tool percontohan (mis. Kapasitas Lentur Balok) disetujui dulu sebelum tool lain diikuti;
+      putuskan hitung otomatis vs tombol Hitung (UI.md)
+- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail)
+- [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
+- [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
+      `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE
+- [ ] **[Anda]** Cloudflare Pages: build command → `npm ci && npm run build`, output `dist`, env `NODE_VERSION`
 
 ## Tahap 6 — Rilis v0.8.0 di `tools.edifisia.com`
 

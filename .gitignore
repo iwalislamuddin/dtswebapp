@@ -15,3 +15,6 @@ __pycache__/
 
 # Build staging untuk Cloudflare Pages/Netlify (scripts/cf-build.sh)
 dist/
+
+# Node (tooling src/calc, nanti Vite)
+node_modules/

@@ -14,7 +14,13 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 > di-expose, trial akun Google terkonfirmasi, URL + publishable key dev/prod tercatat di PLATFORM.md §2.
 > Header `noindex` untuk `*.pages.dev` dipasang. Prod menyusul di Tahap 6. Catatan: repo ini **tidak** memakai
 > `supabase db push` (bentrok riwayat dengan repo platform) — pakai `scripts/db_migrate.py`, lihat PLATFORM.md §2.
-> **Berikutnya: Tahap 3 (Vite)** — perlu keputusan React+TS vs vanilla TS dulu.
+>
+> **2026-10-07: React + TypeScript dipilih; urutan Tahap 3–5 diubah** (tool tidak dibungkus dulu lalu ditulis
+> ulang). Tahap 3 kini = mesin hitung `src/calc/` dengan *golden test* terhadap `compute()` modul lama + shell
+> React baru sesuai **[`UI.md`](UI.md)** (gaya Windows ala Matrix tanpa Ribbon, aksen `#566246`, tab Input/Detail).
+> Sudah: tooling (`package.json`, Vitest, oxlint), harness `scripts/golden/`, port `bearing-capacity` &
+> `pile-capacity` + `shared/geotech.ts` (54 test lulus). **Lanjut: port tool berikutnya** — daftar di TODO
+> Tahap 3, resep di [`src/calc/README.md`](../src/calc/README.md).
 >
 > **Arah berubah: Civil Tools diselaraskan dengan platform Edifisia.**
 > Diputuskan 2026-10-06: **Firebase dibuang**, akun & hak akses pindah ke

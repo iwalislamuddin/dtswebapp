@@ -1,0 +1,2922 @@
+[
+ {
+  "name": "default (HANDOFF: Qu 527,4, Q_izin 211)",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 23.00222426164139,
+     "Qs": 173.43268501583398,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 106.71,
+     "fs": 33.85521640119794,
+     "Qs": 85.08743930535691,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 355.04840759038535,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 115.89999999999999,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 527.3886076552983,
+   "Qallow": 210.95544306211931,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 996.9320687391611,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 2756.2239547494455,
+    "Qallow": 1102.4895818997782
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "SPT di lapis 3 (HANDOFF 882 kN)",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "spt"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 23.00222426164139,
+     "Qs": 173.43268501583398,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "spt",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 106.71,
+     "fs": 70,
+     "Qs": 175.92918860102841,
+     "how": "SPT 2N"
+    }
+   ],
+   "Qs": 445.89015688605684,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "spt"
+   },
+   "svTip": 115.89999999999999,
+   "qp": 14000,
+   "qpHow": "SPT 40N*L/D<=400N",
+   "Nq": null,
+   "ql": null,
+   "Qp": 1759.2918860102843,
+   "Qu": 2205.182042896341,
+   "Qallow": 882.0728171585364,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 996.9320687391611,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 2756.2239547494455,
+    "Qallow": 1102.4895818997782
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "spt"
+    }
+   ]
+  }
+ },
+ {
+  "name": "L 8, ujung di lapis 2 (HANDOFF 116 kN)",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 8,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 24 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 8,
+   "Leff": 8,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 24.127431579569613,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 8,
+     "dL": 4,
+     "sv": 64.75999999999999,
+     "fs": 20.419794971677813,
+     "Qs": 102.64108459333251,
+     "how": "beta K=0.66,d=26"
+    }
+   ],
+   "Qs": 199.169367862527,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 6,
+    "gamma": 18,
+    "cu": 0,
+    "phi": 32,
+    "N": 18,
+    "method": "static"
+   },
+   "svTip": 81.13999999999999,
+   "qp": 724.1228563911752,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 23.176776207012633,
+   "ql": 724.1228563911752,
+   "Qp": 90.99596183739892,
+   "Qu": 290.1653296999259,
+   "Qallow": 116.06613187997036,
+   "dq": {
+    "active": true,
+    "NsAvg": 12,
+    "fsDq": 50,
+    "QsDq": 502.6548245743669,
+    "C": 400,
+    "Np": 18,
+    "qpDq": 7200,
+    "QpDq": 904.7786842338605,
+    "QuDq": 1407.4335088082275,
+    "Qallow": 562.973403523291
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "persegi",
+  "args": [
+   {
+    "shape": "square",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 46 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "square",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 46.08000000000001,
+   "perim": 1.6,
+   "Ap": 0.16000000000000003,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 122.90362744373604,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 23.00222426164139,
+     "Qs": 220.8213529117574,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 106.71,
+     "fs": 33.85521640119794,
+     "Qs": 108.33669248383342,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 452.0616728393269,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 115.89999999999999,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 219.43035787021668,
+   "Qu": 671.4920307095435,
+   "Qallow": 268.5968122838174,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 1269.3333333333335,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 2240.0000000000005,
+    "QuDq": 3509.333333333334,
+    "Qallow": 1403.7333333333336
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "bor baja",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "bored",
+    "material": "steel",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "bored",
+   "material": "steel",
+   "inclW": false,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1,
+   "cDelta": 0.6,
+   "nfSPT": 1,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 11.941873554043877,
+     "Qs": 90.03960534595794,
+     "how": "beta K=0.47,d=19"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 106.71,
+     "fs": 17.415857839853388,
+     "Qs": 43.77082483651809,
+     "how": "beta K=0.41,d=22"
+    }
+   ],
+   "Qs": 230.33871345167051,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 115.89999999999999,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 402.6789135165835,
+   "Qallow": 161.0715654066334,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 996.9320687391611,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 2756.2239547494455,
+    "Qallow": 1102.4895818997782
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "kurangi berat sendiri",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "yes"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang DIKURANGKAN dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": true,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 23.00222426164139,
+     "Qs": 173.43268501583398,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 106.71,
+     "fs": 33.85521640119794,
+     "Qs": 85.08743930535691,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 355.04840759038535,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 115.89999999999999,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 527.3886076552983,
+   "Qallow": 174.7642956927649,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 996.9320687391611,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 2756.2239547494455,
+    "Qallow": 1066.2984345304237
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "L melebihi profil",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 25,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Panjang tiang L=25.0 m melebihi total profil tanah 18.0 m — ujung dianggap di dasar profil (18.0 m). Tambahkan lapis di bawah ujung.",
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 54 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 25,
+   "Leff": 18,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 54.28672105403163,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 23.00222426164139,
+     "Qs": 173.43268501583398,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 18,
+     "dL": 8,
+     "sv": 134.28,
+     "fs": 42.60217841207816,
+     "Qs": 428.2838103241806,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 698.2447786092091,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 171.04,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 870.5849786741221,
+   "Qallow": 348.23399146964886,
+   "dq": {
+    "active": true,
+    "NsAvg": 22.88888888888889,
+    "fsDq": 86.2962962962963,
+    "QsDq": 1951.9762354304582,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 3711.2681214407426,
+    "Qallow": 1484.5072485762971
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "MAT di permukaan",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 0,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 0,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 14.379999999999999,
+     "fs": 15.486551437383994,
+     "Qs": 77.84389796020162,
+     "how": "alpha=0.39"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 53.33,
+     "fs": 16.815745303267107,
+     "Qs": 126.78773258251442,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 87.09,
+     "fs": 27.630501324902344,
+     "Qs": 69.443023981853,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 274.07465452456904,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 96.28,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 446.41485458948205,
+   "Qallow": 178.5659418357928,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 996.9320687391611,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 2756.2239547494455,
+    "Qallow": 1102.4895818997782
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "MAT negatif -> 0",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": -2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 0,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 14.379999999999999,
+     "fs": 15.486551437383994,
+     "Qs": 77.84389796020162,
+     "how": "alpha=0.39"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 53.33,
+     "fs": 16.815745303267107,
+     "Qs": 126.78773258251442,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 87.09,
+     "fs": 27.630501324902344,
+     "Qs": 69.443023981853,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 274.07465452456904,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 96.28,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 446.41485458948205,
+   "Qallow": 178.5659418357928,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 996.9320687391611,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 2756.2239547494455,
+    "Qallow": 1102.4895818997782
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "MAT di bawah profil",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 30,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "MAT (30.0 m) di bawah profil — dihitung tanpa pengaruh air (tegangan efektif = total).",
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 30,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 122,
+     "fs": 38.46842165757711,
+     "Qs": 290.04506609913295,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 195,
+     "fs": 61.86643424452815,
+     "Qs": 155.48730826112453,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 542.060657629452,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 214,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 714.400857694365,
+   "Qallow": 285.760343077746,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 996.9320687391611,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 2756.2239547494455,
+    "Qallow": 1102.4895818997782
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "ujung di lempung",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 3,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 9 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 3,
+   "Leff": 3,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 9.047786842338605,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 3,
+     "dL": 3,
+     "sv": 25.5,
+     "fs": 17.87104889068983,
+     "Qs": 67.37226708832223,
+     "how": "alpha=0.45"
+    }
+   ],
+   "Qs": 67.37226708832223,
+   "tipLayer": {
+    "soil": "clay",
+    "H": 4,
+    "gamma": 17,
+    "cu": 40,
+    "phi": 0,
+    "N": 6,
+    "method": "static"
+   },
+   "svTip": 41.19,
+   "qp": 360,
+   "qpHow": "9*cu",
+   "Nq": null,
+   "ql": null,
+   "Qp": 45.23893421169303,
+   "Qu": 112.61120130001527,
+   "Qallow": 45.044480520006104,
+   "dq": {
+    "active": true,
+    "NsAvg": 6,
+    "fsDq": 30,
+    "QsDq": 113.09733552923255,
+    "C": 120,
+    "Np": 6,
+    "qpDq": 720,
+    "QpDq": 90.47786842338606,
+    "QuDq": 203.5752039526186,
+    "Qallow": 81.43008158104745
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "ujung di lempung SPT",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 3,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "spt"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 9 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 3,
+   "Leff": 3,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 9.047786842338605,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "spt",
+     "top": 0,
+     "bot": 3,
+     "dL": 3,
+     "sv": 25.5,
+     "fs": 12,
+     "Qs": 45.23893421169302,
+     "how": "SPT 2N"
+    }
+   ],
+   "Qs": 45.23893421169302,
+   "tipLayer": {
+    "soil": "clay",
+    "H": 4,
+    "gamma": 17,
+    "cu": 40,
+    "phi": 0,
+    "N": 6,
+    "method": "spt"
+   },
+   "svTip": 41.19,
+   "qp": 1800,
+   "qpHow": "SPT 40N*L/D<=300N",
+   "Nq": null,
+   "ql": null,
+   "Qp": 226.19467105846513,
+   "Qu": 271.4336052701582,
+   "Qallow": 108.57344210806328,
+   "dq": {
+    "active": true,
+    "NsAvg": 6,
+    "fsDq": 30,
+    "QsDq": 113.09733552923255,
+    "C": 120,
+    "Np": 6,
+    "qpDq": 720,
+    "QpDq": 90.47786842338606,
+    "QuDq": 203.5752039526186,
+    "Qallow": 81.43008158104745
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "spt"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "fs dibatasi 120 kPa",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 18,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 80,
+     "method": "spt"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Sebagian fs dibatasi ke 120 kPa (batas lunak konservatif) — periksa parameter kekuatan/pilih metode lain bila perlu.",
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 54 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 18,
+   "Leff": 18,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 54.28672105403163,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 23.00222426164139,
+     "Qs": 173.43268501583398,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "spt",
+     "top": 10,
+     "bot": 18,
+     "dL": 8,
+     "sv": 134.28,
+     "fs": 120,
+     "Qs": 1206.3715789784806,
+     "how": "SPT 2N"
+    }
+   ],
+   "Qs": 1476.332547263509,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 80,
+    "method": "spt"
+   },
+   "svTip": 171.04,
+   "qp": 32000,
+   "qpHow": "SPT 40N*L/D<=400N",
+   "Nq": null,
+   "ql": null,
+   "Qp": 4021.2385965949356,
+   "Qu": 5497.571143858445,
+   "Qallow": 2199.028457543378,
+   "dq": {
+    "active": true,
+    "NsAvg": 42.888888888888886,
+    "fsDq": 152.96296296296296,
+    "QsDq": 3459.9407091535586,
+    "C": 400,
+    "Np": 80,
+    "qpDq": 32000,
+    "QpDq": 4021.2385965949356,
+    "QuDq": 7481.179305748494,
+    "Qallow": 2992.4717222993977
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 80,
+     "method": "spt"
+    }
+   ]
+  }
+ },
+ {
+  "name": "Decourt dilewati (N kosong)",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 0,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma dilewati — isi N-SPT (>0) pada SEMUA lapis tertanam untuk pembanding empiris.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 23.00222426164139,
+     "Qs": 173.43268501583398,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 106.71,
+     "fs": 33.85521640119794,
+     "Qs": 85.08743930535691,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 355.04840759038535,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 115.89999999999999,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 527.3886076552983,
+   "Qallow": 210.95544306211931,
+   "dq": {
+    "active": false
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 0,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "lempung psi > 1",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 3,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 150,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 9 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 3,
+   "Leff": 3,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 9.047786842338605,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 3,
+     "dL": 3,
+     "sv": 25.5,
+     "fs": 48.158560136386285,
+     "Qs": 181.5534944783201,
+     "how": "alpha=0.32"
+    }
+   ],
+   "Qs": 181.5534944783201,
+   "tipLayer": {
+    "soil": "clay",
+    "H": 4,
+    "gamma": 17,
+    "cu": 150,
+    "phi": 0,
+    "N": 6,
+    "method": "static"
+   },
+   "svTip": 41.19,
+   "qp": 1350,
+   "qpHow": "9*cu",
+   "Nq": null,
+   "ql": null,
+   "Qp": 169.64600329384885,
+   "Qu": 351.1994977721689,
+   "Qallow": 140.47979910886755,
+   "dq": {
+    "active": true,
+    "NsAvg": 6,
+    "fsDq": 30,
+    "QsDq": 113.09733552923255,
+    "C": 120,
+    "Np": 6,
+    "qpDq": 720,
+    "QpDq": 90.47786842338606,
+    "QuDq": 203.5752039526186,
+    "Qallow": 81.43008158104745
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 150,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "tiang pendek L/D < 4",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 1.2,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "L/D = 3.0 < 4 — tiang pendek; qp lempung (Nc=9) & rumus tiang panjang mungkin tidak berlaku (cek daya dukung dangkal).",
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 4 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 1.2,
+   "Leff": 1.2,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 3.6191147369354417,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 1.2,
+     "dL": 1.2,
+     "sv": 10.2,
+     "fs": 14.212322075130494,
+     "Qs": 21.43167677840736,
+     "how": "alpha=0.36"
+    }
+   ],
+   "Qs": 21.43167677840736,
+   "tipLayer": {
+    "soil": "clay",
+    "H": 4,
+    "gamma": 17,
+    "cu": 40,
+    "phi": 0,
+    "N": 6,
+    "method": "static"
+   },
+   "svTip": 20.4,
+   "qp": 360,
+   "qpHow": "9*cu",
+   "Nq": null,
+   "ql": null,
+   "Qp": 45.23893421169303,
+   "Qu": 66.67061099010039,
+   "Qallow": 26.668244396040155,
+   "dq": {
+    "active": true,
+    "NsAvg": 6,
+    "fsDq": 30,
+    "QsDq": 45.23893421169302,
+    "C": 120,
+    "Np": 6,
+    "qpDq": 720,
+    "QpDq": 90.47786842338606,
+    "QuDq": 135.7168026350791,
+    "Qallow": 54.28672105403164
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "satu lapis pasir",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 10,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "sand",
+     "H": 15,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 30,
+     "N": 20,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 30 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 10,
+   "Leff": 10,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 30.159289474462014,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 15,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "sand",
+     "method": "static",
+     "top": 0,
+     "bot": 10,
+     "dL": 10,
+     "sv": 60.57,
+     "fs": 18.87725102839662,
+     "Qs": 237.21853260312477,
+     "how": "beta K=0.70,d=24"
+    }
+   ],
+   "Qs": 237.21853260312477,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 15,
+    "gamma": 18,
+    "cu": 0,
+    "phi": 30,
+    "N": 20,
+    "method": "static"
+   },
+   "svTip": 101.52,
+   "qp": 531.1946433181326,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 18.401122218708668,
+   "ql": 531.1946433181326,
+   "Qp": 66.75188756297985,
+   "Qu": 303.97042016610465,
+   "Qallow": 121.58816806644185,
+   "dq": {
+    "active": true,
+    "NsAvg": 20,
+    "fsDq": 76.66666666666667,
+    "QsDq": 963.42174710087,
+    "C": 400,
+    "Np": 20,
+    "qpDq": 8000,
+    "QpDq": 1005.3096491487339,
+    "QuDq": 1968.731396249604,
+    "Qallow": 787.4925584998416
+   },
+   "layers": [
+    {
+     "soil": "sand",
+     "H": 15,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 30,
+     "N": 20,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "FS 0 -> 2,5",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 0,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "FS tidak valid — dipakai 2,5.",
+    "Berat sendiri tiang diabaikan dari Q_izin (Wp = 36 kN, γ beton 24 kN/m³).",
+    "Decourt-Quaresma ditampilkan sebagai pembanding empiris (faktor α,β=1,0). Selisih dengan metode statik/Meyerhof adalah wajar — gunakan penilaian teknik.",
+    "Analisis TIANG TUNGGAL. TIDAK termasuk: efisiensi kelompok, gesekan negatif, beban lateral/cabut, penurunan tiang, beban gempa."
+   ],
+   "valid": true,
+   "shape": "circular",
+   "D": 0.4,
+   "L": 12,
+   "Leff": 12,
+   "FS": 2.5,
+   "Dw": 2,
+   "ptype": "driven",
+   "material": "concrete",
+   "inclW": false,
+   "Wp": 36.19114736935442,
+   "perim": 1.2566370614359172,
+   "Ap": 0.12566370614359174,
+   "totalH": 18,
+   "cK": 1.4,
+   "cDelta": 0.8,
+   "nfSPT": 2,
+   "segs": [
+    {
+     "idx": 1,
+     "soil": "clay",
+     "method": "static",
+     "top": 0,
+     "bot": 4,
+     "dL": 4,
+     "sv": 34,
+     "fs": 19.203691788083756,
+     "Qs": 96.5282832691945,
+     "how": "alpha=0.48"
+    },
+    {
+     "idx": 2,
+     "soil": "sand",
+     "method": "static",
+     "top": 4,
+     "bot": 10,
+     "dL": 6,
+     "sv": 72.94999999999999,
+     "fs": 23.00222426164139,
+     "Qs": 173.43268501583398,
+     "how": "beta K=0.66,d=26"
+    },
+    {
+     "idx": 3,
+     "soil": "sand",
+     "method": "static",
+     "top": 10,
+     "bot": 12,
+     "dL": 2,
+     "sv": 106.71,
+     "fs": 33.85521640119794,
+     "Qs": 85.08743930535691,
+     "how": "beta K=0.58,d=29"
+    }
+   ],
+   "Qs": 355.04840759038535,
+   "tipLayer": {
+    "soil": "sand",
+    "H": 8,
+    "gamma": 19,
+    "cu": 0,
+    "phi": 36,
+    "N": 35,
+    "method": "static"
+   },
+   "svTip": 115.89999999999999,
+   "qp": 1371.439736688854,
+   "qpHow": "sigma'v*Nq<=ql",
+   "Nq": 37.752497171885715,
+   "ql": 1371.439736688854,
+   "Qp": 172.34020006491298,
+   "Qu": 527.3886076552983,
+   "Qallow": 210.95544306211931,
+   "dq": {
+    "active": true,
+    "NsAvg": 16.833333333333332,
+    "fsDq": 66.11111111111111,
+    "QsDq": 996.9320687391611,
+    "C": 400,
+    "Np": 35,
+    "qpDq": 14000,
+    "QpDq": 1759.2918860102843,
+    "QuDq": 2756.2239547494455,
+    "Qallow": 1102.4895818997782
+   },
+   "layers": [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  }
+ },
+ {
+  "name": "D 0 tidak valid",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Diameter/sisi tiang D harus > 0."
+   ],
+   "valid": false
+  }
+ },
+ {
+  "name": "L 0 tidak valid",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 0,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   [
+    {
+     "soil": "clay",
+     "H": 4,
+     "gamma": 17,
+     "cu": 40,
+     "phi": 0,
+     "N": 6,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 6,
+     "gamma": 18,
+     "cu": 0,
+     "phi": 32,
+     "N": 18,
+     "method": "static"
+    },
+    {
+     "soil": "sand",
+     "H": 8,
+     "gamma": 19,
+     "cu": 0,
+     "phi": 36,
+     "N": 35,
+     "method": "static"
+    }
+   ]
+  ],
+  "output": {
+   "warn": [
+    "Panjang tertanam L harus > 0."
+   ],
+   "valid": false
+  }
+ },
+ {
+  "name": "tanpa lapis",
+  "args": [
+   {
+    "shape": "circular",
+    "D": 0.4,
+    "L": 12,
+    "ptype": "driven",
+    "material": "concrete",
+    "Dw": 2,
+    "FS": 2.5,
+    "inclW": "no"
+   },
+   []
+  ],
+  "output": {
+   "warn": [
+    "Tambahkan minimal satu lapis tanah."
+   ],
+   "valid": false
+  }
+ }
+]
