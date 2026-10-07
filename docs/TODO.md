@@ -97,15 +97,24 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
             — 2026-10-07
       - [x] Pembebanan & hidraulika: `wind-load`, `rational-method`, `open-channel`, `pipe-flow`
             (+ `shared/hydraulics.ts`) — 2026-10-07
-      - ⏸ **Sambungan** `bolt-connection`, `weld-connection`, `anchor-bolt-group` — DITAHAN, pemilik ingin diskusi
-        dulu (2026-10-07)
+      - [ ] **Baut & las sederhana** `bolt-connection`, `weld-connection` — tetap di Civil Tools (kategori **Baja**),
+            perlu di-port
+            (keputusan 2026-10-07; sambungan lengkap → EDFS Nexus, PLATFORM.md §1a)
+      - [ ] `anchor-bolt-group` — tetap di Civil Tools, perlu di-port (keputusan 2026-10-07)
       - ⏸ **`load-combo`** — TIDAK di-port; disembunyikan di UI baru, akan dihapus atau diganti formatnya
         (2026-10-07). Fitur handoff "Kirim ke…" ikut ditinjau ulang bersamanya
 - [x] **[Claude]** Katalog tool `src/tools.ts` (id, nama, kategori, status, SEO) dari registry lama + test
       konsistensi; kategori **"Umum" → "Pembebanan"** (keputusan pemilik 2026-10-07), `load-combo` `hidden`,
       sambungan `pending` — 2026-10-07
-- [ ] **[Bersama]** Diskusi sambungan (`bolt-connection`, `weld-connection`, `anchor-bolt-group`) → lanjut port atau
-      revisi isi
+- [x] **[Bersama]** Diskusi sambungan → aplikasi terpisah **EDFS Nexus** (sekelas Limcon / IDEA StatiCa);
+      `base-plate` pindah ke Nexus, baut & las sederhana tetap di Civil Tools — 2026-10-07 (PLATFORM.md §1a)
+- [ ] **[Claude]** Keluarkan `base-plate` dari katalog `src/tools.ts` (+ rencana redirect/tautan ke Nexus) dan
+      perbarui komentar sambungan di kepala `src/tools.ts`; `src/calc/base-plate.ts` disimpan sebagai bahan Nexus
+- [x] **[Anda]** `anchor-bolt-group` tetap di Civil Tools; pondasi Civil Tools = pondasi tunggal (Radix = seluruh
+      bangunan); baut & las → kategori Baja, "Sambungan" dihapus; Radix & Nexus ikut satu Edifisia Premium — 2026-10-07
+- [ ] **[Claude]** `src/tools.ts`: pindahkan `bolt-connection`/`weld-connection` ke Baja, hapus kategori Sambungan,
+      status `anchor-bolt-group`/baut/las dari `pending` → siap port (bersama tugas `base-plate` di atas)
+- [ ] **[Anda]** Gating fitur Premium di EDFS Radix & EDFS Nexus (belum ditentukan)
 - [ ] **[Claude]** Shell React sesuai UI.md: menu bar File/Help, navigasi kiri, header, tab Input/Detail, tema
       Light/Dark (token `[data-theme]`, aksen `#566246`, tipografi Matrix)
 - [ ] **[Claude]** Routing path `/{tool}` + lazy load per tool; PWA `vite-plugin-pwa` (prompt update seperti Matrix);
@@ -119,7 +128,7 @@ Port dibuat 1:1 (golden test). Perubahan rumus/perilaku dikumpulkan di sini lalu
 terpisah yang memperbarui acuan golden secara sadar.
 
 - [ ] **[Anda]** Daftar tool yang isinya ingin diubah — sudah: tapak → `shallow-foundation`, pile cap →
-      `deep-foundation`, Library Data, `load-combo`; menyusul: sambungan (diskusi) & tool lain bila ada
+      `deep-foundation`, Library Data, `load-combo`; menyusul: tool lain bila ada
 - [ ] ⚠️ **Profil siku (L) di `core/steel-profiles.js` salah baca kolom** (ditemukan 2026-10-07): Sx = Sy = nilai imin
       (L75×75×6 → 1,46 cm³, seharusnya ±8,5) dan imin = undefined. Akibat: cek kelangsingan L/r siku di
       `steel-tension` terlewati diam-diam; lentur siku `steel-flexure` (F10 indikatif) ±6× terlalu kecil. Juga cek

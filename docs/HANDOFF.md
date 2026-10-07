@@ -18,18 +18,21 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 >   byte-per-byte. Fungsi bersama di `src/calc/shared/` (geoteknik, CPT, beton, dinding penahan, profil baja, rangka
 >   bidang, hidraulika). Katalog tool baru: `src/tools.ts` (kategori **Pembebanan** untuk beban angin).
 >   Resep port: [`src/calc/README.md`](../src/calc/README.md).
-> - Tidak di-port: sambungan (`bolt-connection`, `weld-connection`, `anchor-bolt-group`) **ditahan** menunggu
->   diskusi; `load-combo` **disembunyikan** (akan dihapus/diganti format).
+> - Tidak di-port: sambungan (`bolt-connection`, `weld-connection`, `anchor-bolt-group`) —
+>   sambungan lengkap jadi aplikasi terpisah **EDFS Nexus**; baut & las sederhana (kategori Baja) dan
+>   `anchor-bolt-group` tetap di Civil Tools (perlu di-port), `base-plate` pindah ke Nexus ([PLATFORM.md](PLATFORM.md) §1a); `load-combo` **disembunyikan** (akan dihapus/diganti format).
 >
 > **Temuan yang menunggu perbaikan** (detail di TODO "Perbaikan isi tool"): profil siku di library baja lama salah
 > baca kolom (Sx/imin) — juga terjadi di situs live; 2 crash build lama sudah diperbaiki di port (tangga rol-rol,
 > lentur HSS sayap langsing).
 >
 > **Sesi ditutup 2026-10-07** — semua commit lokal di `main`, **belum di-push** (11 commit di depan `origin/main`;
-> aman di-push: build lama tidak berubah, `src/` & `supabase/` belum dipakai deploy). Pembuka sesi berikutnya,
-> pilih salah satu: (a) **diskusi sambungan** dengan pemilik, atau (b) mulai **shell React**. Pertanyaan terbuka
-> untuk pemilik: kelompok navigasi "Struktur Bawah" ([UI.md](UI.md) "Masih dibahas"), hitung otomatis vs tombol
-> Hitung, susunan tiang `deep-foundation` (2–6 vs grid m×n).
+> aman di-push: build lama tidak berubah, `src/` & `supabase/` belum dipakai deploy). Pertanyaan terbuka sesi itu
+> sudah dijawab pemilik (2026-10-07): navigasi pakai kelompok **Struktur Bawah**, **hitung otomatis tanpa tombol**,
+> susunan tiang `deep-foundation` **input koordinat + poer segitiga 3 tiang** ([TOOL-REVISIONS.md](TOOL-REVISIONS.md) §2);
+> masterplan diperbarui: **EDFS Radix** (pondasi seluruh bangunan; Civil Tools = pondasi tunggal) & **EDFS Nexus**
+> (sambungan baja), keduanya ikut satu Edifisia Premium — [PLATFORM.md](PLATFORM.md) §1a.
+> Langkah berikutnya: **shell React**.
 >
 > **Berikutnya:** shell React (Tahap 3 sisa) → akun & Save Supabase (Tahap 4) → 35 tool di UI baru (Tahap 5) →
 > rilis v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
@@ -711,5 +714,5 @@ masuk rencana (shallow/deep-foundation, efisiensi kelompok tiang, settlement di 
   (Schmertmann/N-SPT), pemampatan sekunder, gesekan negatif tiang, penurunan tiang dari CPT.
 - **Pembebanan:** angin atap + komponen & kladding (Bab 30), Gf gedung fleksibel.
 - **Hidraulika:** kurva IDF dari data hujan (Gumbel/Log-Pearson III), HSS Nakayasu, backwater, jaringan pipa.
-- **Sambungan (ditahan):** geser eksentris baut (ICR), blok geser J4.3, grup las eksentris; anchor bolt: side-face
+- **Sambungan (→ EDFS Nexus):** geser eksentris baut (ICR), blok geser J4.3, grup las eksentris; anchor bolt: side-face
   blowout, tulangan angkur, pola melingkar.

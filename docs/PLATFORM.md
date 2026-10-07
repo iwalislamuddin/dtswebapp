@@ -27,7 +27,7 @@ riwayat git) dan pilihan domain lama `edfs.web.id`.
 Keputusan platform yang ikut berlaku (repo `D:\edifisia-platform`, dan
 `docs/rencana/akses-premium.md` di repo Matrix):
 
-- **Satu Edifisia Premium membuka semua aplikasi** (Matrix, Civil Tools, berikutnya).
+- **Satu Edifisia Premium membuka semua aplikasi** (Matrix, Civil Tools, Radix, Nexus, berikutnya).
   Tidak dijual per aplikasi, tidak ada bundle. Library tidak termasuk.
 - **Sekali bayar bermasa aktif**, bukan langganan. Perpanjangan:
   `expires_at baru = max(sekarang, expires_at lama) + durasi`.
@@ -36,6 +36,40 @@ Keputusan platform yang ikut berlaku (repo `D:\edifisia-platform`, dan
   (termasuk trial).
 - **Registrasi, reset password, dan pembelian hanya di `edifisia.com`.** Login boleh
   dari dialog di tiap aplikasi.
+
+## 1a. Lini produk Edifisia (masterplan diperbarui pemilik, 2026-10-07)
+
+Pemilik sudah memperbarui masterplan Edifisia dengan dua produk baru. Ketiganya aplikasi **terpisah** di platform
+yang sama (akun Supabase, design system, aturan Premium di atas):
+
+| Produk | Isi | Acuan pasar |
+|---|---|---|
+| **EDFS Matrix** | (sudah ada) | — |
+| **EDFS Civil Tools** | kalkulator cepat per elemen (repo ini) | — |
+| **EDFS Radix** | analisis & desain **pondasi** berbasis proyek | GS AFES, STAAD Foundation |
+| **EDFS Nexus** | perhitungan **sambungan baja** berbasis proyek: base plate, beam–column, beam splice, column splice, rafter, bracing, end plate, angle connection, dll. | Limcon, IDEA StatiCa |
+
+**Kenapa terpisah (bukan modul Civil Tools):** cara kerja berbeda (proyek berisi banyak sambungan/pondasi, banyak
+kombinasi beban, impor gaya dari software analisis, model 3D) vs kalkulator satu elemen; jumlah jenis sambungan akan
+mendominasi navigasi, SEO dan citra Civil Tools; jadwal Civil Tools tidak tersandera proyek besar.
+
+**Dampak ke Civil Tools**
+- **`base-plate` pindah ke EDFS Nexus.** Port `src/calc/base-plate.ts` (sudah selesai) dibawa sebagai bahan Nexus;
+  di Civil Tools dikeluarkan dari katalog (redirect/tautan ke Nexus saat Nexus rilis).
+- **Baut & las sederhana tetap di Civil Tools** (`bolt-connection`, `weld-connection`: konsentris, cek kapasitas
+  langsung) — sebagai kalkulator cepat & pintu masuk ke Nexus. Status berubah dari *hold* menjadi **perlu di-port**.
+- Kode hitung baja yang dipakai bersama (library profil JIS, mutu baut/las, fungsi SNI 1729) sebaiknya kelak
+  menjadi paket bersama Civil Tools ↔ Nexus agar perbaikan (mis. profil siku) berlaku di keduanya.
+
+**Keputusan lanjutan (pemilik, 2026-10-07)**
+- **`anchor-bolt-group` tetap di Civil Tools.**
+- **Batas Civil Tools ↔ Radix:** tool pondasi Civil Tools (`shallow-foundation`, `deep-foundation`, dll.) hanya
+  **pondasi tunggal — satu titik tumpuan**. **Radix** untuk **satu bangunan/struktur**: menghitung & mendesain semua
+  pondasi struktur sekaligus (banyak titik tumpuan, reaksi dari analisis struktur).
+- **Baut & las sederhana masuk kategori Baja**; kategori "Sambungan" di Civil Tools dihapus (`anchor-bolt-group`
+  ikut kelompok yang sesuai saat susunan kategori final ditetapkan di shell React).
+- **Radix & Nexus ikut dibuka oleh satu Edifisia Premium** (sesuai aturan platform di §1). **Gating fitur di
+  Radix/Nexus belum ditentukan** pemilik.
 
 ## 2. Arsitektur sasaran
 
@@ -196,3 +230,4 @@ kosongkan `MIDTRANS_CONFIG` di `index.html` (paywall mati, semua unduhan bebas).
 - Harga dan durasi paket Edifisia Premium (platform).
 - Masa tenggang setelah expired (platform, cukup di `premium_status`).
 - ~~Framework UI~~ → **React + TypeScript** seperti Matrix (diputuskan 2026-10-07).
+- Gating fitur Premium di EDFS Radix & EDFS Nexus (keduanya ikut satu Edifisia Premium) — lihat §1a.

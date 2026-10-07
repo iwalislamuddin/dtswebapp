@@ -34,8 +34,21 @@ Catatan:
 | Desain pile cap | lentur, geser 1 arah, pons kolom & tiang | `pile-cap.ts` |
 | Settlement (opsional) | tab khusus; metode untuk kelompok tiang (mis. rakit ekuivalen di 2/3 L) | **baru** + `settlement.ts` |
 
-Keputusan yang perlu diambil saat dikerjakan: susunan tiang tetap 2–6 (sekarang) atau grid bebas m×n; metode
-efisiensi grup & settlement kelompok yang dipakai.
+**Susunan tiang (keputusan pemilik 2026-10-07): input KOORDINAT saja + poer segitiga 3 tiang sejak awal.**
+
+- Input = **tabel koordinat tiang (x, y)** relatif pusat kolom (Tambah/Hapus). Tidak ada mode pola baris / grid
+  m×n terpisah; konfigurasi selang-seling (2-1, 2-1-2, 2-3-2, 3-2-3, …) & off-grid diketik sebagai koordinat.
+  Perhitungan (`pile-cap.ts`) dibuat generik atas daftar itu — tidak ada lagi cabang per jumlah tiang.
+- **Poer segitiga untuk 3 tiang** tersedia sejak awal (sering dipakai): bentuk poer = poligon (segitiga dengan
+  sudut terpangkas, overhang dari pusat tiang). Poer lain persegi panjang (bounding box + overhang).
+  Konsekuensi: keliling pons tiang & kolom dipangkas tepi **poligon** (bukan hanya persegi), lebar penampang
+  lentur/geser = panjang potongan poligon di muka kolom / pada jarak d.
+- Reaksi tiang memakai **titik berat kelompok** + momen inersia penuh (Ixx, Iyy, **Ixy**); eksentrisitas kolom
+  terhadap titik berat ditambahkan sebagai momen + peringatan.
+- Cek **spasi minimum** dari jarak antar-pasangan tiang, tepi dari tiap tiang ke tepi poer.
+- Efisiensi grup: m, n diturunkan dari koordinat (baris/kolom unik) atau metode per-tiang (Feld).
+
+Keputusan yang masih perlu diambil saat dikerjakan: metode efisiensi grup & settlement kelompok yang dipakai.
 
 ## 3. Tool lama setelah revisi
 
@@ -95,7 +108,11 @@ Tujuan: data yang sama (tanah, sondir, N-SPT, material) tidak diinput berulang d
 - **Beban angin** pindah ke kategori baru **Pembebanan** (dulu "Umum").
 - **`load-combo`** (Kombinasi Beban) disembunyikan di UI baru; akan dihapus atau diganti formatnya. Mekanisme
   handoff "Kirim ke…" (Pu/Mu ke tool baja, pile cap, base plate) ditinjau bersamanya.
-- **Sambungan** (`bolt-connection`, `weld-connection`, `anchor-bolt-group`) ditahan menunggu diskusi; perhitungannya
-  belum di-port. `base-plate` sudah di-port dan tetap di kategori Sambungan.
+- **Sambungan** (keputusan 2026-10-07, lihat [PLATFORM.md](PLATFORM.md) §1a): sambungan lengkap menjadi aplikasi
+  terpisah **EDFS Nexus**. **`base-plate` pindah ke Nexus** (keluar dari katalog Civil Tools). **Baut & las sederhana
+  (`bolt-connection`, `weld-connection`) tetap di Civil Tools** → di-port seperti tool lain. **`anchor-bolt-group`
+  tetap di Civil Tools.** Baut & las masuk kategori **Baja**; kategori "Sambungan" dihapus.
+- **Batas dengan EDFS Radix** (2026-10-07): tool pondasi Civil Tools hanya **pondasi tunggal (satu titik tumpuan)**;
+  pondasi seluruh bangunan (banyak tumpuan sekaligus) adalah ranah Radix. Revisi §1–2 tetap dalam batas ini.
 - Hidraulika & Hidrologi tetap ada (jarang dipakai pemilik, dipindahkan apa adanya).
 

@@ -32,7 +32,9 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 - **Panel navigasi kiri**: bisa dibuka-tutup (seperti sekarang), **scrollable sendiri**, dikelompokkan per
   kategori, item aktif disorot hijau. Kategori & urutannya dari `src/tools.ts` (`TOOL_CATEGORIES`); per 2026-10-07:
   Analisis Struktur · Beton Bertulang · Baja · Geoteknik · **Pembebanan** · Sambungan · Hidraulika & Hidrologi.
-  Mockup memakai pengelompokan lain (Struktur Baja / Struktur Beton / **Struktur Bawah**) — lihat "Masih dibahas".
+  Kategori **Sambungan akan dihapus** (baut & las → Baja, base-plate → EDFS Nexus; keputusan 2026-10-07).
+  **Diputuskan 2026-10-07: ikut mockup — ada kelompok "Struktur Bawah"** (tapak/shallow-foundation, pile
+  cap/deep-foundation, dinding penahan) terpisah dari Geoteknik. Susunan kategori final ditetapkan saat shell React.
 - **Jendela utama** = **header** (judul + deskripsi) + **content**.
 - **Content berbentuk tab**, hanya dua:
   - **Input** — semua input, ilustrasi/diagram, dan ringkasan hasil dalam satu layar.
@@ -48,10 +50,13 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 - **Kanan bawah: Diagram/hasil** — sub-tab bila lebih dari satu diagram (mis. Reaksi · Geser · Momen ·
   Lendutan), kartu **Nilai Maksimum** / ringkasan hasil di bawahnya.
 
+## Keputusan pemilik 2026-10-07
+
+- Navigasi memakai kelompok **Struktur Bawah** (lihat di atas).
+- **Hitung otomatis** saat input berubah, **tanpa tombol Hitung** (perilaku build lama dipertahankan; tombol hijau
+  di mockup tidak dipakai). Hitungan berat diberi debounce; input tidak valid → hasil lama diredupkan + pesan.
+
 ## Masih dibahas (Tahap 5)
 
-- Pengelompokan navigasi: pertahankan kategori sekarang, atau ikuti mockup dengan kelompok **Struktur Bawah**
-  (tapak/shallow-foundation, pile cap/deep-foundation, dinding penahan) terpisah dari Geoteknik.
-- Hitung otomatis saat input berubah (perilaku sekarang) vs tombol **Hitung** seperti di mockup.
 - Isi menu `File` / `Help` final, pintasan keyboard.
 - Perilaku di layar sempit/ponsel (panel menumpuk; scroll halaman diizinkan di bawah lebar tertentu).
