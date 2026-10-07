@@ -129,6 +129,20 @@ const bpBase = {
 }
 const bp = (name, over) => ({ name, args: [{ ...bpBase, ...over }] })
 
+const pfBase = {
+  H: 4, Lb: 6, support: 'jepit', self: 'ya',
+  cmat: 'baja', cptype: 'WF', cpsize: '250×250×9×14', cfy: 240, cb: 300, ch: 400, cfc: 25,
+  bmat: 'baja', bptype: 'WF', bpsize: '400×200×8×13', bfy: 240, bb: 250, bh: 500, bfc: 25,
+  q: 20, np: 0, p1_P: 40, p1_a: 3, p2_P: 0, p2_a: 0, p3_P: 0, p3_a: 0, p4_P: 0, p4_a: 0, HL1: 0, HL2: 0,
+}
+const pf = (name, over) => ({ name, args: [{ ...pfBase, ...over }] })
+const gfBase = {
+  H: 4, Lb: 8, alpha: 20, support: 'jepit', self: 'ya',
+  cptype: 'WF', cpsize: '300×150×6.5×9', cfy: 240, rptype: 'WF', rpsize: '250×125×6×9', rfy: 240,
+  q: 12, np: 0, p1_P: 20, p1_a: 4, p2_P: 0, p2_a: 0, p3_P: 0, p3_a: 0, p4_P: 0, p4_a: 0, HL1: 0, HL2: 0,
+}
+const gf = (name, over) => ({ name, args: [{ ...gfBase, ...over }] })
+
 export const CASES = {
   'bearing-capacity': [
     bearing('default (HANDOFF: Terzaghi qu 1373)', {}),
@@ -686,5 +700,31 @@ export const CASES = {
     bp('pelat terlalu kecil', { N: 250, B: 250, Mu: 20 }),
     bp('Pu 0', { Pu: 0 }),
     bp('dimensi kosong', { N: 0 }),
+  ],
+  'portal-frame': [
+    pf('default baja jepit', {}),
+    pf('sendi', { support: 'sendi' }),
+    pf('dengan beban terpusat & lateral', { np: 2, p2_P: 25, p2_a: 4.5, HL1: 15, HL2: 5 }),
+    pf('4 beban terpusat, posisi dipotong', { np: 4, p2_P: 10, p2_a: 1, p3_P: 10, p3_a: 5, p4_P: 10, p4_a: 8 }),
+    pf('tanpa berat sendiri', { self: 'tidak' }),
+    pf('beton', { cmat: 'beton', bmat: 'beton' }),
+    pf('kolom beton balok baja, lateral', { cmat: 'beton', HL1: 30, support: 'sendi' }),
+    pf('beton fc 0 (E pakai fc 1)', { cmat: 'beton', cfc: 0 }),
+    pf('profil hollow', { cptype: 'SHS', cpsize: '150×150×6', bptype: 'RHS', bpsize: '200×100×6' }),
+    pf('balok beton b 0', { bmat: 'beton', bb: 0 }),
+    pf('kolom tidak ada', { cpsize: 'xx' }),
+    pf('H 0', { H: 0 }),
+  ],
+  'gable-frame': [
+    gf('default jepit alfa 20', {}),
+    gf('sendi', { support: 'sendi' }),
+    gf('alfa 0 (portal biasa)', { alpha: 0 }),
+    gf('alfa dipotong 75', { alpha: 80 }),
+    gf('terpusat kiri, kanan, puncak + lateral', { np: 3, p1_a: 2, p2_P: 15, p2_a: 6, p3_P: 10, p3_a: 4, HL1: 8, HL2: -3 }),
+    gf('posisi dipotong', { np: 1, p1_a: 9 }),
+    gf('tanpa berat sendiri', { self: 'tidak' }),
+    gf('profil hollow', { cptype: 'RHS', cpsize: '250×150×9', rptype: 'SHS', rpsize: '150×150×6' }),
+    gf('rafter tidak ada', { rpsize: 'xx' }),
+    gf('Lb 0', { Lb: 0 }),
   ],
 }

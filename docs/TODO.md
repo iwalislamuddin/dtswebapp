@@ -116,7 +116,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
             (+ `crackedInertia`, `effectiveInertia` di `shared/concrete.ts`) — 2026-10-07 — **kelompok beton lengkap**
       - [x] Baja: `steel-tension`, `steel-compression`, `steel-flexure`, `steel-beam-analysis`, `base-plate`
             (+ `shared/steel-profiles.ts` 1:1 dari `core/steel-profiles.js`, `shared/steel.ts`) — 2026-10-07
-      - [ ] Analisis struktur: `portal-frame`, `gable-frame` (setelah baja)
+      - [x] Analisis struktur: `portal-frame`, `gable-frame` (+ `shared/frame2d.ts`, dipakai juga `concrete-stair`)
+            — 2026-10-07
       - [ ] Umum & hidraulika: `wind-load`, `rational-method`, `open-channel`, `pipe-flow` (hidraulika jarang
             dipakai pemilik, tetap dipindahkan)
       - ⏸ **Sambungan** `bolt-connection`, `weld-connection`, `anchor-bolt-group` — DITAHAN, pemilik ingin diskusi

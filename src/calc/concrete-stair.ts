@@ -8,6 +8,7 @@
 // Field internal elemen (_kl, _T, _ff, _wx, _wy, wv_u, wv_s) dipertahankan seperti build lama (ikut di hasil).
 
 import { effectiveInertia, stripDesign, type EffectiveInertia, type StripDesign } from './shared/concrete'
+import { extAbs, fefLocal, kLocal, matMul, matT, matZ, solveLinear as solve, transform, type Mat } from './shared/frame2d'
 import { numFinite as num, type NumLike } from './shared/num'
 
 const GAMMA_C = 24
@@ -15,8 +16,6 @@ const GAMMA_C = 24
 const NSEG = 24
 
 export type StairSupport = 'sendi' | 'rol' | 'jepit'
-
-type Mat = number[][]
 
 export interface StairInput {
   /** Bordes bawah, flight (proyeksi horizontal), bordes atas, beda tinggi (m). */
@@ -154,69 +153,6 @@ export interface StairResult {
   Wu?: number
   sumRy?: number
   sumRx?: number
-}
-
-/* ---------- aljabar matriks ---------- */
-const matZ = (n: number, m: number): Mat => Array.from({ length: n }, () => Array.from({ length: m }, () => 0))
-
-function matMul(A: Mat, B: Mat): Mat {
-  const n = A.length, k = B.length, m = B[0].length, C = matZ(n, m)
-  for (let i = 0; i < n; i++) for (let j = 0; j < m; j++) {
-    let s = 0
-    for (let p = 0; p < k; p++) s += A[i][p] * B[p][j]
-    C[i][j] = s
-  }
-  return C
-}
-
-function matT(A: Mat): Mat {
-  const n = A.length, m = A[0].length, C = matZ(m, n)
-  for (let i = 0; i < n; i++) for (let j = 0; j < m; j++) C[j][i] = A[i][j]
-  return C
-}
-
-/** Gauss-Jordan dengan pivot parsial; null bila singular (mekanisme). */
-function solve(K: Mat, b: number[]): number[] | null {
-  const n = b.length
-  const A = K.map((r, i) => r.slice().concat([b[i]]))
-  for (let c = 0; c < n; c++) {
-    let piv = c
-    for (let r = c + 1; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[piv][c])) piv = r
-    if (Math.abs(A[piv][c]) < 1e-12) return null
-    const tmp = A[c]; A[c] = A[piv]; A[piv] = tmp
-    const d = A[c][c]
-    for (let j = c; j <= n; j++) A[c][j] /= d
-    for (let r = 0; r < n; r++) {
-      if (r === c) continue
-      const f = A[r][c]
-      if (f === 0) continue
-      for (let j = c; j <= n; j++) A[r][j] -= f * A[c][j]
-    }
-  }
-  return A.map((r) => r[n])
-}
-
-/* ---------- elemen rangka bidang ---------- */
-function kLocal(EA: number, EI: number, L: number): Mat {
-  const a = EA / L, c1 = (12 * EI) / (L * L * L), c2 = (6 * EI) / (L * L), c3 = (4 * EI) / L, c4 = (2 * EI) / L
-  return [[a, 0, 0, -a, 0, 0], [0, c1, c2, 0, -c1, c2], [0, c2, c3, 0, -c2, c4],
-    [-a, 0, 0, a, 0, 0], [0, -c1, -c2, 0, c1, -c2], [0, c2, c4, 0, -c2, c3]]
-}
-
-function transform(cx: number, cy: number): Mat {
-  const T = matZ(6, 6), R = [[cx, cy, 0], [-cy, cx, 0], [0, 0, 1]]
-  for (let b = 0; b < 2; b++) for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) T[b * 3 + i][b * 3 + j] = R[i][j]
-  return T
-}
-
-/** Gaya ujung terjepit lokal untuk beban merata aksial wx & lintang wy (N/mm). */
-const fefLocal = (wx: number, wy: number, L: number): number[] =>
-  [(-wx * L) / 2, (-wy * L) / 2, (-wy * L * L) / 12, (-wx * L) / 2, (-wy * L) / 2, (wy * L * L) / 12]
-
-function extAbs(arr: number[]): number {
-  let m = 0
-  for (const x of arr) if (Math.abs(x) > Math.abs(m)) m = x
-  return m
 }
 
 export function computeStair(v: StairInput): StairResult {

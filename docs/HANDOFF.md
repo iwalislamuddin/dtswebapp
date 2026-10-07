@@ -25,7 +25,9 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
 > — **11/35 tool, 255 test**; lalu beton gelombang 1 (5 tool) — **16/35 tool, 342 test**;
 > lalu beton gelombang 2 — **kelompok beton lengkap, 20/35 tool, 414 test**.
 > Lalu baja (5 tool + library profil) — **25/35 tool, 535 test**. ⚠️ Bug profil siku di library lama (TODO).
-> Keputusan 2026-10-07: sambungan DITAHAN (diskusi), `load-combo` tidak di-port (disembunyikan/diganti). Revisi tapak/pile cap → shallow/deep-foundation & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md). **Lanjut: port tool berikutnya** — daftar di TODO
+> Keputusan 2026-10-07: sambungan DITAHAN (diskusi), `load-combo` tidak di-port (disembunyikan/diganti).
+> Lalu analisis struktur (portal, gable) + `shared/frame2d.ts` — **27/35 tool, 559 test**. Sisa: angin + 3 hidraulika
+> (lalu sambungan bila sudah didiskusikan). Revisi tapak/pile cap → shallow/deep-foundation & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md). **Lanjut: port tool berikutnya** — daftar di TODO
 > Tahap 3, resep di [`src/calc/README.md`](../src/calc/README.md).
 >
 > **Arah berubah: Civil Tools diselaraskan dengan platform Edifisia.**

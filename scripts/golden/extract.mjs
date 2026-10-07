@@ -46,6 +46,10 @@ function loadModule(id) {
   // privat; nama yang tidak ada dilewati.
   const hook = `;try { SP = window.SteelProfiles } catch (e) {}
     try { state.steel = window.SteelProfiles } catch (e) {}
+    try { state.UI = { fmt: function (n, dp) {
+      if (n === null || n === undefined || isNaN(n)) return '—';
+      dp = dp === undefined ? 2 : dp;
+      return Number(n).toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp }) } } } catch (e) {}
     globalThis.__golden = { __setState: function (k, v) { state[k] = v } };
     ${JSON.stringify(EXPOSED)}.forEach(function (n) {
     try { globalThis.__golden[n] = eval(n) } catch (e) {} });\n`
