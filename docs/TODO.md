@@ -126,7 +126,11 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
       asli, bukan fallback SPA), `sitemap.xml` (tool aktif) + `robots.txt` & `_headers` di `web/public/` — 2026-10-07
 - [ ] **[Claude]** Kontrak UI tool (bentuk state input, hitung otomatis + debounce, sumber data Detail/Report)
       ditetapkan bersama tool percontohan Tahap 5
-- [ ] **[Claude]** Laporan (Detail + Download PDF/.txt) dari satu sumber data per tool; PDF tetap tanpa library
+- [x] **[Claude]** Laporan dari satu sumber per tool (`src/report/`): model `Report` → tab Detail (HTML + SVG ikut
+      tema), `.txt`, dan PDF tanpa library (port `core/report.js`, Courier, gambar vektor). Modul laporan per tool di
+      `src/tools/<id>/report.ts`; contoh acuan `bolt-connection` (tab Detail memakai input bawaan sampai UI barunya
+      ada). File > Download Report aktif bila tool punya laporan — 2026-10-07. Sisa: laporan 33 tool lain ditulis
+      bersama UI-nya di Tahap 5; gating Premium di Tahap 4
 - [x] **[Claude]** CI GitHub Actions (`.github/workflows/ci.yml`): typecheck, lint, test, rekam ulang golden harus
       identik, build — 2026-10-07
 

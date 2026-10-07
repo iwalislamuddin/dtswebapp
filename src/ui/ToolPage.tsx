@@ -1,8 +1,10 @@
-import { Suspense, type ReactNode } from 'react'
+import { Suspense, useEffect, useState, type ReactNode } from 'react'
 import { linkClick } from '../app/router'
 import { useUi, type ToolTab } from '../app/ui-state'
-import { toolUI } from '../tools/registry'
+import { toolReportLoader, toolUI } from '../tools/registry'
 import type { ToolEntry } from '../tools'
+import type { Report } from '../report/model'
+import { ReportView } from './ReportView'
 
 const TABS: { id: ToolTab; label: string }[] = [
   { id: 'input', label: 'Input' },
@@ -33,7 +35,45 @@ export function ToolPage({ tool }: { tool: ToolEntry }) {
     )
   }
 
-  const UI = toolUI(tool.id)
+  return <ActiveTool tool={tool} tab={tab} UI={toolUI(tool.id)} header={header} />
+}
+
+/**
+ * Tool yang belum punya UI baru tetapi sudah punya modul laporan: laporan dengan input bawaan dipakai untuk tab
+ * Detail dan File > Download Report.
+ */
+function useDefaultReport(toolId: string, enabled: boolean): Report | null {
+  const [report, setReport] = useState<Report | null>(null)
+  useEffect(() => {
+    const load = enabled ? toolReportLoader(toolId) : null
+    if (!load) return
+    let live = true
+    void load().then((m) => {
+      if (!live) return
+      const r = m.default.build(m.default.defaults)
+      setReport(r)
+      useUi.getState().setReport({ toolId, report: r })
+    })
+    return () => {
+      live = false
+      useUi.getState().setReport(null)
+    }
+  }, [toolId, enabled])
+  return report
+}
+
+function ActiveTool({
+  tool,
+  tab,
+  UI,
+  header,
+}: {
+  tool: ToolEntry
+  tab: ToolTab
+  UI: ReturnType<typeof toolUI>
+  header: ReactNode
+}) {
+  const defaultReport = useDefaultReport(tool.id, !UI)
   return (
     <div className="tool">
       {header}
@@ -58,6 +98,12 @@ export function ToolPage({ tool }: { tool: ToolEntry }) {
           <Suspense fallback={<div className="tool-loading muted">Memuat…</div>}>
             <UI key={tool.id} tab={tab} />
           </Suspense>
+        ) : tab === 'detail' && defaultReport ? (
+          <ReportView
+            report={defaultReport}
+            toolId={tool.id}
+            note="Contoh perhitungan dengan input bawaan — tampilan input baru tool ini menyusul di versi 0.8."
+          />
         ) : (
           <Notice title={tab === 'input' ? 'Antarmuka baru sedang disiapkan' : 'Detail perhitungan sedang disiapkan'}>
             Perhitungan tool ini sudah dipindahkan ke mesin hitung baru; tampilan input, diagram, dan detail

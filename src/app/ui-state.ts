@@ -1,6 +1,8 @@
 import { create } from 'zustand'
+import type { Report } from '../report/model'
 
-// Keadaan shell: tema & panel navigasi (disimpan di localStorage), tab aktif per tool, dialog terbuka.
+// Keadaan shell: tema & panel navigasi (disimpan di localStorage), tab aktif per tool, dialog terbuka, dan laporan
+// tool yang sedang tampil (sumber File > Download Report).
 
 export type Theme = 'light' | 'dark'
 export type ToolTab = 'input' | 'detail'
@@ -21,6 +23,9 @@ interface Prefs {
 interface UiState extends Prefs {
   tabs: Record<string, ToolTab>
   dialog: DialogId | null
+  /** Laporan tool aktif — diisi UI tool / tab Detail, dikosongkan saat tool ditutup. */
+  report: { toolId: string; report: Report } | null
+  setReport: (r: { toolId: string; report: Report } | null) => void
   setTheme: (t: Theme) => void
   toggleNav: (open?: boolean) => void
   setTab: (toolId: string, tab: ToolTab) => void
@@ -44,6 +49,8 @@ export const useUi = create<UiState>()((set) => ({
   navOpen: !isNarrow() && saved.navOpen !== false,
   tabs: {},
   dialog: null,
+  report: null,
+  setReport: (report) => set({ report }),
   setTheme: (theme) => set({ theme }),
   toggleNav: (open) => set((s) => ({ navOpen: open ?? !s.navOpen })),
   setTab: (toolId, tab) => set((s) => ({ tabs: { ...s.tabs, [toolId]: tab } })),

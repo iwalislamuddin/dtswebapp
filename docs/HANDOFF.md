@@ -23,7 +23,8 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 >   [ARCHITECTURE.md](../ARCHITECTURE.md) §A.1a. Semua tool masih placeholder; kategori final: Struktur Bawah baru,
 >   Sambungan dihapus (baut/las/angkur → Baja, `base-plate` status `moved` → EDFS Nexus).
 >   Juga 2026-10-07: pre-render SEO per rute (`<id>.html`, `404.html`, `sitemap.xml`), CI GitHub Actions, dan port
->   baut, las, grup angkur (kategori Baja). Sambungan lengkap jadi aplikasi terpisah **EDFS Nexus**; `base-plate`
+>   baut, las, grup angkur (kategori Baja), dan infrastruktur laporan `src/report/` (Detail/.txt/PDF dari satu
+>   model; contoh `bolt-connection`). Sambungan lengkap jadi aplikasi terpisah **EDFS Nexus**; `base-plate`
 >   pindah ke Nexus ([PLATFORM.md](PLATFORM.md) §1a). Tidak di-port: `load-combo` (**disembunyikan**, akan
 >   dihapus/diganti format).
 >
@@ -39,8 +40,8 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > (sambungan baja), keduanya ikut satu Edifisia Premium — [PLATFORM.md](PLATFORM.md) §1a.
 > Shell React selesai di sesi yang sama (lihat atas).
 >
-> **Berikutnya:** sisa Tahap 3 (pre-render SEO per rute, CI) → akun & Save Supabase (Tahap 4) → tool percontohan
-> lalu 35 tool di UI baru (Tahap 5) → rilis v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
+> **Berikutnya:** Tahap 3 tuntas (kontrak UI tool ditetapkan bersama tool percontohan) → akun & Save Supabase
+> (Tahap 4) → tool percontohan lalu semua tool di UI baru (Tahap 5) → rilis v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
 >
 > **Kondisi build lama:** `main` masih berisi app zero-build (`index.html`, `assets/`, `core/`, `modules/`) plus akun,
 > Simpan Pekerjaan, dan paywall versi **Firebase** (v0.7.x, sandbox). ⚠️ Jangan deploy `main` apa adanya — paywall
