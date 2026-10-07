@@ -12,7 +12,14 @@ export type PremiumStatus =
 const DEV: PremiumStatus = { premium: true, source: 'dev' }
 const GUEST: PremiumStatus = { premium: false, reason: 'guest' }
 
+/**
+ * Gating Premium aktif? Dimatikan sementara (permintaan pemilik 2026-10-08) agar Detail & PDF bisa ditinjau di
+ * semua build. Nyalakan kembali (true) saat akun Supabase tersambung di Tahap 4.
+ */
+export const PREMIUM_GATE = false
+
 export function premiumStatus(): PremiumStatus {
+  if (!PREMIUM_GATE) return DEV
   return import.meta.env.DEV ? DEV : GUEST
 }
 

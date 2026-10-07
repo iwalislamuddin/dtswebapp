@@ -178,7 +178,8 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **[Claude]** Status "Trial/Premium s/d …", peringatan ≤ 7 hari; tombol beli disembunyikan selama
       `PREMIUM_URL` belum ada
 - [ ] **[Claude]** `src/app/premium.ts` (`usePremium`) mengacu status Supabase — satu titik gating tab Detail & PDF.
-      Kini: `npm run dev` = Premium, build produksi = Guest (Detail & PDF terkunci) sampai tahap ini
+      Kini **gating dimatikan sementara** (`PREMIUM_GATE = false`, permintaan pemilik 2026-10-08 untuk tinjauan):
+      Detail & PDF terbuka di semua build. Nyalakan saat akun tersambung — wajib sebelum rilis v0.8.0
 - [ ] **[Claude]** Uji empat akun: Guest, Premium/trial, Free User (trial habis), Premium expired — email & Google
 - [ ] **[Anda]** Siapkan akun uji di dev; grant/expire manual lewat SQL `platform.grant_premium` (README platform)
 
