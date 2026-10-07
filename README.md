@@ -14,7 +14,7 @@ Repo sedang berada di tengah migrasi dari app **zero-build** (build lama, live) 
 | Lapisan | Lokasi | Status |
 |---|---|---|
 | Build lama — shell, 35 tool, PWA | `index.html`, `assets/`, `core/`, `modules/`, `sw.js` | Dirawat sampai build baru rilis; live ≈ v0.5.1 di `tools.dtsengineering.co.id` |
-| Mesin hitung build baru | `src/calc/` | 31/35 tool selesai di-port, 628 test lulus |
+| Mesin hitung build baru | `src/calc/` | 34/35 tool di-port (`load-combo` tidak), 717 test lulus |
 | Katalog tool build baru | `src/tools.ts` | Selesai (kategori, status, SEO) |
 | Database `tools` (Supabase) | `supabase/`, `tests/`, `scripts/db_migrate.py` | Diterapkan di development |
 | Shell React, akun Supabase, UI baru | — | Berikutnya ([`docs/TODO.md`](docs/TODO.md) Tahap 3–5) |

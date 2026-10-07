@@ -152,6 +152,21 @@ const oc = (name, over) => ({ name, args: [{ ...ocBase, ...over }] })
 const pfwBase = { D: 100, Lp: 200, mat: 'pvc', eps: 0.0015, C: 150, Q: 10, nu: 1.004, sumK: 2 }
 const pfw = (name, over) => ({ name, args: [{ ...pfwBase, ...over }] })
 
+const boltBase = {
+  grade: 'a325', thread: 'N', Fnt: 620, Fnv: 372, d: 20, planes: 1, nr: 2, nc: 2, s: 70, sg: 70, le: 40, t: 10, Fu: 370,
+  Vu: 150, Tu: 0,
+}
+const bolt = (name, over) => ({ name, args: [{ ...boltBase, ...over }] })
+const weldBase = {
+  electrode: 'e70', Fexx: 482, w: 6, Lw: 200, theta: 0, useDir: 'yes', endLoaded: 'no', t: 10, Fy: 240, Fu: 370, Ru: 150,
+}
+const weld = (name, over) => ({ name, args: [{ ...weldBase, ...over }] })
+const abgBase = {
+  nx: 2, ny: 2, sx: 250, sy: 250, da: 24, Ase: 353, hef: 375, ca: 600, ha: 600, fc: 25, futa: 400, crack: 'cracked',
+  cond: 'B', grout: 'no', Nu: 120, Mx: 20, My: 0, Vu: 80, shearDir: 'x',
+}
+const abg = (name, over) => ({ name, args: [{ ...abgBase, ...over }] })
+
 export const CASES = {
   'bearing-capacity': [
     bearing('default (HANDOFF: Terzaghi qu 1373)', {}),
@@ -806,5 +821,85 @@ export const CASES = {
     pfw('lambat', { Q: 1 }),
     pfw('nu kosong -> 1,004', { nu: 0 }),
     pfw('D 0', { D: 0 }),
+  ],
+  'bolt-connection': [
+    bolt('default A325 2x2 M20', {}),
+    bolt('ulir X', { thread: 'X' }),
+    bolt('A490', { grade: 'a490' }),
+    bolt('A307 ulir X diabaikan', { grade: 'a307', thread: 'X' }),
+    bolt('kustom', { grade: 'custom', Fnt: 700, Fnv: 400 }),
+    bolt('kustom Fnt/Fnv 0', { grade: 'custom', Fnt: 0, Fnv: 0, Tu: 50 }),
+    bolt('M24 lubang +3', { d: 24, s: 80, le: 40 }),
+    bolt('M18 tepi di luar tabel', { d: 18 }),
+    bolt('geser ganda', { planes: 2 }),
+    bolt('bidang geser dibulatkan', { planes: 1.6 }),
+    bolt('satu baris (tanpa baut dalam)', { nr: 1, nc: 3 }),
+    bolt('3 baris, tumpu dalam menentukan', { nr: 3, nc: 1, s: 60, t: 6 }),
+    bolt('spasi < 2,67d', { s: 50 }),
+    bolt('spasi antara 2,67d dan 3d', { s: 55 }),
+    bolt('gage kecil', { sg: 40 }),
+    bolt('jarak tepi < minimum', { le: 22 }),
+    bolt('jarak tepi > 12t', { le: 130 }),
+    bolt('lc tepi <= 0', { le: 10 }),
+    bolt('data pelat kosong', { t: 0 }),
+    bolt('tumpu atas 2,4dtFu', { le: 120, s: 140, t: 12 }),
+    bolt('kombinasi wajib', { Vu: 300, Tu: 300 }),
+    bolt('kombinasi tidak wajib', { Vu: 20, Tu: 10 }),
+    bolt('kombinasi rasio geser tepat di atas 0,3', { Vu: 107, Tu: 200 }),
+    bolt('kombinasi FntMod di batas atas', { Vu: 20, Tu: 300 }),
+    bolt('tarik murni', { Vu: 0, Tu: 250 }),
+    bolt('geser melebihi', { Vu: 600 }),
+    bolt('tanpa beban', { Vu: 0, Tu: 0 }),
+    bolt('input teks & kosong', { nr: '3', nc: '', d: '22', le: 'abc' }),
+  ],
+  'weld-connection': [
+    weld('default E70 6mm x 200', {}),
+    weld('E60', { electrode: 'e60' }),
+    weld('E80', { electrode: 'e80' }),
+    weld('kustom', { electrode: 'custom', Fexx: 520 }),
+    weld('kustom FEXX 0 -> 482', { electrode: 'custom', Fexx: 0 }),
+    weld('transversal 90', { theta: 90 }),
+    weld('45 tanpa faktor arah', { theta: 45, useDir: 'no' }),
+    weld('sudut > 90 dibatasi', { theta: 135 }),
+    weld('sudut negatif', { theta: -20 }),
+    weld('end-loaded Lw/w 100 tepat', { endLoaded: 'yes', w: 6, Lw: 600 }),
+    weld('end-loaded Lw/w 150', { endLoaded: 'yes', w: 6, Lw: 900 }),
+    weld('end-loaded Lw/w > 300', { endLoaded: 'yes', w: 5, Lw: 1600 }),
+    weld('logam dasar kosong', { t: 0 }),
+    weld('pelat tipis t<6, w>t', { t: 5, w: 6 }),
+    weld('w < minimum', { t: 20, w: 5 }),
+    weld('t 13 (batas Tabel J2.4)', { t: 13, w: 4 }),
+    weld('w > t-2', { t: 8, w: 8 }),
+    weld('Lw < 4w', { Lw: 20 }),
+    weld('logam dasar menentukan', { t: 4, w: 4, Fy: 240, Fu: 370, Ru: 400, theta: 90 }),
+    weld('fraktur logam dasar', { Fy: 450, Fu: 460 }),
+    weld('D/C > 1', { Ru: 600 }),
+    weld('tanpa beban', { Ru: 0 }),
+    weld('w 0', { w: 0 }),
+  ],
+  'anchor-bolt-group': [
+    abg('default 2x2 M24 hef 375', {}),
+    abg('tak retak', { crack: 'uncracked' }),
+    abg('kondisi A', { cond: 'A' }),
+    abg('grout', { grout: 'yes' }),
+    abg('geser arah Y', { shearDir: 'y', nx: 3 }),
+    abg('tanpa tepi ca 0', { ca: 0 }),
+    abg('tepi dekat', { ca: 200 }),
+    abg('tebal beton tipis', { ha: 300, ca: 300 }),
+    abg('tekan tanpa baut tertarik', { Nu: -200, Mx: 0 }),
+    abg('My dengan satu kolom', { ny: 1, My: 10 }),
+    abg('Mx dengan satu baris', { nx: 1, Mx: 10 }),
+    abg('baut tunggal', { nx: 1, ny: 1, Mx: 0 }),
+    abg('hef dangkal kcp 1', { hef: 60, Nu: 20, Mx: 2, Vu: 30 }),
+    abg('spasi besar tanpa overlap', { sx: 1200, sy: 1200, ca: 0 }),
+    abg('tanpa geser', { Vu: 0 }),
+    abg('geser saja N<=0,2', { Nu: 5, Mx: 0, Vu: 120 }),
+    abg('tarik saja V<=0,2', { Vu: 5 }),
+    abg('interaksi > 1', { Nu: 300, Mx: 40, Vu: 250, ca: 400 }),
+    abg('baja tarik gagal', { Ase: 100, Nu: 300 }),
+    abg('Ase 0', { Ase: 0 }),
+    abg('3x3 biaksial', { nx: 3, ny: 3, sx: 150, sy: 150, Mx: 30, My: 25 }),
+    abg('da kecil Vb1 menentukan', { da: 12, Ase: 84, hef: 100, ca: 150, Nu: 10, Mx: 0, Vu: 15 }),
+    abg('input teks', { nx: '2', sx: '300', Vu: '' }),
   ],
 }

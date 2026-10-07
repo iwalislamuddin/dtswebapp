@@ -13,7 +13,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > **Sudah selesai**
 > - Tahap 0 (keputusan) & Tahap 2 (skema `tools.saved_works` + RLS + batas 50, diterapkan & lulus di
 >   `edifisia-dev`; login Google aktif di dev & prod; trial 7 hari terkonfirmasi).
-> - Tahap 3, bagian mesin hitung: **31 dari 35 tool** dipindah ke `src/calc/` (TypeScript murni) dengan *golden test*
+> - Tahap 3, bagian mesin hitung: **34 dari 35 tool** dipindah ke `src/calc/` (TypeScript murni) dengan *golden test*
 >   terhadap `compute()` build lama — **628 test lulus**, uji mutasi per kelompok, rekam ulang acuan identik
 >   byte-per-byte. Fungsi bersama di `src/calc/shared/` (geoteknik, CPT, beton, dinding penahan, profil baja, rangka
 >   bidang, hidraulika). Katalog tool baru: `src/tools.ts` (kategori **Pembebanan** untuk beban angin).
@@ -22,9 +22,10 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 >   Input/Detail, tema Light/Dark, routing `/{id}`, lazy load UI per tool, PWA prompt update — struktur di
 >   [ARCHITECTURE.md](../ARCHITECTURE.md) §A.1a. Semua tool masih placeholder; kategori final: Struktur Bawah baru,
 >   Sambungan dihapus (baut/las/angkur → Baja, `base-plate` status `moved` → EDFS Nexus).
-> - Tidak di-port: sambungan (`bolt-connection`, `weld-connection`, `anchor-bolt-group`) —
->   sambungan lengkap jadi aplikasi terpisah **EDFS Nexus**; baut & las sederhana (kategori Baja) dan
->   `anchor-bolt-group` tetap di Civil Tools (perlu di-port), `base-plate` pindah ke Nexus ([PLATFORM.md](PLATFORM.md) §1a); `load-combo` **disembunyikan** (akan dihapus/diganti format).
+>   Juga 2026-10-07: pre-render SEO per rute (`<id>.html`, `404.html`, `sitemap.xml`), CI GitHub Actions, dan port
+>   baut, las, grup angkur (kategori Baja). Sambungan lengkap jadi aplikasi terpisah **EDFS Nexus**; `base-plate`
+>   pindah ke Nexus ([PLATFORM.md](PLATFORM.md) §1a). Tidak di-port: `load-combo` (**disembunyikan**, akan
+>   dihapus/diganti format).
 >
 > **Temuan yang menunggu perbaikan** (detail di TODO "Perbaikan isi tool"): profil siku di library baja lama salah
 > baca kolom (Sx/imin) — juga terjadi di situs live; 2 crash build lama sudah diperbaiki di port (tangga rol-rol,

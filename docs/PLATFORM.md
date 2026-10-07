@@ -176,7 +176,7 @@ Kode Fase A–C tidak dipakai ulang (UI ditulis ulang di React); yang dibawa han
    `core/`, `modules/`, `sw.js` setelah semua tool berjalan di build baru.
 6. **Domain & hosting**: Cloudflare Pages + `tools.edifisia.com` ([DOMAIN_MIGRATION.md](DOMAIN_MIGRATION.md)).
 7. **Fondasi React + `src/calc`** (diubah 2026-10-07): perhitungan dikeluarkan ke `src/calc/` dengan *golden test*
-   terhadap `compute()` build lama — **31/35 tool selesai** (sambungan ditahan, `load-combo` tidak di-port); shell
+   terhadap `compute()` build lama — **34/35 tool selesai** (`load-combo` tidak di-port); shell
    React sesuai [UI.md](UI.md); tool di-*lazy load* per rute, Three.js dari npm, PWA lewat `vite-plugin-pwa`.
    **Peluang SEO:** pre-render HTML statis per rute dengan title/description/canonical dari `src/tools.ts` —
    halaman tool belum pernah terindeks Google karena build lama hanya satu `index.html` yang diisi JavaScript.

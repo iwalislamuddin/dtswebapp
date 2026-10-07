@@ -35,7 +35,7 @@ describe('katalog tool', () => {
       expect(t(id)?.category).toBe('Struktur Bawah')
     for (const id of ['bolt-connection', 'weld-connection', 'anchor-bolt-group']) {
       expect(t(id)?.category).toBe('Baja')
-      expect(t(id)?.status).toBe('pending')
+      expect(t(id)).toMatchObject({ status: 'active', ported: true })
     }
     expect(t('base-plate')).toMatchObject({ status: 'moved', movedTo: 'EDFS Nexus' })
     for (const x of TOOLS) expect(x.status === 'moved', x.id).toBe(!!x.movedTo)

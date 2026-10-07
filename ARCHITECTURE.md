@@ -16,7 +16,7 @@ Dua arsitektur hidup berdampingan sampai rilis v0.8.0: **build baru** (sasaran, 
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Katalog tool — src/tools.ts (id/slug, nama, kategori, status, SEO)       │  ✅
 ├──────────────────────────────────────────────────────────────────────────┤
-│ Mesin hitung — src/calc/<id>.ts + src/calc/shared/*  (TS murni)         │  ✅ 31/35
+│ Mesin hitung — src/calc/<id>.ts + src/calc/shared/*  (TS murni)         │  ✅ 34/35
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Akun & data — @supabase/supabase-js → platform.premium_status(),          │  skema ✅,
 │   tools.saved_works (RLS), Library Data (rencana)                        │  klien Tahap 4

@@ -24,7 +24,7 @@ describe('headFor', () => {
     expect(h.canonical).toBe('https://tools.edifisia.com/beam-flexure')
   })
   it('tool tidak aktif & 404 tidak diindeks', () => {
-    for (const id of ['base-plate', 'load-combo', 'bolt-connection'])
+    for (const id of ['base-plate', 'load-combo'])
       expect(headFor({ kind: 'tool', id }).canonical).toBeNull()
     expect(headFor({ kind: 'notfound', path: '/x' }).canonical).toBeNull()
   })

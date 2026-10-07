@@ -339,8 +339,8 @@ export const TOOLS: ToolEntry[] = [
     id: "anchor-bolt-group",
     name: "Anchor Bolt Group",
     category: "Baja",
-    status: "pending",
-    ported: false,
+    status: "active",
+    ported: true,
     seo: {
       title: "Anchor Bolt Group — Tarik, Geser & Interaksi (ACI 318-19 / SNI 2847:2019)",
       desc: "Cek grup baut angkur cor-di-tempat terhadap tarik & geser: baja + breakout beton grup + pryout + interaksi tarik-geser sesuai ACI 318-19 Ch. 17 (SNI 2847:2019 Ps. 17), dengan visual 3D kerucut breakout interaktif.",
@@ -373,8 +373,8 @@ export const TOOLS: ToolEntry[] = [
     id: "bolt-connection",
     name: "Sambungan Baut",
     category: "Baja",
-    status: "pending",
-    ported: false,
+    status: "active",
+    ported: true,
     seo: {
       title: "Sambungan Baut — Geser, Tarik & Tumpu (SNI 1729:2020)",
       desc: "Cek sambungan baut tipe tumpu: kuat geser & tarik baut, kombinasi tarik-geser, dan tumpu/sobek lubang sesuai SNI 1729:2020 (AISC 360-16) Ps. J3 — mutu A325/A490/Gr.8.8/Gr.10.9.",
@@ -384,8 +384,8 @@ export const TOOLS: ToolEntry[] = [
     id: "weld-connection",
     name: "Sambungan Las",
     category: "Baja",
-    status: "pending",
-    ported: false,
+    status: "active",
+    ported: true,
     seo: {
       title: "Sambungan Las Sudut / Fillet (SNI 1729:2020)",
       desc: "Hitung kuat las sudut (fillet): throat efektif, faktor arah beban, reduksi las panjang, dan cek logam dasar sesuai SNI 1729:2020 (AISC 360-16) Ps. J2 & J4.",

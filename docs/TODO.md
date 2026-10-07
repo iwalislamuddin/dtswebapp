@@ -80,7 +80,7 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
       kasus → `src/calc/__golden__/*.json`; test TS wajib sama (toleransi relatif 1e-9)
 - [x] **[Claude]** Port perhitungan per tool ke `src/calc/<tool>.ts` + golden test + kasus hitung tangan dari
       HANDOFF; fungsi bersama di `src/calc/shared/`. Panduan: [`src/calc/README.md`](../src/calc/README.md).
-      **31/35 selesai 2026-10-07**, 628 test lulus, rekam ulang acuan identik byte-per-byte (`_template` tidak dihitung):
+      **34/35 selesai 2026-10-07** (`load-combo` sengaja tidak di-port), 717 test lulus, rekam ulang acuan identik byte-per-byte (`_template` tidak dihitung):
       - [x] Geoteknik: `bearing-capacity`, `pile-capacity` (+ `shared/geotech.ts`) — 2026-10-07
       - [x] Geoteknik: `settlement`, `cpt-bearing`, `cpt-pile` (+ `shared/cpt.ts`) — 2026-10-07
       - [x] Geoteknik: `lateral-broms`, `py-analysis` (+ `rankineKp` di `shared/geotech.ts`) — 2026-10-07 —
@@ -97,10 +97,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
             — 2026-10-07
       - [x] Pembebanan & hidraulika: `wind-load`, `rational-method`, `open-channel`, `pipe-flow`
             (+ `shared/hydraulics.ts`) — 2026-10-07
-      - [ ] **Baut & las sederhana** `bolt-connection`, `weld-connection` — tetap di Civil Tools (kategori **Baja**),
-            perlu di-port
-            (keputusan 2026-10-07; sambungan lengkap → EDFS Nexus, PLATFORM.md §1a)
-      - [ ] `anchor-bolt-group` — tetap di Civil Tools, perlu di-port (keputusan 2026-10-07)
+      - [x] Baja (sambungan sederhana): `bolt-connection`, `weld-connection`, `anchor-bolt-group` — 73 kasus golden +
+            hitung tangan, uji mutasi — 2026-10-07 (sambungan lengkap → EDFS Nexus, PLATFORM.md §1a)
       - ⏸ **`load-combo`** — TIDAK di-port; disembunyikan di UI baru, akan dihapus atau diganti formatnya
         (2026-10-07). Fitur handoff "Kirim ke…" ikut ditinjau ulang bersamanya
 - [x] **[Claude]** Katalog tool `src/tools.ts` (id, nama, kategori, status, SEO) dari registry lama + test
