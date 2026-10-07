@@ -1,115 +1,84 @@
 # EDFS Civil Tools
 
-Alat bantu rekayasa sipil dalam satu aplikasi terpasang (**PWA**) — kumpulan mini-app perhitungan
-teknik sipil berbasis SNI, dengan visual dan laporan siap dokumentasi.
+Alat bantu rekayasa sipil dalam satu aplikasi web terpasang (PWA): kumpulan kalkulator teknik sipil berbasis SNI
+(beton, baja, geoteknik, pembebanan, hidraulika) dengan visual dan laporan siap dokumentasi.
 
-Dikembangkan oleh **Iwal · Edifisia · PT. DTS Engineering**. Bagian dari platform **Edifisia**
-(satu akun & satu Edifisia Premium bersama EDFS Matrix) — rencana penyelarasan: [`docs/PLATFORM.md`](docs/PLATFORM.md).
+Dikembangkan oleh **Iwal · Edifisia · PT. DTS Engineering**. Bagian dari platform **Edifisia** — satu akun dan satu
+Edifisia Premium bersama EDFS Matrix ([`docs/PLATFORM.md`](docs/PLATFORM.md)).
 
-- **Zero build step** — HTML/CSS/JS murni. Produksi: `tools.edifisia.com` di Cloudflare Pages (rencana, lihat `docs/DOMAIN_MIGRATION.md`); saat ini masih cPanel `tools.dtsengineering.co.id`.
-- **Modular** — tambah tool = tambah 1 folder di `modules/` + 1 baris di `core/module-registry.js`. Shell tidak pernah diubah.
-- **PWA** — installable, offline-capable (service worker).
+## Status (2026-10-07)
 
----
+Repo sedang berada di tengah migrasi dari app **zero-build** (build lama, live) ke app **Vite + React + TypeScript**
+(build baru, belum rilis):
 
-## Menjalankan secara lokal
+| Lapisan | Lokasi | Status |
+|---|---|---|
+| Build lama — shell, 35 tool, PWA | `index.html`, `assets/`, `core/`, `modules/`, `sw.js` | Dirawat sampai build baru rilis; live ≈ v0.5.1 di `tools.dtsengineering.co.id` |
+| Mesin hitung build baru | `src/calc/` | 31/35 tool selesai di-port, 628 test lulus |
+| Katalog tool build baru | `src/tools.ts` | Selesai (kategori, status, SEO) |
+| Database `tools` (Supabase) | `supabase/`, `tests/`, `scripts/db_migrate.py` | Diterapkan di development |
+| Shell React, akun Supabase, UI baru | — | Berikutnya ([`docs/TODO.md`](docs/TODO.md) Tahap 3–5) |
 
-Karena ini situs statis, cukup jalankan server statis apa pun dari root proyek:
+Produksi akan pindah ke **`tools.edifisia.com`** (Cloudflare Pages) pada rilis v0.8.0.
+
+## Menjalankan
+
+**Test mesin hitung & katalog** (Node ≥ 20):
+
+```bash
+npm install
+npm test            # golden test + test kesetimbangan/hitung tangan
+npm run typecheck
+npm run lint
+```
+
+**Build lama** (situs statis — jalankan lewat HTTP, bukan `file:///`):
 
 ```bash
 python -m http.server 5188
-# lalu buka http://localhost:5188
 ```
 
-> ⚠️ **Jalankan lewat HTTP, jangan buka file langsung.** Membuka `index.html` dengan klik-dua-kali
-> (`file:///...`) membuat browser memakai origin `null`, sehingga `manifest.json`, service worker, dan
-> `fetch()` diblokir CORS (`Cross origin requests are only supported for protocol schemes: ... http, https`).
-> Gunakan `http://localhost:5188`. Saat di-deploy via `https://` hal ini tidak pernah terjadi.
+Service worker build lama meng-cache agresif: naikkan `CACHE` di `sw.js` tiap rilis; saat mengembangkan, ganti port
+bila registry/shell tampak basi (lihat gotcha di [`docs/HANDOFF.md`](docs/HANDOFF.md)).
 
-> Service worker meng-cache agresif. Saat mengembangkan, naikkan `CACHE` di `sw.js`
-> dan/atau hard-reload (Ctrl+Shift+R). Versi cache sekarang dilihat di `sw.js`
-> (`const CACHE = 'civil-tools-vNN'`) — **wajib dinaikkan tiap rilis**.
-
-## Deploy
-
-> Sasaran: Cloudflare Pages (`tools.edifisia.com`, deploy dari `git push`) —
-> [`docs/DOMAIN_MIGRATION.md`](docs/DOMAIN_MIGRATION.md). Prosedur cPanel di bawah adalah warisan.
-
-Prosedur baku lengkap (paket zip, upload, verifikasi live) ada di
-**[`docs/DEPLOY.md`](docs/DEPLOY.md)**.
-
-Ringkas: upload berkas **publik saja** (`index.html`, `sw.js`, `manifest.json`,
-`sitemap.xml`, `robots.txt`, `.htaccess`, `assets/`, `core/`, `modules/`,
-`favicon/`) ke document root subdomain, overwrite di tempat. **Bukan** `.git/`,
-`.claude/`, `docs/`, atau file `*.md`. Tidak ada build/compile. `start_url` &
-`scope` di `manifest.json` memakai path relatif (`./`), jadi aman di subfolder.
-
----
+**Database** (skema `tools`): [`docs/PLATFORM.md`](docs/PLATFORM.md) §2.
 
 ## Struktur
 
 ```
-index.html                 Shell — satu-satunya entry point
-manifest.json, sw.js       PWA (manifest + service worker cache-first)
-favicon/                   Logo EDFS (edfs-mark.svg, edfs-icon.svg)
-assets/
-  shell.css                Tema (variabel warna EDFS) + layout + UI kit (.ck-*)
-  shell.js                 Router hash, module loader, lifecycle, tema, collapse, modal Tentang
-core/
-  module-registry.js       Daftar tool (SATU-SATUNYA file yang diedit saat menambah tool)
-  ui-kit.js                toast, form generator, hero/kv/note, disposeObject
-  canvas2d.js              Helper kanvas 2D (hi-DPI, auto-resize, repaint saat ganti tema)
-  report.js                Generator laporan monospace → PDF (Courier, tanpa library) / .txt
-  auth.js                  Akun + status Premium — window.CivilAuth (kini Firebase; akan diganti Supabase platform)
-  works.js                 "Simpan Pekerjaan" (premium) — window.CivilWorks (kini Firestore; akan ke tools.saved_works)
-  billing.js               Paket & checkout — window.CivilBilling (kini Midtrans Snap; akan jadi tautan beli edifisia.com)
-functions/, firebase/      Sisa stack Firebase — AKAN DIHAPUS (docs/PLATFORM.md §4)
-  steel-profiles.js        Library DB profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP) — dipakai semua tool baja
-modules/
-  development-length/      Tool #1 — Panjang Penyaluran Tulangan Tarik (SNI 2847:2019)
-  beam-flexure/            Tool #2 — Kapasitas Lentur Balok φMn (SNI 2847:2019)
-  steel-tension/           Tool #3 — Batang Tarik Baja (SNI 1729:2020, DFBK & ASD)
-  steel-compression/       Tool #4 — Batang Tekan Baja (SNI 1729:2020 Bab E, tekuk lentur)
-  steel-flexure/           Tool #5 — Balok Baja / Lentur (SNI 1729:2020 Bab F, LTB + tekuk lokal)
-  _template/               Starter kit — copy untuk membuat module baru
+src/
+  calc/                 Mesin hitung TypeScript murni — satu file per tool (src/calc/<id>.ts) + test
+    shared/             Rumus bersama: geotech, cpt, concrete, retaining, steel, steel-profiles, frame2d, hydraulics
+    __golden__/         Acuan golden dari build lama (dibuat scripts/golden, jangan diedit tangan)
+    README.md           Aturan & resep port
+  tools.ts              Katalog tool (id = slug URL, kategori, status, SEO)
+scripts/
+  golden/               Perekam acuan golden dari modules/<id>/module.js
+  db_migrate.py         Penerap migrasi skema tools (riwayat sendiri, bukan supabase db push)
+  cf-build.sh           Staging build lama untuk Cloudflare Pages
+supabase/migrations/    Migrasi skema tools (tools.saved_works)
+tests/                  Test SQL skema tools (selalu rollback)
+index.html, assets/, core/, modules/, sw.js, manifest.json   Build lama (zero-build)
+functions/, firebase/, firebase.json, .firebaserc            Sisa stack Firebase — dihapus di Tahap 5
+docs/                   Rencana, daftar kerja, runbook
 ```
 
-Detail arsitektur lengkap: [`ARCHITECTURE.md`](ARCHITECTURE.md).
-Rangkuman sesi & langkah berikutnya: [`docs/HANDOFF.md`](docs/HANDOFF.md).
+## Dokumen
 
-## Tiga tier rendering (pilih paling ringan yang cukup)
-
-1. **Pure form + tabel** — kalkulator murni (`ui-kit.js`).
-2. **Kanvas 2D interaktif** — `core/canvas2d.js`. **Default** mayoritas tool sipil.
-3. **3D WebGL** — `core/renderer.js` + `orbit-controls.js` (belum dibuat; menyusul untuk tool 3D).
-
-## Menambah tool baru
-
-1. `cp -r modules/_template modules/<id>` lalu isi `mount()`/`unmount()` (kontrak di `ARCHITECTURE.md` §5).
-2. Tambah 1 entry di `core/module-registry.js`.
-3. (Opsional) tambah file baru ke daftar precache di `sw.js` dan bump `CACHE`.
-
----
-
-## Status
-
-| Bagian | Status |
+| Dokumen | Isi |
 |---|---|
-| Shell (nav, router, tema light/dark, collapse, modal Tentang) | ✅ Selesai |
-| Tema/brand EDFS (palet dari `dtsapp.pdf`) | ✅ Selesai |
-| Tool #1 — Panjang Penyaluran Tulangan Tarik (ulir + polos) | ✅ Selesai |
-| Tool #2 — Kapasitas Lentur Balok φMn (tunggal/rangkap, multi-lapis) | ✅ Selesai |
-| Tool #3 — Batang Tarik Baja (leleh bruto vs fraktur neto efektif, shear lag) | ✅ Selesai |
-| Tool #4 — Batang Tekan Baja (tekuk lentur + tekuk torsi E4 utk WF, dua sumbu, elemen langsing) | ✅ Selesai |
-| Tool #5 — Balok Baja / Lentur (F2/F3 LTB+FLB, F6 sumbu lemah, F7 HSS persegi, F8 HSS bundar) | ✅ Selesai |
-| Library profil baja (WF/UNP/Siku/SHS/RHS/Pipa/CNP, ±138 ukuran) | ✅ Selesai |
-| Laporan unduh PDF/teks | ✅ Selesai |
-| PWA (manifest, service worker, installable) | ✅ Selesai |
-| Tool #6+ (roadmap `coming-soon` di registry) | ⏳ Berikutnya |
-| Infrastruktur 3D + Anchor Bolt Group | ⏳ Fase 3 |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Arsitektur build baru (sasaran) & build lama |
+| [`docs/PLATFORM.md`](docs/PLATFORM.md) | Keputusan & rencana penyelarasan platform Edifisia (rencana aktif) |
+| [`docs/TODO.md`](docs/TODO.md) | Daftar kerja per tahap, siapa mengerjakan apa |
+| [`docs/HANDOFF.md`](docs/HANDOFF.md) | Status terkini + catatan teknis per tool build lama |
+| [`docs/UI.md`](docs/UI.md) | Arah desain UI baru |
+| [`docs/TOOL-REVISIONS.md`](docs/TOOL-REVISIONS.md) | Revisi isi tool (shallow/deep foundation) & Library Data |
+| [`docs/DOMAIN_MIGRATION.md`](docs/DOMAIN_MIGRATION.md) | Pindah ke Cloudflare Pages + `tools.edifisia.com` |
+| [`docs/DEPLOY.md`](docs/DEPLOY.md) | Deploy cPanel (warisan, sampai domain lama dipensiunkan) |
+| [`src/calc/README.md`](src/calc/README.md) | Aturan port perhitungan & golden test |
 
 ## Standar & disclaimer
 
-Perhitungan mengacu **SNI** (tool #1: SNI 2847:2019). Hasil adalah **alat bantu** dan tidak
-menggantikan penilaian teknis — verifikasi seluruh keluaran oleh insinyur profesional yang
-bertanggung jawab sebelum dipakai untuk desain, gambar kerja, atau konstruksi.
+Perhitungan mengacu SNI (2847:2019 beton, 1729:2020 baja, 1727:2020 pembebanan, 8460:2017 geoteknik) dan acuan
+yang disebut di tiap tool. Hasil adalah **alat bantu** dan tidak menggantikan penilaian teknis — verifikasi seluruh
+keluaran oleh insinyur profesional yang bertanggung jawab sebelum dipakai untuk desain, gambar kerja, atau konstruksi.

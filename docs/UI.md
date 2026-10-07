@@ -30,8 +30,9 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 - **Menu bar**: `File` (Simpan / Buka pekerjaan, Download Report, …) dan `Help` (Tentang, catatan rilis, …).
   Di kanan: status Premium/Trial dan menu akun.
 - **Panel navigasi kiri**: bisa dibuka-tutup (seperti sekarang), **scrollable sendiri**, dikelompokkan per
-  kategori (Analisis Struktur, Struktur Baja, Struktur Beton, Struktur Bawah, Geoteknik, …), item aktif disorot
-  hijau.
+  kategori, item aktif disorot hijau. Kategori & urutannya dari `src/tools.ts` (`TOOL_CATEGORIES`); per 2026-10-07:
+  Analisis Struktur · Beton Bertulang · Baja · Geoteknik · **Pembebanan** · Sambungan · Hidraulika & Hidrologi.
+  Mockup memakai pengelompokan lain (Struktur Baja / Struktur Beton / **Struktur Bawah**) — lihat "Masih dibahas".
 - **Jendela utama** = **header** (judul + deskripsi) + **content**.
 - **Content berbentuk tab**, hanya dua:
   - **Input** — semua input, ilustrasi/diagram, dan ringkasan hasil dalam satu layar.
@@ -49,6 +50,8 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 
 ## Masih dibahas (Tahap 5)
 
+- Pengelompokan navigasi: pertahankan kategori sekarang, atau ikuti mockup dengan kelompok **Struktur Bawah**
+  (tapak/shallow-foundation, pile cap/deep-foundation, dinding penahan) terpisah dari Geoteknik.
 - Hitung otomatis saat input berubah (perilaku sekarang) vs tombol **Hitung** seperti di mockup.
 - Isi menu `File` / `Help` final, pintasan keyboard.
 - Perilaku di layar sempit/ponsel (panel menumpuk; scroll halaman diizinkan di bawah lebar tertentu).

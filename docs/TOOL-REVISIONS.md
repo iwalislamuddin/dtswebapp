@@ -89,3 +89,13 @@ Tujuan: data yang sama (tanah, sondir, N-SPT, material) tidak diinput berulang d
   bergeser sedikit → dikerjakan sebagai perubahan sadar (acuan golden diperbarui), bukan bagian port 1:1.
 - Library Data milik user (tabel di atas) khusus Civil Tools dulu; bisa dinaikkan ke level platform bila Matrix
   kelak juga butuh.
+
+## 5. Status tool lain (keputusan 2026-10-07)
+
+- **Beban angin** pindah ke kategori baru **Pembebanan** (dulu "Umum").
+- **`load-combo`** (Kombinasi Beban) disembunyikan di UI baru; akan dihapus atau diganti formatnya. Mekanisme
+  handoff "Kirim ke…" (Pu/Mu ke tool baja, pile cap, base plate) ditinjau bersamanya.
+- **Sambungan** (`bolt-connection`, `weld-connection`, `anchor-bolt-group`) ditahan menunggu diskusi; perhitungannya
+  belum di-port. `base-plate` sudah di-port dan tetap di kategori Sambungan.
+- Hidraulika & Hidrologi tetap ada (jarang dipakai pemilik, dipindahkan apa adanya).
+

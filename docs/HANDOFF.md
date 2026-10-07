@@ -1,63 +1,45 @@
 # Handoff — EDFS Civil Tools
 
-Ringkasan pengembangan sampai **rilis v0.1.0** (2026-07-10). Dokumen ini untuk melanjutkan
-pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
+Dokumen serah-terima: status terkini, lalu catatan teknis per tool dari build lama (v0.1–v0.7) sebagai referensi
+rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
-> ## ▶ MULAI DARI SINI (status per 2026-10-06)
+> ## ▶ MULAI DARI SINI (status per 2026-10-07)
 >
-> **Sesi 2026-10-06 ditutup.** Hasil: semua keputusan Tahap 0 diambil (kecuali React vs vanilla TS),
-> project Supabase di-rename `edifisia-dev` / `edifisia-prod`, Redirect URLs & Site URL beres,
-> **login Google aktif di Supabase dev & prod** (project Google Cloud `Edifisia`, diuji di dev).
-> Belum ada kode yang diubah. **Lanjut: Tahap 2 (skema `tools`) di [`TODO.md`](TODO.md).**
+> **Arah:** Civil Tools diselaraskan dengan platform Edifisia — Firebase dibuang, akun & Premium di Supabase
+> (satu Edifisia Premium untuk semua aplikasi), domain `tools.edifisia.com` (Cloudflare Pages), dan UI ditulis ulang
+> dengan **Vite + React + TypeScript** sesuai [`UI.md`](UI.md). Rencana & alasan: **[`PLATFORM.md`](PLATFORM.md)**;
+> daftar kerja: **[`TODO.md`](TODO.md)**.
 >
-> **Tahap 2 SELESAI (2026-10-07):** `tools.saved_works` diterapkan di **dev** dan test lulus, skema `tools`
-> di-expose, trial akun Google terkonfirmasi, URL + publishable key dev/prod tercatat di PLATFORM.md §2.
-> Header `noindex` untuk `*.pages.dev` dipasang. Prod menyusul di Tahap 6. Catatan: repo ini **tidak** memakai
-> `supabase db push` (bentrok riwayat dengan repo platform) — pakai `scripts/db_migrate.py`, lihat PLATFORM.md §2.
+> **Sudah selesai**
+> - Tahap 0 (keputusan) & Tahap 2 (skema `tools.saved_works` + RLS + batas 50, diterapkan & lulus di
+>   `edifisia-dev`; login Google aktif di dev & prod; trial 7 hari terkonfirmasi).
+> - Tahap 3, bagian mesin hitung: **31 dari 35 tool** dipindah ke `src/calc/` (TypeScript murni) dengan *golden test*
+>   terhadap `compute()` build lama — **628 test lulus**, uji mutasi per kelompok, rekam ulang acuan identik
+>   byte-per-byte. Fungsi bersama di `src/calc/shared/` (geoteknik, CPT, beton, dinding penahan, profil baja, rangka
+>   bidang, hidraulika). Katalog tool baru: `src/tools.ts` (kategori **Pembebanan** untuk beban angin).
+>   Resep port: [`src/calc/README.md`](../src/calc/README.md).
+> - Tidak di-port: sambungan (`bolt-connection`, `weld-connection`, `anchor-bolt-group`) **ditahan** menunggu
+>   diskusi; `load-combo` **disembunyikan** (akan dihapus/diganti format).
 >
-> **2026-10-07: React + TypeScript dipilih; urutan Tahap 3–5 diubah** (tool tidak dibungkus dulu lalu ditulis
-> ulang). Tahap 3 kini = mesin hitung `src/calc/` dengan *golden test* terhadap `compute()` modul lama + shell
-> React baru sesuai **[`UI.md`](UI.md)** (gaya Windows ala Matrix tanpa Ribbon, aksen `#566246`, tab Input/Detail).
-> Sudah: tooling (`package.json`, Vitest, oxlint), harness `scripts/golden/`, port `bearing-capacity` &
-> `pile-capacity` + `shared/geotech.ts`; lalu `settlement`, `cpt-bearing`, `cpt-pile` + `shared/cpt.ts`
-> (131 test lulus, 5/35 tool); lalu `lateral-broms`, `py-analysis` — **geoteknik lengkap, 7/35 tool, 167 test**.
-> Lalu struktur bawah (`footing-design`, `pile-cap`, dinding penahan) + `shared/concrete.ts`, `shared/retaining.ts`
-> — **11/35 tool, 255 test**; lalu beton gelombang 1 (5 tool) — **16/35 tool, 342 test**;
-> lalu beton gelombang 2 — **kelompok beton lengkap, 20/35 tool, 414 test**.
-> Lalu baja (5 tool + library profil) — **25/35 tool, 535 test**. ⚠️ Bug profil siku di library lama (TODO).
-> Keputusan 2026-10-07: sambungan DITAHAN (diskusi), `load-combo` tidak di-port (disembunyikan/diganti).
-> Lalu analisis struktur (portal, gable) + `shared/frame2d.ts` — **27/35 tool, 559 test**. Sisa: angin + 3 hidraulika
-> (lalu sambungan bila sudah didiskusikan). Revisi tapak/pile cap → shallow/deep-foundation & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md). **Lanjut: port tool berikutnya** — daftar di TODO
-> Tahap 3, resep di [`src/calc/README.md`](../src/calc/README.md).
+> **Temuan yang menunggu perbaikan** (detail di TODO "Perbaikan isi tool"): profil siku di library baja lama salah
+> baca kolom (Sx/imin) — juga terjadi di situs live; 2 crash build lama sudah diperbaiki di port (tangga rol-rol,
+> lentur HSS sayap langsing).
 >
-> **Arah berubah: Civil Tools diselaraskan dengan platform Edifisia.**
-> Diputuskan 2026-10-06: **Firebase dibuang**, akun & hak akses pindah ke
-> **Supabase** (project yang sama dengan EDFS Matrix, skema `platform` sudah live),
-> dan domain produksi menjadi **`tools.edifisia.com`** (Cloudflare Pages).
-> Satu Edifisia Premium membuka semua aplikasi; trial 7 hari; beli di `edifisia.com`.
-> Dikerjakan bersama **rombak mayor UI di atas Vite** (zero build ditinggalkan). Semua tool
-> tetap gratis; Premium hanya Save + Download Report; maks 50 pekerjaan/user; login Google.
-> Rencana lengkap & urutan kerja:
-> **[`PLATFORM.md`](PLATFORM.md)** — baca itu dulu.
+> **Berikutnya:** shell React (Tahap 3 sisa) → akun & Save Supabase (Tahap 4) → 35 tool di UI baru (Tahap 5) →
+> rilis v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
 >
-> Kondisi kode di `main` saat ini: monetisasi Fase A–C versi **Firebase** (akun,
-> Simpan Pekerjaan Firestore, paywall unduhan dengan pratinjau, Midtrans Snap)
-> masih ada dan berfungsi di sandbox, tetapi **akan diganti**. Mekanisme snapshot
-> stash (`works.js`) dan titik gating (`report.js`) dipertahankan.
+> **Kondisi build lama:** `main` masih berisi app zero-build (`index.html`, `assets/`, `core/`, `modules/`) plus akun,
+> Simpan Pekerjaan, dan paywall versi **Firebase** (v0.7.x, sandbox). ⚠️ Jangan deploy `main` apa adanya — paywall
+> Firebase menyala otomatis ([PLATFORM.md §7](PLATFORM.md)). Yang live di `tools.dtsengineering.co.id` (cPanel)
+> masih ≈ v0.5.1 tanpa akun.
 >
-> ⚠️ **Jangan deploy build `main` ke produksi apa adanya**: paywall Firebase menyala
-> otomatis karena `MIDTRANS_CONFIG` terisi. Lihat [`PLATFORM.md` §7](PLATFORM.md).
->
-> Yang live di `tools.dtsengineering.co.id` (cPanel) masih ≈ v0.5.1, tanpa akun.
->
-> Daftar kerja per tahap (siapa mengerjakan apa): **[`TODO.md`](TODO.md)**.
->
-> Runbook: [`PLATFORM.md`](PLATFORM.md) (rencana aktif) ·
-> [`DOMAIN_MIGRATION.md`](DOMAIN_MIGRATION.md) (Cloudflare Pages + `tools.edifisia.com`) ·
-> [`DEPLOY.md`](DEPLOY.md) (cPanel, warisan) ·
-> [`MONETIZATION.md`](MONETIZATION.md) (arsip Fase A–C Firebase).
+> Runbook: [`DOMAIN_MIGRATION.md`](DOMAIN_MIGRATION.md) (Cloudflare Pages) · [`DEPLOY.md`](DEPLOY.md) (cPanel, warisan).
 
-## Apa yang sudah jadi
+## Referensi build lama — shell & infrastruktur (v0.1–v0.5)
+
+> Bagian di bawah mendokumentasikan build lama (zero-build) sampai v0.5. Perilaku perhitungannya kini dikunci golden
+> test di `src/calc`; hal khusus UI lama (SW cache, kanvas, port preview) hanya relevan selama build lama masih
+> dirawat.
 
 **Shell & infrastruktur**
 - `index.html` + `assets/shell.js` — router hash-based, module loader (inject `<script>`, cache di memori),
@@ -299,6 +281,10 @@ pekerjaan tanpa kehilangan konteks. Arsitektur teknis: [`../ARCHITECTURE.md`](..
   sering kalah oleh SW controller. Untuk user produksi tetap cukup **bump `CACHE`** — masalah ini khusus dev lokal.
 
 ## Tool #9 — Kombinasi Beban + handoff "kirim ke tool lain" ✅ SELESAI (2026-07-13)
+
+> **Status 2026-10-07:** `load-combo` tidak di-port dan disembunyikan di UI baru (akan dihapus atau diganti
+> formatnya). Mekanisme handoff "Kirim ke…" ikut ditinjau ulang bersamanya — catatan di bawah adalah desain build
+> lama, termasuk OPSI 2 yang tidak lagi otomatis dikerjakan.
 
 **Status: terimplementasi & tervalidasi live.** `modules/load-combo/` (module.js + icon.svg), status `active`.
 - Kombinasi **LRFD (Ps. 2.3.1)** & **ASD (Ps. 2.4.1)**, SNI 1727:2020 (ASCE 7-16). (Lr|R)=maks(Lr,R); W & E ±.
@@ -688,43 +674,36 @@ catatan rilis di index.html, sitemap +2 URL (retaining-stone, retaining-concrete
   mengembalikan sesuai preferensi `localStorage('civiltools-nav')` (preferensi TIDAK ditimpa oleh paksaan).
   Toggle logo tetap berfungsi di mana pun.
 
-## Langkah berikutnya
+## Tool #28–#35 & akun (v0.5.3–v0.7.4) — ringkas
 
-1. ~~**Tool #2** Kapasitas Balok φMn~~ ✅ · ~~**Tool #3** Batang Tarik Baja~~ ✅ · ~~**Tool #4** Batang Tekan Baja
-   (SNI 1729 Bab E, tekuk lentur)~~ ✅ · ~~**Tool #5** Balok Baja / Lentur (SNI 1729 Bab F, LTB + tekuk lokal)~~ ✅ ·
-   ~~**Tool #6** Daya Dukung Tanah / Fondasi Dangkal (Terzaghi, Meyerhof, Vesic)~~ ✅ ·
-   ~~**Tool #7** Penurunan Fondasi / Settlement (elastis Steinbrenner + konsolidasi e–log p + laju Terzaghi)~~ ✅ ·
-   ~~**Tool #8** Daya Dukung Tiang Tunggal (statik α/β berlapis + SPT Meyerhof + Decourt-Quaresma)~~ ✅ **SELESAI**.
-   ~~**Tool #9** Kombinasi Beban (SNI 1727:2020 LRFD/ASD + handoff "kirim ke tool lain")~~ ✅ **SELESAI**.
-   ~~**Tool #10** Anchor Bolt Group 3D (ACI 318-19 Ch.17 — tarik+geser+interaksi; infra Fase 3)~~ ✅ **SELESAI** (status `active`).
-   ~~**Tool #11–#19** batch: Sambungan Baut/Las (J3/J2), Beban Angin (SNI 1727), CPT dangkal+tiang, Diagram P–M
-   Kolom, kategori Hidraulika & Hidrologi (Rasional, Manning, Pipa)~~ ✅ **SELESAI** (2026-07-14, 9 modul aktif).
-   ~~**Tool #20** Tulangan Minimum (balok + geser min, kolom persegi/lingkaran + ikat/spiral, pelat, pile cap)~~
-   ✅ **SELESAI** (2026-07-17, tool pertama siklus v0.3.0).
-   ~~**Tool #21** Balok/Pelat Satu Arah Menerus — metode koefisien Ps. 6.5 (momen + geser ultimit, 1 bentang
-   statika eksak)~~ ✅ **SELESAI** (2026-07-17). **Saat rilis v0.3.0**: bump `APP_VER` di SEMUA module.js
-   + modal Tentang index.html + catatan rilis + SW bump (pola rilis v0.2.0).
-   Lanjutan wajar batch ini: geser eksentris baut (ICR) & blok geser J4.3, grup las eksentris, beban angin ATAP +
-   K&K (Bab 30), kolom biaksial (Bresler) & kelangsingan (6.6.4), penurunan tiang dari CPT, kurva IDF dari data
-   hujan (analisis frekuensi Gumbel/LP-III), HSS Nakayasu.
-   Lanjutan Tool #10: side-face blowout, tulangan angkur, pola circular, eksentrisitas geser. Prioritas non-3D: **OPSI 2 handoff**
-   (field demand + D/C untuk beam-flexure & geoteknik → jadi penerima Kombinasi Beban), geser balok baja (Bab G).
-   **Melengkapi seri geoteknik** (Tool #6/#7/#8 siap dipakai ulang polanya): daya dukung dangkal + **eksentrisitas & beban
-   miring** (faktor ic/iq/iγ, luas efektif B′×L′), **penurunan pasir** (Schmertmann/N-SPT — tabel-lapis dari Tool #8 dipakai
-   ulang), pemampatan sekunder (creep), **efisiensi kelompok tiang** & gesekan negatif (pelengkap Tool #8).
-   **Melengkapi seri baja** (library siap dipakai ulang): **Geser balok baja (Bab G)** — pelengkap alami Tool #5
-   (butuh Aw, Cv, kn — bisa dari geometri); **Kombinasi lentur+aksial (Bab H)** menyatukan Tool #4 & #5;
-   Sambungan (baut/las). Untuk menaikkan mutu Tool #5: badan non-kompak/langsing (F4/F5, Rpc/Rpg) & siku
-   tunggal (F10)/tak-simetris (F12) — perlu tambah **Zx/Zy, J, Cw, pusat geser/sumbu utama** ke `steel-profiles.js`
-   (saat ini Zx/Zy/J/Cw WF & UNP dihitung on-the-fly di module; sebaiknya dipindah ke library agar dipakai bersama).
-2. ✅ **Standarisasi kanvas terverifikasi live** — `steel-compression` (helper `canvasCap`/`canvasTip` yang sama)
-   diuji reload-bersih di preview: `.cap` dinamis muncul & update, tanpa error konsol, penampang + kurva tergambar.
-   Sisa konfirmasi visual `development-length`/`beam-flexure` bersifat kosmetik (wiring identik) — tak memblok.
-2. ~~**Fase 3**: `core/renderer.js` + `orbit-controls.js`, lalu Anchor Bolt Group (3D)~~ ✅ **SELESAI** (orbit-controls ditulis dari nol — `staad-viewer.html` tak ada di repo).
-3. Opsional: logo EDFS resmi (SVG), PNG favicon 192/512 untuk dukungan iOS, halaman kategori.
+Catatan lengkap per tool tidak sempat ditulis saat dibangun; ringkasan dari catatan rilis (`index.html`, modal
+Tentang). Rumus, cakupan, dan batasan kini terdokumentasi di kepala tiap `src/calc/<id>.ts`, dan perilakunya dikunci
+golden test.
 
-## Verifikasi rilis v0.1.0
+| Versi | Tool / perubahan | Inti |
+|---|---|---|
+| v0.5.3 | `continuous-beam` + desain tulangan; library baja +3 WF | lentur & sengkang per momen kritis |
+| v0.6.0 | `steel-beam-analysis` (Baja) | statika 2 tumpuan + kantilever, ≤ 3 patch trapesium + ≤ 4 titik, lendutan integrasi ganda |
+| v0.6.0 | `footing-design` (Beton) | stabilitas layan biaksial + lentur/geser 1–2 arah; visual 3D tegangan tanah |
+| v0.6.0 | `two-way-slab` (Beton) | jalur silang Grashof–Marcus, jalur tepi M/3, lendutan Ie Branson |
+| v0.7.0 | `portal-frame`, `gable-frame` (kategori baru Analisis Struktur) | matrix stiffness rangka bidang 12/15 DOF |
+| v0.7.1 | `concrete-stair` (Beton) | rangka bidang bordes–flight–bordes, desain lentur/geser, lendutan Ig & Ie |
+| v0.7.2 | `composite-slab` (Beton) | dek Bondek/Smartdek: tahap konstruksi + komposit + konektor geser |
+| v0.7.3 | `beam-shear-torsion` (Beton) | geser + torsi SNI 2847 Ps. 22.5/22.7, Al & sengkang minimum |
+| v0.7.4 | `column-pm` bentuk persegi/lingkaran/L/T | lihat "Revisi #16" di atas |
+| v0.7.x | akun, Simpan Pekerjaan, paywall unduh + pratinjau, Midtrans Snap (Firebase) | **akan diganti** Supabase (PLATFORM.md); tidak pernah live |
 
-Diuji di browser (server lokal): shell & routing, tema light/dark + repaint kanvas, kalkulasi ulir/polos
-(D19→560 mm, Ø19 polos→1110 mm), diagram, dispose bersih, collapse+persist, modal Tentang, laporan teks & **PDF
-tervalidasi struktur** (header/xref/EOF, 0 byte non-ASCII), PWA (SW active, manifest valid). Nol console error.
+## Backlog gagasan pengembangan tool (dari build lama)
+
+Belum dijadwalkan — dipertimbangkan setelah port & revisi isi selesai (TOOL-REVISIONS.md). Item yang sudah
+masuk rencana (shallow/deep-foundation, efisiensi kelompok tiang, settlement di tapak) tidak diulang.
+
+- **Baja:** geser balok (Bab G), kombinasi lentur + aksial (Bab H), badan non-kompak/langsing (F4/F5), siku tunggal
+  (F10) & tak-simetris (F12) — butuh Zx/Zy, J, Cw, pusat geser & sumbu utama di library profil.
+- **Beton:** kolom biaksial Bresler sebagai pembanding & kelangsingan (Ps. 6.6.4), balok-T.
+- **Geoteknik:** daya dukung dengan beban miring/eksentris (faktor ic/iq/iγ, B′×L′), penurunan pasir
+  (Schmertmann/N-SPT), pemampatan sekunder, gesekan negatif tiang, penurunan tiang dari CPT.
+- **Pembebanan:** angin atap + komponen & kladding (Bab 30), Gf gedung fleksibel.
+- **Hidraulika:** kurva IDF dari data hujan (Gumbel/Log-Pearson III), HSS Nakayasu, backwater, jaringan pipa.
+- **Sambungan (ditahan):** geser eksentris baut (ICR), blok geser J4.3, grup las eksentris; anchor bolt: side-face
+  blowout, tulangan angkur, pola melingkar.

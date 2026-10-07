@@ -8,7 +8,7 @@ arah UI: [docs/UI.md](../../docs/UI.md).
 
 | Lokasi | Isi |
 |---|---|
-| `shared/` | Rumus yang dipakai lebih dari satu tool (mis. `geotech.ts`: Nq/Nγ, σ'v berlapis). Satu rumus = satu tempat. |
+| `shared/` | Rumus yang dipakai lebih dari satu tool — daftar & pemakainya di [`ARCHITECTURE.md`](../../ARCHITECTURE.md) §A.2. Satu rumus = satu tempat. |
 | `<tool-id>.ts` | Perhitungan satu tool: tipe input/hasil + `compute<Nama>()`. Nama file = id tool (= path URL). |
 | `<tool-id>.test.ts` | Golden test + kasus hitung tangan. |
 | `__golden__/<tool-id>.json` | Acuan dari build lama (jangan diedit tangan). |
@@ -24,7 +24,8 @@ arah UI: [docs/UI.md](../../docs/UI.md).
 2. **Rumus yang muncul di dua tool atau lebih → `shared/`**, lalu kedua tool memakainya.
 3. Input menerima `NumLike` (angka atau teks form) dan di-parse dengan `num()` seperti build lama (`numFinite()`
    bila modul lama memakai `isFinite`).
-4. Hasil berupa union `{ valid: false; warn }` | `{ valid: true; … }`.
+4. Hasil selalu punya `valid` dan `warn`; field lain mengikuti hasil `compute()` lama (opsional saat tidak valid),
+   bertipe lengkap — tanpa `[key: string]: unknown`.
 5. Tanpa akses `window`, `document`, `sessionStorage`, atau waktu/acak — fungsi deterministik.
 
 ## Langkah per tool

@@ -12,13 +12,10 @@ Penanda pelaksana: **[Anda]** = manual di dashboard/akun (tidak bisa dikerjakan 
 
 ---
 
-## Tahap 0 — Keputusan ✅ (2026-10-06)
+## Tahap 0 — Keputusan ✅ (2026-10-06/07)
 
-- [x] Stack UI: **Vite** (acuan stack Matrix)
-- [x] **Semua tool gratis**; Premium hanya **Save** dan **Download Report**
-- [x] Batas **50** pekerjaan tersimpan per user
-- [x] **Login Google** diaktifkan (berlaku juga untuk Matrix)
-- [x] Framework di atas Vite: **React + TypeScript** seperti Matrix (2026-10-07)
+Vite + **React + TypeScript**; semua tool gratis, Premium hanya Save & Download Report; batas 50 pekerjaan per user;
+login Google. Rincian: [PLATFORM.md](PLATFORM.md) §1.
 
 ## Tahap 1 — Hosting & OAuth (bisa mulai sekarang, paralel)
 
@@ -58,39 +55,18 @@ rename 2026-10-06.
 - [x] **[Anda]** Supabase **dev** Site URL: ganti default `http://localhost:3000` → `http://localhost:5173` (dev Matrix) — 2026-10-06
 - [x] **[Anda]** Putus integrasi GitHub Supabase di `edifisia-dev` (migrasi dikelola tiap repo, bukan integrasi) — 2026-10-06
 - [ ] Nanti (Tahap 8): tambah `https://edifisia.com/**` di prod saat halaman akun platform ada
-- [x] **[Anda]** Uji cepat: buka `https://<ref>.supabase.co/auth/v1/authorize?provider=google` → pilih akun Google →
-      kembali ke Site URL; user baru muncul di Supabase > Authentication > Users (dan mendapat trial 7 hari)
-      ✅ 2026-10-06: login Google dev berhasil, user muncul di Authentication > Users (redirect ke
-      `localhost:5173` gagal tampil hanya karena dev server Matrix tidak jalan — normal). Belum dicek: baris trial di
-      `platform.entitlements` untuk user Google itu → cek di awal Tahap 2. Prod belum diuji (uji saat Tahap 6)
+- [x] **[Anda]** Uji login Google di dev — 2026-10-06 berhasil; baris trial 7 hari terkonfirmasi 2026-10-07.
+      Prod diuji saat Tahap 6
 - [ ] **[Platform]** Kebijakan akun ganda: email sama lewat password & Google — Supabase menautkan otomatis bila
       email terverifikasi; pastikan perilaku ini sesuai untuk trial (satu trial per akun)
 - [ ] Opsional nanti: Supabase custom domain (mis. `auth.edifisia.com`, add-on berbayar) agar layar Google
       menampilkan domain Edifisia, bukan `<ref>.supabase.co`
 
-## Tahap 2 — Database: skema `tools` di Supabase
+## Tahap 2 — Database: skema `tools` ✅ (2026-10-07)
 
-- [x] **[Claude]** Folder `supabase/` + migrasi `tools.saved_works` (RLS: baca/hapus pemilik; tulis pemilik +
-      `platform.has_premium()`; trigger `updated_at`; trigger batas **50** per user) — 2026-10-06
-- [x] **[Claude]** `tests/tools_test.sql` + runner (pola repo platform, transaksi selalu di-rollback) — lulus di
-      Postgres lokal (PGlite + skema platform asli + tiruan `auth`); 12 mutasi sengaja, 10 tertangkap, 2 sisanya
-      tetap aman karena lapisan lain (RLS select / with check)
-- [x] **[Claude]** `scripts/db_migrate.py` — **pengganti `supabase db push`** (riwayat CLI milik repo platform;
-      push dari repo ini akan ditolak). Riwayat di `tools.schema_migrations`. Lihat PLATFORM.md §2
-- [x] **[Anda]** ✅ 2026-10-07 diterapkan & lulus. Jalankan di **development** (Sydney), di PowerShell (password tetap di tangan Anda, jangan ke chat):
-      ```
-      pip install psycopg2-binary
-      $env:DATABASE_URL = "<session pooler dev>"
-      python tests/run.py                    # migrasi + test, rollback — harus "semua lulus"
-      python scripts/db_migrate.py --dry-run
-      python scripts/db_migrate.py
-      python tests/run.py --applied
-      Remove-Item Env:DATABASE_URL
-      ```
-- [x] **[Anda]** Cek trial user Google dev (sisa Tahap 1) — 2026-10-07: akun Google punya baris `trial` 7 hari ✅
-- [x] **[Anda]** Supabase dev > Settings > Data API > **Exposed schemas**: tambah `tools` — 2026-10-07
-- [x] **[Anda]** Kirim ke Claude: **Project URL + anon/publishable key** dev dan prod — 2026-10-07, dicatat di
-      PLATFORM.md §2 (Konfigurasi klien)
+`tools.saved_works` (RLS, batas 50) + test SQL (rollback) + `scripts/db_migrate.py` (pengganti `supabase db push`)
+— diterapkan & lulus di **development**, skema `tools` di-expose, URL + publishable key dev/prod tercatat.
+Perintah & detail: [PLATFORM.md](PLATFORM.md) §2. Production menyusul di Tahap 6.
 
 ## Tahap 3 — Fondasi React + mesin hitung `src/calc`
 
@@ -98,12 +74,13 @@ Urutan diubah 2026-10-07: tool **tidak** dibungkus dulu lalu ditulis ulang (kerj
 ke `src/calc/` (TypeScript murni, tanpa UI) dengan *golden test* terhadap build lama, lalu tiap tool langsung
 ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 
-- [x] **[Claude]** Tooling: `package.json` (React + TS + Vite + Vitest + oxlint, versi seperti Matrix), `tsconfig`
+- [x] **[Claude]** Tooling: `package.json` (TypeScript + Vitest + oxlint, versi seperti Matrix), `tsconfig` strict —
+      React & Vite dipasang bersama shell
 - [x] **[Claude]** Harness golden: `scripts/golden/extract.mjs` menjalankan `compute()` modul lama atas daftar
       kasus → `src/calc/__golden__/*.json`; test TS wajib sama (toleransi relatif 1e-9)
-- [ ] **[Claude]** Port perhitungan per tool ke `src/calc/<tool>.ts` + golden test + kasus hitung tangan dari
+- [x] **[Claude]** Port perhitungan per tool ke `src/calc/<tool>.ts` + golden test + kasus hitung tangan dari
       HANDOFF; fungsi bersama di `src/calc/shared/`. Panduan: [`src/calc/README.md`](../src/calc/README.md).
-      35 tool (`_template` tidak dihitung):
+      **31/35 selesai 2026-10-07**, 628 test lulus, rekam ulang acuan identik byte-per-byte (`_template` tidak dihitung):
       - [x] Geoteknik: `bearing-capacity`, `pile-capacity` (+ `shared/geotech.ts`) — 2026-10-07
       - [x] Geoteknik: `settlement`, `cpt-bearing`, `cpt-pile` (+ `shared/cpt.ts`) — 2026-10-07
       - [x] Geoteknik: `lateral-broms`, `py-analysis` (+ `rankineKp` di `shared/geotech.ts`) — 2026-10-07 —
@@ -118,12 +95,17 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
             (+ `shared/steel-profiles.ts` 1:1 dari `core/steel-profiles.js`, `shared/steel.ts`) — 2026-10-07
       - [x] Analisis struktur: `portal-frame`, `gable-frame` (+ `shared/frame2d.ts`, dipakai juga `concrete-stair`)
             — 2026-10-07
-      - [ ] Umum & hidraulika: `wind-load`, `rational-method`, `open-channel`, `pipe-flow` (hidraulika jarang
-            dipakai pemilik, tetap dipindahkan)
+      - [x] Pembebanan & hidraulika: `wind-load`, `rational-method`, `open-channel`, `pipe-flow`
+            (+ `shared/hydraulics.ts`) — 2026-10-07
       - ⏸ **Sambungan** `bolt-connection`, `weld-connection`, `anchor-bolt-group` — DITAHAN, pemilik ingin diskusi
         dulu (2026-10-07)
       - ⏸ **`load-combo`** — TIDAK di-port; disembunyikan di UI baru, akan dihapus atau diganti formatnya
         (2026-10-07). Fitur handoff "Kirim ke…" ikut ditinjau ulang bersamanya
+- [x] **[Claude]** Katalog tool `src/tools.ts` (id, nama, kategori, status, SEO) dari registry lama + test
+      konsistensi; kategori **"Umum" → "Pembebanan"** (keputusan pemilik 2026-10-07), `load-combo` `hidden`,
+      sambungan `pending` — 2026-10-07
+- [ ] **[Bersama]** Diskusi sambungan (`bolt-connection`, `weld-connection`, `anchor-bolt-group`) → lanjut port atau
+      revisi isi
 - [ ] **[Claude]** Shell React sesuai UI.md: menu bar File/Help, navigasi kiri, header, tab Input/Detail, tema
       Light/Dark (token `[data-theme]`, aksen `#566246`, tipografi Matrix)
 - [ ] **[Claude]** Routing path `/{tool}` + lazy load per tool; PWA `vite-plugin-pwa` (prompt update seperti Matrix);
@@ -174,7 +156,7 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **[Claude]** Uji empat akun: Guest, Premium/trial, Free User (trial habis), Premium expired — email & Google
 - [ ] **[Anda]** Siapkan akun uji di dev; grant/expire manual lewat SQL `platform.grant_premium` (README platform)
 
-## Tahap 5 — 36 tool di UI baru
+## Tahap 5 — Tool di UI baru
 
 - [ ] **[Bersama]** Tool percontohan (mis. Kapasitas Lentur Balok) disetujui dulu sebelum tool lain diikuti;
       putuskan hitung otomatis vs tombol Hitung (UI.md)

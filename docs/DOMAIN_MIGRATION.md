@@ -12,7 +12,7 @@ di satu brand, satu DNS/SSL, dan sesi login bisa dibagi lewat cookie
 
 **Kenapa pindah sekarang:** data Search Console (dicek 2026-09-17) menunjukkan
 domain lama baru punya 13 impression / 0 klik dalam 6 bulan, dan cuma halaman
-depan yang pernah tampil di Google (36 halaman tool belum pernah ter-index) —
+depan yang pernah tampil di Google (halaman tool belum pernah ter-index) —
 nyaris tidak ada SEO equity yang perlu "dilindungi" dengan redirect map rumit.
 
 Langkah 1–4 di bawah **dilakukan manual oleh pemilik akun**. Langkah 5 dikerjakan
@@ -70,15 +70,18 @@ Akun Cloudflare sudah ada (dipakai Matrix).
 
 ## 5. Kode yang perlu diubah
 
-Dikerjakan sekali, saat `tools.edifisia.com` sudah aktif di Pages:
+Domain dipasang bersamaan dengan rilis build baru (v0.8.0, TODO Tahap 6), jadi perubahan dikerjakan di build baru,
+bukan di build lama:
 
-- [ ] `assets/shell.js` — konstanta `SITE` → `https://tools.edifisia.com`
-- [ ] `index.html` — `<link rel="canonical">`, semua `og:`/`twitter:` URL, JSON-LD `url`
-- [ ] `sitemap.xml` — semua `<loc>` ganti domain
-- [ ] `manifest.json` — cek `start_url`/`scope` (kini relatif `./`, aman)
-- [ ] `robots.txt` — baris `Sitemap:`
+- [ ] Satu konstanta origin `https://tools.edifisia.com` untuk canonical, Open Graph/Twitter, JSON-LD, dan
+      pre-render HTML per rute (title/description dari `src/tools.ts`)
+- [ ] `sitemap.xml` & `robots.txt` dibangkitkan saat build dari katalog tool aktif
+- [ ] Manifest PWA (`vite-plugin-pwa`): `start_url`/`scope` relatif
+- [ ] Cloudflare Pages: build command `npm ci && npm run build`, output `dist`
 - [ ] `docs/DEPLOY.md` — jadi runbook Cloudflare Pages; cPanel hanya untuk redirect domain lama
-- [ ] Bump versi SW (`sw.js` `CACHE`) setelah semua URL berubah
+
+Bila build lama sempat dipasang di Pages sebelum v0.8.0, URL-nya ada di `assets/shell.js` (`SITE`), `index.html`
+(canonical/OG/JSON-LD), `sitemap.xml`, `robots.txt` — lalu bump `CACHE` di `sw.js`.
 
 ## 6. Di luar scope migrasi ini — versi English
 

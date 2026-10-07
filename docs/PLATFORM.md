@@ -1,8 +1,8 @@
 # Penyelarasan dengan Platform Edifisia
 
-Status: **rencana aktif**, diputuskan 2026-10-06. Belum ada kode yang diubah.
-Dokumen ini menggantikan arah di [MONETIZATION.md](MONETIZATION.md) (Firebase) dan
-pilihan domain di [DOMAIN_MIGRATION.md](DOMAIN_MIGRATION.md) (`edfs.web.id`).
+Status: **rencana aktif**, diputuskan 2026-10-06. Progres: [TODO.md](TODO.md) & [HANDOFF.md](HANDOFF.md).
+Dokumen ini menggantikan rencana monetisasi versi Firebase (Fase A–C; dokumennya dihapus 2026-10-07, tersedia di
+riwayat git) dan pilihan domain lama `edfs.web.id`.
 
 ## 1. Keputusan (2026-10-06)
 
@@ -16,10 +16,9 @@ pilihan domain di [DOMAIN_MIGRATION.md](DOMAIN_MIGRATION.md) (`edfs.web.id`).
    `tools.dtsengineering.co.id` menjadi redirect 301.
 4. Dikerjakan **bersamaan dengan rombak mayor UI** (Fase 1 masterplan Edifisia),
    supaya login dan gating tidak dibangun dua kali.
-5. **Stack UI: Vite** — prinsip *zero build* ditinggalkan. Acuan stack Matrix:
-   Vite + React + TypeScript + `vite-plugin-pwa` + `@supabase/supabase-js` dari npm
-   (framework final dikonfirmasi di awal tahap rombak UI).
-6. **Semua 36 tool tetap gratis** untuk siapa pun. Premium hanya untuk **Save** dan
+5. **Stack UI: Vite + React + TypeScript** (framework dikonfirmasi 2026-10-07) — prinsip *zero build*
+   ditinggalkan. Acuan stack Matrix: `vite-plugin-pwa`, `@supabase/supabase-js` dari npm.
+6. **Semua tool tetap gratis** untuk siapa pun. Premium hanya untuk **Save** dan
    **Download Report** (PDF/.txt). Tidak ada modul premium.
 7. **Batas 50 pekerjaan tersimpan per user.**
 8. **Login Google diaktifkan** di Supabase (ikut berlaku untuk Matrix, karena satu
@@ -74,7 +73,7 @@ demi SEO dan konversi.
 Terimplementasi (2026-10-06): [`supabase/migrations/20261006000000_tools_saved_works.sql`](../supabase/migrations/20261006000000_tools_saved_works.sql).
 
 `tools.saved_works`: `id`, `user_id` (default `auth.uid()`, cascade saat akun dihapus), `tool_id`
-(slug modul), `name` (sudah di-trim, 1–120), `state_json` (objek JSON snapshot stash, ≤ 256 KB),
+(id katalog `src/tools.ts`), `name` (sudah di-trim, 1–120), `state_json` (objek input tool, ≤ 256 KB),
 `created_at`, `updated_at` (trigger).
 
 - **Save ditegakkan di database** (RLS memanggil `platform.has_premium()`), jadi tidak
@@ -112,57 +111,42 @@ di-percent-encode. Set di terminal sendiri, jangan ke repo/chat.
 
 ### Catatan jujur soal gating PDF
 
-Masterplan menulis gating Download Report "di sisi server". Di Civil Tools laporan
-PDF **dibuat di browser** (`core/report.js`), jadi gating unduhan tetap di browser:
-cukup untuk pengguna biasa, tetapi bisa diakali oleh orang yang paham DevTools.
-Pilihan:
+Masterplan menulis gating Download Report "di sisi server". Di Civil Tools laporan PDF **dibuat di browser**, jadi
+gating unduhan tetap di browser: cukup untuk pengguna biasa, tetapi bisa diakali oleh orang yang paham DevTools.
 
-- **A (disarankan untuk sekarang):** tetap di browser seperti hasil Fase C.
-  Nilai premium yang sungguh terlindungi adalah Save (RLS).
-- **B (nanti, bila perlu):** pindahkan pembuatan PDF ke edge function yang mengecek
-  `has_premium` lebih dulu.
+- **A (dipakai):** gating di browser, satu titik untuk PDF & .txt. Nilai premium yang sungguh terlindungi adalah
+  Save (RLS).
+- **B (nanti, bila perlu):** pindahkan pembuatan PDF ke edge function yang mengecek `has_premium` lebih dulu.
 
-## 3. Yang dipertahankan dari Fase A–C
+## 3. Pelajaran dari Fase A–C (Firebase) yang dibawa
 
-Mekanisme yang tidak bergantung pada Firebase tetap dipakai:
+Kode Fase A–C tidak dipakai ulang (UI ditulis ulang di React); yang dibawa hanya polanya:
 
-- **Snapshot stash** `works.js`: semua kunci sessionStorage berprefiks
-  `civiltools-state:{toolId}:` → satu JSON → ditulis balik + `CivilShell.openTool(id,{force:true})`.
-  Nol perubahan di `modules/*`; stash tambahan (`ta`, `layers`) ikut otomatis.
-- **Satu titik gating** di `core/report.js` (`downloadPDF` / `downloadText`),
-  termasuk pratinjau gambar ±97 DPI dengan geometri halaman PDF yang sama.
-- **Pengaman deploy setengah jadi**: paywall hanya menyala bila konfigurasi
-  akun sudah lengkap (dulu `paywallActive()`, kini dicek terhadap config Supabase).
+- **Satu titik gating** unduhan laporan, dengan **pratinjau** resolusi rendah untuk Guest/Free User.
+- **Pengaman deploy setengah jadi**: paywall hanya menyala bila konfigurasi akun lengkap — kebalikannya pelajaran
+  `MIDTRANS_CONFIG` yang membuat paywall Firebase menyala otomatis (§7).
+- Simpan Pekerjaan menyimpan **objek input tool** (`state_json`), bukan lagi snapshot `sessionStorage` per modul.
 
 ## 4. Yang perlu dibangun
 
-1. **Lapisan akun versi Supabase** (pengganti `core/auth.js`): login email + password
-   dan **Google** (`signInWithOAuth`), baca `premium_status()`, ekspor API yang sama
-   (`window.CivilAuth`) agar `works.js` dan `report.js` berubah sesedikit mungkin.
-   Tombol "Daftar" dan "Lupa password" mengarah ke `edifisia.com`.
-2. **`core/works.js`**: ganti Firestore dengan query `tools.saved_works`.
-3. **`core/billing.js`**: tidak lagi membuka Midtrans Snap. Cukup tombol
-   "Beli / Perpanjang Premium" ke halaman beli `edifisia.com`. Tampilan status
-   mengikuti Matrix: "Trial s/d …", "Premium s/d …", peringatan ≤ 7 hari,
-   "Premium berakhir … · Perpanjang".
-4. **Sesi lintas subdomain**: storage adapter `supabase-js` berbasis cookie
-   `Domain=.edifisia.com`, dipakai bersama Matrix. Selama belum ada, login berlaku
-   per aplikasi (seperti Matrix sekarang, `localStorage`).
-5. **Hapus Firebase**: `functions/`, `firebase/`, `firebase.json`, `.firebaserc`,
-   blok `FIREBASE_CONFIG` / `MIDTRANS_CONFIG` dan skrip `gstatic.com/firebasejs`
-   di `index.html`.
-6. **Domain & hosting**: Cloudflare Pages + `tools.edifisia.com`
-   ([DOMAIN_MIGRATION.md](DOMAIN_MIGRATION.md) §5).
-7. **Fondasi React + `src/calc`** (diubah 2026-10-07): perhitungan 36 tool dikeluarkan ke
-   `src/calc/` (TypeScript murni, fungsi bersama di `src/calc/shared/`) dengan *golden test*
-   terhadap `compute()` build lama; shell React baru sesuai [UI.md](UI.md); tool di-*lazy load* per
-   rute (`import()` → satu chunk per tool), Three.js dari npm, PWA lewat
-   `vite-plugin-pwa` (pengganti `sw.js` manual + bump `CACHE`). Output `dist/`
-   menggantikan `scripts/cf-build.sh`.
-   **Peluang SEO:** pre-render HTML statis per rute (`/beam-flexure` dst., dengan
-   title/description/canonical sendiri) saat build — 36 halaman tool belum pernah
-   terindeks Google karena semuanya kini satu `index.html` yang diisi JavaScript.
-8. **36 tool ditulis ulang langsung di UI baru** di atas `src/calc` (tanpa lapisan jembatan ke modul lama).
+1. **Lapisan akun** (React): `@supabase/supabase-js`, login email + password dan **Google**
+   (`signInWithOAuth`), status dari `platform.premium_status()`. "Daftar" & "Lupa password" mengarah ke
+   `edifisia.com` (sementara dialog lokal, seperti Matrix).
+2. **Simpan Pekerjaan** ke `tools.saved_works`; Free User hanya buka & hapus; galat batas 50 dikenali lewat
+   `hint = 'saved_works_limit'`.
+3. **Status & beli**: tampilan mengikuti Matrix ("Trial s/d …", "Premium s/d …", peringatan ≤ 7 hari,
+   "Premium berakhir … · Perpanjang"); tombol beli ke `edifisia.com` disembunyikan selama `PREMIUM_URL` belum ada.
+4. **Sesi lintas subdomain**: storage adapter `supabase-js` berbasis cookie `Domain=.edifisia.com`, dipakai
+   bersama Matrix. Selama belum ada, login berlaku per aplikasi (`localStorage`, seperti Matrix sekarang).
+5. **Hapus Firebase & build lama**: `functions/`, `firebase/`, `firebase.json`, `.firebaserc`, lalu `assets/`,
+   `core/`, `modules/`, `sw.js` setelah semua tool berjalan di build baru.
+6. **Domain & hosting**: Cloudflare Pages + `tools.edifisia.com` ([DOMAIN_MIGRATION.md](DOMAIN_MIGRATION.md)).
+7. **Fondasi React + `src/calc`** (diubah 2026-10-07): perhitungan dikeluarkan ke `src/calc/` dengan *golden test*
+   terhadap `compute()` build lama — **31/35 tool selesai** (sambungan ditahan, `load-combo` tidak di-port); shell
+   React sesuai [UI.md](UI.md); tool di-*lazy load* per rute, Three.js dari npm, PWA lewat `vite-plugin-pwa`.
+   **Peluang SEO:** pre-render HTML statis per rute dengan title/description/canonical dari `src/tools.ts` —
+   halaman tool belum pernah terindeks Google karena build lama hanya satu `index.html` yang diisi JavaScript.
+8. **Tool ditulis ulang langsung di UI baru** di atas `src/calc` (tanpa lapisan jembatan ke modul lama).
 
 ## 5. Urutan kerja
 
@@ -174,13 +158,13 @@ Daftar centang rinci per tahap: [TODO.md](TODO.md).
 | 2 | Skema `tools` + RLS + test (rollback) di Supabase development | Platform (sudah live) |
 | 3 | Fondasi React + `src/calc` (golden test vs build lama) + shell UI baru | — |
 | 4 | Akun & Save versi Supabase di shell React | 2, 3 |
-| 5 | 36 tool di UI baru, build lama + Firebase dicabut | 3, 4 |
+| 5 | Tool di UI baru, build lama + Firebase dicabut | 3, 4 |
 | 6 | Production: skema `tools`, domain `tools.edifisia.com`, rilis **v0.8.0** | 1, 5 |
 | 7 | Redirect 301 dari `tools.dtsengineering.co.id`, pensiunkan Firebase & cPanel | 6 |
 | 8 | Sesi lintas subdomain bersama Matrix | Halaman akun `edifisia.com` |
 
 Vite dikerjakan **sebelum** Supabase supaya `supabase-js` langsung dipasang dari npm,
-tidak dua kali (CDN dulu lalu npm). Rencana awal (bungkus 36 tool lama di Vite, baru rombak UI)
+tidak dua kali (CDN dulu lalu npm). Rencana awal (bungkus tool lama di Vite, baru rombak UI)
 diganti 2026-10-07 karena berarti tiap tool dikerjakan dua kali; pengaman regresi hitungan kini
 *golden test* `src/calc` terhadap `compute()` build lama, sebelum UI mana pun ditulis.
 
