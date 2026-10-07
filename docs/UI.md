@@ -63,6 +63,14 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
   tema, akun ("Masuk", nonaktif sampai Tahap 4). Tombol panel di kiri menu bar membuka/menutup navigasi.
 - Header tool: kategori, nama, deskripsi SEO (2 baris). Tool tanpa UI baru menampilkan placeholder di kedua tab.
 
+## Tool percontohan (2026-10-08)
+
+**Analisis Balok Baja** (`/steel-beam-analysis`) menerapkan tata letak di atas: kartu 1. Profil & Bentang ·
+2. Beban merata/trapesium (tabel) · 3. Beban terpusat (tabel); Preview balok + beban + tumpuan + dimensi; Diagram
+dengan sub-tab Reaksi · Geser · Momen · Lendutan (bidik hover: x, V, M, δ) dan kartu Nilai maksimum; tab Detail =
+laporan. Kontrak teknis untuk tool berikutnya: [`src/tools/README.md`](../src/tools/README.md). Menunggu tinjauan
+pemilik.
+
 ## Masih dibahas (Tahap 5)
 
 - Isi menu `File` / `Help` final, pintasan keyboard.

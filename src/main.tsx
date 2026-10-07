@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
+import './ui/kit.css'
 import './app/ui-state' // pasang tema sebelum render pertama
 import App from './App.tsx'
 

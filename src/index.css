@@ -27,6 +27,15 @@
   --focus: #566246;
   --shadow: 0 8px 28px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.08);
   --font-mono: ui-monospace, Consolas, 'Cascadia Mono', monospace;
+  /* Diagram & preview tool (SVG) */
+  --dg-ink: #1f1f1f;
+  --dg-grid: #e3e3dc;
+  --dg-axis: #8a8d84;
+  --dg-load: #c4661a;
+  --dg-support: #4b5242;
+  --dg-v: #566246;
+  --dg-m: #1d6fa0;
+  --dg-y: #b04a32;
   color-scheme: light;
 }
 
@@ -52,6 +61,14 @@
   --ok: #6ccb5f;
   --focus: #a4c2a5;
   --shadow: 0 8px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --dg-ink: #e6e6e6;
+  --dg-grid: #33352f;
+  --dg-axis: #7d8077;
+  --dg-load: #f28f3b;
+  --dg-support: #b9c4ad;
+  --dg-v: #a4c2a5;
+  --dg-m: #5cc4f0;
+  --dg-y: #f08f78;
   color-scheme: dark;
 }
 

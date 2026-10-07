@@ -40,8 +40,11 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > (sambungan baja), keduanya ikut satu Edifisia Premium — [PLATFORM.md](PLATFORM.md) §1a.
 > Shell React selesai di sesi yang sama (lihat atas).
 >
-> **Berikutnya:** Tahap 3 tuntas (kontrak UI tool ditetapkan bersama tool percontohan) → akun & Save Supabase
-> (Tahap 4) → tool percontohan lalu semua tool di UI baru (Tahap 5) → rilis v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
+> **2026-10-08:** Tahap 4 ditunda (keputusan pemilik); **tool percontohan Analisis Balok Baja** dibangun di UI baru
+> beserta kontrak UI tool ([`src/tools/README.md`](../src/tools/README.md)) — menunggu tinjauan pemilik.
+>
+> **Berikutnya:** tinjauan percontohan → semua tool di UI baru (Tahap 5) → akun & Save Supabase (Tahap 4) → rilis
+> v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
 >
 > **Kondisi build lama:** `main` masih berisi app zero-build (`index.html`, `assets/`, `core/`, `modules/`) plus akun,
 > Simpan Pekerjaan, dan paywall versi **Firebase** (v0.7.x, sandbox). ⚠️ Jangan deploy `main` apa adanya — paywall

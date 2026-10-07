@@ -124,8 +124,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 - [x] **[Claude]** Pre-render HTML per rute saat build (plugin di `vite.config.ts` → `src/app/seo.ts`):
       `<id>.html` per tool (title, description, canonical/noindex, Open Graph, isi statis), `404.html` (status 404
       asli, bukan fallback SPA), `sitemap.xml` (tool aktif) + `robots.txt` & `_headers` di `web/public/` — 2026-10-07
-- [ ] **[Claude]** Kontrak UI tool (bentuk state input, hitung otomatis + debounce, sumber data Detail/Report)
-      ditetapkan bersama tool percontohan Tahap 5
+- [x] **[Claude]** Kontrak UI tool (state input, hitung otomatis, Detail/Report) — ditetapkan bersama tool
+      percontohan 2026-10-08: [`src/tools/README.md`](../src/tools/README.md)
 - [x] **[Claude]** Laporan dari satu sumber per tool (`src/report/`): model `Report` → tab Detail (HTML + SVG ikut
       tema), `.txt`, dan PDF tanpa library (port `core/report.js`, Courier, gambar vektor). Modul laporan per tool di
       `src/tools/<id>/report.ts`; contoh acuan `bolt-connection` (tab Detail memakai input bawaan sampai UI barunya
@@ -168,6 +168,9 @@ terpisah yang memperbarui acuan golden secara sadar.
 
 ## Tahap 4 — Akun & Save versi Supabase (di shell React)
 
+> Ditunda (keputusan pemilik 2026-10-08): Tahap 5 dikerjakan lebih dulu. Titik sambung sudah disiapkan — input tool
+> = objek JSON (`useToolInput`) untuk Simpan/Buka, dan Download Report lewat satu titik (menu File / `ReportView`).
+
 - [ ] **[Claude]** Lapisan akun: `@supabase/supabase-js`, email + password + **Google**, status dari
       `platform.premium_status()`; "Daftar"/"Lupa password" → `edifisia.com` (sementara: dialog lokal, seperti Matrix)
 - [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (`state_json` = objek input tool); Free User buka & hapus
@@ -180,8 +183,10 @@ terpisah yang memperbarui acuan golden secara sadar.
 
 ## Tahap 5 — Tool di UI baru
 
-- [ ] **[Bersama]** Tool percontohan (mis. Kapasitas Lentur Balok) disetujui dulu sebelum tool lain diikuti;
-      putuskan hitung otomatis vs tombol Hitung (UI.md)
+- [ ] **[Bersama]** Tool percontohan **Analisis Balok Baja** (`steel-beam-analysis`, dipilih 2026-10-08 karena paling
+      dekat mockup "Balok Sederhana") — **dibangun 2026-10-08, menunggu tinjauan pemilik** sebelum tool lain diikuti.
+      Hitung otomatis sudah diputuskan (UI.md). Catatan percontohan: bawaan profil WF 300×150 (build lama memilih
+      ukuran tengah daftar, WF 500×200); batas 3 beban merata / 4 terpusat dari mesin hitung lama dipertahankan
 - [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail)
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
