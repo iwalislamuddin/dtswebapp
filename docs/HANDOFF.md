@@ -3,48 +3,49 @@
 Dokumen serah-terima: status terkini, lalu catatan teknis per tool dari build lama (v0.1–v0.7) sebagai referensi
 rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
-> ## ▶ MULAI DARI SINI (status per 2026-10-07)
+> ## ▶ MULAI DARI SINI (status per 2026-10-08)
 >
 > **Arah:** Civil Tools diselaraskan dengan platform Edifisia — Firebase dibuang, akun & Premium di Supabase
 > (satu Edifisia Premium untuk semua aplikasi), domain `tools.edifisia.com` (Cloudflare Pages), dan UI ditulis ulang
 > dengan **Vite + React + TypeScript** sesuai [`UI.md`](UI.md). Rencana & alasan: **[`PLATFORM.md`](PLATFORM.md)**;
-> daftar kerja: **[`TODO.md`](TODO.md)**.
+> daftar kerja: **[`TODO.md`](TODO.md)**; struktur kode: [ARCHITECTURE.md](../ARCHITECTURE.md) §A.
 >
 > **Sudah selesai**
-> - Tahap 0 (keputusan) & Tahap 2 (skema `tools.saved_works` + RLS + batas 50, diterapkan & lulus di
->   `edifisia-dev`; login Google aktif di dev & prod; trial 7 hari terkonfirmasi).
-> - Tahap 3, bagian mesin hitung: **34 dari 35 tool** dipindah ke `src/calc/` (TypeScript murni) dengan *golden test*
->   terhadap `compute()` build lama — **628 test lulus**, uji mutasi per kelompok, rekam ulang acuan identik
->   byte-per-byte. Fungsi bersama di `src/calc/shared/` (geoteknik, CPT, beton, dinding penahan, profil baja, rangka
->   bidang, hidraulika). Katalog tool baru: `src/tools.ts` (kategori **Pembebanan** untuk beban angin).
->   Resep port: [`src/calc/README.md`](../src/calc/README.md).
->   **Shell React** (2026-10-07): `npm run dev` → menu bar File/Help, navigasi kategori + cari, header, tab
->   Input/Detail, tema Light/Dark, routing `/{id}`, lazy load UI per tool, PWA prompt update — struktur di
->   [ARCHITECTURE.md](../ARCHITECTURE.md) §A.1a. Semua tool masih placeholder; kategori final: Struktur Bawah baru,
->   Sambungan dihapus (baut/las/angkur → Baja, `base-plate` status `moved` → EDFS Nexus).
->   Juga 2026-10-07: pre-render SEO per rute (`<id>.html`, `404.html`, `sitemap.xml`), CI GitHub Actions, dan port
->   baut, las, grup angkur (kategori Baja), dan infrastruktur laporan `src/report/` (Detail/.txt/PDF dari satu
->   model; contoh `bolt-connection`). Sambungan lengkap jadi aplikasi terpisah **EDFS Nexus**; `base-plate`
->   pindah ke Nexus ([PLATFORM.md](PLATFORM.md) §1a). Tidak di-port: `load-combo` (**disembunyikan**, akan
->   dihapus/diganti format).
+> - Tahap 0 (keputusan) & Tahap 2 (skema `tools.saved_works` + RLS + batas 50 di `edifisia-dev`; login Google).
+> - **Tahap 3 tuntas** (2026-10-07):
+>   - Mesin hitung **34/35 tool** di `src/calc/` dengan *golden test* terhadap build lama (`load-combo` sengaja tidak
+>     di-port). Resep: [`src/calc/README.md`](../src/calc/README.md).
+>   - Shell React: menu bar File/Help, navigasi kategori (header kontras, bisa dilipat, cari), tab Input/Detail +
+>     tombol PDF, tema Light/Dark, routing `/{id}`, lazy load per tool, PWA prompt update.
+>   - Katalog final: kategori **Struktur Bawah**; Sambungan dihapus (baut/las/angkur → Baja); `base-plate` status
+>     `moved` → **EDFS Nexus**.
+>   - Pre-render SEO per rute (`<id>.html`, `404.html`, `sitemap.xml`); CI GitHub Actions (typecheck, lint, test,
+>     golden identik, build).
+> - **Tahap 5 dimulai** (2026-10-08) — Tahap 4 (akun) **ditunda** atas keputusan pemilik:
+>   - Tool percontohan **Analisis Balok Baja** (`/steel-beam-analysis`) jalan penuh di UI baru. Tab Input
+>     **disetujui pemilik**.
+>   - Kontrak UI tool untuk tool berikutnya: [`src/tools/README.md`](../src/tools/README.md).
+>   - Laporan v2 (`src/report/`): satu model → tab Detail (HTML) & PDF. Isinya heading bernomor, rumus → substitusi →
+>     hasil, tabel, dan gambar berwarna. PDF dibuat dengan **pdf-lib + DejaVu Sans** (A4, footer bernomor), dimuat
+>     hanya saat tombol PDF ditekan. PDF monospace lama & ekspor .txt dihapus.
+>   - Gating Premium satu titik (`src/app/premium.ts`): Detail & PDF = Premium. **Sementara dimatikan**
+>     (`PREMIUM_GATE = false`) agar pemilik bisa meninjau — wajib dinyalakan saat akun tersambung, sebelum rilis.
 >
-> **Temuan yang menunggu perbaikan** (detail di TODO "Perbaikan isi tool"): profil siku di library baja lama salah
-> baca kolom (Sx/imin) — juga terjadi di situs live; 2 crash build lama sudah diperbaiki di port (tangga rol-rol,
-> lentur HSS sayap langsing).
+> **Menunggu pemilik:** tinjauan tab **Detail & PDF** Analisis Balok Baja (format laporan jadi patokan semua tool).
 >
-> **Sesi ditutup 2026-10-07** — semua commit lokal di `main`, **belum di-push** (11 commit di depan `origin/main`;
-> aman di-push: build lama tidak berubah, `src/` & `supabase/` belum dipakai deploy). Pertanyaan terbuka sesi itu
-> sudah dijawab pemilik (2026-10-07): navigasi pakai kelompok **Struktur Bawah**, **hitung otomatis tanpa tombol**,
-> susunan tiang `deep-foundation` **input koordinat + poer segitiga 3 tiang** ([TOOL-REVISIONS.md](TOOL-REVISIONS.md) §2);
-> masterplan diperbarui: **EDFS Radix** (pondasi seluruh bangunan; Civil Tools = pondasi tunggal) & **EDFS Nexus**
-> (sambungan baja), keduanya ikut satu Edifisia Premium — [PLATFORM.md](PLATFORM.md) §1a.
-> Shell React selesai di sesi yang sama (lihat atas).
->
-> **2026-10-08:** Tahap 4 ditunda (keputusan pemilik); **tool percontohan Analisis Balok Baja** dibangun di UI baru
-> beserta kontrak UI tool ([`src/tools/README.md`](../src/tools/README.md)) — menunggu tinjauan pemilik.
->
-> **Berikutnya:** tinjauan percontohan → semua tool di UI baru (Tahap 5) → akun & Save Supabase (Tahap 4) → rilis
+> **Berikutnya:** setelah tinjauan → tulis ulang tool lain di UI baru mengikuti percontohan (Tahap 5; laporan
+> Sambungan Baut masih isi lama tanpa rumus) → akun & Save Supabase + nyalakan `PREMIUM_GATE` (Tahap 4) → rilis
 > v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
+>
+> **Temuan yang menunggu perbaikan** (TODO "Perbaikan isi tool"): profil siku di library baja lama salah baca kolom
+> (Sx/imin) — juga di situs live; prioritas pertama setelah semua tool pindah UI.
+>
+> **Sesi ditutup 2026-10-08** — semua commit lokal di `main`, **belum di-push** (lihat `git log origin/main..`).
+> Aman di-push: deploy Cloudflare masih memakai `scripts/cf-build.sh` (build lama); setelah push, CI baru berjalan
+> pertama kali — cek hasilnya di GitHub Actions.
+>
+> **Dev lokal:** `npm run dev` (app baru, port bebas / `.claude/launch.json` → 5210) · `npm run build` + `npm run
+> preview` untuk build produksi · build lama: `python -m http.server` di akar repo.
 >
 > **Kondisi build lama:** `main` masih berisi app zero-build (`index.html`, `assets/`, `core/`, `modules/`) plus akun,
 > Simpan Pekerjaan, dan paywall versi **Firebase** (v0.7.x, sandbox). ⚠️ Jangan deploy `main` apa adanya — paywall

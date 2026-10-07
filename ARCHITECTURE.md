@@ -12,7 +12,7 @@ Dua arsitektur hidup berdampingan sampai rilis v0.8.0: **build baru** (sasaran, 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ UI — React + TypeScript (Vite), shell sesuai docs/UI.md                  │  shell ✅,
-│   menu bar · navigasi kategori · header · tab Input/Detail · tema L/D    │  tool Tahap 5
+│   menu bar · navigasi kategori · header · tab Input/Detail · tema L/D    │  1 tool ✅
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Katalog tool — src/tools.ts (id/slug, nama, kategori, status, SEO)       │  ✅
 ├──────────────────────────────────────────────────────────────────────────┤

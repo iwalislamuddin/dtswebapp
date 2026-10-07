@@ -68,7 +68,7 @@ rename 2026-10-06.
 — diterapkan & lulus di **development**, skema `tools` di-expose, URL + publishable key dev/prod tercatat.
 Perintah & detail: [PLATFORM.md](PLATFORM.md) §2. Production menyusul di Tahap 6.
 
-## Tahap 3 — Fondasi React + mesin hitung `src/calc`
+## Tahap 3 — Fondasi React + mesin hitung `src/calc` ✅ (2026-10-07)
 
 Urutan diubah 2026-10-07: tool **tidak** dibungkus dulu lalu ditulis ulang (kerja dua kali). Perhitungan dikeluarkan
 ke `src/calc/` (TypeScript murni, tanpa UI) dengan *golden test* terhadap build lama, lalu tiap tool langsung
@@ -183,7 +183,10 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **[Claude]** Uji empat akun: Guest, Premium/trial, Free User (trial habis), Premium expired — email & Google
 - [ ] **[Anda]** Siapkan akun uji di dev; grant/expire manual lewat SQL `platform.grant_premium` (README platform)
 
-## Tahap 5 — Tool di UI baru
+## Tahap 5 — Tool di UI baru (berjalan sejak 2026-10-08)
+
+> Sesi 2026-10-08 ditutup saat **menunggu tinjauan pemilik atas tab Detail & PDF** percontohan. Setelah disetujui:
+> tool berikutnya mengikuti [`src/tools/README.md`](../src/tools/README.md).
 
 - [x] **[Bersama]** Tinjauan pemilik 2026-10-08 → diterapkan: header kategori navigasi kontras & bisa dilipat; tab
       Detail = laporan dengan heading, rumus → substitusi → hasil, tabel, gambar berwarna; Detail & PDF Premium;
