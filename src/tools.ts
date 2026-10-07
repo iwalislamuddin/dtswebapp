@@ -2,12 +2,16 @@
 // Diturunkan dari core/module-registry.js (2026-10-07). Perubahan terhadap registry lama:
 //   - kategori "Umum" → "Pembebanan" (keputusan pemilik 2026-10-07);
 //   - load-combo disembunyikan (akan dihapus atau diganti formatnya);
-//   - sambungan (baut, las, angkur) ditahan — menunggu diskusi;
+//   - kategori "Struktur Bawah" (pondasi tunggal & dinding penahan, dari Beton Bertulang/Geoteknik) dan
+//     kategori "Sambungan" dihapus: baut, las, angkur → Baja; base-plate pindah ke EDFS Nexus (2026-10-07);
 //   - icon/entry/accepts (khusus build lama & handoff Kombinasi Beban) tidak dibawa.
 // Rencana revisi isi tool: docs/TOOL-REVISIONS.md.
 
-/** active = tampil; hidden = tidak tampil di navigasi; pending = belum siap (menunggu keputusan). */
-export type ToolStatus = 'active' | 'hidden' | 'pending'
+/**
+ * active = tampil; hidden = tidak tampil di navigasi; pending = belum di-port (tampil setelah port);
+ * moved = pindah ke aplikasi lain (`movedTo`) — rutenya menampilkan tautan ke sana.
+ */
+export type ToolStatus = 'active' | 'hidden' | 'pending' | 'moved'
 
 export interface ToolEntry {
   /** Slug URL (/{id}) = nama file perhitungan src/calc/{id}.ts. */
@@ -20,12 +24,14 @@ export interface ToolEntry {
   ported: boolean
   /** Slug pengganti setelah revisi isi (lama di-redirect 301). */
   plannedId?: string
+  /** Aplikasi tujuan untuk status `moved`. */
+  movedTo?: string
   /** <title> & meta description halaman tool. */
   seo: { title: string; desc: string }
 }
 
 /** Urutan kategori di navigasi. */
-export const TOOL_CATEGORIES = ["Analisis Struktur","Beton Bertulang","Baja","Geoteknik","Pembebanan","Sambungan","Hidraulika & Hidrologi"] as const
+export const TOOL_CATEGORIES = ["Analisis Struktur","Beton Bertulang","Baja","Struktur Bawah","Geoteknik","Pembebanan","Hidraulika & Hidrologi"] as const
 
 export type ToolCategory = (typeof TOOL_CATEGORIES)[number]
 
@@ -108,27 +114,27 @@ export const TOOLS: ToolEntry[] = [
     },
   },
   {
-    id: "pile-cap",
-    name: "Desain Pile Cap",
-    category: "Beton Bertulang",
-    status: "active",
-    ported: true,
-    plannedId: "deep-foundation",
-    seo: {
-      title: "Desain Pile Cap / Poer 2–6 Tiang — Lentur, Geser & Pons (SNI 2847:2019)",
-      desc: "Desain poer/pile cap 2–6 tiang metode kaku SNI 2847:2019: reaksi tiang dari beban ultimate kolom (Pu) atau kapasitas tekan tiang (desain kapasitas), lentur di muka kolom, geser satu-arah, pons dua-arah kolom & pons tiang — lengkap denah interaktif dan rasio D/C.",
-    },
-  },
-  {
     id: "footing-design",
     name: "Desain Pondasi Tapak",
-    category: "Beton Bertulang",
+    category: "Struktur Bawah",
     status: "active",
     ported: true,
     plannedId: "shallow-foundation",
     seo: {
       title: "Desain Pondasi Tapak (Spread Footing) — Stabilitas, Penulangan & Geser Pons (SNI 2847:2019)",
       desc: "Desain pondasi telapak beban gabungan (aksial + geser + momen biaksial): stabilitas guling-geser-daya dukung, tekanan tanah sudut & eksentrisitas/kern, tulangan lentur dua arah (spasi kelipatan 25 mm), geser satu-arah & geser pons SNI 2847:2019, lengkap visual 3D distribusi tegangan tanah.",
+    },
+  },
+  {
+    id: "pile-cap",
+    name: "Desain Pile Cap",
+    category: "Struktur Bawah",
+    status: "active",
+    ported: true,
+    plannedId: "deep-foundation",
+    seo: {
+      title: "Desain Pile Cap / Poer 2–6 Tiang — Lentur, Geser & Pons (SNI 2847:2019)",
+      desc: "Desain poer/pile cap 2–6 tiang metode kaku SNI 2847:2019: reaksi tiang dari beban ultimate kolom (Pu) atau kapasitas tekan tiang (desain kapasitas), lentur di muka kolom, geser satu-arah, pons dua-arah kolom & pons tiang — lengkap denah interaktif dan rasio D/C.",
     },
   },
   {
@@ -299,7 +305,7 @@ export const TOOLS: ToolEntry[] = [
   {
     id: "retaining-stone",
     name: "DPT Batu Kali",
-    category: "Geoteknik",
+    category: "Struktur Bawah",
     status: "active",
     ported: true,
     seo: {
@@ -310,7 +316,7 @@ export const TOOLS: ToolEntry[] = [
   {
     id: "retaining-concrete",
     name: "DPT Beton Kantilever",
-    category: "Geoteknik",
+    category: "Struktur Bawah",
     status: "active",
     ported: true,
     seo: {
@@ -332,7 +338,7 @@ export const TOOLS: ToolEntry[] = [
   {
     id: "anchor-bolt-group",
     name: "Anchor Bolt Group",
-    category: "Sambungan",
+    category: "Baja",
     status: "pending",
     ported: false,
     seo: {
@@ -343,8 +349,9 @@ export const TOOLS: ToolEntry[] = [
   {
     id: "base-plate",
     name: "Base Plate & Anchor",
-    category: "Sambungan",
-    status: "active",
+    category: "Baja",
+    status: "moved",
+    movedTo: "EDFS Nexus",
     ported: true,
     seo: {
       title: "Base Plate & Anchor Rod Kolom Baja — Tumpu, Tebal Pelat & Tarik Angkur (AISC Design Guide 1)",
@@ -365,7 +372,7 @@ export const TOOLS: ToolEntry[] = [
   {
     id: "bolt-connection",
     name: "Sambungan Baut",
-    category: "Sambungan",
+    category: "Baja",
     status: "pending",
     ported: false,
     seo: {
@@ -376,7 +383,7 @@ export const TOOLS: ToolEntry[] = [
   {
     id: "weld-connection",
     name: "Sambungan Las",
-    category: "Sambungan",
+    category: "Baja",
     status: "pending",
     ported: false,
     seo: {
@@ -421,3 +428,14 @@ export const TOOLS: ToolEntry[] = [
 
 /** Tool yang tampil di navigasi. */
 export const visibleTools = (): ToolEntry[] => TOOLS.filter((t) => t.status === 'active')
+
+/** Entri katalog untuk slug URL (termasuk hidden/pending/moved), atau undefined. */
+export const toolById = (id: string): ToolEntry | undefined => TOOLS.find((t) => t.id === id)
+
+/** Tool yang tampil, dikelompokkan per kategori sesuai urutan TOOL_CATEGORIES (kategori kosong dilewati). */
+export function toolGroups(): { category: ToolCategory; tools: ToolEntry[] }[] {
+  const tools = visibleTools()
+  return TOOL_CATEGORIES.map((category) => ({ category, tools: tools.filter((t) => t.category === category) })).filter(
+    (g) => g.tools.length > 0,
+  )
+}

@@ -1,0 +1,169 @@
+/*
+ * Tema aplikasi desktop (pola EDFS Matrix, tanpa Ribbon). Dua tema lewat [data-theme] di <html>; semua warna
+ * adalah token sehingga komponen & kanvas tidak menulis warna tema langsung. Aksen: olive #566246 (docs/UI.md).
+ */
+
+:root,
+:root[data-theme='light'] {
+  --bg: #ffffff;
+  --bg-panel: #f6f6f3;
+  --bg-sunken: #efefeb;
+  --bg-hover: #e9ebe4;
+  --bg-active: #dfe6d6;
+  --menubar: #ffffff;
+  --border: #dcdcd5;
+  --border-strong: #b7b7ad;
+  --text: #1f1f1f;
+  --text-muted: #5f6359;
+  --text-disabled: #a0a09a;
+  --accent: #566246;
+  --accent-hover: #47523a;
+  --accent-text: #ffffff;
+  --accent-soft: #e6ebdf;
+  --brand-orange: #f28f3b;
+  --danger: #c42b1c;
+  --warning: #9d5d00;
+  --ok: #0e7a0d;
+  --focus: #566246;
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.08);
+  --font-mono: ui-monospace, Consolas, 'Cascadia Mono', monospace;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #1f1f1f;
+  --bg-panel: #262626;
+  --bg-sunken: #1a1a1a;
+  --bg-hover: #34372f;
+  --bg-active: #3b4632;
+  --menubar: #1c1c1c;
+  --border: #3c3c3c;
+  --border-strong: #565656;
+  --text: #e6e6e6;
+  --text-muted: #a3a6a0;
+  --text-disabled: #6b6b6b;
+  --accent: #a4c2a5;
+  --accent-hover: #b6d0b7;
+  --accent-text: #15200f;
+  --accent-soft: #2f3a2a;
+  --brand-orange: #f28f3b;
+  --danger: #ff6b5e;
+  --warning: #f2c14e;
+  --ok: #6ccb5f;
+  --focus: #a4c2a5;
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.35 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  font-family: var(--font-mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* Kontrol standar (dipakai tool di Tahap 5) */
+.ctl {
+  height: 26px;
+  min-width: 0;
+  padding: 0 6px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+input.ctl[type='number'] {
+  text-align: right;
+}
+
+.btn {
+  height: 28px;
+  min-width: 80px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--bg);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.btn.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}

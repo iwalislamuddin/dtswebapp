@@ -30,11 +30,11 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 - **Menu bar**: `File` (Simpan / Buka pekerjaan, Download Report, …) dan `Help` (Tentang, catatan rilis, …).
   Di kanan: status Premium/Trial dan menu akun.
 - **Panel navigasi kiri**: bisa dibuka-tutup (seperti sekarang), **scrollable sendiri**, dikelompokkan per
-  kategori, item aktif disorot hijau. Kategori & urutannya dari `src/tools.ts` (`TOOL_CATEGORIES`); per 2026-10-07:
-  Analisis Struktur · Beton Bertulang · Baja · Geoteknik · **Pembebanan** · Sambungan · Hidraulika & Hidrologi.
-  Kategori **Sambungan akan dihapus** (baut & las → Baja, base-plate → EDFS Nexus; keputusan 2026-10-07).
-  **Diputuskan 2026-10-07: ikut mockup — ada kelompok "Struktur Bawah"** (tapak/shallow-foundation, pile
-  cap/deep-foundation, dinding penahan) terpisah dari Geoteknik. Susunan kategori final ditetapkan saat shell React.
+  kategori, item aktif disorot hijau, ada kotak **Cari tool**. Kategori & urutannya dari `src/tools.ts`
+  (`TOOL_CATEGORIES`), **final 2026-10-07**: Analisis Struktur · Beton Bertulang · Baja · **Struktur Bawah** ·
+  Geoteknik · Pembebanan · Hidraulika & Hidrologi. Struktur Bawah = tapak/shallow-foundation, pile
+  cap/deep-foundation, DPT batu kali & beton; Sambungan dihapus (baut, las, angkur → Baja; base-plate → EDFS Nexus).
+  Di layar ≤ 760 px panel menjadi laci di atas konten (tertutup saat halaman dimuat).
 - **Jendela utama** = **header** (judul + deskripsi) + **content**.
 - **Content berbentuk tab**, hanya dua:
   - **Input** — semua input, ilustrasi/diagram, dan ringkasan hasil dalam satu layar.
@@ -55,6 +55,13 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 - Navigasi memakai kelompok **Struktur Bawah** (lihat di atas).
 - **Hitung otomatis** saat input berubah, **tanpa tombol Hitung** (perilaku build lama dipertahankan; tombol hijau
   di mockup tidak dipakai). Hitungan berat diberi debounce; input tidak valid → hasil lama diredupkan + pesan.
+
+## Shell terpasang (2026-10-07)
+
+- Menu `File`: Halaman Depan · Simpan Pekerjaan… · Buka Pekerjaan… · Download Report… (tiga terakhir tampil
+  "segera" sampai akun Supabase Tahap 4). Menu `Help`: Catatan Rilis · Tentang. Kanan: Perbarui aplikasi (PWA),
+  tema, akun ("Masuk", nonaktif sampai Tahap 4). Tombol panel di kiri menu bar membuka/menutup navigasi.
+- Header tool: kategori, nama, deskripsi SEO (2 baris). Tool tanpa UI baru menampilkan placeholder di kedua tab.
 
 ## Masih dibahas (Tahap 5)
 

@@ -108,17 +108,25 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
       sambungan `pending` — 2026-10-07
 - [x] **[Bersama]** Diskusi sambungan → aplikasi terpisah **EDFS Nexus** (sekelas Limcon / IDEA StatiCa);
       `base-plate` pindah ke Nexus, baut & las sederhana tetap di Civil Tools — 2026-10-07 (PLATFORM.md §1a)
-- [ ] **[Claude]** Keluarkan `base-plate` dari katalog `src/tools.ts` (+ rencana redirect/tautan ke Nexus) dan
-      perbarui komentar sambungan di kepala `src/tools.ts`; `src/calc/base-plate.ts` disimpan sebagai bahan Nexus
+- [x] **[Claude]** `base-plate` keluar dari navigasi: status baru `moved` (`movedTo: 'EDFS Nexus'`), rute
+      `/base-plate` menampilkan pemberitahuan pindah (noindex); `src/calc/base-plate.ts` disimpan sebagai bahan
+      Nexus — 2026-10-07. Tautan ke Nexus ditambahkan saat Nexus rilis
 - [x] **[Anda]** `anchor-bolt-group` tetap di Civil Tools; pondasi Civil Tools = pondasi tunggal (Radix = seluruh
       bangunan); baut & las → kategori Baja, "Sambungan" dihapus; Radix & Nexus ikut satu Edifisia Premium — 2026-10-07
-- [ ] **[Claude]** `src/tools.ts`: pindahkan `bolt-connection`/`weld-connection` ke Baja, hapus kategori Sambungan,
-      status `anchor-bolt-group`/baut/las dari `pending` → siap port (bersama tugas `base-plate` di atas)
+- [x] **[Claude]** `src/tools.ts`: baut, las, `anchor-bolt-group` → Baja; kategori Sambungan dihapus; kategori
+      **Struktur Bawah** (tapak, pile cap, DPT batu kali & beton). `pending` kini berarti "belum di-port, tampil
+      setelah port" — 2026-10-07
 - [ ] **[Anda]** Gating fitur Premium di EDFS Radix & EDFS Nexus (belum ditentukan)
-- [ ] **[Claude]** Shell React sesuai UI.md: menu bar File/Help, navigasi kiri, header, tab Input/Detail, tema
-      Light/Dark (token `[data-theme]`, aksen `#566246`, tipografi Matrix)
-- [ ] **[Claude]** Routing path `/{tool}` + lazy load per tool; PWA `vite-plugin-pwa` (prompt update seperti Matrix);
-      pre-render HTML per rute (title/description/canonical) untuk SEO
+- [x] **[Claude]** Shell React sesuai UI.md: menu bar File/Help, navigasi kiri (cari tool, laci di layar sempit),
+      header, tab Input/Detail, tema Light/Dark (token `[data-theme]`, aksen `#566246`, tipografi Matrix), dialog
+      Tentang & Catatan Rilis, halaman depan & 404 — 2026-10-07. Struktur: ARCHITECTURE.md §A.1a
+- [x] **[Claude]** Routing path `/{tool}` (tanpa library) + lazy load UI per tool (`src/tools/registry.ts`);
+      head per rute (`src/app/head.ts`); PWA `vite-plugin-pwa` prompt update; GA4 hanya di domain produksi —
+      2026-10-07
+- [ ] **[Claude]** Pre-render HTML per rute (title/description/canonical dari `headFor()`) untuk SEO + 404 asli
+      (Cloudflare Pages: file per rute, bukan fallback SPA `/* /index.html 200`)
+- [ ] **[Claude]** Kontrak UI tool (bentuk state input, hitung otomatis + debounce, sumber data Detail/Report)
+      ditetapkan bersama tool percontohan Tahap 5
 - [ ] **[Claude]** Laporan (Detail + Download PDF/.txt) dari satu sumber data per tool; PDF tetap tanpa library
 - [ ] **[Claude]** Lint + test di CI (GitHub Actions), pola Matrix
 
@@ -173,7 +181,9 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail)
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
-      `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE
+      `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.
+      Pindahkan `web/index.html` & `web/public/` ke akar, hapus `root: 'web'` + alias `/src/` di `vite.config.ts`,
+      favicon lama `favicon/` → `public/`
 - [ ] **[Anda]** Cloudflare Pages: build command → `npm ci && npm run build`, output `dist`, env `NODE_VERSION`
 
 ## Tahap 6 — Rilis v0.8.0 di `tools.edifisia.com`

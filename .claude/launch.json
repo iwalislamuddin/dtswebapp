@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "5209"],
       "port": 5209
+    },
+    {
+      "name": "civil-tools-react",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "5210", "--strictPort"],
+      "port": 5210
     }
   ]
 }

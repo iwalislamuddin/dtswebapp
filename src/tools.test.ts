@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { TOOL_CATEGORIES, TOOLS, visibleTools } from './tools'
+import { TOOL_CATEGORIES, TOOLS, toolGroups, visibleTools } from './tools'
 
 const CALC = join(__dirname, 'calc')
 const calcTools = readdirSync(CALC).filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts')).map((f) => f.slice(0, -3))
@@ -27,10 +27,26 @@ describe('katalog tool', () => {
     for (const t of TOOLS) expect(TOOL_CATEGORIES).toContain(t.category)
   })
 
-  it('keputusan 2026-10-07: beban angin di Pembebanan, load-combo tersembunyi, sambungan tertahan', () => {
-    expect(TOOLS.find((t) => t.id === 'wind-load')?.category).toBe('Pembebanan')
-    expect(TOOLS.find((t) => t.id === 'load-combo')?.status).toBe('hidden')
-    for (const id of ['bolt-connection', 'weld-connection', 'anchor-bolt-group'])
-      expect(TOOLS.find((t) => t.id === id)?.status).toBe('pending')
+  it('keputusan 2026-10-07: Pembebanan, Struktur Bawah, sambungan → Baja, base-plate → EDFS Nexus', () => {
+    const t = (id: string) => TOOLS.find((x) => x.id === id)
+    expect(t('wind-load')?.category).toBe('Pembebanan')
+    expect(t('load-combo')?.status).toBe('hidden')
+    for (const id of ['footing-design', 'pile-cap', 'retaining-stone', 'retaining-concrete'])
+      expect(t(id)?.category).toBe('Struktur Bawah')
+    for (const id of ['bolt-connection', 'weld-connection', 'anchor-bolt-group']) {
+      expect(t(id)?.category).toBe('Baja')
+      expect(t(id)?.status).toBe('pending')
+    }
+    expect(t('base-plate')).toMatchObject({ status: 'moved', movedTo: 'EDFS Nexus' })
+    for (const x of TOOLS) expect(x.status === 'moved', x.id).toBe(!!x.movedTo)
+  })
+
+  it('navigasi: urutan kategori, tanpa kategori kosong, setiap tool aktif tepat sekali', () => {
+    const groups = toolGroups()
+    expect(groups.map((g) => g.category)).toEqual(TOOL_CATEGORIES.filter((c) => groups.some((g) => g.category === c)))
+    expect(groups.flatMap((g) => g.tools.map((x) => x.id))).toEqual(
+      TOOL_CATEGORIES.flatMap((c) => visibleTools().filter((x) => x.category === c).map((x) => x.id)),
+    )
+    expect(groups.every((g) => g.tools.length > 0)).toBe(true)
   })
 })

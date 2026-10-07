@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDFS Civil Tools — Alat Bantu Rekayasa Sipil (SNI)</title>
+    <meta
+      name="description"
+      content="Kumpulan kalkulator rekayasa sipil sesuai SNI: beton bertulang, baja, struktur bawah, geoteknik, pembebanan, dan hidraulika. Gratis, berjalan di browser."
+    />
+    <meta name="theme-color" content="#566246" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/app-icon.svg" />
+    <script>
+      // Tema sebelum render pertama (tanpa kedip). Kunci sama dengan PREFS_KEY di src/app/ui-state.ts.
+      try {
+        var t = JSON.parse(localStorage.getItem('edfs-civil-tools:prefs') || '{}').theme
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.dataset.theme = t
+      } catch (_) {}
+      // Pemulihan (pola EDFS Matrix): bila bundle kembali sebagai selain JavaScript (cache service worker basi,
+      // atau deploy berganti saat memuat), lepas service worker & cache sekali lalu muat ulang dari jaringan.
+      addEventListener('error', function (e) {
+        var s = e.target
+        if (!s || s.tagName !== 'SCRIPT' || !/\/assets\//.test(s.src)) return
+        try {
+          if (sessionStorage.getItem('edfs-recovered')) return
+          sessionStorage.setItem('edfs-recovered', '1')
+        } catch (_) {
+          return
+        }
+        var sw = navigator.serviceWorker
+        Promise.all([
+          sw && sw.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister() })) }),
+          self.caches && caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k) })) }),
+        ]).catch(function () {}).then(function () { location.reload() })
+      }, true)
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>EDFS Civil Tools membutuhkan JavaScript.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
