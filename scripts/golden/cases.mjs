@@ -106,6 +106,29 @@ const cs = (name, over) => ({ name, args: [{ ...csBase, ...over }] })
 const stBase = { L1: 1.2, L2: 2.52, L3: 1.2, H: 1.8, R: 175, tw: 150, supA: 'sendi', supB: 'rol', SDL: 1.5, LL: 3.0, fc: 25, fy: 420, cc: 20, db: 13 }
 const st = (name, over) => ({ name, args: [{ ...stBase, ...over }] })
 
+const stTBase = {
+  ptype: 'WF', psize: '400×200×8×13', Fy: 240, Fu: 370, conn: 'bolt', nHole: 2, db: 16, hole: 2, tHole: 0,
+  Upreset: '1', Uval: 0.85, L: 3000, Pu: 0, Pa: 0,
+}
+const stT = (name, over) => ({ name, args: [{ ...stTBase, ...over }] })
+const stCBase = {
+  ptype: 'WF', psize: '200×200×8×12', Fy: 240, Kpreset: '1', Kval: 1.0, Lx: 3000, Ly: 3000, Kz: 1.0, Lz: 3000, Pu: 0, Pa: 0,
+}
+const stC = (name, over) => ({ name, args: [{ ...stCBase, ...over }] })
+const stFBase = { ptype: 'WF', psize: '400×200×8×13', Fy: 240, axis: 'x', Lb: 3000, Cbpreset: '1', Cbval: 1.0, Mu: 0, Ma: 0 }
+const stF = (name, over) => ({ name, args: [{ ...stFBase, ...over }] })
+const sbaBase = {
+  ptype: 'WF', psize: '300×150×6.5×9', L: 6, cL: 0, cR: 0, E: 200000, self: 'ya', nd: 1,
+  d1_w1: 15, d1_w2: 15, d1_a1: 0, d1_a2: 6, d2_w1: 0, d2_w2: 0, d2_a1: 0, d2_a2: 6, d3_w1: 0, d3_w2: 0, d3_a1: 0, d3_a2: 6,
+  np: 1, p1_P: 30, p1_a: 3, p2_P: 0, p2_a: 0, p3_P: 0, p3_a: 0, p4_P: 0, p4_a: 0,
+}
+const sba = (name, over, profile = ['WF', '300×150×6.5×9']) => ({ name, args: [{ ...sbaBase, ...over }], profile })
+const bpBase = {
+  colType: 'w', d: 300, bf: 300, tf: 15, N: 500, B: 500, tp: 32, Fy: 250, lamExact: '1', fc: 25, a2a1: 1,
+  Pu: 1200, Mu: 150, Vu: 0, surf: 'grout', mat: 'g36', Fu: 400, db: 25, nT: 2, aEdge: 50,
+}
+const bp = (name, over) => ({ name, args: [{ ...bpBase, ...over }] })
+
 export const CASES = {
   'bearing-capacity': [
     bearing('default (HANDOFF: Terzaghi qu 1373)', {}),
@@ -536,5 +559,132 @@ export const CASES = {
     st('L negatif -> 0', { L1: -1 }),
     st('fc 40', { fc: 40 }),
     st('R 0', { R: 0 }),
+  ],
+  'core:steel-profiles': [
+    ...['WF', 'UNP', 'L', 'SHS', 'RHS', 'PIPE', 'CNP'].map((t) => ({ name: 'daftar ' + t, fn: 'list', args: [t] })),
+    { name: 'tipe tak dikenal', fn: 'list', args: ['XX'] },
+    { name: 'get ada', fn: 'get', args: ['WF', '400×200×8×13'] },
+    { name: 'get tidak ada', fn: 'get', args: ['WF', '999'] },
+    { name: 'typeInfo', fn: 'typeInfo', args: ['PIPE'] },
+    { name: 'typeInfo tak dikenal', fn: 'typeInfo', args: ['XX'] },
+  ],
+  'steel-tension': [
+    stT('default WF baut (HANDOFF phiPn 1817 leleh)', { nHole: 2, db: 18, tHole: 13, Upreset: '1' }),
+    stT('baut default, tebal auto', {}),
+    stT('las', { conn: 'weld' }),
+    stT('fraktur menentukan', { nHole: 4, db: 22, Upreset: '0.7' }),
+    stT('U manual', { Upreset: '0', Uval: 0.8 }),
+    stT('U manual tak valid', { Upreset: '0', Uval: 0 }),
+    stT('U > 1', { Upreset: '0', Uval: 1.4 }),
+    stT('An sangat kecil', { nHole: 8, db: 30 }),
+    stT('An tepat di atas 0,3Ag', { nHole: 20, db: 20 }),
+    stT('L/r tepat di atas 300', { L: 13850 }),
+    stT('pipa (HANDOFF Ag 2041)', { ptype: 'PIPE', psize: 'Ø114.3×6', conn: 'weld' }),
+    stT('siku (rmin kosong, bug lama)', { ptype: 'L', psize: 'L 75×75×6', nHole: 1, Upreset: '0.8' }),
+    stT('UNP', { ptype: 'UNP', psize: 'UNP 200', Upreset: '0.85' }),
+    stT('SHS hitung', { ptype: 'SHS', psize: '100×100×6', conn: 'weld' }),
+    stT('CNP langsing L/r > 300', { ptype: 'CNP', psize: 'C100×50×20×2', L: 12000, conn: 'weld' }),
+    stT('D/C terlampaui', { Pu: 2500, Pa: 1600 }),
+    stT('D/C aman', { Pu: 500, Pa: 300 }),
+    stT('profil tidak ada', { psize: 'xx' }),
+    stT('Fu < Fy', { Fu: 200 }),
+  ],
+  'steel-compression': [
+    stC('default WF200 K1 L3000 (HANDOFF phiPn 1144,2)', {}),
+    stC('L 9000 elastis (HANDOFF 307,9)', { Lx: 9000, Ly: 9000, Lz: 9000 }),
+    stC('torsi menentukan (HANDOFF Ly 1500 Lz 6000)', { Lx: 1500, Ly: 1500, Lz: 6000 }),
+    stC('Kz & Lz kosong', { Kz: 0, Lz: 0 }),
+    stC('K preset jepit-jepit', { Kpreset: '0.65' }),
+    stC('K manual', { Kpreset: '0', Kval: 1.5 }),
+    stC('Fy/Fe tepat di bawah 2,25', { Lx: 6782, Ly: 6782, Lz: 1000 }),
+    stC('K manual tak valid', { Kpreset: '0', Kval: 0 }),
+    stC('sumbu kuat menentukan', { Lx: 9000, Ly: 2000 }),
+    stC('KL/r > 200', { Lx: 12000, Ly: 12000, Lz: 12000, psize: '100×100×6×8' }),
+    stC('WF sayap langsing', { psize: '600×200×11×17', Fy: 410 }),
+    stC('UNP', { ptype: 'UNP', psize: 'UNP 160' }),
+    stC('siku', { ptype: 'L', psize: 'L 100×100×10' }),
+    stC('SHS langsing', { ptype: 'SHS', psize: '250×250×9', Fy: 345 }),
+    stC('RHS', { ptype: 'RHS', psize: '200×100×6' }),
+    stC('pipa langsing', { ptype: 'PIPE', psize: 'Ø318.5×6.9', Fy: 345 }),
+    stC('CNP', { ptype: 'CNP', psize: 'C150×65×20×2.3' }),
+    stC('D/C', { Pu: 1500, Pa: 900 }),
+    stC('panjang 0', { Lx: 0, Ly: 0 }),
+    stC('Fy 0', { Fy: 0 }),
+    stC('profil tidak ada', { psize: 'xx' }),
+  ],
+  'steel-flexure': [
+    stF('default WF400 Lb 3000 (HANDOFF phiMn 262,9)', {}),
+    stF('Lb 9000 elastis (HANDOFF 122,0)', { Lb: 9000 }),
+    stF('Lb kecil plastis', { Lb: 1000 }),
+    stF('Lb 0', { Lb: 0 }),
+    stF('Cb 1,14', { Cbpreset: '1.14' }),
+    stF('Cb kantilever (teks)', { Cbpreset: 'cant' }),
+    stF('Cb manual', { Cbpreset: '0', Cbval: 1.67 }),
+    stF('WF sayap non-kompak', { psize: '600×200×11×17', Fy: 410, Lb: 1000 }),
+    stF('WF sayap langsing', { psize: '588×300×12×20', Fy: 690, Lb: 500 }),
+    stF('WF sumbu lemah', { axis: 'y' }),
+    stF('WF sumbu lemah non-kompak', { axis: 'y', psize: '600×200×11×17', Fy: 410 }),
+    stF('WF sumbu lemah langsing', { axis: 'y', psize: '588×300×12×20', Fy: 690 }),
+    stF('UNP sumbu kuat', { ptype: 'UNP', psize: 'UNP 200' }),
+    stF('UNP sumbu lemah (ditampilkan kuat)', { ptype: 'UNP', psize: 'UNP 200', axis: 'y' }),
+    stF('SHS (leleh F7.1)', { ptype: 'SHS', psize: '100×100×6' }),
+    stF('SHS sayap non-kompak', { ptype: 'SHS', psize: '200×200×6', Fy: 345 }),
+    stF('SHS sayap langsing', { ptype: 'SHS', psize: '250×250×9', Fy: 450 }),
+    stF('RHS LTB elastis', { ptype: 'RHS', psize: '300×200×9', Lb: 60000 }),
+    stF('RHS LTB inelastis', { ptype: 'RHS', psize: '150×75×4.5', Lb: 9000 }),
+    stF('RHS sumbu lemah', { ptype: 'RHS', psize: '200×100×6', axis: 'y' }),
+    stF('RHS badan non-kompak', { ptype: 'RHS', psize: '250×150×6', Fy: 345 }),
+    stF('pipa kompak', { ptype: 'PIPE', psize: 'Ø114.3×6' }),
+    stF('pipa non-kompak', { ptype: 'PIPE', psize: 'Ø318.5×6.9', Fy: 345 }),
+    stF('pipa langsing / di luar batas', { ptype: 'PIPE', psize: 'Ø318.5×6.9', Fy: 690 }),
+    stF('siku indikatif (bug Sx lama)', { ptype: 'L', psize: 'L 75×75×6' }),
+    stF('CNP indikatif', { ptype: 'CNP', psize: 'C150×65×20×2.3' }),
+    // Fy sintetis sangat tinggi hanya untuk menguji cabang rumus elemen langsing (profil pasaran tidak sampai).
+    stF('cabang: WF sayap langsing (Fy sintetis)', { psize: '588×300×12×20', Fy: 4000, Lb: 500 }),
+    stF('cabang: WF sayap langsing kc dibatasi 0,76 (Fy sintetis)', { psize: '200×200×8×12', Fy: 4000, Lb: 500 }),
+    stF('cabang: WF sumbu lemah langsing (Fy sintetis)', { axis: 'y', psize: '588×300×12×20', Fy: 4000 }),
+    // SHS/RHS sayap langsing membuat modul lama crash (f.lamF tak ada di F7) — diuji langsung di steel-flexure.test.ts.
+    stF('cabang: RHS badan non-kompak (Fy sintetis)', { ptype: 'RHS', psize: '150×75×4.5', Fy: 1500, Lb: 0 }),
+    stF('cabang: pipa langsing (Fy sintetis)', { ptype: 'PIPE', psize: 'Ø318.5×6.9', Fy: 1500 }),
+    stF('D/C', { Mu: 400, Ma: 250 }),
+    stF('Fy 0', { Fy: 0 }),
+    stF('profil tidak ada', { psize: 'xx' }),
+  ],
+  'steel-beam-analysis': [
+    sba('default: merata + titik', {}),
+    sba('tanpa berat sendiri', { self: 'tidak' }),
+    sba('trapesium sebagian + 2 titik', { d1_w1: 5, d1_w2: 20, d1_a1: 1, d1_a2: 4.5, np: 2, p2_P: 15, p2_a: 5 }),
+    sba('3 patch + 4 titik', {
+      nd: 3, d2_w1: 8, d2_w2: 8, d2_a1: 2, d2_a2: 3, d3_w1: 0, d3_w2: 12, d3_a1: 4, d3_a2: 6,
+      np: 4, p2_P: 10, p2_a: 1, p3_P: -5, p3_a: 4, p4_P: 20, p4_a: 6,
+    }),
+    sba('kantilever kiri & kanan', { cL: 1.5, cR: 1, d1_a2: 8.5, p1_a: 0 }),
+    sba('kantilever kanan saja, beban ujung', { cR: 2, d1_a2: 8, p1_a: 8 }),
+    sba('posisi beban dipotong', { d1_a1: -1, d1_a2: 9, p1_a: 10 }),
+    sba('patch a2 <= a1 diabaikan', { d1_a1: 4, d1_a2: 2 }),
+    sba('E kosong -> 200000', { E: 0 }),
+    sba('UNP', {}, ['UNP', 'UNP 200']),
+    sba('CNP', { L: 3, d1_a2: 3, p1_a: 1.5 }, ['CNP', 'C150×65×20×2.3']),
+    sba('tanpa beban', { self: 'tidak', nd: 0, np: 0 }),
+    sba('L 0', { L: 0 }),
+  ],
+  'base-plate': [
+    bp('default W momen besar', {}),
+    bp('konsentrik', { Mu: 0 }),
+    bp('konsentrik lambda konservatif', { Mu: 0, lamExact: '0' }),
+    bp('momen kecil', { Mu: 40 }),
+    bp('momen besar tanpa solusi', { Mu: 900, N: 400, B: 400 }),
+    bp('Y > N', { Mu: 400, N: 450, aEdge: 0 }),
+    bp('HSS persegi', { colType: 'hssr', d: 250, bf: 250, Mu: 60 }),
+    bp('HSS bulat', { colType: 'hssc', d: 300, Mu: 0 }),
+    bp('A2/A1 = 4', { a2a1: 6, Mu: 60 }),
+    bp('geser beton, aman', { Vu: 100, surf: 'concrete' }),
+    bp('geser lebih', { Vu: 900 }),
+    bp('angkur kurang', { db: 16, nT: 1, Mu: 300 }),
+    bp('mutu Gr.105', { mat: 'g105', Mu: 300 }),
+    bp('mutu kustom', { mat: 'custom', Fu: 550, Mu: 300 }),
+    bp('pelat terlalu kecil', { N: 250, B: 250, Mu: 20 }),
+    bp('Pu 0', { Pu: 0 }),
+    bp('dimensi kosong', { N: 0 }),
   ],
 }

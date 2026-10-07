@@ -1,0 +1,1948 @@
+[
+ {
+  "name": "default WF200 K1 L3000 (HANDOFF phiPn 1144,2)",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 34.80278422273782,
+   "lamY": 59.76095617529881,
+   "lam": 59.76095617529881,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 552.7066194426939,
+   "FcrFlex": 200.11519294296724,
+   "PnFlex": 1271.331820766671,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 3000,
+    "Lcz": 3000,
+    "Fe": 808.7498199045039,
+    "Fcr": 211.96736009768966,
+    "lamEq": 49.403506183455015,
+    "Pn": 1346.6286387006223
+   },
+   "Fe": 552.7066194426939,
+   "Fcr": 200.11519294296724,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 1271.331820766671,
+   "phiPn": 1144.198638690004,
+   "Pa": 761.2765393812401,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "L 9000 elastis (HANDOFF 307,9)",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 9000,
+    "Ly": 9000,
+    "Kz": 1,
+    "Lz": 9000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1,
+   "Lx": 9000,
+   "Ly": 9000,
+   "lamX": 104.40835266821347,
+   "lamY": 179.28286852589642,
+   "lam": 179.28286852589642,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 61.411846604743765,
+   "FcrFlex": 53.85818947236028,
+   "PnFlex": 342.1610777179049,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 9000,
+    "Lcz": 9000,
+    "Fe": 372.6425557043449,
+    "Fcr": 183.29045197737204,
+    "lamEq": 72.78110511354967,
+    "Pn": 1164.4442414122445
+   },
+   "Fe": 61.411846604743765,
+   "Fcr": 53.85818947236028,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Elastis (Euler)",
+   "Pn": 342.1610777179049,
+   "phiPn": 307.94496994611444,
+   "Pa": 204.886872884973,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "torsi menentukan (HANDOFF Ly 1500 Lz 6000)",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 1500,
+    "Ly": 1500,
+    "Kz": 1,
+    "Lz": 6000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Tekuk TORSI (E4) menentukan: φPn torsi 1092.6 kN < φPn lentur 1311.3 kN. Periksa panjang tak-terkekang torsi Lz (biasanya terjadi bila Lz > Ly)."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1,
+   "Lx": 1500,
+   "Ly": 1500,
+   "lamX": 17.40139211136891,
+   "lamY": 29.880478087649404,
+   "lam": 29.880478087649404,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 2210.8264777707755,
+   "FcrFlex": 229.33928108009596,
+   "PnFlex": 1456.9924527018497,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 6000,
+    "Lcz": 6000,
+    "Fe": 440.7843157356197,
+    "Fcr": 191.09008438391476,
+    "lamEq": 66.91936389991793,
+    "Pn": 1213.9953060910104
+   },
+   "Fe": 440.7843157356197,
+   "Fcr": 191.09008438391476,
+   "govLS": "Tekuk torsi (E4)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 1213.9953060910104,
+   "phiPn": 1092.5957754819094,
+   "Pa": 726.9432970604853,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "Kz & Lz kosong",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 0,
+    "Lz": 0,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 34.80278422273782,
+   "lamY": 59.76095617529881,
+   "lam": 59.76095617529881,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 552.7066194426939,
+   "FcrFlex": 200.11519294296724,
+   "PnFlex": 1271.331820766671,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 3000,
+    "Lcz": 3000,
+    "Fe": 808.7498199045039,
+    "Fcr": 211.96736009768966,
+    "lamEq": 49.403506183455015,
+    "Pn": 1346.6286387006223
+   },
+   "Fe": 552.7066194426939,
+   "Fcr": 200.11519294296724,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 1271.331820766671,
+   "phiPn": 1144.198638690004,
+   "Pa": 761.2765393812401,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "K preset jepit-jepit",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "0.65",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Tekuk TORSI (E4) menentukan: φPn torsi 1212.0 kN < φPn lentur 1270.8 kN. Periksa panjang tak-terkekang torsi Lz (biasanya terjadi bila Lz > Ly)."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 0.65,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 22.621809744779586,
+   "lamY": 38.844621513944226,
+   "lam": 38.844621513944226,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 1308.181347793358,
+   "FcrFlex": 222.26077188339735,
+   "PnFlex": 1412.0226837752234,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 3000,
+    "Lcz": 3000,
+    "Fe": 808.7498199045039,
+    "Fcr": 211.96736009768966,
+    "lamEq": 49.403506183455015,
+    "Pn": 1346.6286387006223
+   },
+   "Fe": 808.7498199045039,
+   "Fcr": 211.96736009768966,
+   "govLS": "Tekuk torsi (E4)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 1346.6286387006223,
+   "phiPn": 1211.9657748305601,
+   "Pa": 806.3644543117499,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "K manual",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "0",
+    "Kval": 1.5,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1.5,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 52.204176334106734,
+   "lamY": 89.64143426294821,
+   "lam": 89.64143426294821,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 245.64738641897506,
+   "FcrFlex": 159.44690265784678,
+   "PnFlex": 1012.9661725853007,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 3000,
+    "Lcz": 3000,
+    "Fe": 808.7498199045039,
+    "Fcr": 211.96736009768966,
+    "lamEq": 49.403506183455015,
+    "Pn": 1346.6286387006223
+   },
+   "Fe": 245.64738641897506,
+   "Fcr": 159.44690265784678,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 1012.9661725853007,
+   "phiPn": 911.6695553267706,
+   "Pa": 606.5665704103598,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "Fy/Fe tepat di bawah 2,25",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 6782,
+    "Ly": 6782,
+    "Kz": 1,
+    "Lz": 1000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1,
+   "Lx": 6782,
+   "Ly": 6782,
+   "lamX": 78.67749419953597,
+   "lamY": 135.09960159362552,
+   "lam": 135.09960159362552,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 108.1487749761095,
+   "FcrFlex": 94.80352091755158,
+   "PnFlex": 602.2867683892052,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 1000,
+    "Lcz": 1000,
+    "Fe": 4733.715197705936,
+    "Fcr": 234.96072303966065,
+    "lamEq": 20.420379453245282,
+    "Pn": 1492.705473470964
+   },
+   "Fe": 108.1487749761095,
+   "Fcr": 94.80352091755158,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 602.2867683892052,
+   "phiPn": 542.0580915502848,
+   "Pa": 360.65075951449415,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "K manual tak valid",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "0",
+    "Kval": 0,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "K tidak valid → dipakai 1,0."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 34.80278422273782,
+   "lamY": 59.76095617529881,
+   "lam": 59.76095617529881,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 552.7066194426939,
+   "FcrFlex": 200.11519294296724,
+   "PnFlex": 1271.331820766671,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 3000,
+    "Lcz": 3000,
+    "Fe": 808.7498199045039,
+    "Fcr": 211.96736009768966,
+    "lamEq": 49.403506183455015,
+    "Pn": 1346.6286387006223
+   },
+   "Fe": 552.7066194426939,
+   "Fcr": 200.11519294296724,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 1271.331820766671,
+   "phiPn": 1144.198638690004,
+   "Pa": 761.2765393812401,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "sumbu kuat menentukan",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 9000,
+    "Ly": 2000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1,
+   "Lx": 9000,
+   "Ly": 2000,
+   "lamX": 104.40835266821347,
+   "lamY": 39.8406374501992,
+   "lam": 104.40835266821347,
+   "govAxis": "x-x (sumbu kuat)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 181.07531685439605,
+   "FcrFlex": 137.81137166328668,
+   "PnFlex": 875.5156441768602,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 3000,
+    "Lcz": 3000,
+    "Fe": 808.7498199045039,
+    "Fcr": 211.96736009768966,
+    "lamEq": 49.403506183455015,
+    "Pn": 1346.6286387006223
+   },
+   "Fe": 181.07531685439605,
+   "Fcr": 137.81137166328668,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 875.5156441768602,
+   "phiPn": 787.9640797591742,
+   "Pa": 524.260864776563,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "KL/r > 200",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "100×100×6×8",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 12000,
+    "Ly": 12000,
+    "Kz": 1,
+    "Lz": 12000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "KL/r = 486 > 200 — melebihi rekomendasi kelangsingan batang tekan (Ps. E2). Perbesar profil atau kurangi panjang tekuk."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "100×100×6×8",
+    "H": 100,
+    "B": 100,
+    "tw": 6,
+    "tf": 8,
+    "A": 21.9,
+    "w": 17.2,
+    "Ix": 383,
+    "Iy": 134,
+    "ix": 4.18,
+    "iy": 2.47,
+    "Sx": 76.5,
+    "Sy": 26.7,
+    "imin": 2.47,
+    "t": 8,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "100×100×6×8",
+   "Fy": 240,
+   "Ag": 2190,
+   "rx": 41.8,
+   "ry": 24.700000000000003,
+   "K": 1,
+   "Lx": 12000,
+   "Ly": 12000,
+   "lamX": 287.0813397129187,
+   "lamY": 485.82995951416996,
+   "lam": 485.82995951416996,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 8.36298187369529,
+   "FcrFlex": 7.334335103230769,
+   "PnFlex": 16.062193876075384,
+   "tors": {
+    "G": 77200,
+    "Cw": 2835440000,
+    "J": 40181.333333333336,
+    "Kz": 1,
+    "Lz": 12000,
+    "Lcz": 12000,
+    "Fe": 607.517704465674,
+    "Fcr": 203.4236028346098,
+    "lamEq": 57.00138407987276,
+    "Pn": 445.4976902077955
+   },
+   "Fe": 8.36298187369529,
+   "Fcr": 7.334335103230769,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Elastis (Euler)",
+   "Pn": 16.062193876075384,
+   "phiPn": 14.455974488467845,
+   "Pa": 9.618080165314602,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 6.25,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 14,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "WF sayap langsing",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "600×200×11×17",
+    "Fy": 410,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Penampang punya elemen LANGSING (rasio b/t melebihi λr) — Ps. E7 (luas efektif) TIDAK diterapkan; φPn di atas berpotensi TERLALU BESAR. Perlu analisis elemen langsing."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "600×200×11×17",
+    "H": 600,
+    "B": 200,
+    "tw": 11,
+    "tf": 17,
+    "A": 131.7,
+    "w": 103,
+    "Ix": 77600,
+    "Iy": 2280,
+    "ix": 24.3,
+    "iy": 4.16,
+    "Sx": 2590,
+    "Sy": 228,
+    "imin": 4.16,
+    "t": 17,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "600×200×11×17",
+   "Fy": 410,
+   "Ag": 13169.999999999998,
+   "rx": 243,
+   "ry": 41.6,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 12.345679012345679,
+   "lamY": 72.11538461538461,
+   "lam": 72.11538461538461,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 104.02649756250544,
+   "FeFlex": 379.5542798299822,
+   "FcrFlex": 260.8728295688825,
+   "PnFlex": 3435.6951654221816,
+   "tors": {
+    "G": 77200,
+    "Cw": 1937367300000,
+    "J": 906182,
+    "Kz": 1,
+    "Lz": 3000,
+    "Lcz": 3000,
+    "Fe": 619.5160824182553,
+    "Fcr": 310.8025004870485,
+    "lamEq": 56.44670271026458,
+    "Pn": 4093.2689314144286
+   },
+   "Fe": 379.5542798299822,
+   "Fcr": 260.8728295688825,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 3435.6951654221816,
+   "phiPn": 3092.1256488799636,
+   "Pa": 2057.3024942647794,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": true,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 5.882352941176471,
+      "lamr": 12.368330920382814,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 51.45454545454545,
+      "lamr": 32.90859477030427,
+      "slender": true
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "UNP",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "UNP",
+    "psize": "UNP 160",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Penampang tunggal/tak-simetris — tekuk lentur-torsi (Ps. E4) dapat MENENTUKAN dan belum dihitung (perlu properti pusat geser & torsi). Hanya tekuk lentur ditampilkan — hasil berpotensi tidak konservatif."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "C",
+    "name": "UNP 160",
+    "H": 160,
+    "B": 65,
+    "tw": 7.5,
+    "tf": 10.5,
+    "A": 24,
+    "w": 18.8,
+    "Ix": 925,
+    "Iy": 85.3,
+    "ix": 6.21,
+    "iy": 1.89,
+    "Sx": 116,
+    "Sy": 18.3,
+    "imin": 1.89,
+    "t": 10.5,
+    "source": "tabel"
+   },
+   "type": "UNP",
+   "ti": {
+    "key": "UNP",
+    "name": "UNP",
+    "full": "Kanal U (channel)",
+    "std": "DIN 1026",
+    "src": "tabel",
+    "shape": "C"
+   },
+   "name": "UNP 160",
+   "Fy": 240,
+   "Ag": 2400,
+   "rx": 62.1,
+   "ry": 18.9,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 48.309178743961354,
+   "lamY": 158.73015873015873,
+   "lam": 158.73015873015873,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 78.34491973584731,
+   "FcrFlex": 68.7084946083381,
+   "PnFlex": 164.90038706001144,
+   "tors": null,
+   "Fe": 78.34491973584731,
+   "Fcr": 68.7084946083381,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Elastis (Euler)",
+   "Pn": 164.90038706001144,
+   "phiPn": 148.4103483540103,
+   "Pa": 98.74274674252183,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/tf)",
+      "lam": 6.190476190476191,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 18.533333333333335,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "siku",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "L",
+    "psize": "L 100×100×10",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Penampang tunggal/tak-simetris — tekuk lentur-torsi (Ps. E4/E5) dapat MENENTUKAN dan belum dihitung (perlu properti pusat geser & torsi). Hanya tekuk lentur ditampilkan — hasil berpotensi tidak konservatif."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "L",
+    "name": "L 100×100×10",
+    "H": 100,
+    "B": 100,
+    "a": 100,
+    "t": 10,
+    "A": 19,
+    "w": 14.9,
+    "Ix": 175,
+    "Iy": 175,
+    "ix": 3.04,
+    "iy": 3.04,
+    "Sx": 1.95,
+    "Sy": 1.95,
+    "source": "tabel"
+   },
+   "type": "L",
+   "ti": {
+    "key": "L",
+    "name": "Siku (L)",
+    "full": "Baja siku sama kaki",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "L"
+   },
+   "name": "L 100×100×10",
+   "Fy": 240,
+   "Ag": 1900,
+   "rx": 30.4,
+   "ry": 30.4,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 98.6842105263158,
+   "lamY": 98.6842105263158,
+   "lam": 98.6842105263158,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 202.6909689624609,
+   "FcrFlex": 146.21039172740524,
+   "PnFlex": 277.79974428207,
+   "tors": null,
+   "Fe": 202.6909689624609,
+   "Fcr": 146.21039172740524,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 277.79974428207,
+   "phiPn": 250.01976985386298,
+   "Pa": 166.34715226471258,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Kaki (b/t)",
+      "lam": 10,
+      "lamr": 12.99038105676658,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "SHS langsing",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "SHS",
+    "psize": "250×250×9",
+    "Fy": 345,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Penampang tertutup (HSS) — tekuk torsi/lentur-torsi dikecualikan dari Ps. E4 (konstanta torsi J besar → tak menentukan); cukup tekuk lentur.",
+    "Properti profil SHS DIHITUNG dari geometri (geometris (sudut tajam)); verifikasi terhadap katalog pabrikan."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "box",
+    "name": "250×250×9",
+    "H": 250,
+    "B": 250,
+    "t": 9,
+    "A": 86.76,
+    "w": 68.1066,
+    "Ix": 8410.2252,
+    "Iy": 8410.2252,
+    "ix": 9.845642013940314,
+    "iy": 9.845642013940314,
+    "Sx": 672.818016,
+    "Sy": 672.818016,
+    "Zx": 784.458,
+    "Zy": 784.458,
+    "imin": 9.845642013940314,
+    "source": "hitung",
+    "note": "geometris (sudut tajam)"
+   },
+   "type": "SHS",
+   "ti": {
+    "key": "SHS",
+    "name": "SHS",
+    "full": "Hollow persegi",
+    "std": "geometris",
+    "src": "hitung",
+    "shape": "box"
+   },
+   "name": "250×250×9",
+   "Fy": 345,
+   "Ag": 8676,
+   "rx": 98.45642013940314,
+   "ry": 98.45642013940314,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 30.470333938125517,
+   "lamY": 30.470333938125517,
+   "lam": 30.470333938125517,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 113.40347360679459,
+   "FeFlex": 2126.0590043561456,
+   "FcrFlex": 322.3459619761414,
+   "PnFlex": 2796.6735661050025,
+   "tors": null,
+   "Fe": 2126.0590043561456,
+   "Fcr": 322.3459619761414,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 2796.6735661050025,
+   "phiPn": 2517.0062094945024,
+   "Pa": 1674.6548300029956,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Dinding (b/t)",
+      "lam": 25.77777777777778,
+      "lamr": 33.70803886401537,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "RHS",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "RHS",
+    "psize": "200×100×6",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Penampang tertutup (HSS) — tekuk torsi/lentur-torsi dikecualikan dari Ps. E4 (konstanta torsi J besar → tak menentukan); cukup tekuk lentur.",
+    "Properti profil RHS DIHITUNG dari geometri (geometris (sudut tajam)); verifikasi terhadap katalog pabrikan."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "box",
+    "name": "200×100×6",
+    "H": 200,
+    "B": 100,
+    "t": 6,
+    "A": 34.56,
+    "w": 27.129599999999996,
+    "Ix": 1793.9072,
+    "Iy": 599.0272,
+    "ix": 7.204653845746999,
+    "iy": 4.1632875186519325,
+    "Sx": 179.39072,
+    "Sy": 119.80544,
+    "Zx": 222.432,
+    "Zy": 136.032,
+    "imin": 4.1632875186519325,
+    "source": "hitung",
+    "note": "geometris (sudut tajam)"
+   },
+   "type": "RHS",
+   "ti": {
+    "key": "RHS",
+    "name": "RHS",
+    "full": "Hollow persegi panjang",
+    "std": "geometris",
+    "src": "hitung",
+    "shape": "box"
+   },
+   "name": "200×100×6",
+   "Fy": 240,
+   "Ag": 3456,
+   "rx": 72.04653845746999,
+   "ry": 41.63287518651933,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 41.63975208567361,
+   "lamY": 72.05843907152,
+   "lam": 72.05843907152,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 380.15441676261815,
+   "FcrFlex": 184.2693806009743,
+   "PnFlex": 636.8349793569671,
+   "tors": null,
+   "Fe": 380.15441676261815,
+   "Fcr": 184.2693806009743,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 636.8349793569671,
+   "phiPn": 573.1514814212704,
+   "Pa": 381.3383109921959,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Dinding (b/t)",
+      "lam": 31.333333333333332,
+      "lamr": 40.4145188432738,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "pipa langsing",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "PIPE",
+    "psize": "Ø318.5×6.9",
+    "Fy": 345,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Penampang tertutup (HSS) — tekuk torsi/lentur-torsi dikecualikan dari Ps. E4 (konstanta torsi J besar → tak menentukan); cukup tekuk lentur.",
+    "Properti profil Pipa DIHITUNG dari geometri (eksak); verifikasi terhadap katalog pabrikan."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "pipe",
+    "name": "Ø318.5×6.9",
+    "D": 318.5,
+    "t": 6.9,
+    "A": 67.54549868924201,
+    "w": 53.02321647105497,
+    "Ix": 8201.895395506412,
+    "Iy": 8201.895395506412,
+    "ix": 11.019424327069,
+    "iy": 11.019424327069,
+    "Sx": 515.0326778967919,
+    "Sy": 515.0326778967919,
+    "Zx": 670.0619670000008,
+    "imin": 11.019424327069,
+    "source": "hitung",
+    "note": "eksak"
+   },
+   "type": "PIPE",
+   "ti": {
+    "key": "PIPE",
+    "name": "Pipa",
+    "full": "Hollow bundar (pipe)",
+    "std": "geometris",
+    "src": "hitung",
+    "shape": "pipe"
+   },
+   "name": "Ø318.5×6.9",
+   "Fy": 345,
+   "Ag": 6754.549868924201,
+   "rx": 110.19424327069001,
+   "ry": 110.19424327069001,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 27.224652676551884,
+   "lamY": 27.224652676551884,
+   "lam": 27.224652676551884,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 113.40347360679459,
+   "FeFlex": 2663.207746009365,
+   "FcrFlex": 326.7920830227052,
+   "PnFlex": 2207.33342154648,
+   "tors": null,
+   "Fe": 2663.207746009365,
+   "Fcr": 326.7920830227052,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 2207.33342154648,
+   "phiPn": 1986.6000793918322,
+   "Pa": 1321.7565398481918,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Dinding (D/t)",
+      "lam": 46.15942028985507,
+      "lamr": 63.768115942028984,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "CNP",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "CNP",
+    "psize": "C150×65×20×2.3",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Profil CNP (cold-formed) mengikuti AISI/SNI 7971 dengan luas efektif; hasil di sini hanya perkiraan tekuk lentur kolom — verifikasi terpisah.",
+    "Penampang tunggal/tak-simetris — tekuk lentur-torsi (Ps. E4) dapat MENENTUKAN dan belum dihitung (perlu properti pusat geser & torsi). Hanya tekuk lentur ditampilkan — hasil berpotensi tidak konservatif.",
+    "Properti profil CNP DIHITUNG dari geometri (garis-tengah (linear, tanpa radius)); verifikasi terhadap katalog pabrikan."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "C",
+    "name": "C150×65×20×2.3",
+    "H": 150,
+    "B": 65,
+    "C": 20,
+    "t": 2.3,
+    "xbar": 2.0254440154440156,
+    "A": 7.148399999999999,
+    "w": 5.611493999999999,
+    "Ix": 255.30285130999997,
+    "Iy": 42.55787379069498,
+    "ix": 5.97617641876138,
+    "iy": 2.4399759073263225,
+    "Sx": 34.040380174666666,
+    "Sy": 9.761974371119228,
+    "imin": 2.4399759073263225,
+    "source": "hitung",
+    "note": "garis-tengah (linear, tanpa radius)"
+   },
+   "type": "CNP",
+   "ti": {
+    "key": "CNP",
+    "name": "CNP",
+    "full": "Kanal C berbibir (ringan)",
+    "std": "garis-tengah",
+    "src": "hitung",
+    "shape": "C"
+   },
+   "name": "C150×65×20×2.3",
+   "Fy": 240,
+   "Ag": 714.8399999999999,
+   "rx": 59.7617641876138,
+   "ry": 24.399759073263226,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 50.19932126805887,
+   "lamY": 122.95203370624019,
+   "lam": 122.95203370624019,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 130.57448083662814,
+   "FcrFlex": 111.19998294649074,
+   "PnFlex": 79.49019580946943,
+   "tors": null,
+   "Fe": 130.57448083662814,
+   "Fcr": 111.19998294649074,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 79.49019580946943,
+   "phiPn": 71.54117622852249,
+   "Pa": 47.59891964638888,
+   "Pu": 0,
+   "Pa_dem": 0,
+   "dcL": null,
+   "dcA": null,
+   "local": {
+    "slender": false,
+    "items": [],
+    "cnp": true
+   }
+  }
+ },
+ {
+  "name": "D/C",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 1500,
+    "Pa": 900
+   }
+  ],
+  "output": {
+   "warn": [
+    "DFBK: Pu/φPn = 1.31 > 1,0 — kapasitas TERLAMPAUI.",
+    "ASD: Pa/(Pn/Ω) = 1.18 > 1,0 — kapasitas TERLAMPAUI."
+   ],
+   "valid": true,
+   "p": {
+    "shape": "I",
+    "name": "200×200×8×12",
+    "H": 200,
+    "B": 200,
+    "tw": 8,
+    "tf": 12,
+    "A": 63.53,
+    "w": 49.9,
+    "Ix": 4720,
+    "Iy": 1600,
+    "ix": 8.62,
+    "iy": 5.02,
+    "Sx": 472,
+    "Sy": 160,
+    "imin": 5.02,
+    "t": 12,
+    "source": "tabel"
+   },
+   "type": "WF",
+   "ti": {
+    "key": "WF",
+    "name": "WF / IWF",
+    "full": "Wide Flange (profil H/I)",
+    "std": "JIS G3192",
+    "src": "tabel",
+    "shape": "I"
+   },
+   "name": "200×200×8×12",
+   "Fy": 240,
+   "Ag": 6353,
+   "rx": 86.19999999999999,
+   "ry": 50.199999999999996,
+   "K": 1,
+   "Lx": 3000,
+   "Ly": 3000,
+   "lamX": 34.80278422273782,
+   "lamY": 59.76095617529881,
+   "lam": 59.76095617529881,
+   "govAxis": "y-y (sumbu lemah)",
+   "lamLimit": 135.96598839415685,
+   "FeFlex": 552.7066194426939,
+   "FcrFlex": 200.11519294296724,
+   "PnFlex": 1271.331820766671,
+   "tors": {
+    "G": 77200,
+    "Cw": 141376000000,
+    "J": 260437.33333333334,
+    "Kz": 1,
+    "Lz": 3000,
+    "Lcz": 3000,
+    "Fe": 808.7498199045039,
+    "Fcr": 211.96736009768966,
+    "lamEq": 49.403506183455015,
+    "Pn": 1346.6286387006223
+   },
+   "Fe": 552.7066194426939,
+   "Fcr": 200.11519294296724,
+   "govLS": "Tekuk lentur (E3)",
+   "mode": "Inelastis (tekuk tak-elastis)",
+   "Pn": 1271.331820766671,
+   "phiPn": 1144.198638690004,
+   "Pa": 761.2765393812401,
+   "Pu": 1500,
+   "Pa_dem": 900,
+   "dcL": 1.3109611821574565,
+   "dcA": 1.1822247940695942,
+   "local": {
+    "slender": false,
+    "items": [
+     {
+      "el": "Sayap (b/2tf)",
+      "lam": 8.333333333333334,
+      "lamr": 16.165807537309522,
+      "slender": false
+     },
+     {
+      "el": "Badan (h/tw)",
+      "lam": 22,
+      "lamr": 43.01259505462712,
+      "slender": false
+     }
+    ],
+    "cnp": false
+   }
+  }
+ },
+ {
+  "name": "panjang 0",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 0,
+    "Ly": 0,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Panjang batang (Lx/Ly) harus > 0."
+   ],
+   "valid": false
+  }
+ },
+ {
+  "name": "Fy 0",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "200×200×8×12",
+    "Fy": 0,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Fy harus > 0."
+   ],
+   "valid": false
+  }
+ },
+ {
+  "name": "profil tidak ada",
+  "fn": "compute",
+  "args": [
+   {
+    "ptype": "WF",
+    "psize": "xx",
+    "Fy": 240,
+    "Kpreset": "1",
+    "Kval": 1,
+    "Lx": 3000,
+    "Ly": 3000,
+    "Kz": 1,
+    "Lz": 3000,
+    "Pu": 0,
+    "Pa": 0
+   }
+  ],
+  "output": {
+   "warn": [
+    "Profil belum dipilih."
+   ],
+   "valid": false
+  }
+ }
+]

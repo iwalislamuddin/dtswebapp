@@ -43,6 +43,6 @@ Acuan besar (> 500 KB, mis. permukaan interaksi P–M) ditulis ringkas dengan 12
 mengganti beban pada penampang yang sama boleh memakai `omit: ['surf']` agar data identik tidak disimpan ulang.
 Bila modul lama crash pada suatu input, jangan rekam kasusnya: perbaiki di port, uji langsung, dan catat di TODO.
 
-Catatan: tool baja memakai `window.SteelProfiles` (`core/steel-profiles.js`). Library itu perlu di-port ke
-`shared/steel-profiles.ts` lebih dulu, dan `scripts/golden/extract.mjs` perlu memuat `core/steel-profiles.js`
-ke sandbox sebelum modulnya.
+Harness memuat library inti (`core/steel-profiles.js`) ke sandbox dan mengisi variabel yang biasanya diisi
+`mount()` (`SP`, `state.steel`). Library inti direkam dengan id `core:<nama>`. Modul yang membaca profil dari
+state UI memakai `profile: [tipe, ukuran]` pada kasus — profil ikut direkam sebagai argumen terakhir.

@@ -114,11 +114,15 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
             `two-way-slab` (+ `rhoMinBeam`, `stripDesign` di `shared/concrete.ts`) — 2026-10-07
       - [x] Beton gelombang 2: `column-pm`, `continuous-beam`, `composite-slab`, `concrete-stair`
             (+ `crackedInertia`, `effectiveInertia` di `shared/concrete.ts`) — 2026-10-07 — **kelompok beton lengkap**
-      - [ ] Baja (port `core/steel-profiles.js` → `shared/` dulu): `steel-tension`, `steel-compression`,
-            `steel-flexure`, `steel-beam-analysis`, `base-plate`
-      - [ ] Sambungan: `bolt-connection`, `weld-connection`, `anchor-bolt-group`
-      - [ ] Analisis struktur: `portal-frame`, `gable-frame`
-      - [ ] Umum & hidraulika: `load-combo`, `wind-load`, `rational-method`, `open-channel`, `pipe-flow`
+      - [x] Baja: `steel-tension`, `steel-compression`, `steel-flexure`, `steel-beam-analysis`, `base-plate`
+            (+ `shared/steel-profiles.ts` 1:1 dari `core/steel-profiles.js`, `shared/steel.ts`) — 2026-10-07
+      - [ ] Analisis struktur: `portal-frame`, `gable-frame` (setelah baja)
+      - [ ] Umum & hidraulika: `wind-load`, `rational-method`, `open-channel`, `pipe-flow` (hidraulika jarang
+            dipakai pemilik, tetap dipindahkan)
+      - ⏸ **Sambungan** `bolt-connection`, `weld-connection`, `anchor-bolt-group` — DITAHAN, pemilik ingin diskusi
+        dulu (2026-10-07)
+      - ⏸ **`load-combo`** — TIDAK di-port; disembunyikan di UI baru, akan dihapus atau diganti formatnya
+        (2026-10-07). Fitur handoff "Kirim ke…" ikut ditinjau ulang bersamanya
 - [ ] **[Claude]** Shell React sesuai UI.md: menu bar File/Help, navigasi kiri, header, tab Input/Detail, tema
       Light/Dark (token `[data-theme]`, aksen `#566246`, tipografi Matrix)
 - [ ] **[Claude]** Routing path `/{tool}` + lazy load per tool; PWA `vite-plugin-pwa` (prompt update seperti Matrix);
@@ -132,6 +136,11 @@ Port dibuat 1:1 (golden test). Perubahan rumus/perilaku dikumpulkan di sini lalu
 terpisah yang memperbarui acuan golden secara sadar.
 
 - [ ] **[Anda]** Daftar tool yang isinya ingin diubah (disampaikan pemilik 2026-10-07, rinciannya menyusul)
+- [ ] ⚠️ **Profil siku (L) di `core/steel-profiles.js` salah baca kolom** (ditemukan 2026-10-07): Sx = Sy = nilai imin
+      (L75×75×6 → 1,46 cm³, seharusnya ±8,5) dan imin = undefined. Akibat: cek kelangsingan L/r siku di
+      `steel-tension` terlewati diam-diam; lentur siku `steel-flexure` (F10 indikatif) ±6× terlalu kecil. Juga cek
+      `steel-compression` siku memakai ix/iy, bukan iv (sumbu lemah utama) → tekuk siku tunggal tidak konservatif.
+      Perbaiki bersama penggantian sumber ke tabel JIS Matrix (punya Iu/Iv/iu/iv). **Prioritas pertama setelah port.**
 - [ ] `footing-design` → **`shallow-foundation`** dan `pile-cap` → **`deep-foundation`** (+ redirect 301), tab
       Settlement opsional — spesifikasi: [TOOL-REVISIONS.md](TOOL-REVISIONS.md) §1–3
 - [ ] **Library Data** (Premium; tanah, profil lapis, CPT, N-SPT, material; nama + deskripsi, tanpa proyek) —
@@ -141,6 +150,8 @@ terpisah yang memperbarui acuan golden secara sadar.
       (dinding nyata praktis tak mencapainya) — tambahkan uji langsung saat fungsi tumpu terfaktor dirapikan
 - [ ] `settlement`: derajat konsolidasi melompat kecil di U ≈ 60% (batas cabang Tv = 0,2827; rumus log memberi
       59,66% di sana) — geser batas ke Tv ≈ 0,286 agar kontinu
+- `steel-flexure`: SHS/RHS dengan sayap langsing (mis. SHS 200×6, Fy kustom 450) membuat build lama **crash**
+  (`f.lamF` tak ada pada F7); port memakai λ klasifikasi sayap — diuji langsung, kasus dikeluarkan dari golden
 - `concrete-stair`: tumpuan rol-rol (mekanisme) membuat build lama **crash** (solusi layan null tidak dicek); port
   melaporkan "Struktur tidak stabil" — diuji langsung, kasus ini dikeluarkan dari golden
 - β1 disatukan ke versi Tabel 22.2.2.4.3 (0,65 untuk f'c ≥ 55 MPa) di `shared/concrete.ts`. Modul lama tapak,
