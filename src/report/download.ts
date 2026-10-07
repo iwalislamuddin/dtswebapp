@@ -1,10 +1,7 @@
 import type { Report, ReportMeta } from './model'
-import { buildPdf } from './pdf'
-import { reportLines, reportText } from './text'
 
-// Unduhan laporan di browser. Gating Premium (Tahap 4) dipasang di satu titik pemanggil (menu File / tab Detail).
-
-export type ReportFormat = 'pdf' | 'txt'
+// Unduh laporan PDF di browser. Pembangun PDF (pdf-lib) & font DejaVu dimuat hanya saat diperlukan (chunk
+// terpisah). Gating Premium dipasang di pemanggil (src/app/premium.ts).
 
 const p2 = (x: number) => String(x).padStart(2, '0')
 
@@ -15,32 +12,41 @@ export function reportMeta(appVersion: string, now = new Date()): ReportMeta {
   }
 }
 
-/** Nama berkas: <tool>-YYYYMMDD-HHMM.<ext>. */
-export function reportFileName(toolId: string, fmt: ReportFormat, meta: ReportMeta): string {
-  return `${toolId}-${meta.date.replace(/[-:]/g, '').replace(' ', '-')}.${fmt}`
+/** Nama berkas: <tool>-YYYYMMDD-HHMM.pdf. */
+export function reportFileName(toolId: string, meta: ReportMeta): string {
+  return `${toolId}-${meta.date.replace(/[-:]/g, '').replace(' ', '-')}.pdf`
 }
 
-function saveBlob(filename: string, blob: Blob) {
-  const url = URL.createObjectURL(blob)
+let fontsP: Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }> | null = null
+
+async function loadFonts() {
+  const [{ default: regUrl }, { default: boldUrl }] = await Promise.all([
+    import('dejavu-fonts-ttf/ttf/DejaVuSans.ttf?url'),
+    import('dejavu-fonts-ttf/ttf/DejaVuSans-Bold.ttf?url'),
+  ])
+  const get = (u: string) => fetch(u).then((r) => {
+    if (!r.ok) throw new Error(`Font gagal dimuat (${r.status})`)
+    return r.arrayBuffer()
+  })
+  const [regular, bold] = await Promise.all([get(regUrl), get(boldUrl)])
+  return { regular, bold }
+}
+
+export async function downloadReportPdf(toolId: string, report: Report, meta: ReportMeta): Promise<void> {
+  fontsP ??= loadFonts().catch((e) => {
+    fontsP = null
+    throw e
+  })
+  const [{ buildPdf }, fonts] = await Promise.all([import('./pdf'), fontsP])
+  const bytes = await buildPdf(report, meta, fonts)
+  const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'application/pdf' }))
   const a = document.createElement('a')
   a.href = url
-  a.download = filename
+  a.download = reportFileName(toolId, meta)
   document.body.append(a)
   a.click()
   setTimeout(() => {
     a.remove()
     URL.revokeObjectURL(url)
   }, 0)
-}
-
-export function downloadReport(toolId: string, report: Report, fmt: ReportFormat, meta: ReportMeta) {
-  const name = reportFileName(toolId, fmt, meta)
-  if (fmt === 'txt') {
-    saveBlob(name, new Blob([reportText(report, meta)], { type: 'text/plain;charset=utf-8' }))
-    return
-  }
-  // PDF berisi ASCII murni: ubah per karakter ke byte agar tidak ada encoding ulang UTF-8.
-  const pdf = buildPdf(reportLines(report, meta), report.title)
-  const bytes = Uint8Array.from(pdf, (c) => c.charCodeAt(0))
-  saveBlob(name, new Blob([bytes], { type: 'application/pdf' }))
 }

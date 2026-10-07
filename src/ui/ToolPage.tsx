@@ -4,7 +4,10 @@ import { useUi, type ToolTab } from '../app/ui-state'
 import { toolReportLoader, toolUI } from '../tools/registry'
 import type { ToolEntry } from '../tools'
 import type { Report } from '../report/model'
-import { ReportView } from './ReportView'
+import { DetailTab } from './ReportView'
+import { FileDown, Loader2, Lock } from 'lucide-react'
+import { usePremium } from '../app/premium'
+import { downloadActivePdf } from '../app/report-actions'
 
 const TABS: { id: ToolTab; label: string }[] = [
   { id: 'input', label: 'Input' },
@@ -74,24 +77,41 @@ function ActiveTool({
   header: ReactNode
 }) {
   const defaultReport = useDefaultReport(tool.id, !UI)
+  const { premium } = usePremium()
+  const hasReport = useUi((s) => s.report?.toolId === tool.id)
+  const pdfState = useUi((s) => s.pdfState)
   return (
     <div className="tool">
       {header}
-      <div className="tool-tabs" role="tablist" aria-label="Tampilan tool">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            role="tab"
-            id={`tab-${t.id}`}
-            aria-selected={tab === t.id}
-            aria-controls="tool-panel"
-            className={`tool-tab${tab === t.id ? ' active' : ''}`}
-            onClick={() => useUi.getState().setTab(tool.id, t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className="tool-tabs">
+        <div role="tablist" aria-label="Tampilan tool" className="tool-tablist">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              id={`tab-${t.id}`}
+              aria-selected={tab === t.id}
+              aria-controls="tool-panel"
+              className={`tool-tab${tab === t.id ? ' active' : ''}`}
+              onClick={() => useUi.getState().setTab(tool.id, t.id)}
+            >
+              {t.label}
+              {t.id === 'detail' && !premium && <Lock size={12} className="tab-lock" aria-label="Premium" />}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="btn pdf-btn"
+          disabled={!hasReport || !premium || pdfState === 'busy'}
+          onClick={() => void downloadActivePdf()}
+          title={!premium ? 'Download PDF — fitur Premium' : !hasReport ? 'Lengkapi input untuk membuat laporan' : 'Unduh laporan perhitungan (PDF)'}
+        >
+          {pdfState === 'busy' ? <Loader2 size={14} className="spin" /> : premium ? <FileDown size={14} /> : <Lock size={13} />}
+          PDF
+        </button>
+        {pdfState === 'error' && <span className="pdf-err">PDF gagal dibuat — coba lagi</span>}
       </div>
       <div className="tool-body" role="tabpanel" id="tool-panel" aria-labelledby={`tab-${tab}`}>
         {UI ? (
@@ -99,9 +119,8 @@ function ActiveTool({
             <UI key={tool.id} tab={tab} />
           </Suspense>
         ) : tab === 'detail' && defaultReport ? (
-          <ReportView
+          <DetailTab
             report={defaultReport}
-            toolId={tool.id}
             note="Contoh perhitungan dengan input bawaan — tampilan input baru tool ini menyusul di versi 0.8."
           />
         ) : (

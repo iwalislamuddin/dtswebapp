@@ -4,7 +4,7 @@ import { listProfiles, typeInfo } from '../../calc/shared/steel-profiles'
 import { useAutoCompute, useToolInput, useToolReport } from '../../app/tool-state'
 import { fx } from '../../report/model'
 import { Card, NumField, Panel, ResetButton, RowTable, Segmented, SelectField, StatTiles, SubTabs, ToolLayout, useSize, Field } from '../../ui/kit'
-import { ReportView } from '../../ui/ReportView'
+import { DetailTab } from '../../ui/ReportView'
 import type { ToolUIProps } from '../registry'
 import { BeamDiagram, DIAGRAM_TABS, type DiagramTab } from './BeamDiagrams'
 import { BeamPreview } from './BeamPreview'
@@ -22,10 +22,14 @@ export default function SteelBeamAnalysis({ tab }: ToolUIProps) {
   const report = useMemo(() => (result && r?.valid ? beamReport(result.input, r) : null), [result, r])
   useToolReport(ID, stale ? null : report)
 
-  if (tab === 'detail') {
-    if (!report) return <p className="msg warn">Lengkapi input (profil, bentang, minimal satu beban) untuk melihat detail perhitungan.</p>
-    return <ReportView report={report} toolId={ID} note={stale ? 'Input sedang tidak valid — detail di bawah dari input sah terakhir.' : undefined} />
-  }
+  if (tab === 'detail')
+    return (
+      <DetailTab
+        report={report}
+        empty="Lengkapi input (profil, bentang, minimal satu beban) untuk melihat detail perhitungan."
+        note={stale ? 'Input sedang tidak valid — detail di bawah dari input sah terakhir.' : undefined}
+      />
+    )
 
   const status = stale
     ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.'

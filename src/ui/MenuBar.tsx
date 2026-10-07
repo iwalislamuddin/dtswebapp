@@ -3,8 +3,8 @@ import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { APP_NAME } from '../app/appInfo'
 import { linkClick, navigate } from '../app/router'
 import { useUi } from '../app/ui-state'
-import { APP_VERSION } from '../app/version'
-import { downloadReport, reportMeta, type ReportFormat } from '../report/download'
+import { downloadActivePdf } from '../app/report-actions'
+import { premiumStatus } from '../app/premium'
 import { BrandMark } from './Brand'
 import { UpdatePrompt } from './UpdatePrompt'
 
@@ -22,16 +22,15 @@ interface MenuDef {
 }
 
 // Simpan/Buka menunggu akun Supabase (Tahap 4); item tampil nonaktif agar susunan menu final terlihat. Download
-// Report aktif bila tool yang tampil punya laporan (gating Premium menyusul di Tahap 4, satu titik di sini).
+// Report aktif bila tool yang tampil punya laporan dan pengguna Premium (src/app/premium.ts).
 const SOON = 'Segera — membutuhkan akun Edifisia'
 
 function menus(): MenuDef[] {
   const ui = useUi.getState()
   // Laporan tool yang sedang tampil (null di halaman depan / tool tanpa laporan).
   const rep = ui.report
-  const dl = (fmt: ReportFormat) =>
-    rep ? () => downloadReport(rep.toolId, rep.report, fmt, reportMeta(APP_VERSION)) : undefined
-  const noReport = 'Buka tool yang sudah punya laporan'
+  const premium = premiumStatus().premium
+  const pdfHint = !rep ? 'Buka tool yang sudah punya laporan' : !premium ? 'Fitur Premium' : undefined
   return [
     {
       id: 'file',
@@ -42,8 +41,7 @@ function menus(): MenuDef[] {
         { label: 'Simpan Pekerjaan…', hint: SOON },
         { label: 'Buka Pekerjaan…', hint: SOON },
         'sep',
-        { label: 'Download Report (PDF)', onSelect: dl('pdf'), hint: rep ? undefined : noReport },
-        { label: 'Download Report (.txt)', onSelect: dl('txt'), hint: rep ? undefined : noReport },
+        { label: 'Download Report (PDF)', onSelect: rep && premium ? () => void downloadActivePdf() : undefined, hint: pdfHint },
       ],
     },
     {

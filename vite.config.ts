@@ -33,7 +33,8 @@ function prerender(): Plugin {
 // pembersihan Tahap 5. Kode tetap di src/; hasil build ke dist/ (sama dengan scripts/cf-build.sh — dipakai bergantian).
 export default defineConfig({
   root: 'web',
-  build: { outDir: '../dist', emptyOutDir: true },
+  // chunk pdf-lib (lazy, hanya saat unduh PDF) memang ±1,1 MB
+  build: { outDir: '../dist', emptyOutDir: true, chunkSizeWarningLimit: 1200 },
   // /src/... (entry di web/index.html) menunjuk ke src/ di akar repo, bukan web/src.
   resolve: { alias: [{ find: /^\/src\//, replacement: fileURLToPath(new URL('./src/', import.meta.url)) }] },
   plugins: [
@@ -65,7 +66,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,json}'],
         navigateFallback: '/index.html',
         // Halaman pre-render hanya untuk crawler/muat pertama; offline cukup index.html (SPA).
-        globIgnores: ['404.html', ...TOOLS.map((t) => `${t.id}.html`)],
+        // + pembangun PDF (pdf-lib, ±1 MB) & font: dimuat saat tombol PDF ditekan, tidak perlu di-precache.
+        globIgnores: ['404.html', ...TOOLS.map((t) => `${t.id}.html`), 'assets/pdf-*.js'],
         cleanupOutdatedCaches: true,
       },
     }),

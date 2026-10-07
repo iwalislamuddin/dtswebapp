@@ -14,7 +14,7 @@ Penanda pelaksana: **[Anda]** = manual di dashboard/akun (tidak bisa dikerjakan 
 
 ## Tahap 0 — Keputusan ✅ (2026-10-06/07)
 
-Vite + **React + TypeScript**; semua tool gratis, Premium hanya Save & Download Report; batas 50 pekerjaan per user;
+Vite + **React + TypeScript**; semua tool gratis, Premium = Save, tab Detail & PDF (Detail dikunci 2026-10-08); batas 50 pekerjaan per user;
 login Google. Rincian: [PLATFORM.md](PLATFORM.md) §1.
 
 ## Tahap 1 — Hosting & OAuth (bisa mulai sekarang, paralel)
@@ -127,7 +127,7 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 - [x] **[Claude]** Kontrak UI tool (state input, hitung otomatis, Detail/Report) — ditetapkan bersama tool
       percontohan 2026-10-08: [`src/tools/README.md`](../src/tools/README.md)
 - [x] **[Claude]** Laporan dari satu sumber per tool (`src/report/`): model `Report` → tab Detail (HTML + SVG ikut
-      tema), `.txt`, dan PDF tanpa library (port `core/report.js`, Courier, gambar vektor). Modul laporan per tool di
+      tema) dan PDF — diganti 2026-10-08: PDF pdf-lib berwarna, .txt dihapus. Modul laporan per tool di
       `src/tools/<id>/report.ts`; contoh acuan `bolt-connection` (tab Detail memakai input bawaan sampai UI barunya
       ada). File > Download Report aktif bila tool punya laporan — 2026-10-07. Sisa: laporan 33 tool lain ditulis
       bersama UI-nya di Tahap 5; gating Premium di Tahap 4
@@ -177,14 +177,19 @@ terpisah yang memperbarui acuan golden secara sadar.
       saja; pesan jelas saat batas 50 tercapai (hint `saved_works_limit`)
 - [ ] **[Claude]** Status "Trial/Premium s/d …", peringatan ≤ 7 hari; tombol beli disembunyikan selama
       `PREMIUM_URL` belum ada
-- [ ] **[Claude]** Gating Download Report di satu titik mengacu status Supabase; tab Detail tetap terbuka
+- [ ] **[Claude]** `src/app/premium.ts` (`usePremium`) mengacu status Supabase — satu titik gating tab Detail & PDF.
+      Kini: `npm run dev` = Premium, build produksi = Guest (Detail & PDF terkunci) sampai tahap ini
 - [ ] **[Claude]** Uji empat akun: Guest, Premium/trial, Free User (trial habis), Premium expired — email & Google
 - [ ] **[Anda]** Siapkan akun uji di dev; grant/expire manual lewat SQL `platform.grant_premium` (README platform)
 
 ## Tahap 5 — Tool di UI baru
 
+- [x] **[Bersama]** Tinjauan pemilik 2026-10-08 → diterapkan: header kategori navigasi kontras & bisa dilipat; tab
+      Detail = laporan dengan heading, rumus → substitusi → hasil, tabel, gambar berwarna; Detail & PDF Premium;
+      tombol PDF di kanan baris tab; ekspor .txt dihapus; PDF baru (pdf-lib + font DejaVu, A4, berwarna, footer
+      bernomor halaman) menggantikan PDF monospace tanpa library. Tab Input disetujui
 - [ ] **[Bersama]** Tool percontohan **Analisis Balok Baja** (`steel-beam-analysis`, dipilih 2026-10-08 karena paling
-      dekat mockup "Balok Sederhana") — **dibangun 2026-10-08, menunggu tinjauan pemilik** sebelum tool lain diikuti.
+      dekat mockup "Balok Sederhana") — dibangun 2026-10-08; **tinjauan putaran 2** (laporan/PDF baru) sebelum tool lain diikuti.
       Hitung otomatis sudah diputuskan (UI.md). Catatan percontohan: bawaan profil WF 300×150 (build lama memilih
       ukuran tengah daftar, WF 500×200); batas 3 beban merata / 4 terpusat dari mesin hitung lama dipertahankan
 - [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail)

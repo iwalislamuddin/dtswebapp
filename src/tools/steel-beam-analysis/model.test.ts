@@ -46,12 +46,23 @@ describe('analisis balok baja — input UI', () => {
     expect(buildBeamReport(none)).toBeNull()
   })
 
-  it('laporan: bagian, gambar diagram, nilai hasil', () => {
+  it('laporan: bagian, rumus reaksi konsisten dengan hasil hitung, gambar', () => {
     const rep = buildBeamReport(BEAM_DEFAULTS)!
-    expect(rep.sections.map((s) => s.title)).toEqual(['Data input', 'Beban', 'Reaksi', 'Hasil'])
-    expect(rep.sections[1].blocks.some((b) => b.k === 'figure')).toBe(true)
+    expect(rep.sections.map((s) => s.title)).toEqual([
+      'Data penampang & material', 'Geometri & beban', 'Reaksi tumpuan', 'Gaya dalam', 'Lendutan', 'Tegangan lentur elastis',
+    ])
     const r = computeBeam(BEAM_DEFAULTS)!.r
-    const rows = rep.sections[3].blocks[0]
-    expect(rows.k === 'rows' && rows.rows[0]).toMatchObject({ value: `${r.Mmax!.toFixed(2)} kN·m` })
+    const steps = rep.sections[2].blocks.flatMap((b) => (b.k === 'calc' ? b.steps : []))
+    expect(steps.map((s) => s.value)).toEqual([r.RB!.toFixed(2), r.RA!.toFixed(2)])
+    // ΣW·(x − xA) / L di tabel = RB dari mesin hitung
+    const tbl = rep.sections[2].blocks.find((b) => b.k === 'table')
+    const sum = tbl?.k === 'table' ? Number(tbl.rows[tbl.rows.length - 1][3]) : NaN
+    expect(sum / r.L!).toBeCloseTo(r.RB!, 2)
+    // tabel kontribusi momen menjumlah ke Mmaks
+    const mt = rep.sections[3].blocks.filter((b) => b.k === 'table')[0]
+    const parts = mt?.k === 'table' ? mt.rows.slice(0, -1).map((x) => Number(x[3])) : []
+    expect(parts.reduce((a, b) => a + b, 0)).toBeCloseTo(r.Mmax!, 1)
+    expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(2)
+    expect(rep.summary?.length).toBeGreaterThan(3)
   })
 })

@@ -1,4 +1,4 @@
-import { Search, X } from 'lucide-react'
+import { ChevronRight, Search, X } from 'lucide-react'
 import { useMemo, useState, type MouseEvent } from 'react'
 import { linkClick, toolPath } from '../app/router'
 import { NARROW, useUi } from '../app/ui-state'
@@ -9,6 +9,7 @@ const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/\p{Mn}/gu,
 
 export function NavPanel({ activeId }: { activeId: string | null }) {
   const [q, setQ] = useState('')
+  const collapsed = useUi((s) => s.navCollapsed)
   const groups = useMemo(() => {
     const k = norm(q.trim())
     const all = toolGroups()
@@ -42,9 +43,27 @@ export function NavPanel({ activeId }: { activeId: string | null }) {
         )}
       </div>
       <div className="nav-list">
-        {groups.map((g) => (
-          <section key={g.category} className="nav-group">
-            <h2 className="nav-cat">{g.category}</h2>
+        {groups.map((g) => {
+          // Saat mencari, semua kelompok hasil terbuka; kelompok tool aktif tidak bisa tersembunyi diam-diam.
+          const hasActive = g.tools.some((t) => t.id === activeId)
+          const open = !!q.trim() || !collapsed.includes(g.category)
+          const listId = `nav-g-${g.category.replace(/\W+/g, '-')}`
+          return (
+          <section key={g.category} className={`nav-group${open ? ' open' : ''}`}>
+            <h2 className="nav-cat">
+              <button
+                type="button"
+                aria-expanded={open}
+                aria-controls={listId}
+                onClick={() => useUi.getState().toggleCategory(g.category)}
+              >
+                <ChevronRight size={14} className="nav-chev" aria-hidden="true" />
+                <span>{g.category}</span>
+                {!open && hasActive && <span className="nav-dot" title="Tool aktif ada di kelompok ini" />}
+                <span className="nav-count">{g.tools.length}</span>
+              </button>
+            </h2>
+            <div id={listId} className="nav-items" hidden={!open}>
             {g.tools.map((t) => (
               <a
                 key={t.id}
@@ -57,8 +76,10 @@ export function NavPanel({ activeId }: { activeId: string | null }) {
                 {t.name}
               </a>
             ))}
+            </div>
           </section>
-        ))}
+          )
+        })}
         {groups.length === 0 && <p className="nav-empty">Tidak ada tool yang cocok.</p>}
       </div>
     </aside>

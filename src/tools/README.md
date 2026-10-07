@@ -19,8 +19,10 @@ Contoh acuan: **`steel-beam-analysis/`** (tool percontohan). Arah tampilan: [doc
    Naikkan `version` bila bentuk input berubah.
 2. **Hitung otomatis, tanpa tombol Hitung**: `useAutoCompute(input, compute)`. Field tidak valid → kontrol merah +
    pesan di bawahnya; hasil sah terakhir tetap tampil **diredupkan** (`.stale`) dengan pesan di panel hasil.
-3. **Laporan**: `useToolReport(id, report)` mendaftarkan laporan untuk File > Download Report (null saat input tidak
-   valid). Tab Detail = `<ReportView report … />`.
+3. **Laporan** (`report.ts`) memakai model `src/report/model.ts`: `summary`, bagian bernomor berisi `h` (subjudul),
+   `p`, `rows` (kv/check), `calc` (langkah **rumus → substitusi → hasil**, markup `_{}` `^{}` `rac{}{}`), `table`,
+   `figure` (op berwarna `c: 'load' | 'v' | 'm' | …`). `useToolReport(id, report)` mendaftarkannya untuk tombol PDF;
+   tab Detail = `<DetailTab report … />` (gating Premium di dalamnya).
 4. **Tata letak tab Input**: `ToolLayout` — kiri kartu bernomor (`Card n={1} …`), kanan atas `Panel "Preview"`, kanan
    bawah `Panel "Diagram"` dengan `SubTabs` + `StatTiles` "Nilai maksimum". Halaman tidak di-scroll; kolom input
    scroll sendiri. ≤ 900 px kolom menumpuk.

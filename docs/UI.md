@@ -58,8 +58,8 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 
 ## Shell terpasang (2026-10-07)
 
-- Menu `File`: Halaman Depan · Simpan Pekerjaan… · Buka Pekerjaan… · Download Report… (tiga terakhir tampil
-  "segera" sampai akun Supabase Tahap 4). Menu `Help`: Catatan Rilis · Tentang. Kanan: Perbarui aplikasi (PWA),
+- Menu `File`: Halaman Depan · Simpan Pekerjaan… · Buka Pekerjaan… (tampil "segera" sampai akun Supabase Tahap 4)
+  · Download Report (PDF) (Premium). Menu `Help`: Catatan Rilis · Tentang. Kanan: Perbarui aplikasi (PWA),
   tema, akun ("Masuk", nonaktif sampai Tahap 4). Tombol panel di kiri menu bar membuka/menutup navigasi.
 - Header tool: kategori, nama, deskripsi SEO (2 baris). Tool tanpa UI baru menampilkan placeholder di kedua tab.
 
@@ -70,6 +70,17 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 dengan sub-tab Reaksi · Geser · Momen · Lendutan (bidik hover: x, V, M, δ) dan kartu Nilai maksimum; tab Detail =
 laporan. Kontrak teknis untuk tool berikutnya: [`src/tools/README.md`](../src/tools/README.md). Menunggu tinjauan
 pemilik.
+
+## Keputusan pemilik 2026-10-08 (tinjauan percontohan)
+
+- Navigasi: **header kategori kontras** (latar olive, tebal) dan **bisa dilipat**; status lipat disimpan.
+- Tab Input percontohan **disetujui**.
+- Tab **Detail = laporan perhitungan**: heading bernomor, ringkasan hasil, langkah **rumus → substitusi → hasil**
+  (pecahan, subskrip), tabel, gambar berwarna. **Dikunci untuk non-Premium** (daftar isi saja + ajakan Premium).
+- Tombol **PDF** di baris tab, pojok kanan (juga File > Download Report). Ekspor .txt **dihapus**.
+- **PDF bukan monospace lagi**: A4, kepala laporan, heading berwarna, tabel, rumus, gambar berwarna, footer
+  (versi · tools.edifisia.com · tanggal · nomor halaman). Dibuat dengan pdf-lib + font DejaVu Sans tertanam
+  (dimuat hanya saat tombol PDF ditekan).
 
 ## Masih dibahas (Tahap 5)
 

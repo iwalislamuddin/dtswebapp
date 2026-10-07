@@ -18,8 +18,9 @@ riwayat git) dan pilihan domain lama `edfs.web.id`.
    supaya login dan gating tidak dibangun dua kali.
 5. **Stack UI: Vite + React + TypeScript** (framework dikonfirmasi 2026-10-07) — prinsip *zero build*
    ditinggalkan. Acuan stack Matrix: `vite-plugin-pwa`, `@supabase/supabase-js` dari npm.
-6. **Semua tool tetap gratis** untuk siapa pun. Premium hanya untuk **Save** dan
-   **Download Report** (PDF/.txt). Tidak ada modul premium.
+6. **Semua tool tetap gratis** untuk siapa pun (tab Input: input, diagram, ringkasan hasil). Premium untuk **Save**,
+   **tab Detail** (laporan perhitungan langkah demi langkah) dan **Download Report PDF** — Detail ikut dikunci
+   (keputusan pemilik 2026-10-08); ekspor .txt dihapus. Tidak ada modul premium.
 7. **Batas 50 pekerjaan tersimpan per user.**
 8. **Login Google diaktifkan** di Supabase (ikut berlaku untuk Matrix, karena satu
    project Supabase = satu konfigurasi provider untuk semua aplikasi).
@@ -148,7 +149,7 @@ di-percent-encode. Set di terminal sendiri, jangan ke repo/chat.
 Masterplan menulis gating Download Report "di sisi server". Di Civil Tools laporan PDF **dibuat di browser**, jadi
 gating unduhan tetap di browser: cukup untuk pengguna biasa, tetapi bisa diakali oleh orang yang paham DevTools.
 
-- **A (dipakai):** gating di browser, satu titik untuk PDF & .txt. Nilai premium yang sungguh terlindungi adalah
+- **A (dipakai):** gating di browser, satu titik (`src/app/premium.ts`) untuk tab Detail & PDF. Nilai premium yang sungguh terlindungi adalah
   Save (RLS).
 - **B (nanti, bila perlu):** pindahkan pembuatan PDF ke edge function yang mengecek `has_premium` lebih dulu.
 
