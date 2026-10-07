@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Runner dipatok ke ubuntu-24.04 (pola EDFS Matrix): ubuntu-latest pindah ke 26.04 mulai 2026-10-19.
+jobs:
+  app:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      # Acuan golden harus tetap identik dengan compute() build lama: rekam ulang lalu pastikan tidak ada beda.
+      - name: Golden tidak berubah
+        run: |
+          npm run golden
+          git diff --exit-code -- src/calc/__golden__
+      - run: npm run build

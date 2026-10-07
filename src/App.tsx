@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { trackPageView } from './app/analytics'
-import { applyHead, headFor } from './app/head'
+import { applyHead } from './app/head'
+import { headFor } from './app/seo'
 import { linkClick, parsePath, usePath } from './app/router'
 import { useUi } from './app/ui-state'
 import { toolById } from './tools'

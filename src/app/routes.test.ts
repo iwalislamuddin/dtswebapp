@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parsePath } from './router'
+import { parsePath } from './routes'
 
 describe('parsePath', () => {
   it('halaman depan', () => {
@@ -8,6 +8,7 @@ describe('parsePath', () => {
   it('slug tool di katalog, termasuk yang tidak tampil di navigasi', () => {
     expect(parsePath('/beam-flexure')).toEqual({ kind: 'tool', id: 'beam-flexure' })
     expect(parsePath('/beam-flexure/')).toEqual({ kind: 'tool', id: 'beam-flexure' })
+    expect(parsePath('/beam-flexure.html')).toEqual({ kind: 'tool', id: 'beam-flexure' })
     expect(parsePath('/base-plate')).toEqual({ kind: 'tool', id: 'base-plate' })
     expect(parsePath('/load-combo')).toEqual({ kind: 'tool', id: 'load-combo' })
   })

@@ -167,3 +167,9 @@ input.ctl[type='number'] {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Isi statis pre-render (src/app/seo.ts) — tampil sekejap sebelum React mengganti #root. */
+.pre {
+  max-width: 820px;
+  padding: 24px 28px;
+}

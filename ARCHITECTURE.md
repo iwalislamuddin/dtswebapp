@@ -35,7 +35,7 @@ Dua arsitektur hidup berdampingan sampai rilis v0.8.0: **build baru** (sasaran, 
 |---|---|
 | `web/index.html` | Entry Vite (`root: 'web'`, karena `index.html` akar masih milik build lama; dipindah ke akar saat pembersihan Tahap 5). Skrip awal: tema tanpa kedip + pemulihan cache SW basi. `/src/...` di-alias ke `src/` akar. |
 | `src/App.tsx`, `App.css`, `index.css` | Kerangka jendela & token tema `[data-theme]` (aksen `#566246` light / `#a4c2a5` dark). |
-| `src/app/` | `router.ts` (path `/{id}`, history API, tanpa library) · `head.ts` (title/description/canonical/noindex per rute — dipakai juga pre-render nanti) · `ui-state.ts` (zustand: tema & navigasi di localStorage, tab per tool, dialog) · `analytics.ts` (GA4, hanya di `tools.edifisia.com`) · `appInfo.ts` · `releaseNotes.ts` |
+| `src/app/` | `routes.ts` (penguraian path `/{id}`, murni) · `router.ts` (history API, tanpa library) · `seo.ts` (head per rute, HTML pre-render, sitemap — murni, dipanggil plugin build) · `head.ts` (memasang head di browser) · `version.ts` · `ui-state.ts` (zustand: tema & navigasi di localStorage, tab per tool, dialog) · `analytics.ts` (GA4, hanya di `tools.edifisia.com`) · `appInfo.ts` · `releaseNotes.ts` |
 | `src/ui/` | `MenuBar` (File/Help, tema, akun, UpdatePrompt) · `NavPanel` (kategori + cari; laci di ≤ 760 px) · `ToolPage` (header + tab Input/Detail) · `HomePage` · `Dialogs` (Tentang, Catatan Rilis) |
 | `src/tools/<id>/index.tsx` | UI satu tool (Tahap 5): default export komponen `({ tab })`, dimuat malas lewat `src/tools/registry.ts`. Tool tanpa folder → placeholder. |
 
@@ -77,7 +77,7 @@ TypeScript dipecah: `tsconfig.calc.json` (src/calc tanpa lib DOM — menjaga kem
 
 `npm run dev` (Vite) · `npm run build` · `npm test` (Vitest) · `npm run typecheck` (`tsc -b`, strict) ·
 `npm run lint` (oxlint) · `npm run golden` (rekam acuan).
-CI GitHub Actions menyusul (TODO Tahap 3).
+CI: `.github/workflows/ci.yml` (typecheck · lint · test · golden identik · build).
 
 ---
 

@@ -123,12 +123,14 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 - [x] **[Claude]** Routing path `/{tool}` (tanpa library) + lazy load UI per tool (`src/tools/registry.ts`);
       head per rute (`src/app/head.ts`); PWA `vite-plugin-pwa` prompt update; GA4 hanya di domain produksi —
       2026-10-07
-- [ ] **[Claude]** Pre-render HTML per rute (title/description/canonical dari `headFor()`) untuk SEO + 404 asli
-      (Cloudflare Pages: file per rute, bukan fallback SPA `/* /index.html 200`)
+- [x] **[Claude]** Pre-render HTML per rute saat build (plugin di `vite.config.ts` → `src/app/seo.ts`):
+      `<id>.html` per tool (title, description, canonical/noindex, Open Graph, isi statis), `404.html` (status 404
+      asli, bukan fallback SPA), `sitemap.xml` (tool aktif) + `robots.txt` & `_headers` di `web/public/` — 2026-10-07
 - [ ] **[Claude]** Kontrak UI tool (bentuk state input, hitung otomatis + debounce, sumber data Detail/Report)
       ditetapkan bersama tool percontohan Tahap 5
 - [ ] **[Claude]** Laporan (Detail + Download PDF/.txt) dari satu sumber data per tool; PDF tetap tanpa library
-- [ ] **[Claude]** Lint + test di CI (GitHub Actions), pola Matrix
+- [x] **[Claude]** CI GitHub Actions (`.github/workflows/ci.yml`): typecheck, lint, test, rekam ulang golden harus
+      identik, build — 2026-10-07
 
 ### Perbaikan isi tool — SETELAH semua tool selesai di-port
 

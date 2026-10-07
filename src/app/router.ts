@@ -1,19 +1,8 @@
 import { useSyncExternalStore, type MouseEvent } from 'react'
-import { toolById } from '../tools'
 
-// Router path /{id} tanpa library: satu tingkat, rute = halaman depan atau slug tool di katalog.
+// Router path /{id} tanpa library di atas history API. Penguraian path: routes.ts.
 
-export type Route = { kind: 'home' } | { kind: 'tool'; id: string } | { kind: 'notfound'; path: string }
-
-export function parsePath(pathname: string): Route {
-  const p = pathname.replace(/\/+$/, '') || '/'
-  if (p === '/' || p === '/index.html') return { kind: 'home' }
-  const m = /^\/([a-z0-9][a-z0-9-]{0,63})$/.exec(p)
-  if (m && toolById(m[1])) return { kind: 'tool', id: m[1] }
-  return { kind: 'notfound', path: p }
-}
-
-export const toolPath = (id: string) => `/${id}`
+export { parsePath, toolPath, type Route } from './routes'
 
 const listeners = new Set<() => void>()
 const notify = () => listeners.forEach((l) => l())

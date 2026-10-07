@@ -1,4 +1,5 @@
-// Identitas produk. Nama Edifisia/DTS hanya muncul di dialog Tentang (kredit).
+// Identitas produk (murni — dipakai juga pre-render saat build). Nama Edifisia/DTS hanya di dialog Tentang.
+// Versi & tanggal build: version.ts.
 export const APP_NAME = 'EDFS Civil Tools'
 export const APP_TAGLINE = 'Alat Bantu Rekayasa Sipil'
 export const APP_DESCRIPTION =
@@ -8,5 +9,3 @@ export const SITE_URL = 'https://tools.edifisia.com'
 export const CREDIT = ['Iwal', 'Edifisia', 'DTS Engineering'] as const
 /** GA4 — hanya dikirim dari domain produksi (bukan *.pages.dev / localhost). */
 export const GA4_ID = 'G-2MDVZFKNSE'
-export const APP_VERSION = __APP_VERSION__
-export const BUILD_DATE = __BUILD_DATE__

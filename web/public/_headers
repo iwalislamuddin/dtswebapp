@@ -1,0 +1,16 @@
+# Cloudflare Pages (build baru). Service worker, manifest & HTML selalu revalidasi agar versi baru cepat sampai;
+# aset ber-hash (/assets/*) boleh di-cache lama.
+/sw.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
+/*.html
+  Cache-Control: no-cache
+/
+  Cache-Control: no-cache
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# URL sementara *.pages.dev jangan diindeks — hanya tools.edifisia.com.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex

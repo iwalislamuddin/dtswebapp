@@ -1,8 +1,9 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, type ReactNode } from 'react'
-import { APP_NAME, APP_TAGLINE, APP_VERSION, BUILD_DATE, CREDIT } from '../app/appInfo'
+import { APP_NAME, APP_TAGLINE, CREDIT } from '../app/appInfo'
 import { RELEASE_NOTES } from '../app/releaseNotes'
 import { useUi } from '../app/ui-state'
+import { APP_VERSION, BUILD_DATE } from '../app/version'
 import { BrandMark } from './Brand'
 
 /** Dialog modal di atas <dialog> bawaan (fokus terkunci, Escape menutup). */
