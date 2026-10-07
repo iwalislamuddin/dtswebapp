@@ -118,7 +118,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 Port dibuat 1:1 (golden test). Perubahan rumus/perilaku dikumpulkan di sini lalu dikerjakan sebagai commit
 terpisah yang memperbarui acuan golden secara sadar.
 
-- [ ] **[Anda]** Daftar tool yang isinya ingin diubah (disampaikan pemilik 2026-10-07, rinciannya menyusul)
+- [ ] **[Anda]** Daftar tool yang isinya ingin diubah — sudah: tapak → `shallow-foundation`, pile cap →
+      `deep-foundation`, Library Data, `load-combo`; menyusul: sambungan (diskusi) & tool lain bila ada
 - [ ] ⚠️ **Profil siku (L) di `core/steel-profiles.js` salah baca kolom** (ditemukan 2026-10-07): Sx = Sy = nilai imin
       (L75×75×6 → 1,46 cm³, seharusnya ±8,5) dan imin = undefined. Akibat: cek kelangsingan L/r siku di
       `steel-tension` terlewati diam-diam; lentur siku `steel-flexure` (F10 indikatif) ±6× terlalu kecil. Juga cek

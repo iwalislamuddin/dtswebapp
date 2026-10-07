@@ -25,6 +25,12 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > baca kolom (Sx/imin) — juga terjadi di situs live; 2 crash build lama sudah diperbaiki di port (tangga rol-rol,
 > lentur HSS sayap langsing).
 >
+> **Sesi ditutup 2026-10-07** — semua commit lokal di `main`, **belum di-push** (11 commit di depan `origin/main`;
+> aman di-push: build lama tidak berubah, `src/` & `supabase/` belum dipakai deploy). Pembuka sesi berikutnya,
+> pilih salah satu: (a) **diskusi sambungan** dengan pemilik, atau (b) mulai **shell React**. Pertanyaan terbuka
+> untuk pemilik: kelompok navigasi "Struktur Bawah" ([UI.md](UI.md) "Masih dibahas"), hitung otomatis vs tombol
+> Hitung, susunan tiang `deep-foundation` (2–6 vs grid m×n).
+>
 > **Berikutnya:** shell React (Tahap 3 sisa) → akun & Save Supabase (Tahap 4) → 35 tool di UI baru (Tahap 5) →
 > rilis v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
 >
