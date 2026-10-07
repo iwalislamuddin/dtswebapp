@@ -39,7 +39,7 @@ Dua arsitektur hidup berdampingan sampai rilis v0.8.0: **build baru** (sasaran, 
 | `src/ui/` | `MenuBar` (File/Help, tema, akun, UpdatePrompt) · `NavPanel` (kategori + cari; laci di ≤ 760 px) · `ToolPage` (header + tab Input/Detail) · `HomePage` · `Dialogs` (Tentang, Catatan Rilis) |
 | `src/tools/<id>/index.tsx` | UI satu tool (Tahap 5): default export komponen `({ tab })`, dimuat malas lewat `src/tools/registry.ts`. Tool tanpa folder → placeholder. |
 | `src/tools/<id>/report.ts` | Laporan tool: default export `{ defaults, build(input) → Report }`. |
-| `src/report/` | `model.ts` (Report: ringkasan, bagian → heading, paragraf, baris nilai, cek D/C, langkah rumus, tabel, gambar vektor berwarna) · `math.ts` (markup rumus `_{}` `^{}` `rac{}{}`) · `pdf.ts` (pdf-lib + DejaVu Sans, A4, footer bernomor) · `figure.ts` · `download.ts` (muat pdf-lib & font saat diperlukan). Tab Detail: `src/ui/ReportView.tsx` (`DetailTab` = gating Premium). |
+| `src/report/` | `model.ts` (Report: ringkasan, bagian → heading, paragraf, baris nilai, cek D/C, langkah rumus, tabel, gambar vektor berwarna) · `math.ts` (markup rumus `_{}` `^{}` `\frac{}{}`) · `pdf.ts` (pdf-lib + DejaVu Sans, A4, footer bernomor) · `figure.ts` · `download.ts` (muat pdf-lib & font saat diperlukan). Tab Detail: `src/ui/ReportView.tsx` (`DetailTab` = gating Premium). |
 | `src/app/premium.ts` | Satu titik gating Premium (tab Detail & PDF); `tool-state.ts` (input tool, hitung otomatis, laporan aktif); `report-actions.ts` (unduh PDF). |
 
 TypeScript dipecah: `tsconfig.calc.json` (src/calc tanpa lib DOM — menjaga kemurnian mesin hitung),

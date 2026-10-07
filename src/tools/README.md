@@ -20,7 +20,7 @@ Contoh acuan: **`steel-beam-analysis/`** (tool percontohan). Arah tampilan: [doc
 2. **Hitung otomatis, tanpa tombol Hitung**: `useAutoCompute(input, compute)`. Field tidak valid → kontrol merah +
    pesan di bawahnya; hasil sah terakhir tetap tampil **diredupkan** (`.stale`) dengan pesan di panel hasil.
 3. **Laporan** (`report.ts`) memakai model `src/report/model.ts`: `summary`, bagian bernomor berisi `h` (subjudul),
-   `p`, `rows` (kv/check), `calc` (langkah **rumus → substitusi → hasil**, markup `_{}` `^{}` `rac{}{}`), `table`,
+   `p`, `rows` (kv/check), `calc` (langkah **rumus → substitusi → hasil**, markup `_{}` `^{}` `\frac{}{}`), `table`,
    `figure` (op berwarna `c: 'load' | 'v' | 'm' | …`). `useToolReport(id, report)` mendaftarkannya untuk tombol PDF;
    tab Detail = `<DetailTab report … />` (gating Premium di dalamnya).
 4. **Tata letak tab Input**: `ToolLayout` — kiri kartu bernomor (`Card n={1} …`), kanan atas `Panel "Preview"`, kanan
@@ -30,4 +30,4 @@ Contoh acuan: **`steel-beam-analysis/`** (tool percontohan). Arah tampilan: [doc
    tambah, edit langsung, hapus; kunci error `prefix.indeks.kolom`). Angka desimal boleh koma.
 6. **Gambar**: SVG ukuran piksel nyata (`useSize`), warna dari token `--dg-*` (terang/gelap); diagram gaya dalam
    memakai `Curve`/`XAxis` dari `src/ui/diagram.tsx` (label ekstrem + bidik hover).
-7. Angka hasil pakai `fx(n, dp)`; teks satuan dengan simbol Unicode (kN·m, cm⁴) — laporan .txt/PDF mengubahnya ke ASCII.
+7. Angka hasil pakai `fx(n, dp)`; teks satuan dengan simbol Unicode (kN·m, cm⁴) — dipakai langsung di tab Detail & PDF (font Unicode).
