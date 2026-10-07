@@ -1,0 +1,503 @@
+[
+ {
+  "name": "default PVC",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "pvc",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 10,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.01,
+   "mat": "pvc",
+   "eps": 0.0000015,
+   "C": 150,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "PVC / HDPE",
+   "A": 0.007853981633974483,
+   "V": 1.2732395447351625,
+   "Re": 126816.68772262576,
+   "regime": "turbulen",
+   "f": 0.01711340417204438,
+   "hv": 0.08262685720068318,
+   "hf": 2.8280536054821734,
+   "hm": 0.16525371440136635,
+   "hTot": 2.99330731988354,
+   "gradient": 14.140268027410867,
+   "hfHW": 2.9179201515570736,
+   "diffHW": 3.1776818480630693
+  }
+ },
+ {
+  "name": "laminar",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "pvc",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 0.05,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "V = 0.01 m/s < 0,3 m/s — risiko pengendapan; pertimbangkan D lebih kecil.",
+    "Selisih Darcy vs Hazen–Williams -62% — wajar bila V di luar ±0,9–2 m/s atau pipa sangat kasar (HW empiris utk air)."
+   ],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.00005,
+   "mat": "pvc",
+   "eps": 0.0000015,
+   "C": 150,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "PVC / HDPE",
+   "A": 0.007853981633974483,
+   "V": 0.006366197723675813,
+   "Re": 634.0834386131288,
+   "regime": "laminar",
+   "f": 0.10093308877453289,
+   "hv": 0.00000206567143001708,
+   "hf": 0.00041698919564986045,
+   "hm": 0.00000413134286003416,
+   "hTot": 0.0004211205385098946,
+   "gradient": 0.0020849459782493023,
+   "hfHW": 0.0001597959806669262,
+   "diffHW": -61.67862804745078
+  }
+ },
+ {
+  "name": "transisi",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "pvc",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 0.25,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "V = 0.03 m/s < 0,3 m/s — risiko pengendapan; pertimbangkan D lebih kecil.",
+    "Re = 3170 di zona transisi (2300–4000) — f tak menentu; hasil indikatif.",
+    "Selisih Darcy vs Hazen–Williams -30% — wajar bila V di luar ±0,9–2 m/s atau pipa sangat kasar (HW empiris utk air)."
+   ],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.00025,
+   "mat": "pvc",
+   "eps": 0.0000015,
+   "C": 150,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "PVC / HDPE",
+   "A": 0.007853981633974483,
+   "V": 0.03183098861837907,
+   "Re": 3170.4171930656444,
+   "regime": "transisi",
+   "f": 0.04370604984788521,
+   "hv": 0.000051641785750427,
+   "hf": 0.004514116924483941,
+   "hm": 0.000103283571500854,
+   "hTot": 0.004617400495984795,
+   "gradient": 0.022570584622419704,
+   "hfHW": 0.0031481708939269273,
+   "diffHW": -30.25942954973791
+  }
+ },
+ {
+  "name": "laminar dekat batas (Re 2000-2300)",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "pvc",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 0.17,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "V = 0.02 m/s < 0,3 m/s — risiko pengendapan; pertimbangkan D lebih kecil."
+   ],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.00017,
+   "mat": "pvc",
+   "eps": 0.0000015,
+   "C": 150,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "PVC / HDPE",
+   "A": 0.007853981633974483,
+   "V": 0.021645072260497767,
+   "Re": 2155.883691284638,
+   "regime": "laminar",
+   "f": 0.02968620258074496,
+   "hv": 0.000023879161730997446,
+   "hf": 0.0014177632652095254,
+   "hm": 0.00004775832346199489,
+   "hTot": 0.0014655215886715204,
+   "gradient": 0.007088816326047627,
+   "hfHW": 0.0015412206019066942,
+   "diffHW": 8.707895015104908
+  }
+ },
+ {
+  "name": "baja lama, cepat",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "steelOld",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 30,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "V = 3.82 m/s > 3 m/s — bising/erosif & rugi tinggi; pertimbangkan D lebih besar (lazim 0,6–2,5 m/s)."
+   ],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.03,
+   "mat": "steelOld",
+   "eps": 0.0005,
+   "C": 100,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "Baja lama/berkarat",
+   "A": 0.007853981633974483,
+   "V": 3.8197186342054876,
+   "Re": 380450.06316787726,
+   "regime": "turbulen",
+   "f": 0.03073444917996298,
+   "hv": 0.7436417148061486,
+   "hf": 45.7108369836202,
+   "hm": 1.4872834296122972,
+   "hTot": 47.198120413232495,
+   "gradient": 228.554184918101,
+   "hfHW": 47.29584388232964,
+   "diffHW": 3.4674641798342223
+  }
+ },
+ {
+  "name": "beton besar",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 600,
+    "Lp": 200,
+    "mat": "concrete",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 300,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [],
+   "D": 0.6,
+   "Lp": 200,
+   "Q": 0.3,
+   "mat": "concrete",
+   "eps": 0.0005,
+   "C": 120,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "Beton",
+   "A": 0.2827433388230814,
+   "V": 1.0610329539459689,
+   "Re": 634083.4386131287,
+   "regime": "turbulen",
+   "f": 0.0194454055077136,
+   "hv": 0.05737976194491888,
+   "hf": 0.3719242463183403,
+   "hm": 0.11475952388983776,
+   "hTot": 0.4866837702081781,
+   "gradient": 1.8596212315917016,
+   "hfHW": 0.389567503094166,
+   "diffHW": 4.743776978907775
+  }
+ },
+ {
+  "name": "material kustom",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "custom",
+    "eps": 0.1,
+    "C": 125,
+    "Q": 10,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.01,
+   "mat": "custom",
+   "eps": 0.0001,
+   "C": 125,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "Kustom",
+   "A": 0.007853981633974483,
+   "V": 1.2732395447351625,
+   "Re": 126816.68772262576,
+   "regime": "turbulen",
+   "f": 0.021882631153895896,
+   "hv": 0.08262685720068318,
+   "hf": 3.6161860790563543,
+   "hm": 0.16525371440136635,
+   "hTot": 3.7814397934577206,
+   "gradient": 18.080930395281772,
+   "hfHW": 4.089941262926379,
+   "diffHW": 13.10096254763669
+  }
+ },
+ {
+  "name": "kustom C 0",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "custom",
+    "eps": 0.1,
+    "C": 0,
+    "Q": 10,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "C Hazen–Williams kustom belum diisi — pembanding HW tidak bermakna.",
+    "Selisih Darcy vs Hazen–Williams Infinity% — wajar bila V di luar ±0,9–2 m/s atau pipa sangat kasar (HW empiris utk air)."
+   ],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.01,
+   "mat": "custom",
+   "eps": 0.0001,
+   "C": 0,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "Kustom",
+   "A": 0.007853981633974483,
+   "V": 1.2732395447351625,
+   "Re": 126816.68772262576,
+   "regime": "turbulen",
+   "f": 0.021882631153895896,
+   "hv": 0.08262685720068318,
+   "hf": 3.6161860790563543,
+   "hm": 0.16525371440136635,
+   "hTot": 3.7814397934577206,
+   "gradient": 18.080930395281772,
+   "hfHW": null,
+   "diffHW": null
+  }
+ },
+ {
+  "name": "kustom eps besar (di luar Swamee-Jain)",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "custom",
+    "eps": 10,
+    "C": 100,
+    "Q": 10,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "ε/D = 1.0e-1 di luar rentang validitas Swamee–Jain — hasil ekstrapolasi.",
+    "Selisih Darcy vs Hazen–Williams -63% — wajar bila V di luar ±0,9–2 m/s atau pipa sangat kasar (HW empiris utk air)."
+   ],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.01,
+   "mat": "custom",
+   "eps": 0.01,
+   "C": 100,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "Kustom",
+   "A": 0.007853981633974483,
+   "V": 1.2732395447351625,
+   "Re": 126816.68772262576,
+   "regime": "turbulen",
+   "f": 0.10196194886472464,
+   "hv": 0.08262685720068318,
+   "hf": 16.849590777497923,
+   "hm": 0.16525371440136635,
+   "hTot": 17.01484449189929,
+   "gradient": 84.24795388748961,
+   "hfHW": 6.182931216154618,
+   "diffHW": -63.30515501651399
+  }
+ },
+ {
+  "name": "lambat",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "pvc",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 1,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "V = 0.13 m/s < 0,3 m/s — risiko pengendapan; pertimbangkan D lebih kecil."
+   ],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.001,
+   "mat": "pvc",
+   "eps": 0.0000015,
+   "C": 150,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "PVC / HDPE",
+   "A": 0.007853981633974483,
+   "V": 0.12732395447351627,
+   "Re": 12681.668772262577,
+   "regime": "turbulen",
+   "f": 0.02907251147600017,
+   "hv": 0.000826268572006832,
+   "hf": 0.04804340508385379,
+   "hm": 0.001652537144013664,
+   "hTot": 0.049695942227867454,
+   "gradient": 0.24021702541926893,
+   "hfHW": 0.041027344047056054,
+   "diffHW": -14.603588202276823
+  }
+ },
+ {
+  "name": "nu kosong -> 1,004",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 100,
+    "Lp": 200,
+    "mat": "pvc",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 10,
+    "nu": 0,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [],
+   "D": 0.1,
+   "Lp": 200,
+   "Q": 0.01,
+   "mat": "pvc",
+   "eps": 0.0000015,
+   "C": 150,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "PVC / HDPE",
+   "A": 0.007853981633974483,
+   "V": 1.2732395447351625,
+   "Re": 126816.68772262576,
+   "regime": "turbulen",
+   "f": 0.01711340417204438,
+   "hv": 0.08262685720068318,
+   "hf": 2.8280536054821734,
+   "hm": 0.16525371440136635,
+   "hTot": 2.99330731988354,
+   "gradient": 14.140268027410867,
+   "hfHW": 2.9179201515570736,
+   "diffHW": 3.1776818480630693
+  }
+ },
+ {
+  "name": "D 0",
+  "fn": "compute",
+  "args": [
+   {
+    "D": 0,
+    "Lp": 200,
+    "mat": "pvc",
+    "eps": 0.0015,
+    "C": 150,
+    "Q": 10,
+    "nu": 1.004,
+    "sumK": 2
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi D, L, dan Q (> 0)."
+   ],
+   "D": 0,
+   "Lp": 200,
+   "Q": 0.01,
+   "mat": "pvc",
+   "eps": 0.0000015,
+   "C": 150,
+   "nu": 0.000001004,
+   "sumK": 2,
+   "matLabel": "PVC / HDPE"
+  }
+ }
+]

@@ -1,0 +1,1293 @@
+[
+ {
+  "name": "default (HANDOFF qh 0,768, F 554,6)",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 20,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 0.7681834945538822,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.3840917472769411,
+   "pWWtopMinus": 0.6606378053163386,
+   "pLee": -0.46475101420509873,
+   "pLeeMinus": -0.18820495616570115,
+   "pSide": -0.5953422082792587,
+   "pSideMinus": -0.3187961502398611,
+   "pNetTop": 0.8488427614820399,
+   "F": 554.6069538664613,
+   "M": 6915.192591865219,
+   "Fmin": 554.4000000000001,
+   "minGoverns": false,
+   "Fdesign": 554.6069538664613,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.5737404895924607,
+     "pWW": 0.2518705039031745,
+     "pWWm": 0.528416561942572
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 0.6638809940510362,
+     "pWW": 0.3131660469350059,
+     "pWWm": 0.5897121049744034
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 0.7230395931563781,
+     "pWW": 0.3533938943266383,
+     "pWWm": 0.6299399523660358
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 0.7681834945538822,
+     "pWW": 0.3840917472769411,
+     "pWWm": 0.6606378053163386
+    }
+   ]
+  }
+ },
+ {
+  "name": "eksposur B",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "B",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Beban minimum SPGAU 0,77 kN/m² (Ps. 27.1.5) MENENTUKAN: F,min = 554.4 kN > hasil hitungan 412.3 kN.",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "B",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 20,
+   "H": 24,
+   "Kh": 0.922997134133606,
+   "qh": 0.5891363795068864,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.2945681897534432,
+   "pWWtopMinus": 0.5066572863759222,
+   "pLee": -0.35642750960166625,
+   "pLeeMinus": -0.14433841297918715,
+   "pSide": -0.4565806941178369,
+   "pSideMinus": -0.24449159749535782,
+   "pNetTop": 0.6509956993551094,
+   "F": 412.27737556263025,
+   "M": 5201.726168948128,
+   "Fmin": 554.4000000000001,
+   "minGoverns": true,
+   "Fdesign": 554.4000000000001,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.6211310103147666,
+     "qz": 0.39645938333252373,
+     "pWW": 0.16354783235487663,
+     "pWWm": 0.37563692897735573
+    },
+    {
+     "z": 12,
+     "Kz": 0.7571671826235212,
+     "qz": 0.48328940161983247,
+     "pWW": 0.22259224479024653,
+     "pWWm": 0.43468134141272563
+    },
+    {
+     "z": 18,
+     "Kz": 0.8501656830349914,
+     "qz": 0.5426490657030932,
+     "pWW": 0.26295681636686385,
+     "pWWm": 0.47504591298934296
+    },
+    {
+     "z": 24,
+     "Kz": 0.922997134133606,
+     "qz": 0.5891363795068864,
+     "pWW": 0.2945681897534432,
+     "pWWm": 0.5066572863759222
+    }
+   ]
+  }
+ },
+ {
+  "name": "eksposur D",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "D",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "D",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 20,
+   "H": 24,
+   "Kh": 1.3745788717419483,
+   "qh": 0.8773747933733992,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.43868739668669965,
+   "pWWtopMinus": 0.7545423223011233,
+   "pLee": -0.5308117499909065,
+   "pLeeMinus": -0.2149568243764828,
+   "pSide": -0.6799654648643843,
+   "pSideMinus": -0.3641105392499606,
+   "pNetTop": 0.9694991466776062,
+   "F": 643.5473889300978,
+   "M": 7975.334239075189,
+   "Fmin": 554.4000000000001,
+   "minGoverns": false,
+   "Fdesign": 643.5473889300978,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 1.0800990367333025,
+     "qz": 0.689412363785112,
+     "pWW": 0.31087294456666426,
+     "pWWm": 0.626727870181088
+    },
+    {
+     "z": 12,
+     "Kz": 1.218474995755936,
+     "qz": 0.7777358357598223,
+     "pWW": 0.37093290550946734,
+     "pWWm": 0.686787831123891
+    },
+    {
+     "z": 18,
+     "Kz": 1.3074984667986924,
+     "qz": 0.8345582932536868,
+     "pWW": 0.4095721766052952,
+     "pWWm": 0.7254271022197188
+    },
+    {
+     "z": 24,
+     "Kz": 1.3745788717419483,
+     "qz": 0.8773747933733992,
+     "pWW": 0.43868739668669965,
+     "pWWm": 0.7545423223011233
+    }
+   ]
+  }
+ },
+ {
+  "name": "tertutup sebagian",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "partial",
+    "B": 30,
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "partial",
+   "GCpi": 0.55,
+   "B": 30,
+   "L": 20,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 0.7681834945538822,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.09986385429200462,
+   "pWWtopMinus": 0.9448656983012752,
+   "pLee": -0.7489789071900352,
+   "pLeeMinus": 0.09602293681923535,
+   "pSide": -0.8795701012641952,
+   "pSideMinus": -0.03456825725492457,
+   "pNetTop": 0.8488427614820399,
+   "F": 554.6069538664613,
+   "M": 6915.192591865219,
+   "Fmin": 554.4000000000001,
+   "minGoverns": false,
+   "Fdesign": 554.6069538664613,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.5737404895924607,
+     "pWW": -0.032357389081762,
+     "pWWm": 0.8126444549275086
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 0.6638809940510362,
+     "pWW": 0.02893815395006938,
+     "pWWm": 0.87393999795934
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 0.7230395931563781,
+     "pWW": 0.06916600134170181,
+     "pWWm": 0.9141678453509724
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 0.7681834945538822,
+     "pWW": 0.09986385429200462,
+     "pWWm": 0.9448656983012752
+    }
+   ]
+  }
+ },
+ {
+  "name": "terbuka",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "open",
+    "B": 30,
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "open",
+   "GCpi": 0,
+   "B": 30,
+   "L": 20,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 0.7681834945538822,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.5223647762966399,
+   "pWWtopMinus": 0.5223647762966399,
+   "pLee": -0.32647798518539994,
+   "pLeeMinus": -0.32647798518539994,
+   "pSide": -0.45706917925955987,
+   "pSideMinus": -0.45706917925955987,
+   "pNetTop": 0.8488427614820399,
+   "F": 554.6069538664613,
+   "M": 6915.192591865219,
+   "Fmin": 554.4000000000001,
+   "minGoverns": false,
+   "Fdesign": 554.6069538664613,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.5737404895924607,
+     "pWW": 0.3901435329228733,
+     "pWWm": 0.3901435329228733
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 0.6638809940510362,
+     "pWW": 0.45143907595470467,
+     "pWWm": 0.45143907595470467
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 0.7230395931563781,
+     "pWW": 0.4916669233463371,
+     "pWWm": 0.4916669233463371
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 0.7681834945538822,
+     "pWW": 0.5223647762966399,
+     "pWWm": 0.5223647762966399
+    }
+   ]
+  }
+ },
+ {
+  "name": "L/B 1,5",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 45,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Beban minimum SPGAU 0,77 kN/m² (Ps. 27.1.5) MENENTUKAN: F,min = 554.4 kN > hasil hitungan 507.6 kN.",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 45,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 0.7681834945538822,
+   "LB": 1.5,
+   "CpL": -0.4,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.3840917472769411,
+   "pWWtopMinus": 0.6606378053163386,
+   "pLee": -0.39945541716801874,
+   "pLeeMinus": -0.12290935912862117,
+   "pSide": -0.5953422082792587,
+   "pSideMinus": -0.3187961502398611,
+   "pNetTop": 0.7835471644449599,
+   "F": 507.59412399976367,
+   "M": 6351.038633464851,
+   "Fmin": 554.4000000000001,
+   "minGoverns": true,
+   "Fdesign": 554.4000000000001,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.5737404895924607,
+     "pWW": 0.2518705039031745,
+     "pWWm": 0.528416561942572
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 0.6638809940510362,
+     "pWW": 0.3131660469350059,
+     "pWWm": 0.5897121049744034
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 0.7230395931563781,
+     "pWW": 0.3533938943266383,
+     "pWWm": 0.6299399523660358
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 0.7681834945538822,
+     "pWW": 0.3840917472769411,
+     "pWWm": 0.6606378053163386
+    }
+   ]
+  }
+ },
+ {
+  "name": "L/B 3",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 90,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Beban minimum SPGAU 0,77 kN/m² (Ps. 27.1.5) MENENTUKAN: F,min = 554.4 kN > hasil hitungan 437.1 kN.",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 90,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 0.7681834945538822,
+   "LB": 3,
+   "CpL": -0.25,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.3840917472769411,
+   "pWWtopMinus": 0.6606378053163386,
+   "pLee": -0.30151202161239876,
+   "pLeeMinus": -0.024965963573001182,
+   "pSide": -0.5953422082792587,
+   "pSideMinus": -0.3187961502398611,
+   "pNetTop": 0.6856037688893399,
+   "F": 437.0748791997172,
+   "M": 5504.807695864293,
+   "Fmin": 554.4000000000001,
+   "minGoverns": true,
+   "Fdesign": 554.4000000000001,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.5737404895924607,
+     "pWW": 0.2518705039031745,
+     "pWWm": 0.528416561942572
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 0.6638809940510362,
+     "pWW": 0.3131660469350059,
+     "pWWm": 0.5897121049744034
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 0.7230395931563781,
+     "pWW": 0.3533938943266383,
+     "pWWm": 0.6299399523660358
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 0.7681834945538822,
+     "pWW": 0.3840917472769411,
+     "pWWm": 0.6606378053163386
+    }
+   ]
+  }
+ },
+ {
+  "name": "L/B 5",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 150,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Beban minimum SPGAU 0,77 kN/m² (Ps. 27.1.5) MENENTUKAN: F,min = 554.4 kN > hasil hitungan 413.6 kN.",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 150,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 0.7681834945538822,
+   "LB": 5,
+   "CpL": -0.2,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.3840917472769411,
+   "pWWtopMinus": 0.6606378053163386,
+   "pLee": -0.26886422309385877,
+   "pLeeMinus": 0.007681834945538812,
+   "pSide": -0.5953422082792587,
+   "pSideMinus": -0.3187961502398611,
+   "pNetTop": 0.6529559703707999,
+   "F": 413.5684642663685,
+   "M": 5222.730716664108,
+   "Fmin": 554.4000000000001,
+   "minGoverns": true,
+   "Fdesign": 554.4000000000001,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.5737404895924607,
+     "pWW": 0.2518705039031745,
+     "pWWm": 0.528416561942572
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 0.6638809940510362,
+     "pWW": 0.3131660469350059,
+     "pWWm": 0.5897121049744034
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 0.7230395931563781,
+     "pWW": 0.3533938943266383,
+     "pWWm": 0.6299399523660358
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 0.7681834945538822,
+     "pWW": 0.3840917472769411,
+     "pWWm": 0.6606378053163386
+    }
+   ]
+  }
+ },
+ {
+  "name": "L/B < 1, rendah (z < 4,6)",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 10,
+    "H": 3
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Beban minimum SPGAU 0,77 kN/m² (Ps. 27.1.5) MENENTUKAN: F,min = 69.3 kN > hasil hitungan 54.0 kN.",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 10,
+   "H": 3,
+   "Kh": 0.8499759928123365,
+   "qh": 0.5425279890422131,
+   "LB": 0.3333333333333333,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.27126399452110656,
+   "pWWtopMinus": 0.46657407057630323,
+   "pLee": -0.3282294333705389,
+   "pLeeMinus": -0.1329193573153422,
+   "pSide": -0.4204591915077151,
+   "pSideMinus": -0.22514911545251842,
+   "pNetTop": 0.5994934278916455,
+   "F": 53.95440851024808,
+   "M": 80.93161276537214,
+   "Fmin": 69.30000000000001,
+   "minGoverns": true,
+   "Fdesign": 69.30000000000001,
+   "table": [
+    {
+     "z": 0.75,
+     "Kz": 0.8499759928123365,
+     "qz": 0.5425279890422131,
+     "pWW": 0.27126399452110656,
+     "pWWm": 0.46657407057630323
+    },
+    {
+     "z": 1.5,
+     "Kz": 0.8499759928123365,
+     "qz": 0.5425279890422131,
+     "pWW": 0.27126399452110656,
+     "pWWm": 0.46657407057630323
+    },
+    {
+     "z": 2.25,
+     "Kz": 0.8499759928123365,
+     "qz": 0.5425279890422131,
+     "pWW": 0.27126399452110656,
+     "pWWm": 0.46657407057630323
+    },
+    {
+     "z": 3,
+     "Kz": 0.8499759928123365,
+     "qz": 0.5425279890422131,
+     "pWW": 0.27126399452110656,
+     "pWWm": 0.46657407057630323
+    }
+   ]
+  }
+ },
+ {
+  "name": "beban minimum menentukan",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 20,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 20,
+    "H": 6
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Beban minimum SPGAU 0,77 kN/m² (Ps. 27.1.5) MENENTUKAN: F,min = 138.6 kN > hasil hitungan 36.2 kN.",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 20,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 20,
+   "H": 6,
+   "Kh": 0.898876467403866,
+   "qh": 0.18734383333631371,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.09367191666815688,
+   "pWWtopMinus": 0.1611156966692298,
+   "pLee": -0.1133430191684698,
+   "pLeeMinus": -0.04589923916739687,
+   "pSide": -0.14519147083564313,
+   "pSideMinus": -0.0777476908345702,
+   "pNetTop": 0.20701493583662667,
+   "F": 36.16565086093763,
+   "M": 108.87663728421423,
+   "Fmin": 138.60000000000002,
+   "minGoverns": true,
+   "Fdesign": 138.60000000000002,
+   "table": [
+    {
+     "z": 1.5,
+     "Kz": 0.8499759928123365,
+     "qz": 0.17715199642194715,
+     "pWW": 0.08674146756638759,
+     "pWWm": 0.15418524756746052
+    },
+    {
+     "z": 3,
+     "Kz": 0.8499759928123365,
+     "qz": 0.17715199642194715,
+     "pWW": 0.08674146756638759,
+     "pWWm": 0.15418524756746052
+    },
+    {
+     "z": 4.5,
+     "Kz": 0.8499759928123365,
+     "qz": 0.17715199642194715,
+     "pWW": 0.08674146756638759,
+     "pWWm": 0.15418524756746052
+    },
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.18734383333631371,
+     "pWW": 0.09367191666815688,
+     "pWWm": 0.1611156966692298
+    }
+   ]
+  }
+ },
+ {
+  "name": "tinggi > 60",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 20,
+    "H": 80
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "H > 60 m — prosedur pengarah tetap berlaku, tetapi pastikan gedung kaku (n1 ≥ 1 Hz); bila fleksibel gunakan Gf.",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 20,
+   "H": 80,
+   "Kh": 1.5507051115689359,
+   "qh": 0.9897937505191676,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.4948968752595838,
+   "pWWtopMinus": 0.8512226254464842,
+   "pLee": -0.5988252190640964,
+   "pLeeMinus": -0.24249946887719606,
+   "pSide": -0.7670901566523549,
+   "pSideMinus": -0.41076440646545453,
+   "pNetTop": 1.0937220943236803,
+   "F": 2352.8477953708043,
+   "M": 98852.48401372554,
+   "Fmin": 1848,
+   "minGoverns": false,
+   "Fdesign": 2352.8477953708043,
+   "table": [
+    {
+     "z": 20,
+     "Kz": 1.1581898286447585,
+     "qz": 0.7392566425138055,
+     "pWW": 0.3245316418159375,
+     "pWWm": 0.6808573920028379
+    },
+    {
+     "z": 40,
+     "Kz": 1.340153307441569,
+     "qz": 0.8554014290319761,
+     "pWW": 0.4035100966482936,
+     "pWWm": 0.759835846835194
+    },
+    {
+     "z": 60,
+     "Kz": 1.4595746991745266,
+     "qz": 0.9316264613309866,
+     "pWW": 0.4553431186116207,
+     "pWWm": 0.8116688687985211
+    },
+    {
+     "z": 80,
+     "Kz": 1.5507051115689359,
+     "qz": 0.9897937505191676,
+     "pWW": 0.4948968752595838,
+     "pWWm": 0.8512226254464842
+    }
+   ]
+  }
+ },
+ {
+  "name": "tinggi > 160, langsing",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 25,
+    "L": 25,
+    "H": 180
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "H = 180 m sangat tinggi — cek fleksibilitas (T > 1 dtk → perlu Gf, bukan G=0,85). Prosedur ini untuk gedung KAKU.",
+    "H/lebar-terkecil = 7.2 > 4 — gedung langsing, kemungkinan fleksibel; periksa frekuensi alami.",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 25,
+   "L": 25,
+   "H": 180,
+   "Kh": 1.8393861263340765,
+   "qh": 1.174054872879804,
+   "LB": 1,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.587027436439902,
+   "pWWtopMinus": 1.0096871906766314,
+   "pLee": -0.7103031980922814,
+   "pLeeMinus": -0.28764344385555196,
+   "pSide": -0.909892526481848,
+   "pSideMinus": -0.48723277224511863,
+   "pNetTop": 1.2973306345321833,
+   "F": 5220.893190659485,
+   "M": 494623.4405115022,
+   "Fmin": 3465,
+   "minGoverns": false,
+   "Fdesign": 5220.893190659485,
+   "table": [
+    {
+     "z": 45,
+     "Kz": 1.3737997550772283,
+     "qz": 0.8768774939191625,
+     "pWW": 0.3849468187466657,
+     "pWWm": 0.8076065729833951
+    },
+    {
+     "z": 90,
+     "Kz": 1.589637760576354,
+     "qz": 1.014643925056679,
+     "pWW": 0.478627991920177,
+     "pWWm": 0.9012877461569064
+    },
+    {
+     "z": 135,
+     "Kz": 1.7312907734556788,
+     "qz": 1.1050590954486248,
+     "pWW": 0.5401103077867002,
+     "pWWm": 0.9627700620234296
+    },
+    {
+     "z": 180,
+     "Kz": 1.8393861263340765,
+     "qz": 1.174054872879804,
+     "pWW": 0.587027436439902,
+     "pWWm": 1.0096871906766314
+    }
+   ]
+  }
+ },
+ {
+  "name": "V di luar rentang, Kzt 1,2",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 70,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1.2,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "V = 70 m/s di luar rentang lazim peta angin Indonesia (± 25–45 m/s) — pastikan satuan m/s (bukan km/jam).",
+    "Kzt = 1.2 ≠ 1 — pastikan dihitung dari Ps. 26.8 (bukit/escarpment).",
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 70,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1.2,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 20,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 3.687280773858635,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 1.8436403869293172,
+   "pWWtopMinus": 3.171061465518426,
+   "pLee": -2.230804868184474,
+   "pLeeMinus": -0.9033837895953655,
+   "pSide": -2.857642599740442,
+   "pSideMinus": -1.5302215211513333,
+   "pNetTop": 4.074445255113791,
+   "F": 2662.113378559013,
+   "M": 33192.92444095306,
+   "Fmin": 554.4000000000001,
+   "minGoverns": false,
+   "Fdesign": 2662.113378559013,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 2.7539543500438115,
+     "pWW": 1.2089784187352377,
+     "pWWm": 2.536399497324346
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 3.186628771444973,
+     "pWW": 1.5031970252880273,
+     "pWWm": 2.830618103877136
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 3.4705900471506146,
+     "pWW": 1.6962906927678634,
+     "pWWm": 3.023711771356972
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 3.687280773858635,
+     "pWW": 1.8436403869293172,
+     "pWWm": 3.171061465518426
+    }
+   ]
+  }
+ },
+ {
+  "name": "faktor kosong -> default",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0,
+    "Kzt": 0,
+    "Ke": 0,
+    "G": 0,
+    "enc": "enclosed",
+    "B": 30,
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 30,
+   "L": 20,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 0.7681834945538822,
+   "LB": 0.6666666666666666,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.3840917472769411,
+   "pWWtopMinus": 0.6606378053163386,
+   "pLee": -0.46475101420509873,
+   "pLeeMinus": -0.18820495616570115,
+   "pSide": -0.5953422082792587,
+   "pSideMinus": -0.3187961502398611,
+   "pNetTop": 0.8488427614820399,
+   "F": 554.6069538664613,
+   "M": 6915.192591865219,
+   "Fmin": 554.4000000000001,
+   "minGoverns": false,
+   "Fdesign": 554.6069538664613,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.5737404895924607,
+     "pWW": 0.2518705039031745,
+     "pWWm": 0.528416561942572
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 0.6638809940510362,
+     "pWW": 0.3131660469350059,
+     "pWWm": 0.5897121049744034
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 0.7230395931563781,
+     "pWW": 0.3533938943266383,
+     "pWWm": 0.6299399523660358
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 0.7681834945538822,
+     "pWW": 0.3840917472769411,
+     "pWWm": 0.6606378053163386
+    }
+   ]
+  }
+ },
+ {
+  "name": "nilai string",
+  "fn": "compute",
+  "args": [
+   {
+    "V": "40",
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": "25.5",
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Atap TIDAK dihitung (uplift atap datar/miring, zona tepi) — tinjau terpisah. Tekanan dinding samping & internal untuk desain elemen dinding (K&K perlu prosedur Bab 30)."
+   ],
+   "V": 40,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 25.5,
+   "L": 20,
+   "H": 24,
+   "Kh": 1.2035093887012016,
+   "qh": 1.0033417071724176,
+   "LB": 0.7843137254901961,
+   "CpL": -0.5,
+   "CpW": 0.8,
+   "CpS": -0.7,
+   "pWWtopPlus": 0.5016708535862088,
+   "pWWtopMinus": 0.8628738681682792,
+   "pLee": -0.6070217328393126,
+   "pLeeMinus": -0.2458187182572423,
+   "pSide": -0.7775898230586236,
+   "pSideMinus": -0.4163868084765532,
+   "pNetTop": 1.1086925864255215,
+   "F": 615.7269038843978,
+   "M": 7677.2750407646545,
+   "Fmin": 471.24,
+   "minGoverns": false,
+   "Fdesign": 615.7269038843978,
+   "table": [
+    {
+     "z": 6,
+     "Kz": 0.898876467403866,
+     "qz": 0.7493753333452549,
+     "pWW": 0.3289737193837382,
+     "pWWm": 0.6901767339658086
+    },
+    {
+     "z": 12,
+     "Kz": 1.0400991624855402,
+     "qz": 0.8671098697809453,
+     "pWW": 0.40903320416000755,
+     "pWWm": 0.7702362187420779
+    },
+    {
+     "z": 18,
+     "Kz": 1.1327826553625089,
+     "qz": 0.9443782441226164,
+     "pWW": 0.46157569871234394,
+     "pWWm": 0.8227787132944143
+    },
+    {
+     "z": 24,
+     "Kz": 1.2035093887012016,
+     "qz": 1.0033417071724176,
+     "pWW": 0.5016708535862088,
+     "pWWm": 0.8628738681682792
+    }
+   ]
+  }
+ },
+ {
+  "name": "B 0",
+  "fn": "compute",
+  "args": [
+   {
+    "V": 35,
+    "expo": "C",
+    "Kd": 0.85,
+    "Kzt": 1,
+    "Ke": 1,
+    "G": 0.85,
+    "enc": "enclosed",
+    "B": 0,
+    "L": 20,
+    "H": 24
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Lengkapi V, B, L, dan H (> 0)."
+   ],
+   "V": 35,
+   "expo": "C",
+   "Kd": 0.85,
+   "Kzt": 1,
+   "Ke": 1,
+   "G": 0.85,
+   "enc": "enclosed",
+   "GCpi": 0.18,
+   "B": 0,
+   "L": 20,
+   "H": 24
+  }
+ }
+]

@@ -1,0 +1,374 @@
+[
+ {
+  "name": "default Kirpich",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 10,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "kirpich",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Mononobe adalah PENDEKATAN intensitas dari hujan harian — bila tersedia kurva IDF lokal (analisis frekuensi), gunakan itu.",
+    "R24 harus hujan rencana sesuai periode ulang (mis. R24 kala ulang 5–10 th untuk drainase kota)."
+   ],
+   "A": 10,
+   "C": 0.7,
+   "R24": 120,
+   "tcMode": "kirpich",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "Permukiman padat (0,70)",
+   "S": 0.01,
+   "tcMin": 19.743034359862445,
+   "tcHr": 0.3290505726643741,
+   "i": 87.28421924258842,
+   "Q": 1.6985509064607704
+  }
+ },
+ {
+  "name": "tc manual",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 10,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "manual",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Mononobe adalah PENDEKATAN intensitas dari hujan harian — bila tersedia kurva IDF lokal (analisis frekuensi), gunakan itu.",
+    "R24 harus hujan rencana sesuai periode ulang (mis. R24 kala ulang 5–10 th untuk drainase kota)."
+   ],
+   "A": 10,
+   "C": 0.7,
+   "R24": 120,
+   "tcMode": "manual",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "Permukiman padat (0,70)",
+   "S": null,
+   "tcMin": 30,
+   "tcHr": 0.5,
+   "i": 66.03854497789253,
+   "Q": 1.2851100852697885
+  }
+ },
+ {
+  "name": "C kustom",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 10,
+    "land": "custom",
+    "C": 0.42,
+    "R24": 120,
+    "tcMode": "kirpich",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Mononobe adalah PENDEKATAN intensitas dari hujan harian — bila tersedia kurva IDF lokal (analisis frekuensi), gunakan itu.",
+    "R24 harus hujan rencana sesuai periode ulang (mis. R24 kala ulang 5–10 th untuk drainase kota)."
+   ],
+   "A": 10,
+   "C": 0.42,
+   "R24": 120,
+   "tcMode": "kirpich",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "Kustom",
+   "S": 0.01,
+   "tcMin": 19.743034359862445,
+   "tcHr": 0.3290505726643741,
+   "i": 87.28421924258842,
+   "Q": 1.0191305438764624
+  }
+ },
+ {
+  "name": "tutupan tak dikenal -> 0,5",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 10,
+    "land": "xx",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "kirpich",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Mononobe adalah PENDEKATAN intensitas dari hujan harian — bila tersedia kurva IDF lokal (analisis frekuensi), gunakan itu.",
+    "R24 harus hujan rencana sesuai periode ulang (mis. R24 kala ulang 5–10 th untuk drainase kota)."
+   ],
+   "A": 10,
+   "C": 0.5,
+   "R24": 120,
+   "tcMode": "kirpich",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "-",
+   "S": 0.01,
+   "tcMin": 19.743034359862445,
+   "tcHr": 0.3290505726643741,
+   "i": 87.28421924258842,
+   "Q": 1.213250647471979
+  }
+ },
+ {
+  "name": "A > 80",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 150,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "kirpich",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "A = 150 ha — di ambang atas metode rasional; hasil makin kasar.",
+    "Mononobe adalah PENDEKATAN intensitas dari hujan harian — bila tersedia kurva IDF lokal (analisis frekuensi), gunakan itu.",
+    "R24 harus hujan rencana sesuai periode ulang (mis. R24 kala ulang 5–10 th untuk drainase kota)."
+   ],
+   "A": 150,
+   "C": 0.7,
+   "R24": 120,
+   "tcMode": "kirpich",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "Permukiman padat (0,70)",
+   "S": 0.01,
+   "tcMin": 19.743034359862445,
+   "tcHr": 0.3290505726643741,
+   "i": 87.28421924258842,
+   "Q": 25.478263596911557
+  }
+ },
+ {
+  "name": "A > 300",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 500,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "kirpich",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "A = 500 ha — melampaui batas lazim metode rasional (±80–300 ha); gunakan hidrograf satuan (HSS).",
+    "Mononobe adalah PENDEKATAN intensitas dari hujan harian — bila tersedia kurva IDF lokal (analisis frekuensi), gunakan itu.",
+    "R24 harus hujan rencana sesuai periode ulang (mis. R24 kala ulang 5–10 th untuk drainase kota)."
+   ],
+   "A": 500,
+   "C": 0.7,
+   "R24": 120,
+   "tcMode": "kirpich",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "Permukiman padat (0,70)",
+   "S": 0.01,
+   "tcMin": 19.743034359862445,
+   "tcHr": 0.3290505726643741,
+   "i": 87.28421924258842,
+   "Q": 84.92754532303852
+  }
+ },
+ {
+  "name": "A tepat di atas 300",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 350,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "kirpich",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "A = 350 ha — melampaui batas lazim metode rasional (±80–300 ha); gunakan hidrograf satuan (HSS).",
+    "Mononobe adalah PENDEKATAN intensitas dari hujan harian — bila tersedia kurva IDF lokal (analisis frekuensi), gunakan itu.",
+    "R24 harus hujan rencana sesuai periode ulang (mis. R24 kala ulang 5–10 th untuk drainase kota)."
+   ],
+   "A": 350,
+   "C": 0.7,
+   "R24": 120,
+   "tcMode": "kirpich",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "Permukiman padat (0,70)",
+   "S": 0.01,
+   "tcMin": 19.743034359862445,
+   "tcHr": 0.3290505726643741,
+   "i": 87.28421924258842,
+   "Q": 59.44928172612696
+  }
+ },
+ {
+  "name": "tc < 5 menit, lereng curam",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 10,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "kirpich",
+    "Lf": 60,
+    "dH": 9,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "tc = 0.9 menit < 5 menit — dipakai minimum praktis 5 menit? Nilai i sangat sensitif; di sini tc TIDAK diklamp (hasil konservatif).",
+    "Kemiringan S = 15.0% curam — Kirpich dikembangkan untuk lereng pertanian; hasil indikatif.",
+    "Mononobe adalah PENDEKATAN intensitas dari hujan harian — bila tersedia kurva IDF lokal (analisis frekuensi), gunakan itu.",
+    "R24 harus hujan rencana sesuai periode ulang (mis. R24 kala ulang 5–10 th untuk drainase kota)."
+   ],
+   "A": 10,
+   "C": 0.7,
+   "R24": 120,
+   "tcMode": "kirpich",
+   "Lf": 60,
+   "dH": 9,
+   "landLabel": "Permukiman padat (0,70)",
+   "S": 0.15,
+   "tcMin": 0.9471438407864475,
+   "tcHr": 0.015785730679774127,
+   "i": 661.1008356451425,
+   "Q": 12.865022261654474
+  }
+ },
+ {
+  "name": "Kirpich tanpa L",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 10,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "kirpich",
+    "Lf": 0,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi panjang lintasan L dan beda tinggi ΔH (> 0) untuk Kirpich."
+   ],
+   "A": 10,
+   "C": 0.7,
+   "R24": 120,
+   "tcMode": "kirpich",
+   "Lf": 0,
+   "dH": 8,
+   "landLabel": "Permukiman padat (0,70)"
+  }
+ },
+ {
+  "name": "tc manual 0",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 10,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 120,
+    "tcMode": "manual",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 0
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi tc manual (> 0 menit)."
+   ],
+   "A": 10,
+   "C": 0.7,
+   "R24": 120,
+   "tcMode": "manual",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "Permukiman padat (0,70)"
+  }
+ },
+ {
+  "name": "R24 0",
+  "fn": "compute",
+  "args": [
+   {
+    "A": 10,
+    "land": "urban",
+    "C": 0.6,
+    "R24": 0,
+    "tcMode": "kirpich",
+    "Lf": 800,
+    "dH": 8,
+    "tcMan": 30
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi A, C, dan R24 (> 0)."
+   ],
+   "A": 10,
+   "C": 0.7,
+   "R24": 0,
+   "tcMode": "kirpich",
+   "Lf": 800,
+   "dH": 8,
+   "landLabel": "Permukiman padat (0,70)"
+  }
+ }
+]

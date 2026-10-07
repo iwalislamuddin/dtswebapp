@@ -1,0 +1,906 @@
+[
+ {
+  "name": "default trapesium dari y",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.8,
+   "Q": 2.5255661004619325,
+   "A": 1.7600000000000002,
+   "P": 3.8844410203711917,
+   "T": 3.4000000000000004,
+   "R": 0.45308964424225373,
+   "V": 1.4349807388988252,
+   "yc": 0.6335040713083264,
+   "Fr": 0.6367877389802464,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "persegi",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "rect",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "rect",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.8,
+   "Q": 0.8869335039489972,
+   "A": 0.8,
+   "P": 2.6,
+   "T": 1,
+   "R": 0.3076923076923077,
+   "V": 1.1086668799362465,
+   "yc": 0.43122543736665797,
+   "Fr": 0.39575059503349375,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "segitiga",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "tri",
+    "b": 1,
+    "m": 2,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "tri",
+   "mode": "fromY",
+   "b": 1,
+   "m": 2,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.8,
+   "Q": 1.5691697977731738,
+   "A": 1.2800000000000002,
+   "P": 3.577708763999664,
+   "T": 3.2,
+   "R": 0.3577708763999664,
+   "V": 1.2259139045102918,
+   "yc": 0.6602800501712285,
+   "Fr": 0.6188643584065331,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "lingkaran dari y",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "circle",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.5,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [],
+   "shape": "circle",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.5,
+   "Q": 0.37909076596143415,
+   "A": 0.39269908169872414,
+   "P": 1.5707963267948966,
+   "T": 1,
+   "R": 0.25,
+   "V": 0.965346708532081,
+   "yc": 0.3454236242954114,
+   "Fr": 0.4918343689764497,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "lingkaran y/D > 0,8",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "circle",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.9,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "y/D = 0.90 > 0,8 — melampaui batas lazim desain gravitasi saluran tertutup; sisakan ruang udara."
+   ],
+   "shape": "circle",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.9,
+   "Q": 0.8080678630232414,
+   "A": 0.7445228861991272,
+   "P": 2.498091544796509,
+   "T": 0.6,
+   "R": 0.29803667033338244,
+   "V": 1.0853499308107484,
+   "yc": 0.5125277291617514,
+   "Fr": 0.31107984814309814,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "lingkaran y/D tepat di atas 0,8",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "circle",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.82,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "y/D = 0.82 > 0,8 — melampaui batas lazim desain gravitasi saluran tertutup; sisakan ruang udara."
+   ],
+   "shape": "circle",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.82,
+   "Q": 0.7584887273339089,
+   "A": 0.6892636334640737,
+   "P": 2.2652945924214523,
+   "T": 0.768374908491942,
+   "R": 0.30427108057822,
+   "V": 1.100433405316811,
+   "yc": 0.4958130824437028,
+   "Fr": 0.3709566548052522,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "lingkaran y >= D",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "circle",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 1.2,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "y ≥ D — saluran penuh/bertekanan. Gunakan tool Aliran Pipa."
+   ],
+   "shape": "circle",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001
+  }
+ },
+ {
+  "name": "trapesium dari Q",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromQ",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "trap",
+   "mode": "fromQ",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.5053257152291626,
+   "Q": 1,
+   "A": 0.8883568329369597,
+   "P": 2.82197777706926,
+   "T": 2.5159771456874878,
+   "R": 0.31479937232516225,
+   "V": 1.1256737866178634,
+   "yc": 0.38288682723291334,
+   "Fr": 0.6048360542008748,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "persegi dari Q besar (hi diperluas)",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "rect",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromQ",
+    "y": 0.8,
+    "Q": 400
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "rect",
+   "mode": "fromQ",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 261.3625528193028,
+   "Q": 400,
+   "A": 261.3625528193028,
+   "P": 523.7251056386056,
+   "T": 1,
+   "R": 0.4990453006842391,
+   "V": 1.5304411274118002,
+   "yc": 25.360062824673086,
+   "Fr": 0.030224591686165158,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "lingkaran dari Q",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "circle",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromQ",
+    "y": 0.8,
+    "Q": 0.4
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [],
+   "shape": "circle",
+   "mode": "fromQ",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.5161812726259598,
+   "Q": 0.4,
+   "A": 0.4088775293470486,
+   "P": 1.6031645237783547,
+   "T": 0.9994761956469086,
+   "R": 0.25504402279524113,
+   "V": 0.9782880478630721,
+   "yc": 0.3551732519671843,
+   "Fr": 0.488339494814151,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "lingkaran Q melebihi kapasitas",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "circle",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromQ",
+    "y": 0.8,
+    "Q": 5
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Q = 5.000 m³/s melampaui kapasitas gravitasi maks 0.816 m³/s (pada y≈0.94D) — perbesar D atau S, atau saluran menjadi bertekanan."
+   ],
+   "shape": "circle",
+   "mode": "fromQ",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001
+  }
+ },
+ {
+  "name": "superkritis (curam)",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.05,
+    "mode": "fromY",
+    "y": 0.3,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "V = 6.06 m/s > 3 m/s — risiko erosi/abrasif; pastikan material tahan (beton mutu baik ±4–6 m/s).",
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.05,
+   "y": 0.3,
+   "Q": 2.6348130029853998,
+   "A": 0.435,
+   "P": 2.081665382639197,
+   "T": 1.9,
+   "R": 0.20896730263559177,
+   "V": 6.057041386173333,
+   "yc": 0.6477353621772848,
+   "Fr": 4.041645419068232,
+   "regime": "SUPERKRITIS"
+  }
+ },
+ {
+  "name": "mendekati kritis",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "rect",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.004,
+    "mode": "fromY",
+    "y": 0.5,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Fr = 0.87 dekat 1 — aliran tak stabil (bergelombang); hindari desain di rentang 0,8–1,2.",
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "rect",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.004,
+   "y": 0.5,
+   "Q": 0.965346708532081,
+   "A": 0.5,
+   "P": 2,
+   "T": 1,
+   "R": 0.25,
+   "V": 1.930693417064162,
+   "yc": 0.4562811676913572,
+   "Fr": 0.8717537212999927,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "Fr antara 0,9 dan 0,95",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "rect",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.0045,
+    "mode": "fromY",
+    "y": 0.5,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Fr = 0.92 dekat 1 — aliran tak stabil (bergelombang); hindari desain di rentang 0,8–1,2.",
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "rect",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.0045,
+   "y": 0.5,
+   "Q": 1.0239048056987223,
+   "A": 0.5,
+   "P": 2,
+   "T": 1,
+   "R": 0.25,
+   "V": 2.0478096113974447,
+   "yc": 0.4745515378390126,
+   "Fr": 0.9246344517837488,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "lambat, sedimentasi",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.0001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "V = 0.45 m/s < 0,6 m/s — risiko sedimentasi (self-cleansing tak terpenuhi).",
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.0001,
+   "y": 0.8,
+   "Q": 0.7986541258769339,
+   "A": 1.7600000000000002,
+   "P": 3.8844410203711917,
+   "T": 3.4000000000000004,
+   "R": 0.45308964424225373,
+   "V": 0.4537807533391669,
+   "yc": 0.33711705002871484,
+   "Fr": 0.20136996412463665,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "material tanah",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "earth",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.022,
+   "S": 0.001,
+   "y": 0.8,
+   "Q": 1.4923799684547785,
+   "A": 1.7600000000000002,
+   "P": 3.8844410203711917,
+   "T": 3.4000000000000004,
+   "R": 0.45308964424225373,
+   "V": 0.8479431638947604,
+   "yc": 0.4779446687580732,
+   "Fr": 0.37628366394287294,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "n kustom",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "custom",
+    "nman": 0.02,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.02,
+   "S": 0.001,
+   "y": 0.8,
+   "Q": 1.641617965300256,
+   "A": 1.7600000000000002,
+   "P": 3.8844410203711917,
+   "T": 3.4000000000000004,
+   "R": 0.45308964424225373,
+   "V": 0.9327374802842363,
+   "yc": 0.5033806070167226,
+   "Fr": 0.4139120303371602,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "n kustom kosong",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "custom",
+    "nman": 0,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": true,
+   "warn": [
+    "Tambahkan tinggi jagaan (freeboard) — lazim ≥ 0,25·y atau sesuai standar (mis. KP-03 irigasi)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001,
+   "y": 0.8,
+   "Q": 2.5255661004619325,
+   "A": 1.7600000000000002,
+   "P": 3.8844410203711917,
+   "T": 3.4000000000000004,
+   "R": 0.45308964424225373,
+   "V": 1.4349807388988252,
+   "yc": 0.6335040713083264,
+   "Fr": 0.6367877389802464,
+   "regime": "subkritis"
+  }
+ },
+ {
+  "name": "y 0",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi kedalaman air y (> 0)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001
+  }
+ },
+ {
+  "name": "b 0",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 0,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi lebar dasar b (> 0)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 0,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001
+  }
+ },
+ {
+  "name": "m 0 trapesium",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 0,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi kemiringan talud m (> 0)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 0,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001
+  }
+ },
+ {
+  "name": "D 0 lingkaran",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "circle",
+    "b": 1,
+    "m": 1.5,
+    "D": 0,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi diameter D (> 0)."
+   ],
+   "shape": "circle",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 0,
+   "n": 0.013,
+   "S": 0.001
+  }
+ },
+ {
+  "name": "Q 0",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0.001,
+    "mode": "fromQ",
+    "y": 0.8,
+    "Q": 0
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi debit Q (> 0)."
+   ],
+   "shape": "trap",
+   "mode": "fromQ",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0.001
+  }
+ },
+ {
+  "name": "S 0",
+  "fn": "compute",
+  "args": [
+   {
+    "shape": "trap",
+    "b": 1,
+    "m": 1.5,
+    "D": 1,
+    "mat": "concrete",
+    "nman": 0.013,
+    "S": 0,
+    "mode": "fromY",
+    "y": 0.8,
+    "Q": 1
+   }
+  ],
+  "output": {
+   "valid": false,
+   "warn": [
+    "Isi koefisien Manning n dan kemiringan S (> 0)."
+   ],
+   "shape": "trap",
+   "mode": "fromY",
+   "b": 1,
+   "m": 1.5,
+   "D": 1,
+   "n": 0.013,
+   "S": 0
+  }
+ }
+]

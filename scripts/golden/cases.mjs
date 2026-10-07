@@ -143,6 +143,15 @@ const gfBase = {
 }
 const gf = (name, over) => ({ name, args: [{ ...gfBase, ...over }] })
 
+const wiBase = { V: 35, expo: 'C', Kd: 0.85, Kzt: 1.0, Ke: 1.0, G: 0.85, enc: 'enclosed', B: 30, L: 20, H: 24 }
+const wi = (name, over) => ({ name, args: [{ ...wiBase, ...over }] })
+const raBase = { A: 10, land: 'urban', C: 0.6, R24: 120, tcMode: 'kirpich', Lf: 800, dH: 8, tcMan: 30 }
+const ra = (name, over) => ({ name, args: [{ ...raBase, ...over }] })
+const ocBase = { shape: 'trap', b: 1.0, m: 1.5, D: 1.0, mat: 'concrete', nman: 0.013, S: 0.001, mode: 'fromY', y: 0.8, Q: 1.0 }
+const oc = (name, over) => ({ name, args: [{ ...ocBase, ...over }] })
+const pfwBase = { D: 100, Lp: 200, mat: 'pvc', eps: 0.0015, C: 150, Q: 10, nu: 1.004, sumK: 2 }
+const pfw = (name, over) => ({ name, args: [{ ...pfwBase, ...over }] })
+
 export const CASES = {
   'bearing-capacity': [
     bearing('default (HANDOFF: Terzaghi qu 1373)', {}),
@@ -726,5 +735,76 @@ export const CASES = {
     gf('profil hollow', { cptype: 'RHS', cpsize: '250×150×9', rptype: 'SHS', rpsize: '150×150×6' }),
     gf('rafter tidak ada', { rpsize: 'xx' }),
     gf('Lb 0', { Lb: 0 }),
+  ],
+  'wind-load': [
+    wi('default (HANDOFF qh 0,768, F 554,6)', {}),
+    wi('eksposur B', { expo: 'B' }),
+    wi('eksposur D', { expo: 'D' }),
+    wi('tertutup sebagian', { enc: 'partial' }),
+    wi('terbuka', { enc: 'open' }),
+    wi('L/B 1,5', { L: 45 }),
+    wi('L/B 3', { L: 90 }),
+    wi('L/B 5', { L: 150 }),
+    wi('L/B < 1, rendah (z < 4,6)', { L: 10, H: 3 }),
+    wi('beban minimum menentukan', { V: 20, H: 6 }),
+    wi('tinggi > 60', { H: 80 }),
+    wi('tinggi > 160, langsing', { H: 180, B: 25, L: 25 }),
+    wi('V di luar rentang, Kzt 1,2', { V: 70, Kzt: 1.2 }),
+    wi('faktor kosong -> default', { Kd: 0, Kzt: 0, Ke: 0, G: 0 }),
+    wi('nilai string', { V: '40', B: '25.5' }),
+    wi('B 0', { B: 0 }),
+  ],
+  'rational-method': [
+    ra('default Kirpich', {}),
+    ra('tc manual', { tcMode: 'manual' }),
+    ra('C kustom', { land: 'custom', C: 0.42 }),
+    ra('tutupan tak dikenal -> 0,5', { land: 'xx' }),
+    ra('A > 80', { A: 150 }),
+    ra('A > 300', { A: 500 }),
+    ra('A tepat di atas 300', { A: 350 }),
+    ra('tc < 5 menit, lereng curam', { Lf: 60, dH: 9 }),
+    ra('Kirpich tanpa L', { Lf: 0 }),
+    ra('tc manual 0', { tcMode: 'manual', tcMan: 0 }),
+    ra('R24 0', { R24: 0 }),
+  ],
+  'open-channel': [
+    oc('default trapesium dari y', {}),
+    oc('persegi', { shape: 'rect' }),
+    oc('segitiga', { shape: 'tri', m: 2 }),
+    oc('lingkaran dari y', { shape: 'circle', y: 0.5 }),
+    oc('lingkaran y/D > 0,8', { shape: 'circle', y: 0.9 }),
+    oc('lingkaran y/D tepat di atas 0,8', { shape: 'circle', y: 0.82 }),
+    oc('lingkaran y >= D', { shape: 'circle', y: 1.2 }),
+    oc('trapesium dari Q', { mode: 'fromQ' }),
+    oc('persegi dari Q besar (hi diperluas)', { shape: 'rect', mode: 'fromQ', Q: 400 }),
+    oc('lingkaran dari Q', { shape: 'circle', mode: 'fromQ', Q: 0.4 }),
+    oc('lingkaran Q melebihi kapasitas', { shape: 'circle', mode: 'fromQ', Q: 5 }),
+    oc('superkritis (curam)', { S: 0.05, y: 0.3 }),
+    oc('mendekati kritis', { S: 0.004, y: 0.5, shape: 'rect' }),
+    oc('Fr antara 0,9 dan 0,95', { S: 0.0045, y: 0.5, shape: 'rect' }),
+    oc('lambat, sedimentasi', { S: 0.0001 }),
+    oc('material tanah', { mat: 'earth' }),
+    oc('n kustom', { mat: 'custom', nman: 0.02 }),
+    oc('n kustom kosong', { mat: 'custom', nman: 0 }),
+    oc('y 0', { y: 0 }),
+    oc('b 0', { b: 0 }),
+    oc('m 0 trapesium', { m: 0 }),
+    oc('D 0 lingkaran', { shape: 'circle', D: 0 }),
+    oc('Q 0', { mode: 'fromQ', Q: 0 }),
+    oc('S 0', { S: 0 }),
+  ],
+  'pipe-flow': [
+    pfw('default PVC', {}),
+    pfw('laminar', { Q: 0.05 }),
+    pfw('transisi', { Q: 0.25 }),
+    pfw('laminar dekat batas (Re 2000-2300)', { Q: 0.17 }),
+    pfw('baja lama, cepat', { mat: 'steelOld', Q: 30 }),
+    pfw('beton besar', { mat: 'concrete', D: 600, Q: 300 }),
+    pfw('material kustom', { mat: 'custom', eps: 0.1, C: 125 }),
+    pfw('kustom C 0', { mat: 'custom', eps: 0.1, C: 0 }),
+    pfw('kustom eps besar (di luar Swamee-Jain)', { mat: 'custom', eps: 10, C: 100 }),
+    pfw('lambat', { Q: 1 }),
+    pfw('nu kosong -> 1,004', { nu: 0 }),
+    pfw('D 0', { D: 0 }),
   ],
 }
