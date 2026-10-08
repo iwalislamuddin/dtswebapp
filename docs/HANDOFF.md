@@ -37,14 +37,16 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > jingga heading dihapus (jingga tinggal di pita atas halaman pertama), langkah rumus tanpa latar dengan garis kiri
 > tipis, jeda ekstra setelah Ringkasan hasil. Tabel, header & footer disetujui.
 >
-> **Tahap 5 berjalan (2026-10-08, sesi 2):** tool kedua **Sambungan Baut** (`/bolt-connection`) selesai di UI baru
-> mengikuti percontohan — input 4 kartu, preview denah + potongan bidang geser, diagram kapasitas vs beban, laporan
-> berumus (menggantikan laporan lama tanpa rumus). Pembantu bersama baru: `src/tools/form.ts` (`parseNum`) dan
-> `<Sized>` di `src/ui/kit.tsx`. Usul berikutnya: `weld-connection`, lalu tool baja lain.
+> **Tahap 5 berjalan (2026-10-08, sesi 2):** **Sambungan Baut** (`/bolt-connection`) dan **Sambungan Las**
+> (`/weld-connection`) selesai di UI baru mengikuti percontohan — input berkartu, preview, diagram kapasitas vs beban,
+> laporan berumus. Pembantu bersama baru: `src/tools/form.ts` (`parseNum`), `<Sized>` di `src/ui/kit.tsx`,
+> `<CapacityBars>` di `src/ui/bars.tsx`. Temuan las (β untuk Lw/w > 300 tidak konservatif) dicatat di TODO
+> "Perbaikan isi tool". Usul berikutnya: tool baja lain. Catatan dev: folder tool baru belum terlihat oleh
+> `import.meta.glob` server dev yang sudah berjalan — sentuh `src/tools/registry.ts` atau mulai ulang server.
 >
 > **Menunggu pemilik:** tinjauan **redaksi** laporan (dilakukan sekaligus nanti) — format sudah jadi patokan semua tool.
 >
-> **Berikutnya:** lanjut tulis ulang tool lain di UI baru (Tahap 5, 2/33 tool aktif selesai) → akun & Save Supabase + nyalakan `PREMIUM_GATE` (Tahap 4) → rilis
+> **Berikutnya:** lanjut tulis ulang tool lain di UI baru (Tahap 5, 3/33 tool aktif selesai) → akun & Save Supabase + nyalakan `PREMIUM_GATE` (Tahap 4) → rilis
 > v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
 >
 > **Temuan yang menunggu perbaikan** (TODO "Perbaikan isi tool"): profil siku di library baja lama salah baca kolom

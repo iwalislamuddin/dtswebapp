@@ -29,7 +29,7 @@ export function xFromEvent(f: DiagramFrame, e: MouseEvent<SVGElement>): number {
 }
 
 /** Garis skala x di bawah diagram (tick 1/2/5). */
-export function XAxis({ f, y, unit }: { f: DiagramFrame; y: number; unit: string }) {
+export function XAxis({ f, y, unit, name = 'x' }: { f: DiagramFrame; y: number; unit: string; name?: string }) {
   const step = niceStep(f.x1 - f.x0, Math.max(2, Math.floor((f.w - f.padL - f.padR) / 70)))
   const ticks: number[] = []
   for (let v = Math.ceil(f.x0 / step) * step; v <= f.x1 + 1e-9; v += step) ticks.push(v)
@@ -45,7 +45,7 @@ export function XAxis({ f, y, unit }: { f: DiagramFrame; y: number; unit: string
         </g>
       ))}
       <text x={f.w - f.padR} y={y + 28} textAnchor="end">
-        x ({unit})
+        {name} ({unit})
       </text>
     </g>
   )

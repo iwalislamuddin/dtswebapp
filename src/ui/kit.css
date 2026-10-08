@@ -634,3 +634,9 @@ select.ctl {
 .dg-bar.gov .dg-bar-label {
   font-weight: 700;
 }
+
+.bp-weld {
+  fill: color-mix(in srgb, var(--accent) 55%, transparent);
+  stroke: var(--dg-ink);
+  stroke-width: 1;
+}

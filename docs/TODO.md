@@ -129,8 +129,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 - [x] **[Claude]** Laporan dari satu sumber per tool (`src/report/`): model `Report` → tab Detail (HTML + SVG ikut
       tema) dan PDF — diganti 2026-10-08: PDF pdf-lib berwarna, .txt dihapus. Modul laporan per tool di
       `src/tools/<id>/report.ts`; contoh acuan `bolt-connection` (tab Detail memakai input bawaan sampai UI barunya
-      ada). File > Download Report aktif bila tool punya laporan — 2026-10-07. Sisa: laporan 31 tool lain ditulis
-      bersama UI-nya di Tahap 5 (baut sudah ditulis ulang berumus 2026-10-08); gating Premium di Tahap 4
+      ada). File > Download Report aktif bila tool punya laporan — 2026-10-07. Sisa: laporan 30 tool lain ditulis
+      bersama UI-nya di Tahap 5 (baut & las sudah ditulis ulang berumus 2026-10-08); gating Premium di Tahap 4
 - [x] **[Claude]** CI GitHub Actions (`.github/workflows/ci.yml`): typecheck, lint, test, rekam ulang golden harus
       identik, build — 2026-10-07
 
@@ -146,6 +146,10 @@ terpisah yang memperbarui acuan golden secara sadar.
       `steel-tension` terlewati diam-diam; lentur siku `steel-flexure` (F10 indikatif) ±6× terlalu kecil. Juga cek
       `steel-compression` siku memakai ix/iy, bukan iv (sumbu lemah utama) → tekuk siku tunggal tidak konservatif.
       Perbaiki bersama penggantian sumber ke tabel JIS Matrix (punya Iu/Iv/iu/iv). **Prioritas pertama setelah port.**
+- [ ] ⚠️ `weld-connection` (ditemukan 2026-10-08 saat tulis ulang UI): las end-loaded dengan Lw/w > 300 memakai
+      β = 0,6, padahal J2.2b menetapkan panjang efektif 180w (β efektif = 180/(Lw/w) < 0,6) — **tidak konservatif**.
+      Peringatan Lw < 4w juga keliru redaksi: J2.2b membatasi *ukuran* efektif las ≤ Lw/4, bukan "panjang efektif
+      25% Lw". Laporan baru menampilkan β apa adanya dari mesin hitung
 - [ ] `footing-design` → **`shallow-foundation`** dan `pile-cap` → **`deep-foundation`** (+ redirect 301), tab
       Settlement opsional — spesifikasi: [TOOL-REVISIONS.md](TOOL-REVISIONS.md) §1–3
 - [ ] **Library Data** (Premium; tanah, profil lapis, CPT, N-SPT, material; nama + deskripsi, tanpa proyek) —
@@ -200,13 +204,16 @@ terpisah yang memperbarui acuan golden secara sadar.
         deskripsi judul dihapus, dialog Cetak PDF + Deskripsi (diingat per tool, localStorage), jingga heading dihapus,
         rumus tanpa sorot (garis kiri tipis), jeda setelah ringkasan. Tabel/header/footer disetujui
   - [ ] **[Anda]** Tinjauan redaksi laporan (sekaligus, nanti)
-- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 2/33 tool aktif:
+- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 3/33 tool aktif:
   - [x] `steel-beam-analysis` (percontohan) — 2026-10-08
   - [x] `bolt-connection` — 2026-10-08: 4 kartu input (mutu/ulir/Fnt-Fnv kustom bersyarat, d, bidang geser
         tunggal/ganda; pola; pelat tumpu; beban), preview denah + potongan bidang geser, diagram batang kapasitas
         Grup / Per baut, laporan baru berumus (Ab, dh, syarat geometri J3.3–J3.5, J3-1, J3-6a/c, tabel kapasitas
         grup efektif, J3-3a) + 2 gambar berwarna. Input bawaan = golden default; 8 kasus golden diuji lewat input UI
-  - [ ] berikutnya (usul): `weld-connection`, lalu baja lain (`steel-tension`, `steel-compression`, `steel-flexure`)
+  - [x] `weld-connection` — 2026-10-08: 4 kartu (las, arah beban, logam dasar, beban), preview las + arah θ +
+        potongan throat, diagram Kapasitas / Faktor arah kd(θ), laporan berumus (te, Awe, J2-5, J2-1, J2-4, J4-3,
+        J4-4) + 2 gambar. Grafik batang kapasitas kini komponen bersama `src/ui/bars.tsx` (baut & las)
+  - [ ] berikutnya (usul): baja lain — `steel-tension`, `steel-compression`, `steel-flexure`, `anchor-bolt-group`
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.
