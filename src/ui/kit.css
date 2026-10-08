@@ -574,7 +574,8 @@ select.ctl {
 /* Pelat, baut, batang kapasitas (sambungan) */
 
 .bp-plate rect,
-.bp-plate path {
+.bp-plate path,
+.bp-plate circle {
   fill: color-mix(in srgb, var(--dg-support) 12%, transparent);
   stroke: var(--dg-support);
   stroke-width: 1.2;
