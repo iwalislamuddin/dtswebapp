@@ -170,7 +170,7 @@ export function beamFlexReport(r: BeamFlexureResult): Report {
             { lhs: 'C', expr: "0.85 f'_{c} b a", subst: `0.85 × ${fc} × ${fx(r.b, 0)} × ${fx(r.a, 2)} / 10^{3}`, value: fx(C, 1), unit: 'kN' },
             ...(r.Asc! > 0 ? [{ lhs: 'C_{s}', expr: "A'_{s} f'_{s}", subst: `${fx(r.Asc, 1)} × ${fx(r.fsc, 1)} / 10^{3}`, value: fx(Cs, 1), unit: 'kN' }] : []),
             { lhs: 'T', expr: 'A_{s} f_{s}', subst: `${fx(r.As, 1)} × ${fx(r.fs, 1)} / 10^{3}`, value: fx(T, 1), unit: 'kN' },
-            { desc: 'Kontrol', lhs: 'C + C_{s} − T', value: fx(C + Cs - T, 2), unit: 'kN' },
+            { desc: 'Kontrol', lhs: 'C + C_{s} − T', value: fx(Math.abs(C + Cs - T) < 0.005 ? 0 : C + Cs - T, 2), unit: 'kN' },
           ],
         },
       ],
