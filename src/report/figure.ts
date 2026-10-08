@@ -1,4 +1,4 @@
-import type { FigColor, FigOp } from './model'
+import type { FigColor, FigOp, Figure } from './model'
 
 // Pembantu gambar laporan (port core/report.js: CivilReport.fig). Semua menambah primitif ke `ops`.
 
@@ -59,4 +59,34 @@ export function cross(ops: FigOp[], x: number, y: number, label?: string, g = 0)
   ops.push({ t: 'line', x1: x - 3.5, y1: y - 3.5, x2: x + 3.5, y2: y + 3.5, lw: 1.2, g })
   ops.push({ t: 'line', x1: x - 3.5, y1: y + 3.5, x2: x + 3.5, y2: y - 3.5, lw: 1.2, g })
   if (label) ops.push({ t: 'text', x: x + 6, y: y - 3, s: label, size: 6, g })
+}
+
+/** Gambar batang kapasitas rencana tiap keadaan batas + garis beban (laporan cek kapasitas). */
+export function capacityFigure(
+  rows: { label: string; cap: number; c: FigColor }[],
+  dem: number,
+  opt: { unit: string; demLabel: string; caption: string; alt: string },
+): Figure {
+  const ops: FigOp[] = []
+  const bx0 = 200, bw = 250, rh = 20
+  const maxV = Math.max(1e-9, dem, ...rows.map((b) => (Number.isFinite(b.cap) ? b.cap : 0))) * 1.08
+  const xd = bx0 + (dem / maxV) * bw
+  rows.forEach((b, i) => {
+    const y = 12 + i * rh
+    const len = Math.max(1.5, (Math.min(b.cap, maxV) / maxV) * bw)
+    ops.push({ t: 'text', x: bx0 - 8, y: y + 9, s: b.label, size: 7, align: 'r', c: 'ink' })
+    ops.push({ t: 'rect', x: bx0, y, w: len, h: 12, fill: true, c: b.c, op: 0.35 })
+    ops.push({ t: 'rect', x: bx0, y, w: len, h: 12, lw: 0.6, c: b.c })
+    // angka di kanan batang — atau di kanan garis beban bila beban melampaui kapasitas
+    ops.push({ t: 'text', x: Math.max(bx0 + len, dem > b.cap ? xd : 0) + 4, y: y + 9, s: `${b.cap.toFixed(1)} ${opt.unit}`, size: 7, c: 'ink' })
+  })
+  const yb = 12 + rows.length * rh
+  const minCap = Math.min(...rows.map((b) => b.cap))
+  if (dem > 0) ops.push({ t: 'line', x1: xd, y1: 6, x2: xd, y2: yb, lw: 1.4, c: dem > minCap ? 'bad' : 'load' })
+  ops.push({ t: 'line', x1: bx0, y1: 6, x2: bx0, y2: yb, lw: 0.6, c: 'muted' })
+  if (dem > 0) {
+    ops.push({ t: 'line', x1: bx0, y1: yb + 10, x2: bx0 + 14, y2: yb + 10, lw: 1.4, c: 'load' })
+    ops.push({ t: 'text', x: bx0 + 18, y: yb + 12.5, s: opt.demLabel, size: 6.5, c: 'muted' })
+  }
+  return { h: figRows(yb + (dem > 0 ? 18 : 6)), ops, alt: opt.alt, caption: opt.caption }
 }

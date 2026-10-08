@@ -640,3 +640,15 @@ select.ctl {
   stroke: var(--dg-ink);
   stroke-width: 1;
 }
+
+.bp-hole {
+  fill: var(--bg);
+  stroke: var(--danger);
+  stroke-width: 1.4;
+}
+
+.bp-member {
+  fill: color-mix(in srgb, var(--dg-support) 18%, transparent);
+  stroke: var(--dg-support);
+  stroke-width: 1.2;
+}
