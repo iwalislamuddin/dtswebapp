@@ -570,3 +570,67 @@ select.ctl {
 .dg-note {
   fill: var(--text-muted) !important;
 }
+
+/* Pelat, baut, batang kapasitas (sambungan) */
+
+.bp-plate rect,
+.bp-plate path {
+  fill: color-mix(in srgb, var(--dg-support) 12%, transparent);
+  stroke: var(--dg-support);
+  stroke-width: 1.2;
+}
+
+.bp-plate .cut {
+  fill: none;
+  stroke: var(--dg-axis);
+  stroke-dasharray: 4 3;
+}
+
+.bp-bolt circle {
+  fill: color-mix(in srgb, var(--accent) 35%, transparent);
+  stroke: var(--dg-ink);
+  stroke-width: 1;
+}
+
+.bp-bolt line {
+  stroke: var(--dg-axis);
+  stroke-width: 0.6;
+}
+
+.bp-bolt rect {
+  fill: color-mix(in srgb, var(--accent) 45%, transparent);
+  stroke: var(--dg-ink);
+  stroke-width: 1;
+}
+
+.bp-plane {
+  stroke: var(--dg-y);
+  stroke-width: 1.2;
+  stroke-dasharray: 5 3;
+}
+
+.bp-plane-label {
+  fill: var(--dg-y) !important;
+  font-size: 10px;
+}
+
+.dg-bar rect {
+  stroke-width: 1;
+}
+
+.dg-bar .val {
+  font-family: var(--font-mono);
+}
+
+.dg-bar .dem {
+  stroke: var(--dg-load);
+  stroke-width: 2.5;
+}
+
+.dg-bar .dem.over {
+  stroke: var(--danger);
+}
+
+.dg-bar.gov .dg-bar-label {
+  font-weight: 700;
+}

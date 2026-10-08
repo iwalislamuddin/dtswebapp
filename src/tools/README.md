@@ -1,11 +1,13 @@
 # `src/tools` — UI tool (kontrak, Tahap 5)
 
-Contoh acuan: **`steel-beam-analysis/`** (tool percontohan). Arah tampilan: [docs/UI.md](../../docs/UI.md).
+Contoh acuan: **`steel-beam-analysis/`** (tool percontohan; daftar beban `RowTable`, diagram gaya dalam) dan
+**`bolt-connection/`** (form datar, pilihan bersyarat, diagram batang kapasitas vs beban). Arah tampilan: [docs/UI.md](../../docs/UI.md).
 
 ## Berkas per tool
 
 | Berkas | Isi |
 |---|---|
+| `form.ts` | Bersama: `parseNum()` (koma desimal diterima) & `FieldErrors`. |
 | `<id>/model.ts` | Bentuk input UI (`…Input`, JSON murni, angka sebagai **teks form**), `…_DEFAULTS`, `validate()` → `{ kunciField: pesan }`, adapter ke `src/calc/<id>.ts`, `compute…(input)` → hasil atau `null` bila ada field tidak valid. Tanpa React — diuji Vitest. |
 | `<id>/report.ts` | `Report` dari hasil (`src/report/model.ts`) + `default export { defaults, build }`. Sumber tunggal tab Detail & PDF. |
 | `<id>/index.tsx` | Default export komponen `({ tab })`. Dimuat malas oleh `registry.ts` (satu chunk per tool). |
@@ -32,6 +34,8 @@ Contoh acuan: **`steel-beam-analysis/`** (tool percontohan). Arah tampilan: [doc
    scroll sendiri. ≤ 900 px kolom menumpuk.
 5. **Kontrol**: `NumField` (label · input · satuan), `SelectField`, `Segmented`, `RowTable` (daftar beban/lapisan:
    tambah, edit langsung, hapus; kunci error `prefix.indeks.kolom`). Angka desimal boleh koma.
-6. **Gambar**: SVG ukuran piksel nyata (`useSize`), warna dari token `--dg-*` (terang/gelap); diagram gaya dalam
+6. **Gambar**: SVG ukuran piksel nyata (`<Sized>` / `useSize` dari `src/ui/kit.tsx`), warna dari token `--dg-*` (terang/gelap); diagram gaya dalam
    memakai `Curve`/`XAxis` dari `src/ui/diagram.tsx` (label ekstrem + bidik hover).
 7. Angka hasil pakai `fx(n, dp)`; teks satuan dengan simbol Unicode (kN·m, cm⁴) — dipakai langsung di tab Detail & PDF (font Unicode).
+8. **Field bersyarat**: kontrol yang tak berlaku disembunyikan (mis. Fnt/Fnv hanya untuk mutu Kustom, spasi s hanya
+   bila baris > 1) dan **tidak divalidasi** selama tersembunyi — field tersembunyi tak boleh memblokir hitung.

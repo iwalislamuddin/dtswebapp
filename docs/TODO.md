@@ -129,8 +129,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 - [x] **[Claude]** Laporan dari satu sumber per tool (`src/report/`): model `Report` → tab Detail (HTML + SVG ikut
       tema) dan PDF — diganti 2026-10-08: PDF pdf-lib berwarna, .txt dihapus. Modul laporan per tool di
       `src/tools/<id>/report.ts`; contoh acuan `bolt-connection` (tab Detail memakai input bawaan sampai UI barunya
-      ada). File > Download Report aktif bila tool punya laporan — 2026-10-07. Sisa: laporan 33 tool lain ditulis
-      bersama UI-nya di Tahap 5; gating Premium di Tahap 4
+      ada). File > Download Report aktif bila tool punya laporan — 2026-10-07. Sisa: laporan 31 tool lain ditulis
+      bersama UI-nya di Tahap 5 (baut sudah ditulis ulang berumus 2026-10-08); gating Premium di Tahap 4
 - [x] **[Claude]** CI GitHub Actions (`.github/workflows/ci.yml`): typecheck, lint, test, rekam ulang golden harus
       identik, build — 2026-10-07
 
@@ -200,7 +200,13 @@ terpisah yang memperbarui acuan golden secara sadar.
         deskripsi judul dihapus, dialog Cetak PDF + Deskripsi (diingat per tool, localStorage), jingga heading dihapus,
         rumus tanpa sorot (garis kiri tipis), jeda setelah ringkasan. Tabel/header/footer disetujui
   - [ ] **[Anda]** Tinjauan redaksi laporan (sekaligus, nanti)
-- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail)
+- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 2/33 tool aktif:
+  - [x] `steel-beam-analysis` (percontohan) — 2026-10-08
+  - [x] `bolt-connection` — 2026-10-08: 4 kartu input (mutu/ulir/Fnt-Fnv kustom bersyarat, d, bidang geser
+        tunggal/ganda; pola; pelat tumpu; beban), preview denah + potongan bidang geser, diagram batang kapasitas
+        Grup / Per baut, laporan baru berumus (Ab, dh, syarat geometri J3.3–J3.5, J3-1, J3-6a/c, tabel kapasitas
+        grup efektif, J3-3a) + 2 gambar berwarna. Input bawaan = golden default; 8 kasus golden diuji lewat input UI
+  - [ ] berikutnya (usul): `weld-connection`, lalu baja lain (`steel-tension`, `steel-compression`, `steel-flexure`)
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.

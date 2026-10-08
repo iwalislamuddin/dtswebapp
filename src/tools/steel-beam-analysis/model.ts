@@ -1,5 +1,8 @@
 import { computeSteelBeam, type SteelBeamInput, type SteelBeamResult } from '../../calc/steel-beam-analysis'
 import { getProfile, listProfiles } from '../../calc/shared/steel-profiles'
+import { parseNum, type FieldErrors } from '../form'
+
+export { parseNum, type FieldErrors }
 
 // Input UI Analisis Balok Baja: struktur yang terbaca manusia (daftar beban), angka sebagai teks form agar bisa
 // diketik bebas ("1," / kosong). toCalcInput() menerjemahkannya ke bentuk datar compute lama (d1_w1, p1_P, …).
@@ -55,16 +58,6 @@ export const BEAM_DEFAULTS: BeamInput = {
   dist: [{ w1: '15', w2: '15', a1: '0', a2: '6' }],
   point: [{ P: '30', a: '3' }],
 }
-
-/** Angka dari teks form ("1,5" diterima); null bila kosong/tidak valid. */
-export function parseNum(s: string): number | null {
-  const t = s.trim().replace(',', '.')
-  if (t === '' || !/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(t)) return null
-  return Number(t)
-}
-
-/** Kunci field ("L", "dist.0.w1", "point.1.a") → pesan kesalahan. Kosong = input sah. */
-export type FieldErrors = Record<string, string>
 
 export function validate(i: BeamInput): FieldErrors {
   const e: FieldErrors = {}

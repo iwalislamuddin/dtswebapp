@@ -2,8 +2,7 @@ import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { PDFDocument } from 'pdf-lib'
 import { describe, expect, it } from 'vitest'
-import { computeBoltConnection } from '../calc/bolt-connection'
-import { BOLT_DEFAULTS, boltReport } from '../tools/bolt-connection/report'
+import { BOLT_DEFAULTS, buildBoltReport } from '../tools/bolt-connection/report'
 import { BEAM_DEFAULTS } from '../tools/steel-beam-analysis/model'
 import { buildBeamReport } from '../tools/steel-beam-analysis/report'
 import { parseMath, plainMath } from './math'
@@ -51,8 +50,8 @@ describe('PDF laporan', () => {
     const [w, h] = [doc.getPage(0).getWidth(), doc.getPage(0).getHeight()]
     expect([Math.round(w), Math.round(h)]).toEqual([595, 842])
   })
-  it('laporan lama bergaya kv/check/gambar abu-abu tetap dirender (sambungan baut)', async () => {
-    const doc = await pdfOf(boltReport(computeBoltConnection({ ...BOLT_DEFAULTS, Tu: 120, Vu: 200 })))
+  it('Sambungan Baut tarik + geser (semua bagian, dua gambar) dirender', async () => {
+    const doc = await pdfOf(buildBoltReport({ ...BOLT_DEFAULTS, Tu: '120', Vu: '200' })!)
     expect(doc.getPageCount()).toBeGreaterThanOrEqual(1)
   })
   it('laporan kosong tetap satu halaman valid', async () => {

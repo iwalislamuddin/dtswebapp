@@ -263,3 +263,13 @@ export function useSize<T extends HTMLElement>() {
   }, [])
   return [ref, size] as const
 }
+
+/** Wadah yang memberi ukuran piksel ke anak (untuk SVG). */
+export function Sized({ children }: { children: (w: number, h: number) => ReactNode }) {
+  const [ref, size] = useSize<HTMLDivElement>()
+  return (
+    <div ref={ref} className="sized">
+      {children(size.w, size.h)}
+    </div>
+  )
+}

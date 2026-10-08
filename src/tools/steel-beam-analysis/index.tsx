@@ -1,9 +1,9 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState } from 'react'
 import { BEAM_PROFILE_TYPES, type SteelBeamResult } from '../../calc/steel-beam-analysis'
 import { listProfiles, typeInfo } from '../../calc/shared/steel-profiles'
 import { useAutoCompute, useToolInput, useToolReport } from '../../app/tool-state'
 import { fx } from '../../report/model'
-import { Card, NumField, Panel, ResetButton, RowTable, Segmented, SelectField, StatTiles, SubTabs, ToolLayout, useSize, Field } from '../../ui/kit'
+import { Card, NumField, Panel, ResetButton, RowTable, Segmented, SelectField, StatTiles, SubTabs, ToolLayout, Field, Sized } from '../../ui/kit'
 import { DetailTab } from '../../ui/ReportView'
 import type { ToolUIProps } from '../registry'
 import { BeamDiagram, DIAGRAM_TABS, type DiagramTab } from './BeamDiagrams'
@@ -139,16 +139,6 @@ function Inputs({
         />
       </Card>
     </>
-  )
-}
-
-/** Wadah yang memberi ukuran piksel ke anak (untuk SVG). */
-function Sized({ children }: { children: (w: number, h: number) => ReactNode }) {
-  const [ref, size] = useSize<HTMLDivElement>()
-  return (
-    <div ref={ref} className="sized">
-      {children(size.w, size.h)}
-    </div>
   )
 }
 
