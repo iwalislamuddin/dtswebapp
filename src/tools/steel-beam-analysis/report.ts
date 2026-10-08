@@ -333,7 +333,6 @@ export function beamReport(input: BeamInput, r: SteelBeamResult): Report {
 
   return {
     title: 'Analisis Balok Baja Sederhana',
-    method: `Balok statis tertentu sendi–rol${cant ? ' dengan kantilever' : ''} · reaksi, gaya geser, momen, lendutan · E = ${fx(r.E, 0)} MPa`,
     summary: [
       kv('Reaksi R_{A} / R_{B}', `${fx(r.RA, 2)} / ${fx(r.RB, 2)} kN`),
       kv(`Momen maksimum M_{maks} (x = ${fx(r.xMmax, 2)} m)`, `${fx(r.Mmax, 2)} kN·m`),
@@ -358,5 +357,5 @@ export function buildBeamReport(i: BeamInput): Report | null {
 
 export default {
   defaults: BEAM_DEFAULTS,
-  build: (i: BeamInput) => buildBeamReport(i) ?? { title: 'Analisis Balok Baja', method: '-', sections: [], warnings: ['Input belum lengkap.'], scope: [] },
+  build: (i: BeamInput) => buildBeamReport(i) ?? { title: 'Analisis Balok Baja', sections: [], warnings: ['Input belum lengkap.'], scope: [] },
 }

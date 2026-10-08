@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { APP_NAME } from '../app/appInfo'
 import { linkClick, navigate } from '../app/router'
 import { useUi } from '../app/ui-state'
-import { downloadActivePdf } from '../app/report-actions'
+import { openPdfDialog } from '../app/report-actions'
 import { premiumStatus } from '../app/premium'
 import { BrandMark } from './Brand'
 import { UpdatePrompt } from './UpdatePrompt'
@@ -41,7 +41,7 @@ function menus(): MenuDef[] {
         { label: 'Simpan Pekerjaan…', hint: SOON },
         { label: 'Buka Pekerjaan…', hint: SOON },
         'sep',
-        { label: 'Download Report (PDF)', onSelect: rep && premium ? () => void downloadActivePdf() : undefined, hint: pdfHint },
+        { label: 'Download Report (PDF)', onSelect: rep && premium ? openPdfDialog : undefined, hint: pdfHint },
       ],
     },
     {

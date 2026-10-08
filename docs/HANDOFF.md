@@ -31,7 +31,13 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 >   - Gating Premium satu titik (`src/app/premium.ts`): Detail & PDF = Premium. **Sementara dimatikan**
 >     (`PREMIUM_GATE = false`) agar pemilik bisa meninjau — wajib dinyalakan saat akun tersambung, sebelum rilis.
 >
-> **Menunggu pemilik:** tinjauan tab **Detail & PDF** Analisis Balok Baja (format laporan jadi patokan semua tool).
+> **Tinjauan format Detail & PDF putaran 2 diterapkan (2026-10-08):** halaman PDF setengah kosong / halaman terakhir
+> berisi penutup saja diperbaiki (gambar ditunda ke halaman berikut, penutup tak pernah sendirian), deskripsi di bawah
+> judul dihapus, dialog **Cetak PDF** dengan isian *Deskripsi* (opsional, hanya di PDF, diingat per tool), aksen
+> jingga heading dihapus (jingga tinggal di pita atas halaman pertama), langkah rumus tanpa latar dengan garis kiri
+> tipis, jeda ekstra setelah Ringkasan hasil. Tabel, header & footer disetujui.
+>
+> **Menunggu pemilik:** tinjauan **redaksi** laporan (dilakukan sekaligus nanti) — format sudah jadi patokan semua tool.
 >
 > **Berikutnya:** setelah tinjauan → tulis ulang tool lain di UI baru mengikuti percontohan (Tahap 5; laporan
 > Sambungan Baut masih isi lama tanpa rumus) → akun & Save Supabase + nyalakan `PREMIUM_GATE` (Tahap 4) → rilis

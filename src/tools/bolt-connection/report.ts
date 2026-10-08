@@ -78,7 +78,6 @@ export function boltReport(r: BoltConnectionResult): Report {
   const tension = r.Tu > 0
   return {
     title: 'Sambungan Baut (SNI 1729:2020 Ps. J3)',
-    method: 'DFBK, bearing-type',
     sections: [
       {
         title: 'Konfigurasi',

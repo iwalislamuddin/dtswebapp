@@ -7,7 +7,7 @@ Contoh acuan: **`steel-beam-analysis/`** (tool percontohan). Arah tampilan: [doc
 | Berkas | Isi |
 |---|---|
 | `<id>/model.ts` | Bentuk input UI (`…Input`, JSON murni, angka sebagai **teks form**), `…_DEFAULTS`, `validate()` → `{ kunciField: pesan }`, adapter ke `src/calc/<id>.ts`, `compute…(input)` → hasil atau `null` bila ada field tidak valid. Tanpa React — diuji Vitest. |
-| `<id>/report.ts` | `Report` dari hasil (`src/report/model.ts`) + `default export { defaults, build }`. Sumber tunggal tab Detail, .txt, PDF. |
+| `<id>/report.ts` | `Report` dari hasil (`src/report/model.ts`) + `default export { defaults, build }`. Sumber tunggal tab Detail & PDF. |
 | `<id>/index.tsx` | Default export komponen `({ tab })`. Dimuat malas oleh `registry.ts` (satu chunk per tool). |
 | `<id>/*.tsx` | Preview & diagram SVG tool tersebut. |
 | `<id>/model.test.ts` | Input bawaan UI = kasus golden default (angka identik build lama), adapter, validasi, laporan. |
@@ -23,6 +23,10 @@ Contoh acuan: **`steel-beam-analysis/`** (tool percontohan). Arah tampilan: [doc
    `p`, `rows` (kv/check), `calc` (langkah **rumus → substitusi → hasil**, markup `_{}` `^{}` `\frac{}{}`), `table`,
    `figure` (op berwarna `c: 'load' | 'v' | 'm' | …`). `useToolReport(id, report)` mendaftarkannya untuk tombol PDF;
    tab Detail = `<DetailTab report … />` (gating Premium di dalamnya).
+   Judul laporan tanpa deskripsi/metode di bawahnya (dihapus 2026-10-08); deskripsi isian pengguna ("Balok lift
+   lantai atap") hanya di PDF, lewat dialog Cetak PDF (diingat per tool). Format laporan (patokan semua tool):
+   heading = latar sorot saja (jingga hanya di pita atas halaman pertama PDF), langkah rumus = garis kiri tipis
+   tanpa latar, PDF menunda gambar yang tak muat ke halaman berikut dan tidak menyisakan halaman berisi penutup saja.
 4. **Tata letak tab Input**: `ToolLayout` — kiri kartu bernomor (`Card n={1} …`), kanan atas `Panel "Preview"`, kanan
    bawah `Panel "Diagram"` dengan `SubTabs` + `StatTiles` "Nilai maksimum". Halaman tidak di-scroll; kolom input
    scroll sendiri. ≤ 900 px kolom menumpuk.

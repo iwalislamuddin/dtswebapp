@@ -7,7 +7,7 @@ import type { Report } from '../report/model'
 import { DetailTab } from './ReportView'
 import { FileDown, Loader2, Lock } from 'lucide-react'
 import { usePremium } from '../app/premium'
-import { downloadActivePdf } from '../app/report-actions'
+import { openPdfDialog } from '../app/report-actions'
 
 const TABS: { id: ToolTab; label: string }[] = [
   { id: 'input', label: 'Input' },
@@ -105,7 +105,7 @@ function ActiveTool({
           type="button"
           className="btn pdf-btn"
           disabled={!hasReport || !premium || pdfState === 'busy'}
-          onClick={() => void downloadActivePdf()}
+          onClick={openPdfDialog}
           title={!premium ? 'Download PDF — fitur Premium' : !hasReport ? 'Lengkapi input untuk membuat laporan' : 'Unduh laporan perhitungan (PDF)'}
         >
           {pdfState === 'busy' ? <Loader2 size={14} className="spin" /> : premium ? <FileDown size={14} /> : <Lock size={13} />}

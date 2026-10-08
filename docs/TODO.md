@@ -196,6 +196,10 @@ terpisah yang memperbarui acuan golden secara sadar.
       dekat mockup "Balok Sederhana") — dibangun 2026-10-08; **tinjauan putaran 2** (laporan/PDF baru) sebelum tool lain diikuti.
       Hitung otomatis sudah diputuskan (UI.md). Catatan percontohan: bawaan profil WF 300×150 (build lama memilih
       ukuran tengah daftar, WF 500×200); batas 3 beban merata / 4 terpusat dari mesin hitung lama dipertahankan
+  - [x] Tinjauan format Detail & PDF putaran 2 — 2026-10-08: halaman setengah kosong & halaman penutup yatim,
+        deskripsi judul dihapus, dialog Cetak PDF + Deskripsi (diingat per tool, localStorage), jingga heading dihapus,
+        rumus tanpa sorot (garis kiri tipis), jeda setelah ringkasan. Tabel/header/footer disetujui
+  - [ ] **[Anda]** Tinjauan redaksi laporan (sekaligus, nanti)
 - [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail)
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,

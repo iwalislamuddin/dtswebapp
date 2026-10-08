@@ -272,9 +272,6 @@ export function ReportView({ report, note }: { report: Report; note?: string }) 
         <h2>
           <MathText s={report.title} />
         </h2>
-        <div className="muted">
-          <MathText s={report.method} />
-        </div>
       </header>
       {note && <p className="rp-note">{note}</p>}
       {report.summary && report.summary.length > 0 && (

@@ -56,12 +56,12 @@ describe('PDF laporan', () => {
     expect(doc.getPageCount()).toBeGreaterThanOrEqual(1)
   })
   it('laporan kosong tetap satu halaman valid', async () => {
-    const doc = await pdfOf({ title: 'X', method: 'm', sections: [], warnings: [], scope: [] })
+    const doc = await pdfOf({ title: 'X', sections: [], warnings: [], scope: [] })
     expect(doc.getPageCount()).toBe(1)
   })
   it('tabel panjang dipecah ke halaman berikut dengan kepala tabel diulang', async () => {
     const rows = Array.from({ length: 140 }, (_, i) => [`baris ${i}`, String(i)])
-    const doc = await pdfOf({ title: 'T', method: 'm', sections: [{ title: 'Tabel', blocks: [{ k: 'table', head: ['A', 'B'], rows }] }], warnings: [], scope: [] })
+    const doc = await pdfOf({ title: 'T', sections: [{ title: 'Tabel', blocks: [{ k: 'table', head: ['A', 'B'], rows }] }], warnings: [], scope: [] })
     expect(doc.getPageCount()).toBeGreaterThanOrEqual(3)
   })
 })

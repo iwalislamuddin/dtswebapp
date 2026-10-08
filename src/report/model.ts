@@ -70,8 +70,6 @@ export interface Section {
 export interface Report {
   /** Judul + acuan, mis. "Sambungan Baut (SNI 1729:2020 Ps. J3)". */
   title: string
-  /** Metode / catatan singkat di kepala laporan. */
-  method: string
   /** Ringkasan hasil di awal laporan (opsional). */
   summary?: Row[]
   sections: Section[]
@@ -87,6 +85,8 @@ export interface ReportMeta {
   appVersion: string
   /** Waktu pembuatan, "YYYY-MM-DD HH:MM". */
   date: string
+  /** Deskripsi isian pengguna saat cetak (mis. "Balok lift lantai atap") — hanya di PDF, di bawah judul. */
+  description?: string
 }
 
 /** Format angka laporan: '-' untuk null/NaN/±∞. */

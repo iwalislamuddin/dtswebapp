@@ -5,6 +5,8 @@ import { fx, okNg, type Block, type CalcStep, type FigColor, type FigOp, type Fi
 
 // Laporan → PDF A4 (pdf-lib, font Unicode DejaVu Sans tertanam & di-subset). Layout mengikuti tab Detail:
 // kepala laporan, ringkasan, bagian bernomor, langkah rumus, tabel, gambar berwarna, footer bernomor halaman.
+// Gambar yang tidak muat di sisa halaman ditunda ke awal halaman berikutnya (teks sesudahnya mengisi sisa ruang),
+// tetapi tidak melewati batas bagian — agar tidak ada halaman setengah kosong.
 
 export interface PdfFonts {
   regular: Uint8Array | ArrayBuffer
@@ -35,6 +37,8 @@ interface Ctx {
   f: PDFFont
   fb: PDFFont
   title: string
+  /** Gambar tertunda: digambar di awal halaman berikutnya. */
+  floats: Figure[]
 }
 
 const Y = (y: number) => PAGE_H - y
@@ -142,10 +146,20 @@ function newPage(c: Ctx) {
   // kepala halaman lanjutan
   c.page.drawText(c.title, { x: ML, y: Y(32), size: 8, font: c.f, color: C.muted })
   c.page.drawLine({ start: { x: ML, y: Y(38) }, end: { x: PAGE_W - MR, y: Y(38) }, thickness: 0.5, color: C.line })
+  const fl = c.floats.splice(0)
+  for (const f of fl) drawFigure(c, f)
 }
 
 function ensure(c: Ctx, h: number) {
-  if (c.y + h > PAGE_H - MB) newPage(c)
+  if (c.y + h <= PAGE_H - MB) return
+  newPage(c)
+  // gambar tertunda bisa menghabiskan halaman baru
+  if (c.y + h > PAGE_H - MB && c.y > MT) newPage(c)
+}
+
+/** Selesaikan gambar tertunda sebelum pindah bagian (gambar tidak melewati batas bagian). */
+function flushFloats(c: Ctx) {
+  if (c.floats.length) newPage(c)
 }
 
 function paragraph(c: Ctx, text: string, opt: { size?: number; font?: PDFFont; color?: RGB; indent?: number; gap?: number } = {}) {
@@ -160,11 +174,11 @@ function paragraph(c: Ctx, text: string, opt: { size?: number; font?: PDFFont; c
 }
 
 function sectionHead(c: Ctx, n: number, title: string, strong?: boolean) {
+  flushFloats(c)
   ensure(c, 60)
   c.y += 8
   const h = 22
   c.page.drawRectangle({ x: ML, y: Y(c.y + h), width: W, height: h, color: strong ? C.accent : C.accentSoft })
-  c.page.drawRectangle({ x: ML, y: Y(c.y + h), width: 3.5, height: h, color: C.orange })
   c.page.drawText(`${n}.  ${title}`, { x: ML + 11, y: Y(c.y + 15), size: 11.5, font: c.fb, color: strong ? C.white : C.accent })
   c.y += h + 8
 }
@@ -200,7 +214,7 @@ function rows(c: Ctx, rs: Row[], tint = false) {
 }
 
 /** Langkah hitung: [desc] lhs = expr = subst = value; dipecah per "=" bila terlalu lebar. */
-function calc(c: Ctx, steps: CalcStep[]) {
+function calc(c: Ctx, steps: CalcStep[], last = true) {
   for (const s of steps) {
     const size = 10
     const parts = [s.expr, s.subst].filter((x): x is string => !!x)
@@ -228,8 +242,7 @@ function calc(c: Ctx, steps: CalcStep[]) {
     const descH = s.desc ? wrapRich(s.desc, 8.5, c.f, W - 16).length * 8.5 * 1.35 + 2 : 0
     const h = descH + boxes.reduce((t, b) => t + lineH({ w: 0, ...b }, size), 0) + 8
     ensure(c, h)
-    c.page.drawRectangle({ x: ML, y: Y(c.y + h), width: W, height: h, color: C.tint })
-    c.page.drawRectangle({ x: ML, y: Y(c.y + h), width: 2, height: h, color: C.accent })
+    c.page.drawRectangle({ x: ML, y: Y(c.y + h), width: 0.8, height: h, color: C.accent })
     let y = c.y + 4
     if (s.desc) {
       for (const ln of wrapRich(s.desc, 8.5, c.f, W - 16)) {
@@ -249,7 +262,7 @@ function calc(c: Ctx, steps: CalcStep[]) {
     })
     c.y += h + 4
   }
-  c.y += 4
+  if (last) c.y += 4
 }
 
 function table(c: Ctx, b: Extract<Block, { k: 'table' }>) {
@@ -303,10 +316,19 @@ function paint(o: FigOp): RGB {
   return rgb(0.12 + 0.88 * g, 0.12 + 0.88 * g, 0.12 + 0.88 * g)
 }
 
+const capH = (fig: Figure) => (fig.caption ? 18 : 6)
+
 function figure(c: Ctx, fig: Figure) {
-  const sc = Math.min(1, W / 528)
+  const need = fig.h * 11.5 * Math.min(1, W / 528) + capH(fig)
+  // tunda bila tak muat (atau ada gambar tertunda — urutan gambar dipertahankan); di awal halaman langsung gambar
+  if ((c.floats.length || c.y + need > PAGE_H - MB) && c.y > MT) c.floats.push(fig)
+  else drawFigure(c, fig)
+}
+
+/** Gambar di posisi sekarang; gambar lebih tinggi dari satu halaman diperkecil agar muat. */
+function drawFigure(c: Ctx, fig: Figure) {
+  const sc = Math.min(1, W / 528, (PAGE_H - MB - c.y - capH(fig)) / (fig.h * 11.5))
   const h = fig.h * 11.5 * sc
-  ensure(c, h + (fig.caption ? 18 : 6))
   const x0 = ML + (W - 528 * sc) / 2, y0 = c.y
   const PX = (x: number) => x0 + x * sc
   const PY = (y: number) => Y(y0 + y * sc)
@@ -357,8 +379,54 @@ function block(c: Ctx, b: Block) {
   else b.items.forEach((it) => paragraph(c, '•  ' + it, { indent: 6, gap: 2 }))
 }
 
-/** PDF lengkap (byte). */
-export async function buildPdf(report: Report, meta: ReportMeta, fonts: PdfFonts): Promise<Uint8Array> {
+type Item = (c: Ctx) => void
+
+/** Urutan potongan yang boleh dipisah halaman (heading selalu bersama blok pertamanya; langkah rumus per langkah). */
+function items(report: Report): Item[] {
+  const out: Item[] = []
+  const blockItems = (b: Block): Item[] =>
+    b.k === 'calc' && b.steps.length > 1 ? b.steps.map((st, i) => (c: Ctx) => calc(c, [st], i === b.steps.length - 1)) : [(c) => block(c, b)]
+  report.sections.forEach((s, i) => {
+    const bs = s.blocks.flatMap(blockItems)
+    out.push((c) => {
+      sectionHead(c, i + 1, s.title, s.strong)
+      bs[0]?.(c)
+    })
+    out.push(...bs.slice(1))
+  })
+  out.push((c) => {
+    flushFloats(c)
+    if (!report.governing) return
+    ensure(c, 34)
+    c.y += 4
+    c.page.drawRectangle({ x: ML, y: Y(c.y + 26), width: W, height: 26, color: C.accentSoft, borderColor: C.accent, borderWidth: 1 })
+    c.page.drawText(plainMath(report.governing.label), { x: ML + 10, y: Y(c.y + 17), size: 10.5, font: c.fb, color: C.ink })
+    const off = pill(c, PAGE_W - MR - 10, Y(c.y + 17), report.governing.ratio)
+    const v = fx(report.governing.ratio, 2)
+    c.page.drawText(v, { x: PAGE_W - MR - 16 - off - c.fb.widthOfTextAtSize(v, 11), y: Y(c.y + 17), size: 11, font: c.fb, color: C.ink })
+    c.y += 36
+  })
+  if (report.warnings.length)
+    out.push((c) => {
+      sectionHead(c, report.sections.length + 1, 'Catatan')
+      report.warnings.forEach((w) => paragraph(c, '•  ' + w, { indent: 6, gap: 2 }))
+    })
+  // penutup (batas cakupan) selalu utuh dalam satu halaman
+  out.push((c) => {
+    ensure(c, 8 + report.scope.reduce((t, s) => t + wrapRich(s, 8, c.f, W).length * 8 * 1.38 + 2, 0))
+    c.y += 8
+    report.scope.forEach((s) => paragraph(c, s, { size: 8, color: C.muted, gap: 2 }))
+  })
+  return out
+}
+
+interface Pos {
+  page: number
+  y: number
+}
+
+/** Tata letak penuh; `breakAt` = indeks potongan yang dipaksa mulai di halaman baru. */
+async function layout(report: Report, meta: ReportMeta, fonts: PdfFonts, breakAt: number | null) {
   const doc = await PDFDocument.create()
   doc.registerFontkit(fontkit)
   const f = await doc.embedFont(fonts.regular, { subset: true })
@@ -366,7 +434,7 @@ export async function buildPdf(report: Report, meta: ReportMeta, fonts: PdfFonts
   doc.setTitle(plainMath(report.title))
   doc.setProducer('EDFS Civil Tools')
   doc.setCreator(`EDFS Civil Tools v${meta.appVersion}`)
-  const c: Ctx = { doc, page: doc.addPage([PAGE_W, PAGE_H]), y: 0, f, fb, title: plainMath(report.title) }
+  const c: Ctx = { doc, page: doc.addPage([PAGE_W, PAGE_H]), y: 0, f, fb, title: plainMath(report.title), floats: [] }
 
   // kepala laporan (halaman pertama)
   c.page.drawRectangle({ x: 0, y: Y(10), width: PAGE_W, height: 10, color: C.accent })
@@ -375,34 +443,25 @@ export async function buildPdf(report: Report, meta: ReportMeta, fonts: PdfFonts
   c.page.drawText(meta.date, { x: PAGE_W - MR - f.widthOfTextAtSize(meta.date, 8), y: Y(34), size: 8, font: f, color: C.muted })
   c.y = 42
   paragraph(c, report.title, { size: 16, font: fb, gap: 0 })
-  paragraph(c, report.method, { size: 9.5, color: C.muted, gap: 6 })
+  const desc = meta.description?.trim()
+  if (desc) paragraph(c, desc, { size: 11, color: C.muted, gap: 0 })
+  c.y += 6
   c.page.drawLine({ start: { x: ML, y: Y(c.y) }, end: { x: PAGE_W - MR, y: Y(c.y) }, thickness: 1.2, color: C.accent })
   c.y += 10
 
   if (report.summary?.length) {
     paragraph(c, 'Ringkasan hasil', { size: 10.5, font: fb, color: C.accent, gap: 3 })
     rows(c, report.summary, true)
+    c.y += 12
   }
-  report.sections.forEach((s, i) => {
-    sectionHead(c, i + 1, s.title, s.strong)
-    for (const b of s.blocks) block(c, b)
+  const pos = (): Pos => ({ page: doc.getPageCount() - 1, y: c.y })
+  const starts: Pos[] = [], ends: Pos[] = []
+  items(report).forEach((it, i) => {
+    if (i === breakAt) newPage(c)
+    starts.push(pos())
+    it(c)
+    ends.push(pos())
   })
-  if (report.governing) {
-    ensure(c, 34)
-    c.y += 4
-    c.page.drawRectangle({ x: ML, y: Y(c.y + 26), width: W, height: 26, color: C.accentSoft, borderColor: C.accent, borderWidth: 1 })
-    c.page.drawText(plainMath(report.governing.label), { x: ML + 10, y: Y(c.y + 17), size: 10.5, font: fb, color: C.ink })
-    const off = pill(c, PAGE_W - MR - 10, Y(c.y + 17), report.governing.ratio)
-    const v = fx(report.governing.ratio, 2)
-    c.page.drawText(v, { x: PAGE_W - MR - 16 - off - fb.widthOfTextAtSize(v, 11), y: Y(c.y + 17), size: 11, font: fb, color: C.ink })
-    c.y += 36
-  }
-  if (report.warnings.length) {
-    sectionHead(c, report.sections.length + 1, 'Catatan')
-    report.warnings.forEach((w) => paragraph(c, '•  ' + w, { indent: 6, gap: 2 }))
-  }
-  c.y += 8
-  report.scope.forEach((s) => paragraph(c, s, { size: 8, color: C.muted, gap: 2 }))
 
   // footer semua halaman
   const pages = doc.getPages()
@@ -413,5 +472,30 @@ export async function buildPdf(report: Report, meta: ReportMeta, fonts: PdfFonts
     p.drawText(pg, { x: PAGE_W - MR - f.widthOfTextAtSize(pg, 7.5), y: 28, size: 7.5, font: f, color: C.muted })
     p.drawText('Alat bantu perhitungan — verifikasi oleh insinyur penanggung jawab.', { x: ML, y: 18, size: 6.5, font: f, color: C.muted })
   })
-  return doc.save()
+  return { doc, starts, ends }
+}
+
+/**
+ * Halaman terakhir yang hanya berisi penutup → potongan sebelum penutup ikut dipindah (minimal ±4 baris), bila
+ * potongan itu utuh di satu halaman dan tidak terlalu besar (celah yang ditinggalkan tetap kecil).
+ */
+function tailBreak(starts: Pos[], ends: Pos[]): number | null {
+  const n = ends.length
+  if (n < 2 || ends[n - 1].page <= ends[n - 2].page) return null
+  let h = 0
+  for (let j = n - 2; j >= 0; j--) {
+    if (starts[j].page !== ends[j].page || ends[j].page !== ends[n - 2].page) return null
+    h += ends[j].y - starts[j].y
+    if (h > 260) return null
+    if (h >= 48) return j
+  }
+  return null
+}
+
+/** PDF lengkap (byte). */
+export async function buildPdf(report: Report, meta: ReportMeta, fonts: PdfFonts): Promise<Uint8Array> {
+  let out = await layout(report, meta, fonts, null)
+  const k = tailBreak(out.starts, out.ends)
+  if (k !== null) out = await layout(report, meta, fonts, k)
+  return out.doc.save()
 }

@@ -1,7 +1,9 @@
 import { X } from 'lucide-react'
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { APP_NAME, APP_TAGLINE, CREDIT } from '../app/appInfo'
+import { plainMath } from '../report/math'
 import { RELEASE_NOTES } from '../app/releaseNotes'
+import { downloadActivePdf, lastPdfDescription } from '../app/report-actions'
 import { useUi } from '../app/ui-state'
 import { APP_VERSION, BUILD_DATE } from '../app/version'
 import { BrandMark } from './Brand'
@@ -34,6 +36,48 @@ function Dialog({ title, subtitle, onClose, children }: { title: string; subtitl
       </div>
       <div className="dlg-body">{children}</div>
     </dialog>
+  )
+}
+
+/** Cetak PDF: isian Deskripsi (opsional) yang tampil di bawah judul laporan; terisi deskripsi terakhir tool ini. */
+function PdfDialog({ onClose }: { onClose: () => void }) {
+  const report = useUi((s) => s.report)
+  const [desc, setDesc] = useState(() => (report ? lastPdfDescription(report.toolId) : ''))
+  const ref = useRef<HTMLInputElement>(null)
+  useEffect(() => ref.current?.select(), [])
+  return (
+    <Dialog title="Cetak PDF" subtitle={report ? plainMath(report.report.title) : undefined} onClose={onClose}>
+      <form
+        className="pdf-form"
+        onSubmit={(e) => {
+          e.preventDefault()
+          onClose()
+          void downloadActivePdf(desc)
+        }}
+      >
+        <label htmlFor="pdf-desc">Deskripsi</label>
+        <input
+          ref={ref}
+          id="pdf-desc"
+          className="ctl"
+          type="text"
+          maxLength={120}
+          autoComplete="off"
+          placeholder="mis. Balok lift lantai atap"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
+        <p className="muted">Ditampilkan di bawah judul laporan cetak. Boleh dikosongkan.</p>
+        <div className="pdf-form-actions">
+          <button type="button" className="btn" onClick={onClose}>
+            Batal
+          </button>
+          <button type="submit" className="btn primary">
+            Cetak PDF
+          </button>
+        </div>
+      </form>
+    </Dialog>
   )
 }
 
@@ -75,5 +119,6 @@ export function DialogHost() {
         </div>
       </Dialog>
     )
+  if (dialog === 'pdf') return <PdfDialog onClose={close} />
   return null
 }
