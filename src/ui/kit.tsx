@@ -257,6 +257,9 @@ export function useSize<T extends HTMLElement>() {
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    // ukur langsung (ResizeObserver baru terpanggil pada frame berikutnya)
+    const rect = el.getBoundingClientRect()
+    setSize({ w: Math.round(rect.width), h: Math.round(rect.height) })
     const ro = new ResizeObserver(([e]) => setSize({ w: Math.round(e.contentRect.width), h: Math.round(e.contentRect.height) }))
     ro.observe(el)
     return () => ro.disconnect()

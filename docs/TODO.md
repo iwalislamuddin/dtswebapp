@@ -129,8 +129,8 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 - [x] **[Claude]** Laporan dari satu sumber per tool (`src/report/`): model `Report` → tab Detail (HTML + SVG ikut
       tema) dan PDF — diganti 2026-10-08: PDF pdf-lib berwarna, .txt dihapus. Modul laporan per tool di
       `src/tools/<id>/report.ts`; contoh acuan `bolt-connection` (tab Detail memakai input bawaan sampai UI barunya
-      ada). File > Download Report aktif bila tool punya laporan — 2026-10-07. Sisa: laporan 26 tool lain ditulis
-      bersama UI-nya di Tahap 5 (kelompok Baja sudah ditulis ulang berumus 2026-10-08); gating Premium di Tahap 4
+      ada). File > Download Report aktif bila tool punya laporan — 2026-10-07. Sisa: laporan 17 tool lain ditulis
+      bersama UI-nya di Tahap 5 (kelompok Baja & Beton sudah ditulis ulang berumus 2026-10-08); gating Premium di Tahap 4
 - [x] **[Claude]** CI GitHub Actions (`.github/workflows/ci.yml`): typecheck, lint, test, rekam ulang golden harus
       identik, build — 2026-10-07
 
@@ -204,7 +204,7 @@ terpisah yang memperbarui acuan golden secara sadar.
         deskripsi judul dihapus, dialog Cetak PDF + Deskripsi (diingat per tool, localStorage), jingga heading dihapus,
         rumus tanpa sorot (garis kiri tipis), jeda setelah ringkasan. Tabel/header/footer disetujui
   - [ ] **[Anda]** Tinjauan redaksi laporan (sekaligus, nanti)
-- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 7/33 tool aktif:
+- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 16/33 tool aktif:
   - [x] `steel-beam-analysis` (percontohan) — 2026-10-08
   - [x] `bolt-connection` — 2026-10-08: 4 kartu input (mutu/ulir/Fnt-Fnv kustom bersyarat, d, bidang geser
         tunggal/ganda; pola; pelat tumpu; beban), preview denah + potongan bidang geser, diagram batang kapasitas
@@ -218,7 +218,13 @@ terpisah yang memperbarui acuan golden secara sadar.
         bila Kustom). Laporan berumus: tarik D2-1/D2-2 + L/r; tekan E3/E4-2 + elemen B4.1a + kurva kolom; lentur per
         pasal F2/F3, F6, F7 (+F7.4), F8, indikatif + kurva Mn–Lb; angkur 17.6.1/17.6.2/17.7.1–17.7.3/17.8 + diagram
         interaksi. **Kelompok Baja lengkap** (7/7)
-  - [ ] berikutnya (usul): kelompok Beton (`beam-flexure`, `development-length`, `min-reinforcement`, …)
+  - [x] Kelompok **Beton lengkap** (9/9) — 2026-10-08: `development-length` (ld + tabel per diameter),
+        `beam-flexure` (kesetimbangan gaya, φ–εt, φMn vs jumlah batang), `min-reinforcement` (5 elemen),
+        `beam-shear-torsion` (22.5/22.7, Al, spasi), `two-way-slab` (jalur silang, jalur tepi, lendutan Ie),
+        `column-pm` (P–Mx, P–My, kontur biaksial), `continuous-beam` (koefisien 6.5, desain & geser),
+        `composite-slab` (konstruksi/komposit/konektor; properti dek dari tabel bisa ditimpa), `concrete-stair`
+        (rangka 2D, reaksi, tulangan, lendutan). Pembantu validasi `checker`/aturan di `src/tools/form.ts`
+  - [ ] berikutnya (usul): Struktur Bawah (`footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`)
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.

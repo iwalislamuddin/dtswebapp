@@ -37,18 +37,19 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > jingga heading dihapus (jingga tinggal di pita atas halaman pertama), langkah rumus tanpa latar dengan garis kiri
 > tipis, jeda ekstra setelah Ringkasan hasil. Tabel, header & footer disetujui.
 >
-> **Tahap 5 berjalan (2026-10-08, sesi 2):** **kelompok Baja lengkap di UI baru** (7/7): Analisis Balok Baja
+> **Tahap 5 berjalan (2026-10-08, sesi 2):** **kelompok Baja (7/7) dan Beton (9/9) lengkap di UI baru**. Baja: Analisis Balok Baja
 > (percontohan), Sambungan Baut, Sambungan Las, Batang Tarik, Batang Tekan, Balok Baja (Lentur), Anchor Bolt Group —
 > input berkartu, preview, diagram kapasitas/kurva, laporan berumus. Pembantu bersama: `src/tools/form.ts`
 > (`parseNum`), `<Sized>` (`src/ui/kit.tsx`), `<CapacityBars>` (`src/ui/bars.tsx`), `capacityFigure`
 > (`src/report/figure.ts`), dan `src/tools/_steel/` (penampang, pemilih profil, mutu baja). Temuan las (β untuk
-> Lw/w > 300 tidak konservatif) dicatat di TODO "Perbaikan isi tool". Usul berikutnya: kelompok Beton. Catatan dev:
+> Lw/w > 300 tidak konservatif) dicatat di TODO "Perbaikan isi tool". Beton: Penyaluran, Kapasitas Balok, Tulangan Minimum, Geser & Torsi, Pelat Dua Arah, Diagram P–M, Balok/Pelat
+> Menerus, Slab Komposit, Tangga. Usul berikutnya: Struktur Bawah. Catatan dev:
 > folder tool baru belum terlihat oleh `import.meta.glob` server dev yang sudah berjalan — sentuh
 > `src/tools/registry.ts` atau mulai ulang server. Markup rumus laporan tidak mengenal `\sqrt` — pakai `√( )`.
 >
 > **Menunggu pemilik:** tinjauan **redaksi** laporan (dilakukan sekaligus nanti) — format sudah jadi patokan semua tool.
 >
-> **Berikutnya:** lanjut tulis ulang tool lain di UI baru (Tahap 5, 7/33 tool aktif selesai) → akun & Save Supabase + nyalakan `PREMIUM_GATE` (Tahap 4) → rilis
+> **Berikutnya:** lanjut tulis ulang tool lain di UI baru (Tahap 5, 16/33 tool aktif selesai) → akun & Save Supabase + nyalakan `PREMIUM_GATE` (Tahap 4) → rilis
 > v0.8.0 (Tahap 6). Revisi isi tool & Library Data: [`TOOL-REVISIONS.md`](TOOL-REVISIONS.md).
 >
 > **Temuan yang menunggu perbaikan** (TODO "Perbaikan isi tool"): profil siku di library baja lama salah baca kolom
