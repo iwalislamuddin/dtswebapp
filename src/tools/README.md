@@ -1,13 +1,15 @@
 # `src/tools` — UI tool (kontrak, Tahap 5)
 
 Contoh acuan: **`steel-beam-analysis/`** (tool percontohan; daftar beban `RowTable`, diagram gaya dalam) dan
-**`bolt-connection/`** · **`weld-connection/`** (form datar, pilihan bersyarat, diagram batang kapasitas vs beban). Arah tampilan: [docs/UI.md](../../docs/UI.md).
+**`bolt-connection/`** · **`weld-connection/`** (form datar, pilihan bersyarat, diagram batang kapasitas vs beban);
+profil baja: **`steel-flexure/`** (kurva dari mesin hitung, bagian laporan per pasal). Arah tampilan: [docs/UI.md](../../docs/UI.md).
 
 ## Berkas per tool
 
 | Berkas | Isi |
 |---|---|
 | `form.ts` | Bersama: `parseNum()` (koma desimal diterima) & `FieldErrors`. |
+| `_steel/` | Bersama tool profil baja: `section.ts` (geometri penampang → SVG & gambar laporan), `profile.tsx` (`ProfileFields`, `GradeFields`, `SectionSvg`, `profileRows`, `dcSub`). Folder `_…` bukan tool. |
 | `<id>/model.ts` | Bentuk input UI (`…Input`, JSON murni, angka sebagai **teks form**), `…_DEFAULTS`, `validate()` → `{ kunciField: pesan }`, adapter ke `src/calc/<id>.ts`, `compute…(input)` → hasil atau `null` bila ada field tidak valid. Tanpa React — diuji Vitest. |
 | `<id>/report.ts` | `Report` dari hasil (`src/report/model.ts`) + `default export { defaults, build }`. Sumber tunggal tab Detail & PDF. |
 | `<id>/index.tsx` | Default export komponen `({ tab })`. Dimuat malas oleh `registry.ts` (satu chunk per tool). |
@@ -40,3 +42,5 @@ Contoh acuan: **`steel-beam-analysis/`** (tool percontohan; daftar beban `RowTab
 7. Angka hasil pakai `fx(n, dp)`; teks satuan dengan simbol Unicode (kN·m, cm⁴) — dipakai langsung di tab Detail & PDF (font Unicode).
 8. **Field bersyarat**: kontrol yang tak berlaku disembunyikan (mis. Fnt/Fnv hanya untuk mutu Kustom, spasi s hanya
    bila baris > 1) dan **tidak divalidasi** selama tersembunyi — field tersembunyi tak boleh memblokir hitung.
+9. **Rumus laporan**: markup hanya `_{}` `^{}` `\frac{}{}` — akar ditulis `√( )`. Gambar laporan cek kapasitas memakai
+   `capacityFigure` (`src/report/figure.ts`); kurva (Mn–Lb, kolom) dihitung ulang dengan mesin hitung, bukan disalin.

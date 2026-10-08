@@ -68,13 +68,13 @@ function Inputs({
         <ProfileFields ptype={input.ptype} psize={input.psize} error={errors.psize} onChange={setInput} />
         <GradeFields value={input} errors={errors} withFu={false} onChange={setInput} />
         {hasAxisChoice(input.ptype) && (
-          <Field label="Sumbu lentur">
+          <Field label="Sumbu lentur" hint="x-x = sumbu kuat, y-y = sumbu lemah.">
             <Segmented
               ariaLabel="Sumbu lentur"
               value={input.axis}
               options={[
-                { value: 'x', label: 'Kuat (x-x)' },
-                { value: 'y', label: 'Lemah (y-y)' },
+                { value: 'x', label: 'x-x' },
+                { value: 'y', label: 'y-y' },
               ]}
               onChange={(axis) => setInput({ axis })}
             />
