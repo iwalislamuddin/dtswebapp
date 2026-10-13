@@ -93,13 +93,24 @@ export const TOOLS: ToolEntry[] = [
   },
   {
     id: "continuous-beam",
-    name: "Balok/Pelat Menerus",
+    name: "Balok Menerus",
     category: "Beton Bertulang",
     status: "active",
     ported: true,
     seo: {
-      title: "Momen & Geser Balok / Pelat Satu Arah Menerus — Metode Koefisien (SNI 2847:2019 Ps. 6.5)",
-      desc: "Hitung momen positif-negatif dan geser ultimit balok atau pelat satu arah menerus dengan metode koefisien SNI 2847:2019 Tabel 6.5.2 & 6.5.4 — berat sendiri otomatis, wu = 1,2D+1,6L, diagram momen interaktif, termasuk statika eksak untuk satu bentang.",
+      title: "Balok Beton Menerus — Momen, Geser, Tulangan & Lendutan, Balok T/L (SNI 2847:2019)",
+      desc: "Analisis dan desain balok beton bertulang menerus: metode koefisien SNI 2847:2019 Ps. 6.5 atau analisis elastis sebenarnya dengan pola beban hidup bila syarat tidak terpenuhi, balok persegi/T/L dengan lebar tributari & lebar efektif sayap, pengaruh retak (Ie bervariasi sepanjang bentang), tulangan lentur, sengkang, dan cek lendutan.",
+    },
+  },
+  {
+    id: "one-way-slab",
+    name: "Pelat Satu Arah Menerus",
+    category: "Beton Bertulang",
+    status: "active",
+    ported: true,
+    seo: {
+      title: "Pelat Satu Arah Menerus — Momen, Tulangan & Lendutan (SNI 2847:2019 Ps. 6.5)",
+      desc: "Analisis dan desain pelat beton satu arah menerus per lajur 1 m: metode koefisien SNI 2847:2019 Ps. 6.5 atau analisis elastis sebenarnya dengan pola beban hidup bila syarat tidak terpenuhi, pengaruh retak (Ie bervariasi sepanjang bentang), tulangan lentur dengan spasi, dan cek lendutan jangka panjang.",
     },
   },
   {

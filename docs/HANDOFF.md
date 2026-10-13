@@ -43,7 +43,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > (`parseNum`), `<Sized>` (`src/ui/kit.tsx`), `<CapacityBars>` (`src/ui/bars.tsx`), `capacityFigure`
 > (`src/report/figure.ts`), dan `src/tools/_steel/` (penampang, pemilih profil, mutu baja). Temuan las (β untuk
 > Lw/w > 300 tidak konservatif) dicatat di TODO "Perbaikan isi tool". Beton: Penyaluran, Kapasitas Balok, Tulangan Minimum, Geser & Torsi, Pelat Dua Arah, Diagram P–M, Balok/Pelat
-> Menerus, Slab Komposit, Tangga. Usul berikutnya: Struktur Bawah. Catatan dev:
+> Menerus, Slab Komposit, Tangga. Usul berikutnya: Struktur Bawah. **2026-10-14:** Balok Menerus & Pelat Satu Arah Menerus dipisah (mesin bersama `continuous-beam`, solver `shared/beam-solver.ts` bisa dipakai tool analisis lain, balok T/L, retak Ie(x), lendutan) — lihat TODO Tahap 5. Catatan dev:
 > folder tool baru belum terlihat oleh `import.meta.glob` server dev yang sudah berjalan — sentuh
 > `src/tools/registry.ts` atau mulai ulang server. Markup rumus laporan tidak mengenal `\sqrt` — pakai `√( )`.
 >

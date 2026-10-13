@@ -223,7 +223,16 @@ terpisah yang memperbarui acuan golden secara sadar.
         `beam-shear-torsion` (22.5/22.7, Al, spasi), `two-way-slab` (jalur silang, jalur tepi, lendutan Ie),
         `column-pm` (P–Mx, P–My, kontur biaksial), `continuous-beam` (koefisien 6.5, desain & geser),
         `composite-slab` (konstruksi/komposit/konektor; properti dek dari tabel bisa ditimpa), `concrete-stair`
-        (rangka 2D, reaksi, tulangan, lendutan). Pembantu validasi `checker`/aturan di `src/tools/form.ts`
+  - [x] **Balok Menerus & Pelat Satu Arah Menerus dipisah** (2026-10-14): tool baru `one-way-slab`; satu mesin
+        `src/calc/continuous-beam.ts` (+ `one-way-slab.ts`) membungkus metode koefisien lama
+        (`shared/coefficient-method.ts`, tetap terkunci golden). Opsi **Otomatis / Koefisien / Solver**: syarat 6.5.1
+        gagal (qL > 3qD, beda bentang > 20%) → analisis elastis sebenarnya (`shared/beam-solver.ts` di atas
+        `frame2d`, EI per elemen, amplop pola beban hidup, momen direduksi ke muka tumpuan). **Pengaruh retak**: Ig /
+        Ie rata-rata per bentang (24.2.3.7) / Ie(x) bervariasi per 1/10 bentang (iterasi dengan As terpasang).
+        **Balok T/L**: lebar tributari + tebal pelat sayap (beban pelat ikut), lebar efektif Tabel 6.3.2.1 per bentang,
+        lentur positif sebagai T, negatif b_w (`shared/tee.ts`). Lendutan selalu dari solver (δD, δL, λΔ, L/360 &
+        L/480|360|240). **Gambar penulangan** (`_continuous/rebar.ts`, tab Preview "Penulangan" + bagian laporan/PDF): balok = elevasi sengkang per zona Vu(x) + potongan lapangan & tumpuan; pelat = potongan memanjang + melintang lajur 1 m (tulangan bagi). Spasi sengkang & tulangan pelat kelipatan 25 mm; tulangan atas dipotong ≈ 0,3 ln (indikatif, panjang penyaluran belum dicek). Catatan: ujung eksterior solver dipilih sendi/jepit manual (tanpa pegas kolom); tulangan
+        tunggal; pembersihan: ID lama `continuous-beam` kini khusus balok (URL pelat lama → `/one-way-slab`)
   - [ ] berikutnya (usul): Struktur Bawah (`footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`)
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,

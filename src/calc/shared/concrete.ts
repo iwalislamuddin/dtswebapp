@@ -148,13 +148,13 @@ export interface EffectiveInertia {
   cracked: boolean
 }
 
-/** Momen inersia efektif Branson (Ps. 24.2.3.5) per meter pelat setebal h; fr = 0,62√f'c. */
-export function effectiveInertia(Ma: number, As: number, d: number, fc: number, h: number): EffectiveInertia {
-  const Ig = (1000 * h * h * h) / 12
+/** Momen inersia efektif Branson (Ps. 24.2.3.5) untuk penampang persegi b × h (bawaan lajur 1 m); fr = 0,62√f'c. */
+export function effectiveInertia(Ma: number, As: number, d: number, fc: number, h: number, b = 1000): EffectiveInertia {
+  const Ig = (b * h * h * h) / 12
   const fr = 0.62 * Math.sqrt(fc), yt = h / 2
   const Mcr = (fr * Ig) / yt / 1e6
   if (Ma <= Mcr || As <= 0) return { Ig, Mcr, Ma, Ie: Ig, Icr: Ig, cracked: false }
-  const Icr = crackedInertia(As, d, fc).Icr
+  const Icr = crackedInertia(As, d, fc, b).Icr
   const ratio = Math.pow(Mcr / Ma, 3)
   return { Ig, Mcr, Ma, Icr, Ie: Math.min(Ig, ratio * Ig + (1 - ratio) * Icr), cracked: true }
 }
