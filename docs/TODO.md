@@ -247,8 +247,9 @@ terpisah yang memperbarui acuan golden secara sadar.
         kapasitas tiang, lentur, geser, pons kolom & tiang), `retaining-stone` & `retaining-concrete` (penampang bersama
         di `src/tools/_retaining/`: geometri, tekanan dasar, stabilitas; beton + tumpu terfaktor, stem/toe/heel, susut,
         BOQ, skema tulangan). 4 tool: 20/33 aktif; berikutnya kelompok Geoteknik/Pembebanan/Hidraulika/Analisis Struktur
-  - [ ] Kelompok **Geoteknik** (1/7) — mulai 2026-10-14: [x] `bearing-capacity` (potongan fondasi + baji, batang q izin 3
-        metode, komposisi suku q_u, laporan faktor + rincian; golden identik 21 kasus). Sisa: `settlement`, `pile-capacity`,
+  - [ ] Kelompok **Geoteknik** (2/7) — mulai 2026-10-14: [x] `bearing-capacity` (potongan fondasi + baji, batang q izin 3
+        metode, komposisi suku q_u, laporan faktor + rincian; golden identik 21 kasus), [x] `settlement` (potongan + lapisan, batang Se/Sc/total, kurva waktu–penurunan, laporan
+        Steinbrenner + e–log p + laju; golden identik 24 kasus). Sisa: `pile-capacity`,
         `cpt-bearing`, `cpt-pile`, `lateral-broms`, `py-analysis`
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
