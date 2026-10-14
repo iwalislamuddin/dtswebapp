@@ -213,7 +213,7 @@ terpisah yang memperbarui acuan golden secara sadar.
         deskripsi judul dihapus, dialog Cetak PDF + Deskripsi (diingat per tool, localStorage), jingga heading dihapus,
         rumus tanpa sorot (garis kiri tipis), jeda setelah ringkasan. Tabel/header/footer disetujui
   - [ ] **[Anda]** Tinjauan redaksi laporan (sekaligus, nanti)
-- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 31/33 tool aktif:
+- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — **33/33 tool aktif, semua kelompok lengkap**:
   - [x] `steel-beam-analysis` (percontohan) — 2026-10-08
   - [x] `bolt-connection` — 2026-10-08: 4 kartu input (mutu/ulir/Fnt-Fnv kustom bersyarat, d, bidang geser
         tunggal/ganda; pola; pelat tumpu; beban), preview denah + potongan bidang geser, diagram batang kapasitas
@@ -266,7 +266,16 @@ terpisah yang memperbarui acuan golden secara sadar.
         geometri per bentuk + Manning + yc/Fr; Q > kapasitas gorong-gorong → pesan mesin; golden identik 15 kasus),
         `pipe-flow` (profil EGL/HGL, kurva sistem Darcy/HW terhadap Q, diagram Moody ε/D vs pipa licin, laporan Re, f
         Swamee–Jain/64/Re, hf/hm, pembanding HW; golden identik 9 kasus). C kustom > 1, n/ν/C kustom 0 kini ditolak
-        validasi (build lama diam-diam memakai bawaan). 31/33 tool aktif; berikutnya Analisis Struktur
+        validasi (build lama diam-diam memakai bawaan). 31/33 tool aktif
+  - [x] Kelompok **Analisis Struktur lengkap** (2/2) — 2026-10-14. Bersama: `src/tools/_frame/` (geometri rangka bidang
+        `geom.ts` satu sumber untuk SVG & laporan: diagram M di sisi serat tarik / V / N tegak lurus batang, bentuk
+        terdeformasi Hermite; `FrameSvg` + panel Diagram dengan bidik hover per titik batang; `figure.ts`; bagian laporan
+        bersama `report.ts`; input penampang baja/beton `section.tsx`). `portal-frame` (penampang baja/beton per batang,
+        model + beban, M/V/N/deformasi/reaksi, laporan penampang + E beton, metode kekakuan + FEF, kesetimbangan ΣV/ΣH,
+        gaya ujung per batang, σ elastis informatif, perpindahan simpul + cek H/500…H/250 & L/360…L/240; golden identik 7
+        kasus), `gable-frame` (+ geometri atap f/L_r, penguraian beban atap ke w⊥/w∥, turun puncak; golden identik 6 kasus).
+        Posisi beban terpusat di luar 0…L & α > 75° kini ditolak validasi (build lama memotong + peringatan); f'c / b = 0
+        ditolak (build lama memakai f'c 1). **33/33 tool aktif**
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.

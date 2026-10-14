@@ -653,3 +653,51 @@ select.ctl {
   stroke: var(--dg-support);
   stroke-width: 1.2;
 }
+
+/* Rangka bidang (portal, gable) */
+
+.fr-member {
+  stroke: var(--dg-axis);
+  stroke-width: 1.4;
+}
+
+.fr-node {
+  fill: var(--dg-ink);
+}
+
+.fr-load-line {
+  stroke: var(--dg-load);
+  stroke-width: 1;
+}
+
+.fr-table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.fr-table th,
+.fr-table td {
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.fr-table th:first-child,
+.fr-table td:first-child {
+  text-align: left;
+}
+
+.fr-table th {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ringkasan + tabel batang: scroll sendiri bila panel pendek, diagram tetap ≥ 160 px */
+.fr-summary {
+  max-height: 42vh;
+  overflow: auto;
+}

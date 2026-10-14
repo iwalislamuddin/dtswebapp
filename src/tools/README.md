@@ -11,6 +11,7 @@ profil baja: **`steel-flexure/`** (kurva dari mesin hitung, bagian laporan per p
 | `form.ts` | Bersama: `parseNum()` (koma desimal diterima) & `FieldErrors`. |
 | `_steel/` | Bersama tool profil baja: `section.ts` (geometri penampang → SVG & gambar laporan), `profile.tsx` (`ProfileFields`, `GradeFields`, `SectionSvg`, `profileRows`, `dcSub`). Folder `_…` bukan tool. |
 | `_hydraulics/` | Bersama tool Hidraulika: `chart.tsx` (`XYChart` — grafik XY multi-seri, sumbu log, titik tanda, bidik hover per x atau per y) & `figure.ts` (`chartFigure` — grafik yang sama untuk laporan). |
+| `_frame/` | Bersama tool rangka bidang (portal, gable): `geom.ts` (kurva M/V/N tegak lurus batang, deformasi Hermite, pemetaan model → kanvas), `FrameSvg.tsx` (model + beban, diagram, reaksi, bidik hover), `results.tsx` (panel Diagram + tabel batang), `figure.ts` (gambar laporan), `report.ts` (bagian laporan bersama), `section.tsx` (penampang baja/beton). |
 | `<id>/model.ts` | Bentuk input UI (`…Input`, JSON murni, angka sebagai **teks form**), `…_DEFAULTS`, `validate()` → `{ kunciField: pesan }`, adapter ke `src/calc/<id>.ts`, `compute…(input)` → hasil atau `null` bila ada field tidak valid. Tanpa React — diuji Vitest. |
 | `<id>/report.ts` | `Report` dari hasil (`src/report/model.ts`) + `default export { defaults, build }`. Sumber tunggal tab Detail & PDF. |
 | `<id>/index.tsx` | Default export komponen `({ tab })`. Dimuat malas oleh `registry.ts` (satu chunk per tool). |
