@@ -12,7 +12,7 @@ export type Exposure = 'B' | 'C' | 'D'
 export type Enclosure = 'enclosed' | 'partial' | 'open'
 
 /** Konstanta eksposur (α, zg dalam m) — Tabel 26.11-1. */
-const EXPO: Record<Exposure, { alpha: number; zg: number }> = {
+export const EXPO: Record<Exposure, { alpha: number; zg: number }> = {
   B: { alpha: 7.0, zg: 365.76 },
   C: { alpha: 9.5, zg: 274.32 },
   D: { alpha: 11.5, zg: 213.36 },

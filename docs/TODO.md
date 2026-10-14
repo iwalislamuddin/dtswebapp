@@ -254,7 +254,11 @@ terpisah yang memperbarui acuan golden secara sadar.
         pengaruh, batang q izin, laporan Meyerhof/Skempton; golden identik 14 kasus), [x] `cpt-pile` (data z–qc–fs tempel, profil qc + jendela Schmertmann, fs terpakai, batang kapasitas;
         golden identik 11 kasus), [x] `lateral-broms` (tiang + beban + diagram tekanan batas, batang pendek/panjang,
         laporan 4 kombinasi tanah×kepala; golden identik 11 kasus), [x] `py-analysis` (bentuk terdefleksi, profil y/M/p,
-        kurva H–y₀, laporan parameter + tabel profil; golden identik 8 kasus). 27/33 tool aktif; berikutnya Pembebanan/Hidraulika/Analisis Struktur
+        kurva H–y₀, laporan parameter + tabel profil; golden identik 8 kasus). 27/33 tool aktif
+  - [x] Kelompok **Pembebanan lengkap** (1/1; `load-combo` tetap tersembunyi) — 2026-10-14: `wind-load` (elevasi gedung +
+        profil windward/leeward dengan bidik qz per elevasi, diagram tekanan dinding ±GCpi & geser kumulatif dari atap,
+        laporan qh/Cp/tekanan desain/geser dasar + beban minimum Ps. 27.1.5; golden identik 13 kasus). Faktor Kd/Kzt/Ke/G
+        = 0 kini ditolak validasi (build lama diam-diam memakai nilai bawaan). 28/33 tool aktif; berikutnya Hidraulika/Analisis Struktur
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.
