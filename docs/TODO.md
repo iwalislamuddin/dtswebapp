@@ -155,6 +155,12 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **Library Data** (Premium; tanah, profil lapis, CPT, N-SPT, material; nama + deskripsi, tanpa proyek) —
       [TOOL-REVISIONS.md](TOOL-REVISIONS.md) §4 (keputusan 2026-10-07)
 - [ ] Profil baja: ganti sumber ke tabel JIS EDFS Matrix (perubahan angka sadar) — TOOL-REVISIONS.md §4
+- [ ] ⚠️ **`retaining-stone` / `retaining-concrete`: `qmax` salah bila resultan condong ke heel** (ditemukan 2026-10-14):
+      `basePressure` (`shared/retaining.ts`) pada kasus trapesium (|e| ≤ B/6) mengembalikan `qmax` = tekanan di toe
+      walau e < 0 — padahal maksimum ada di heel (kasus golden "lereng curam ke heel": qmax 16,7 < qmin 53,6 kPa).
+      Cek daya dukung (`dcQ`, `okQ`, peringatan) jadi **tidak konservatif**. UI & laporan baru memakai tekanan toe/heel
+      sebenarnya (`basePressures` di `src/tools/_retaining/common.ts`); mesin hitung dibiarkan 1:1 sampai perbaikan
+      disengaja (perbarui golden). Perlu juga `tri`-cabang dicek bila e < −B/6 (sudah benar)
 - [ ] `retaining-concrete`: cabang tekanan tumpu terfaktor segitiga ke arah heel tidak tercapai oleh kasus uji
       (dinding nyata praktis tak mencapainya) — tambahkan uji langsung saat fungsi tumpu terfaktor dirapikan
 - [ ] `settlement`: derajat konsolidasi melompat kecil di U ≈ 60% (batas cabang Tv = 0,2827; rumus log memberi
@@ -204,7 +210,7 @@ terpisah yang memperbarui acuan golden secara sadar.
         deskripsi judul dihapus, dialog Cetak PDF + Deskripsi (diingat per tool, localStorage), jingga heading dihapus,
         rumus tanpa sorot (garis kiri tipis), jeda setelah ringkasan. Tabel/header/footer disetujui
   - [ ] **[Anda]** Tinjauan redaksi laporan (sekaligus, nanti)
-- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 16/33 tool aktif:
+- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 20/33 tool aktif:
   - [x] `steel-beam-analysis` (percontohan) — 2026-10-08
   - [x] `bolt-connection` — 2026-10-08: 4 kartu input (mutu/ulir/Fnt-Fnv kustom bersyarat, d, bidang geser
         tunggal/ganda; pola; pelat tumpu; beban), preview denah + potongan bidang geser, diagram batang kapasitas
@@ -233,7 +239,11 @@ terpisah yang memperbarui acuan golden secara sadar.
         lentur positif sebagai T, negatif b_w (`shared/tee.ts`). Lendutan selalu dari solver (δD, δL, λΔ, L/360 &
         L/480|360|240). **Gambar penulangan** (`_continuous/rebar.ts`, tab Preview "Penulangan" + bagian laporan/PDF): balok = elevasi sengkang per zona Vu(x) + potongan lapangan & tumpuan; pelat = potongan memanjang + melintang lajur 1 m (tulangan bagi). Spasi sengkang & tulangan pelat kelipatan 25 mm; tulangan atas dipotong ≈ 0,3 ln (indikatif, panjang penyaluran belum dicek). Catatan: ujung eksterior solver dipilih sendi/jepit manual (tanpa pegas kolom); tulangan
         tunggal; pembersihan: ID lama `continuous-beam` kini khusus balok (URL pelat lama → `/one-way-slab`)
-  - [ ] berikutnya (usul): Struktur Bawah (`footing-design`, `pile-cap`, `retaining-concrete`, `retaining-stone`)
+  - [x] Kelompok **Struktur Bawah lengkap** (4/4) — 2026-10-14: `footing-design` (denah tekanan sudut + kern, rasio D/C,
+        laporan stabilitas + lentur 2 arah + geser 1 arah + pons), `pile-cap` (2–6 tiang, denah reaksi, mode beban kolom /
+        kapasitas tiang, lentur, geser, pons kolom & tiang), `retaining-stone` & `retaining-concrete` (penampang bersama
+        di `src/tools/_retaining/`: geometri, tekanan dasar, stabilitas; beton + tumpu terfaktor, stem/toe/heel, susut,
+        BOQ, skema tulangan). 4 tool: 20/33 aktif; berikutnya kelompok Geoteknik/Pembebanan/Hidraulika/Analisis Struktur
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.
