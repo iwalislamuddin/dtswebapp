@@ -21,9 +21,11 @@ export interface PileCapInput {
   Mux: number
   Muy: number
   Q: number
-  /** Jumlah tiang 2–6 (dari select, boleh teks). */
+  /** Jumlah tiang 2–6 (dari select, boleh teks); diabaikan bila `piles` diisi. */
   n: number | string
-  /** Diameter tiang, spasi, overhang pusat→tepi (mm). */
+  /** Koordinat tiang (mm) relatif pusat kolom — bila diisi menggantikan susunan n/s. */
+  piles?: PilePosition[]
+  /** Diameter tiang, spasi (susunan n tiang), overhang pusat→tepi (mm). */
   dp: number
   s: number
   ov: number
@@ -129,6 +131,15 @@ export interface PileCapResult {
   /** Dimensi poer (mm). */
   Lx?: number
   Ly?: number
+  /** Tepi poer (mm) terhadap pusat kolom: bounding box tiang + overhang. */
+  xlo?: number
+  xhi?: number
+  ylo?: number
+  yhi?: number
+  /** Titik berat kelompok tiang (mm) & hasil kali inersia Σx'y' (mm²), tiang diukur dari titik berat. */
+  xc?: number
+  yc?: number
+  Sxy?: number
   cantX?: number
   cantY?: number
   /** Tulangan arah X di lapis luar. */
@@ -173,28 +184,37 @@ export function pileLayout(n: number, s: number): PilePosition[] {
   return [{ x: -s, y: -s / 2 }, { x: 0, y: -s / 2 }, { x: s, y: -s / 2 }, { x: -s, y: s / 2 }, { x: 0, y: s / 2 }, { x: s, y: s / 2 }]
 }
 
-type Ready = Required<Pick<PileCapResult, 'n' | 'piles' | 'R' | 'cx' | 'cy' | 'Lx' | 'Ly' | 'dx' | 'dy' | 'davg' | 'h' | 'cov' | 'fc' | 'fy' | 'Ab' | 'dp'>>
+type Ready = Required<Pick<PileCapResult, 'n' | 'piles' | 'R' | 'cx' | 'cy' | 'Lx' | 'Ly' | 'xlo' | 'xhi' | 'ylo' | 'yhi' | 'dx' | 'dy' | 'davg' | 'h' | 'cov' | 'fc' | 'fy' | 'Ab' | 'dp'>>
 
 export function computePileCap(v: PileCapInput): PileCapResult {
   const r: PileCapResult = { warn: [], valid: true }
-  const n = parseInt(String(v.n), 10)
+  const n = v.piles ? v.piles.length : parseInt(String(v.n), 10)
   const { fc, fy, dp, s, ov, cx, cy, h, cov } = v
   const db = parseFloat(String(v.db))
   if (!(fc > 0) || !(fy > 0) || !(dp > 0) || !(s > 0) || !(ov > 0) ||
       !(cx > 0) || !(cy > 0) || !(h > 0) || !(cov >= 0)) { r.valid = false; return r }
   Object.assign(r, { n, fc, fy, dp, s, ov, cx, cy, h, cov, db, Ab: barArea(db), mode: v.mode })
 
-  if (s < 2.5 * dp) r.warn.push('Spasi tiang s = ' + s.toFixed(0) + ' mm < 2,5·dp (' +
+  if (!v.piles && s < 2.5 * dp) r.warn.push('Spasi tiang s = ' + s.toFixed(0) + ' mm < 2,5·dp (' +
     (2.5 * dp).toFixed(0) + ' mm) — jarak antar tiang lazimnya ≥ 2,5–3·dp.')
   if (ov < dp / 2 + 50) r.warn.push('Overhang tepi ' + ov.toFixed(0) + ' mm terlalu kecil — jarak pusat tiang ke tepi poer sebaiknya ≥ dp/2 + selimut.')
 
   // Geometri poer dari bounding box tiang + overhang.
-  const P = pileLayout(n, s)
+  const P = v.piles ? v.piles.map((p) => ({ x: p.x, y: p.y })) : pileLayout(n, s)
+  if (v.piles) {
+    let dmin = Infinity
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) dmin = Math.min(dmin, Math.hypot(P[i].x - P[j].x, P[i].y - P[j].y))
+    if (n > 1 && dmin < 2.5 * dp) r.warn.push('Jarak antar tiang terdekat ' + dmin.toFixed(0) + ' mm < 2,5·dp (' + (2.5 * dp).toFixed(0) + ' mm)' + (dmin < dp ? ' — tiang saling tumpang tindih.' : ' — lazimnya ≥ 2,5–3·dp.'))
+  }
   r.piles = P
   const xs = P.map((p) => p.x), ys = P.map((p) => p.y)
   const spanX = Math.max(...xs) - Math.min(...xs)
   const spanY = Math.max(...ys) - Math.min(...ys)
-  Object.assign(r, { spanX, spanY, Lx: spanX + 2 * ov, Ly: spanY + 2 * ov })
+  // Tepi poer: koordinat tiang eksplisit → bounding box sebenarnya; susunan n/s lama → simetris terhadap kolom (perilaku
+  // build lama; tidak tepat untuk 3 tiang yang kotak-batasnya tak simetris — lihat TODO).
+  const xlo = v.piles ? Math.min(...xs) - ov : -(spanX / 2 + ov), xhi = v.piles ? Math.max(...xs) + ov : spanX / 2 + ov
+  const ylo = v.piles ? Math.min(...ys) - ov : -(spanY / 2 + ov), yhi = v.piles ? Math.max(...ys) + ov : spanY / 2 + ov
+  Object.assign(r, { spanX, spanY, Lx: spanX + 2 * ov, Ly: spanY + 2 * ov, xlo, xhi, ylo, yhi })
 
   // Tinggi efektif dua lapis; lapis luar ke arah kantilever terbesar.
   const cantX = Math.max(...xs.map(Math.abs)) - cx / 2
@@ -208,11 +228,12 @@ export function computePileCap(v: PileCapInput): PileCapResult {
   const dx = xOuter ? dOut : dIn, dy = xOuter ? dIn : dOut
   Object.assign(r, { xOuter, dx, dy, davg: (dx + dy) / 2 })
 
-  // Reaksi tiang.
-  const Sx2 = xs.reduce((a, x) => a + x * x, 0)
-  const Sy2 = ys.reduce((a, y) => a + y * y, 0)
-  r.Sx2 = Sx2
-  r.Sy2 = Sy2
+  // Reaksi tiang: dihitung terhadap titik berat kelompok; eksentrisitas kolom terhadap titik berat menjadi momen tambahan.
+  const xc = xs.reduce((a, x) => a + x, 0) / n, yc = ys.reduce((a, y) => a + y, 0) / n
+  const Sx2 = xs.reduce((a, x) => a + (x - xc) * (x - xc), 0)
+  const Sy2 = ys.reduce((a, y) => a + (y - yc) * (y - yc), 0)
+  const Sxy = P.reduce((a, p) => a + (p.x - xc) * (p.y - yc), 0)
+  Object.assign(r, { Sx2, Sy2, Sxy, xc, yc })
   const R: number[] = []
   if (v.mode === 'kapasitas') {
     const Q = v.Q
@@ -227,11 +248,21 @@ export function computePileCap(v: PileCapInput): PileCapResult {
       r.warn.push('Susunan tiang tidak punya lengan arah-Y → Mux tak dapat ditahan kopel tiang (diabaikan).')
     if (Math.abs(Muy) > 1e-6 && Sx2 < 1e-6)
       r.warn.push('Susunan tiang tidak punya lengan arah-X → Muy tak dapat ditahan kopel tiang (diabaikan).')
-    for (let j = 0; j < n; j++) {
-      R.push(Pu / n +
-        (Sx2 > 1e-6 ? (Muy * 1000 * P[j].x) / Sx2 : 0) +
-        (Sy2 > 1e-6 ? (Mux * 1000 * P[j].y) / Sy2 : 0))
+    // momen terhadap titik berat (kN·m): momen kolom + Pu × eksentrisitas
+    const MyC = Muy - (Pu * xc) / 1000, MxC = Mux - (Pu * yc) / 1000
+    if (Math.abs(xc) > 1e-6 || Math.abs(yc) > 1e-6)
+      r.warn.push('Titik berat kelompok tiang (' + xc.toFixed(0) + '; ' + yc.toFixed(0) + ') mm tidak berimpit dengan pusat kolom — momen tambahan Pu·e diikutkan pada reaksi tiang.')
+    const det = Sx2 * Sy2 - Sxy * Sxy
+    let a = 0, b = 0
+    if (Math.abs(Sxy) > 1e-6 * Math.max(Sx2, Sy2, 1) && det > 1e-9) {
+      // kelompok tak simetris (Ixy ≠ 0): selesaikan [Sx2 Sxy; Sxy Sy2][a; b] = [MyC; MxC]
+      a = (MyC * 1000 * Sy2 - MxC * 1000 * Sxy) / det
+      b = (MxC * 1000 * Sx2 - MyC * 1000 * Sxy) / det
+    } else {
+      a = Sx2 > 1e-6 ? (MyC * 1000) / Sx2 : 0
+      b = Sy2 > 1e-6 ? (MxC * 1000) / Sy2 : 0
     }
+    for (let j = 0; j < n; j++) R.push(Pu / n + a * (P[j].x - xc) + b * (P[j].y - yc))
   }
   r.R = R
   r.Rmax = Math.max(...R)
@@ -338,12 +369,11 @@ function punchPile(r: Ready): CapPunchPile {
   for (let i = 0; i < r.n; i++) {
     const px = r.piles[i].x, py = r.piles[i].y
     const xl = px - he, xr = px + he, yb = py - he, yt = py + he
-    const HX = r.Lx / 2, HY = r.Ly / 2
     let sides = 0, b0 = 0
-    if (xl >= -HX) { b0 += Math.min(yt, HY) - Math.max(yb, -HY); sides++ }
-    if (xr <= HX) { b0 += Math.min(yt, HY) - Math.max(yb, -HY); sides++ }
-    if (yb >= -HY) { b0 += Math.min(xr, HX) - Math.max(xl, -HX); sides++ }
-    if (yt <= HY) { b0 += Math.min(xr, HX) - Math.max(xl, -HX); sides++ }
+    if (xl >= r.xlo) { b0 += Math.min(yt, r.yhi) - Math.max(yb, r.ylo); sides++ }
+    if (xr <= r.xhi) { b0 += Math.min(yt, r.yhi) - Math.max(yb, r.ylo); sides++ }
+    if (yb >= r.ylo) { b0 += Math.min(xr, r.xhi) - Math.max(xl, r.xlo); sides++ }
+    if (yt <= r.yhi) { b0 += Math.min(xr, r.xhi) - Math.max(xl, r.xlo); sides++ }
     if (b0 <= 0) continue
     const missing = 4 - sides
     const alphaS = missing >= 2 ? 20 : missing === 1 ? 30 : 40

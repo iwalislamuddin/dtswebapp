@@ -161,6 +161,9 @@ terpisah yang memperbarui acuan golden secara sadar.
       Cek daya dukung (`dcQ`, `okQ`, peringatan) jadi **tidak konservatif**. UI & laporan baru memakai tekanan toe/heel
       sebenarnya (`basePressures` di `src/tools/_retaining/common.ts`); mesin hitung dibiarkan 1:1 sampai perbaikan
       disengaja (perbarui golden). Perlu juga `tri`-cabang dicek bila e < −B/6 (sudah benar)
+- [ ] `pile-cap` (2026-10-14): UI memakai tabel koordinat tiang (mesin hitung menerima `piles`, reaksi via titik berat + Ixy,
+      tepi poer = bounding box nyata). Susunan n/s lama masih menganggap poer simetris terhadap kolom — **tak tepat untuk
+      3 tiang** (pons tiang); dibiarkan demi golden. Belum ada: poer segitiga/poligon (pons & lebar lentur memakai persegi)
 - [ ] `retaining-concrete`: cabang tekanan tumpu terfaktor segitiga ke arah heel tidak tercapai oleh kasus uji
       (dinding nyata praktis tak mencapainya) — tambahkan uji langsung saat fungsi tumpu terfaktor dirapikan
 - [ ] `settlement`: derajat konsolidasi melompat kecil di U ≈ 60% (batas cabang Tv = 0,2827; rumus log memberi

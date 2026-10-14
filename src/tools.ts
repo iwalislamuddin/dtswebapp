@@ -144,8 +144,8 @@ export const TOOLS: ToolEntry[] = [
     ported: true,
     plannedId: "deep-foundation",
     seo: {
-      title: "Desain Pile Cap / Poer 2–6 Tiang — Lentur, Geser & Pons (SNI 2847:2019)",
-      desc: "Desain poer/pile cap 2–6 tiang metode kaku SNI 2847:2019: reaksi tiang dari beban ultimate kolom (Pu) atau kapasitas tekan tiang (desain kapasitas), lentur di muka kolom, geser satu-arah, pons dua-arah kolom & pons tiang — lengkap denah interaktif dan rasio D/C.",
+      title: "Desain Pile Cap / Poer — Koordinat Tiang, Lentur, Geser & Pons (SNI 2847:2019)",
+      desc: "Desain poer/pile cap dengan susunan tiang bebas (tabel koordinat) metode kaku SNI 2847:2019: reaksi tiang dari beban ultimate kolom (Pu) atau kapasitas tekan tiang (desain kapasitas), lentur di muka kolom, geser satu-arah, pons dua-arah kolom & pons tiang — lengkap denah interaktif dan rasio D/C.",
     },
   },
   {

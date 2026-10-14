@@ -2,19 +2,18 @@ import { useMemo, useState } from 'react'
 import type { PileCapResult } from '../../calc/pile-cap'
 import { useAutoCompute, useToolInput, useToolReport } from '../../app/tool-state'
 import { fx } from '../../report/model'
-import { Card, Field, NumField, Panel, ResetButton, Segmented, SelectField, Sized, StatTiles, SubTabs, ToolLayout } from '../../ui/kit'
+import { Card, Field, NumField, Panel, ResetButton, RowTable, Segmented, SelectField, Sized, StatTiles, SubTabs, ToolLayout } from '../../ui/kit'
 import { DetailTab } from '../../ui/ReportView'
 import type { ToolUIProps } from '../registry'
-import { CAP_BARS, CAP_COUNTS, CAP_DEFAULTS, computePileCapUI, rejectReason, validate, type PileCapUIInput } from './model'
+import { CAP_BARS, CAP_COUNTS, CAP_DEFAULTS, computePileCapUI, MAX_PILES, patternPiles, rejectReason, validate, type PileCapUIInput, type PileRow } from './model'
 import { pileCapReport } from './report'
 
 const ID = 'pile-cap'
 
 const BAR_OPTIONS = CAP_BARS.map((d) => ({ value: String(d), label: `D${d}` }))
-const COUNT_OPTIONS = CAP_COUNTS.map((n) => ({ value: n, label: `${n} tiang` }))
 
 export default function PileCap({ tab }: ToolUIProps) {
-  const [input, setInput, reset] = useToolInput<PileCapUIInput>(ID, CAP_DEFAULTS)
+  const [input, setInput, reset] = useToolInput<PileCapUIInput>(ID, CAP_DEFAULTS, 2)
   const errors = useMemo(() => validate(input), [input])
   const { result: r, stale } = useAutoCompute(input, computePileCapUI)
   const reject = useMemo(() => rejectReason(input), [input])
@@ -82,9 +81,33 @@ function Inputs({
         )}
       </Card>
       <Card n={2} title="Susunan tiang">
-        <SelectField label="Jumlah tiang" value={input.n} options={COUNT_OPTIONS} onChange={(n) => setInput({ n })} />
+        <p className="muted card-note">Koordinat pusat tiang (mm) terhadap pusat kolom: x ke kanan, y ke atas. Susunan apa pun, termasuk tak simetris.</p>
+        <RowTable<PileRow>
+          prefix="piles"
+          columns={[
+            { key: 'x', label: 'x', unit: 'mm' },
+            { key: 'y', label: 'y', unit: 'mm' },
+          ]}
+          rows={input.piles}
+          onChange={(piles) => setInput({ piles })}
+          newRow={() => ({ x: '0', y: '0' })}
+          max={MAX_PILES}
+          errors={errors}
+          addLabel="Tambah tiang"
+          emptyText="Belum ada tiang."
+        />
+        {errors.piles && <p className="msg bad">{errors.piles}</p>}
+        <Field label="Isi dari pola" hint="Mengganti seluruh tabel dengan susunan standar berspasi s, lalu bisa diedit.">
+          <div className="seg">
+            {CAP_COUNTS.map((n) => (
+              <button key={n} type="button" onClick={() => setInput({ piles: patternPiles(Number(n), Number(input.s.replace(',', '.')) || 1200) })}>
+                {n}
+              </button>
+            ))}
+          </div>
+        </Field>
+        {f('s', 's — spasi untuk pola', 'mm', 'Hanya dipakai tombol pola di atas.')}
         {f('dp', 'dp — diameter tiang', 'mm')}
-        {f('s', 's — spasi pusat ke pusat', 'mm', 'Lazimnya ≥ 2,5–3 dp.')}
         {f('ov', 'Overhang pusat tiang → tepi', 'mm')}
       </Card>
       <Card n={3} title="Kolom & poer">
@@ -110,8 +133,9 @@ function PlanPreview({ r, w, h }: { r: PileCapResult; w: number; h: number }) {
   const sc = Math.min((w - 2 * padX) / Lx, (h - 2 * padY) / Ly)
   const W = Lx * sc, H = Ly * sc
   const cx = w / 2, cy = h / 2
-  const X = (m: number) => cx + m * sc
-  const Y = (m: number) => cy - m * sc
+  const mx = (r.xlo! + r.xhi!) / 2, my = (r.ylo! + r.yhi!) / 2
+  const X = (m: number) => cx + (m - mx) * sc
+  const Y = (m: number) => cy - (m - my) * sc
   const pc = r.punchCol!
   const rMax = Math.max(1e-9, r.Rmax!)
   return (
@@ -133,6 +157,7 @@ function PlanPreview({ r, w, h }: { r: PileCapResult; w: number; h: number }) {
         )
       })}
       <rect x={X(-r.cx! / 2)} y={Y(r.cy! / 2)} width={r.cx! * sc} height={r.cy! * sc} fill="color-mix(in srgb, var(--dg-ink) 35%, transparent)" stroke="var(--dg-ink)" />
+      <path d={`M${X(r.xc!) - 4},${Y(r.yc!)} h8 M${X(r.xc!)},${Y(r.yc!) - 4} v8`} stroke="var(--dg-load)" strokeWidth={1.5} />
       <g className="bp-dim">
         <line x1={cx - W / 2} y1={cy + H / 2 + 14} x2={cx + W / 2} y2={cy + H / 2 + 14} />
         <text x={cx} y={cy + H / 2 + 27} textAnchor="middle">

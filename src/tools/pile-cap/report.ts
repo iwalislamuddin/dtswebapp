@@ -15,8 +15,9 @@ function figPlan(r: PileCapResult): Figure {
   const sc = Math.min(280 / Lx, 170 / Ly)
   const W = Lx * sc, H = Ly * sc
   const cx = 264, cy = 14 + H / 2
-  const X = (v: number) => cx + v * sc
-  const Y = (v: number) => cy - v * sc
+  const mx = (r.xlo! + r.xhi!) / 2, my = (r.ylo! + r.yhi!) / 2
+  const X = (v: number) => cx + (v - mx) * sc
+  const Y = (v: number) => cy - (v - my) * sc
   ops.push({ t: 'rect', x: cx - W / 2, y: cy - H / 2, w: W, h: H, fill: true, c: 'support', op: 0.1 })
   ops.push({ t: 'rect', x: cx - W / 2, y: cy - H / 2, w: W, h: H, lw: 1, c: 'support' })
   r.piles!.forEach((p, i) => {
@@ -26,6 +27,8 @@ function figPlan(r: PileCapResult): Figure {
     ops.push({ t: 'text', x: X(p.x), y: Y(p.y) + 2.5, s: `${i + 1}`, size: 7, align: 'c', bold: true })
   })
   ops.push({ t: 'rect', x: X(-r.cx! / 2), y: Y(r.cy! / 2), w: r.cx! * sc, h: r.cy! * sc, fill: true, c: 'ink', op: 0.35 })
+  ops.push({ t: 'line', x1: X(r.xc!) - 3, y1: Y(r.yc!), x2: X(r.xc!) + 3, y2: Y(r.yc!), lw: 0.8, c: 'load' })
+  ops.push({ t: 'line', x1: X(r.xc!), y1: Y(r.yc!) - 3, x2: X(r.xc!), y2: Y(r.yc!) + 3, lw: 0.8, c: 'load' })
   const bx = r.punchCol!.bx, by = r.punchCol!.by
   ops.push({ t: 'rect', x: X(-bx / 2), y: Y(by / 2), w: bx * sc, h: by * sc, lw: 0.6, c: 'y', dash: [3, 2] })
   ops.push({ t: 'text', x: cx + W / 2 + 6, y: cy - H / 2 + 8, s: `${fx(Lx, 0)} × ${fx(Ly, 0)} mm`, size: 7, c: 'muted' })
@@ -33,7 +36,7 @@ function figPlan(r: PileCapResult): Figure {
     h: figRows(cy + H / 2 + 12),
     ops,
     alt: 'Denah pile cap dengan susunan tiang',
-    caption: `Gbr. 1 — Denah poer ${fx(Lx, 0)} × ${fx(Ly, 0)} mm: ${r.n} tiang D${fx(r.dp, 0)} (bernomor), kolom ${fx(r.cx, 0)} × ${fx(r.cy, 0)} mm, dan keliling kritis pons kolom (putus-putus).`,
+    caption: `Gbr. 1 — Denah poer ${fx(Lx, 0)} × ${fx(Ly, 0)} mm: ${r.n} tiang D${fx(r.dp, 0)} (bernomor), kolom ${fx(r.cx, 0)} × ${fx(r.cy, 0)} mm, titik berat kelompok tiang (+ merah), dan keliling kritis pons kolom (putus-putus).`,
   }
 }
 
@@ -82,9 +85,10 @@ export function pileCapReport(r: PileCapResult): Report {
     r.mode === 'kapasitas'
       ? [{ desc: 'Mode desain kapasitas: tiap tiang dibebani kapasitas terfaktor', lhs: 'R_{i}', expr: 'Q', value: fx(r.Q, 1), unit: 'kN' }]
       : [
-          { lhs: 'ΣX^{2}', value: fx(r.Sx2! / 1e6, 3), unit: 'm²' },
-          { lhs: 'ΣY^{2}', value: fx(r.Sy2! / 1e6, 3), unit: 'm²' },
-          { lhs: 'R_{i}', expr: '\\frac{P_{u}}{n} + \\frac{M_{uy} x_{i}}{ΣX^{2}} + \\frac{M_{ux} y_{i}}{ΣY^{2}}', subst: `P_{u} = ${fx(r.Pu, 1)}, M_{ux} = ${fx(r.Mux, 1)}, M_{uy} = ${fx(r.Muy, 1)}`, value: `${fx(r.Rmax, 1)} (maks)`, unit: 'kN' },
+          { desc: 'Titik berat kelompok tiang terhadap pusat kolom', lhs: 'x̄ ; ȳ', expr: '\\frac{Σ x_{i}}{n} ; \\frac{Σ y_{i}}{n}', value: `${fx(r.xc, 1)} ; ${fx(r.yc, 1)}`, unit: 'mm' },
+          { desc: 'Momen inersia kelompok terhadap titik berat', lhs: 'ΣX^{2} ; ΣY^{2} ; ΣXY', expr: 'Σ(x_{i} − x̄)^{2} ; Σ(y_{i} − ȳ)^{2} ; Σ(x_{i} − x̄)(y_{i} − ȳ)', value: `${fx(r.Sx2! / 1e6, 3)} ; ${fx(r.Sy2! / 1e6, 3)} ; ${fx(r.Sxy! / 1e6, 3)}`, unit: 'm²' },
+          { desc: 'Pu di pusat kolom berjarak (x̄, ȳ) dari titik berat → momen tambahan', lhs: 'M_{uy,c} ; M_{ux,c}', expr: 'M_{uy} − P_{u} x̄ ; M_{ux} − P_{u} ȳ', value: `${fx(r.Muy! - (r.Pu! * r.xc!) / 1000, 1)} ; ${fx(r.Mux! - (r.Pu! * r.yc!) / 1000, 1)}`, unit: 'kN·m' },
+          { desc: 'ΣXY ≠ 0 → sistem 2×2 penuh', lhs: 'R_{i}', expr: '\\frac{P_{u}}{n} + \\frac{M_{uy,c} x_{i}}{ΣX^{2}} + \\frac{M_{ux,c} y_{i}}{ΣY^{2}}', subst: `P_{u} = ${fx(r.Pu, 1)} kN; x_{i}, y_{i} dari titik berat`, value: `${fx(r.Rmax, 1)} (maks)`, unit: 'kN' },
         ]
   const sections: Section[] = [
     {
@@ -94,7 +98,7 @@ export function pileCapReport(r: PileCapResult): Report {
           k: 'rows',
           rows: [
             kv('Beban', r.mode === 'kapasitas' ? `Kapasitas terfaktor Q = ${fx(r.Q, 1)} kN per tiang` : `P_{u} ${fx(r.Pu, 1)} kN, M_{ux} ${fx(r.Mux, 1)}, M_{uy} ${fx(r.Muy, 1)} kN·m`),
-            kv('Tiang', `${r.n} buah D${fx(r.dp, 0)}, spasi ${fx(r.s, 0)} mm, overhang ${fx(r.ov, 0)} mm`),
+            kv('Tiang', `${r.n} buah D${fx(r.dp, 0)} (koordinat pada tabel), overhang ${fx(r.ov, 0)} mm`),
             kv('Poer L_{x} × L_{y} × h', `${fx(r.Lx, 0)} × ${fx(r.Ly, 0)} × ${fx(r.h, 0)} mm`),
             kv('Kolom c_{x} × c_{y}', `${fx(r.cx, 0)} × ${fx(r.cy, 0)} mm`),
             kv("f'_{c} / f_{y} / selimut / tulangan", `${fc} / ${fx(r.fy, 0)} MPa / ${fx(r.cov, 0)} mm / D${fx(r.db, 0)}`),
