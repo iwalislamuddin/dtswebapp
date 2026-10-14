@@ -87,14 +87,14 @@ function figSection(r: FootingResult): Figure {
   const lx = x0 + W + 40
   const yA = ys - 4, yC = ys + 10
   ops.push({ t: 'line', x1: lx - 4, y1: yA - 2.5, x2: xStart + (n - 1) * sB, y2: yB, lw: 0.4, c: 'm' })
-  ops.push({ t: 'text', x: lx, y: yA, s: `D${fx(r.db, 0)}-${r.flexB!.s} arah B (titik)`, size: 7, c: 'm' })
+  ops.push({ t: 'text', x: lx, y: yA, s: `D${fx(r.db, 0)}-${r.flexB!.s} arah B`, size: 7, c: 'm' })
   ops.push({ t: 'line', x1: lx - 4, y1: yC - 2.5, x2: x0 + W - 3, y2: yL, lw: 0.4, c: 'y' })
-  ops.push({ t: 'text', x: lx, y: yC, s: `D${fx(r.db, 0)}-${r.flexL!.s} arah L (garis)`, size: 7, c: 'y' })
+  ops.push({ t: 'text', x: lx, y: yC, s: `D${fx(r.db, 0)}-${r.flexL!.s} arah L`, size: 7, c: 'y' })
   return {
     h: figRows(yb + 22),
     ops,
     alt: 'Potongan tapak dengan tulangan dua arah',
-    caption: `Gbr. 2 — Potongan arah L: tebal ${fx(tf * 1000, 0)} mm, kedalaman dasar ${fx(Df, 2)} m. Tulangan arah L tampak memanjang (garis), tulangan arah B tegak lurus bidang gambar (titik, spasi sebenarnya).`,
+    caption: `Gbr. 2 — Potongan arah L: tebal ${fx(tf * 1000, 0)} mm, kedalaman dasar ${fx(Df, 2)} m.`,
   }
 }
 
