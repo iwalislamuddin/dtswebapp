@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import golden from '../../calc/__golden__/pile-cap.json'
 import { goldenDiff, type GoldenCase } from '../../calc/__golden__/golden'
-import { pileLayout } from '../../calc/pile-cap'
+import { chord, offsetHull, pileLayout, segmentInside } from '../../calc/pile-cap'
 import { buildPileCapReport } from './report'
 import { CAP_DEFAULTS, computePileCapUI, rejectReason, validate, type PileCapUIInput } from './model'
 
@@ -66,6 +66,51 @@ describe('pile cap — input UI', () => {
     const tipis = { ...CAP_DEFAULTS, h: '100' }
     expect(computePileCapUI(tipis)).toBeNull()
     expect(rejectReason(tipis)).toMatch(/Tebal poer/)
+  })
+})
+
+describe('pile cap — poer poligon (segitiga)', () => {
+  const tri: PileCapUIInput = { ...CAP_DEFAULTS, Pu: '2700', shape: 'poligon', piles: pileLayout(3, 1200).map((p) => ({ x: String(p.x), y: String(p.y) })) }
+
+  it('geometri: tepi sejajar sisi selubung berjarak overhang; semua tiang di dalam; 6 sudut', () => {
+    const r = computePileCapUI(tri)!
+    expect(r.shape).toBe('poligon')
+    expect(r.poly).toHaveLength(6)
+    const poly = r.poly!
+    // jarak titik ke sisi-sisi poligon ≥ ov untuk semua tiang, dan = ov untuk sisi selubung terdekat
+    for (const p of r.piles!) {
+      const d = poly.map((a, i) => {
+        const b = poly[(i + 1) % poly.length]
+        const l = Math.hypot(b.x - a.x, b.y - a.y)
+        return ((b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x)) / l // jarak bertanda (≥ 0 di dalam)
+      })
+      expect(Math.min(...d)).toBeGreaterThanOrEqual(400 - 1e-6)
+    }
+  })
+
+  it('chord & segmentInside pada persegi', () => {
+    const sq = [{ x: -1, y: -1 }, { x: 1, y: -1 }, { x: 1, y: 1 }, { x: -1, y: 1 }]
+    expect(chord(sq, 'x', 0.3)).toBeCloseTo(2, 12)
+    expect(chord(sq, 'y', 5)).toBe(0)
+    expect(segmentInside(sq, { x: 0, y: 0 }, { x: 3, y: 0 })).toBeCloseTo(1, 12)
+    expect(segmentInside(sq, { x: -3, y: 2 }, { x: 3, y: 2 })).toBe(0)
+    expect(offsetHull([{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 2, y: 2 }, { x: 0, y: 2 }], 1)).toHaveLength(8)
+  })
+
+  it('lentur: sisi penentu & lebar dari potongan poligon (lebih sempit dari kotak batas)', () => {
+    const r = computePileCapUI(tri)!
+    const rect = computePileCapUI({ ...tri, shape: 'persegi' })!
+    expect(r.flexX!.side).toBeDefined()
+    expect(r.flexX!.b).toBeLessThan(rect.flexX!.b)
+    expect(r.flexY!.b).toBeLessThan(rect.flexY!.b)
+    expect(r.punchPile!.b0).toBeGreaterThan(0)
+    expect(buildPileCapReport(tri)).not.toBeNull()
+  })
+
+  it('tiang segaris: kembali ke persegi dengan peringatan', () => {
+    const r = computePileCapUI({ ...tri, piles: [{ x: '-600', y: '0' }, { x: '0', y: '0' }, { x: '600', y: '0' }] })!
+    expect(r.shape).toBe('persegi')
+    expect(r.warn.some((w) => /segaris/.test(w))).toBe(true)
   })
 })
 

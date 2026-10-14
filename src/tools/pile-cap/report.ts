@@ -18,8 +18,9 @@ function figPlan(r: PileCapResult): Figure {
   const mx = (r.xlo! + r.xhi!) / 2, my = (r.ylo! + r.yhi!) / 2
   const X = (v: number) => cx + (v - mx) * sc
   const Y = (v: number) => cy - (v - my) * sc
-  ops.push({ t: 'rect', x: cx - W / 2, y: cy - H / 2, w: W, h: H, fill: true, c: 'support', op: 0.1 })
-  ops.push({ t: 'rect', x: cx - W / 2, y: cy - H / 2, w: W, h: H, lw: 1, c: 'support' })
+  const outline = r.poly!.map((q) => [X(q.x), Y(q.y)] as [number, number])
+  ops.push({ t: 'poly', pts: outline, close: true, fill: true, c: 'support', op: 0.1 })
+  ops.push({ t: 'poly', pts: outline, close: true, lw: 1, c: 'support' })
   r.piles!.forEach((p, i) => {
     const bad = r.R![i] < 0
     ops.push({ t: 'circle', cx: X(p.x), cy: Y(p.y), r: (r.dp! / 2) * sc, fill: true, c: bad ? 'bad' : 'm', op: 0.25 })
@@ -36,7 +37,7 @@ function figPlan(r: PileCapResult): Figure {
     h: figRows(cy + H / 2 + 12),
     ops,
     alt: 'Denah pile cap dengan susunan tiang',
-    caption: `Gbr. 1 — Denah poer ${fx(Lx, 0)} × ${fx(Ly, 0)} mm: ${r.n} tiang D${fx(r.dp, 0)} (bernomor), kolom ${fx(r.cx, 0)} × ${fx(r.cy, 0)} mm, titik berat kelompok tiang (+ merah), dan keliling kritis pons kolom (putus-putus).`,
+    caption: `Gbr. 1 — Denah poer ${r.shape === 'poligon' ? 'poligon (kotak batas ' : ''}${fx(Lx, 0)} × ${fx(Ly, 0)} mm${r.shape === 'poligon' ? ')' : ''}: ${r.n} tiang D${fx(r.dp, 0)} (bernomor), kolom ${fx(r.cx, 0)} × ${fx(r.cy, 0)} mm, titik berat kelompok tiang (+ merah), dan keliling kritis pons kolom (putus-putus).`,
   }
 }
 
@@ -57,6 +58,7 @@ function flexBlocks(f: CapFlexure, axis: 'X' | 'Y', r: PileCapResult): Block[] {
     {
       k: 'rows',
       rows: [
+        ...(f.side ? [kv('Sisi penentu / lebar penampang b', `sisi ${f.side === '+' ? '+' : '−'} / ${fx(f.b, 0)} mm (potongan poligon di muka kolom)`)] : []),
         kv('Spasi antar batang / batas (3h; 450)', `${fx(f.spacing, 0)} mm / ${fx(f.sMax, 0)} mm`),
         check('M_{u} / φM_{n}', f.dc),
       ],
@@ -64,12 +66,12 @@ function flexBlocks(f: CapFlexure, axis: 'X' | 'Y', r: PileCapResult): Block[] {
   ]
 }
 
-function oneWayBlock(v: CapOneWay, label: string): Block[] {
+function oneWayBlock(v: CapOneWay, label: string, poligon: boolean): Block[] {
   return [
     {
       k: 'calc',
       steps: [
-        { desc: `Penampang kritis ${fx(v.crit, 0)} mm dari pusat (d dari muka kolom)`, lhs: 'V_{u}', expr: 'Σ fraksi R_{i} di luar penampang', value: fx(v.Vu, 1), unit: 'kN' },
+        { desc: `Penampang kritis ${fx(v.crit, 0)} mm dari pusat (d dari muka kolom), lebar b = ${fx(v.b, 0)} mm${poligon ? ' (potongan poligon, sisi penentu)' : ''}`, lhs: 'V_{u}', expr: 'Σ fraksi R_{i} di luar penampang', value: fx(v.Vu, 1), unit: 'kN' },
         { lhs: 'φV_{c}', expr: "φ · 0.17 √(f'_{c}) b d", subst: `0.75 × 0.17 × √f'_{c} × ${fx(v.b, 0)} × ${fx(v.d, 1)} / 10^{3}`, value: fx(v.phiVc, 1), unit: 'kN', ref: '22.5.5.1' },
       ],
     },
@@ -99,7 +101,7 @@ export function pileCapReport(r: PileCapResult): Report {
           rows: [
             kv('Beban', r.mode === 'kapasitas' ? `Kapasitas terfaktor Q = ${fx(r.Q, 1)} kN per tiang` : `P_{u} ${fx(r.Pu, 1)} kN, M_{ux} ${fx(r.Mux, 1)}, M_{uy} ${fx(r.Muy, 1)} kN·m`),
             kv('Tiang', `${r.n} buah D${fx(r.dp, 0)} (koordinat pada tabel), overhang ${fx(r.ov, 0)} mm`),
-            kv('Poer L_{x} × L_{y} × h', `${fx(r.Lx, 0)} × ${fx(r.Ly, 0)} × ${fx(r.h, 0)} mm`),
+            kv(r.shape === 'poligon' ? 'Poer poligon, kotak batas × h' : 'Poer L_{x} × L_{y} × h', `${fx(r.Lx, 0)} × ${fx(r.Ly, 0)} × ${fx(r.h, 0)} mm`),
             kv('Kolom c_{x} × c_{y}', `${fx(r.cx, 0)} × ${fx(r.cy, 0)} mm`),
             kv("f'_{c} / f_{y} / selimut / tulangan", `${fc} / ${fx(r.fy, 0)} MPa / ${fx(r.cov, 0)} mm / D${fx(r.db, 0)}`),
           ],
@@ -129,7 +131,7 @@ export function pileCapReport(r: PileCapResult): Report {
     },
     { title: 'Lentur arah X', blocks: flexBlocks(r.flexX!, 'X', r) },
     { title: 'Lentur arah Y', blocks: flexBlocks(r.flexY!, 'Y', r) },
-    { title: 'Geser satu arah', blocks: [...oneWayBlock(r.vx!, 'arah X'), ...oneWayBlock(r.vy!, 'arah Y')] },
+    { title: 'Geser satu arah', blocks: [...oneWayBlock(r.vx!, 'arah X', r.shape === 'poligon'), ...oneWayBlock(r.vy!, 'arah Y', r.shape === 'poligon')] },
     {
       title: 'Geser pons kolom',
       blocks: [
@@ -180,6 +182,7 @@ export function pileCapReport(r: PileCapResult): Report {
     warnings: r.warn,
     scope: [
       'Metode poer kaku dengan reaksi tiang elastis (tiang identik); lentur di muka kolom, geser satu arah di d dari muka kolom, pons kolom dan pons tiang.',
+      'Poer poligon: lebar penampang lentur dan geser = potongan poligon pada penampang kritis tegak lurus sumbu X dan Y (bukan sejajar sisi miring).',
       'Belum termasuk: model strat-and-tie (poer tebal), penyaluran tulangan, kapasitas tiang, kuat tumpu kolom–poer. Verifikasi oleh insinyur penanggung jawab.',
     ],
   }

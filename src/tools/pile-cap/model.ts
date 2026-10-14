@@ -27,6 +27,8 @@ export interface PileCapUIInput {
   piles: PileRow[]
   /** Spasi untuk tombol "Isi dari pola" (mm) — hanya membantu mengisi tabel. */
   s: string
+  /** Bentuk poer: persegi (bounding box) atau poligon (selubung tiang + overhang, sudut terpangkas — mis. segitiga). */
+  shape: 'persegi' | 'poligon'
   /** Diameter tiang & overhang pusat tiang → tepi poer (mm). */
   dp: string
   ov: string
@@ -43,7 +45,7 @@ export interface PileCapUIInput {
 /** Input bawaan = kasus golden default (4 tiang D400, Pu 4000 kN → lentur & pons terhitung). */
 export const CAP_DEFAULTS: PileCapUIInput = {
   mode: 'pu', Pu: '4000', Mux: '0', Muy: '0', Q: '1200',
-  piles: [{ x: '-600', y: '-600' }, { x: '600', y: '-600' }, { x: '-600', y: '600' }, { x: '600', y: '600' }], s: '1200', dp: '400', ov: '400', cx: '500', cy: '500', h: '800', cov: '75',
+  piles: [{ x: '-600', y: '-600' }, { x: '600', y: '-600' }, { x: '-600', y: '600' }, { x: '600', y: '600' }], s: '1200', shape: 'persegi', dp: '400', ov: '400', cx: '500', cy: '500', h: '800', cov: '75',
   fc: '30', fy: '420', db: '25',
 }
 
@@ -70,7 +72,7 @@ export function validate(i: PileCapUIInput): FieldErrors {
 /** Bentuk compute lama. Hanya dipanggil untuk input yang lolos validate(). */
 export function toCalcInput(i: PileCapUIInput): PileCapInput {
   return {
-    mode: i.mode, Pu: num(i.Pu), Mux: num(i.Mux), Muy: num(i.Muy), Q: num(i.Q), n: i.piles.length, piles: i.piles.map((p) => ({ x: num(p.x), y: num(p.y) })), dp: num(i.dp), s: Math.max(1, num(i.s)), ov: num(i.ov),
+    mode: i.mode, Pu: num(i.Pu), Mux: num(i.Mux), Muy: num(i.Muy), Q: num(i.Q), n: i.piles.length, piles: i.piles.map((p) => ({ x: num(p.x), y: num(p.y) })), shape: i.shape, dp: num(i.dp), s: Math.max(1, num(i.s)), ov: num(i.ov),
     cx: num(i.cx), cy: num(i.cy), h: num(i.h), cov: num(i.cov), fc: num(i.fc), fy: num(i.fy), db: i.db,
   }
 }

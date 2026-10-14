@@ -25,6 +25,9 @@ export interface PileCapInput {
   n: number | string
   /** Koordinat tiang (mm) relatif pusat kolom — bila diisi menggantikan susunan n/s. */
   piles?: PilePosition[]
+  /** Bentuk poer: 'persegi' = bounding box + overhang (bawaan); 'poligon' = selubung cembung tiang diperlebar overhang,
+   *  sudut terpangkas (mis. segitiga untuk 3 tiang). Hanya berlaku bila `piles` diisi. */
+  shape?: 'persegi' | 'poligon'
   /** Diameter tiang, spasi (susunan n tiang), overhang pusat→tepi (mm). */
   dp: number
   s: number
@@ -53,6 +56,8 @@ export interface CapFlexure {
   /** Momen sisi +/− (kN·mm). */
   Mp: number
   Mm: number
+  /** Sisi penentu (poligon). */
+  side?: '+' | '-'
   Mu: number
   Rn: number
   over?: boolean
@@ -136,6 +141,9 @@ export interface PileCapResult {
   xhi?: number
   ylo?: number
   yhi?: number
+  /** Poligon poer (mm, CCW) — persegi: 4 sudut bounding box. */
+  poly?: PilePosition[]
+  shape?: 'persegi' | 'poligon'
   /** Titik berat kelompok tiang (mm) & hasil kali inersia Σx'y' (mm²), tiang diukur dari titik berat. */
   xc?: number
   yc?: number
@@ -169,6 +177,67 @@ export interface PileCapResult {
   ok?: boolean
 }
 
+/** Selubung cembung (CCW) titik-titik. */
+function convexHull(pts: PilePosition[]): PilePosition[] {
+  const p = [...pts].sort((a, b) => a.x - b.x || a.y - b.y)
+  const cross = (o: PilePosition, a: PilePosition, b: PilePosition) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
+  const lo: PilePosition[] = []
+  for (const q of p) { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], q) <= 1e-9) lo.pop(); lo.push(q) }
+  const up: PilePosition[] = []
+  for (const q of [...p].reverse()) { while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], q) <= 1e-9) up.pop(); up.push(q) }
+  return [...lo.slice(0, -1), ...up.slice(0, -1)]
+}
+
+/** Poligon poer: selubung tiang diperlebar ov ke luar, tiap sudut dipangkas tegak lurus garis bagi pada jarak ov dari pusat tiang sudut. */
+export function offsetHull(hull: PilePosition[], ov: number): PilePosition[] {
+  const n = hull.length
+  const out: PilePosition[] = []
+  const dir = hull.map((a, i) => { const b = hull[(i + 1) % n]; const l = Math.hypot(b.x - a.x, b.y - a.y); return { x: (b.x - a.x) / l, y: (b.y - a.y) / l } })
+  const nor = dir.map((d) => ({ x: d.y, y: -d.x }))
+  for (let i = 0; i < n; i++) {
+    const pe = (i + n - 1) % n // sisi sebelum titik i; sisi i sesudahnya
+    const v = hull[i]
+    let ux = nor[pe].x + nor[i].x, uy = nor[pe].y + nor[i].y
+    const ul = Math.hypot(ux, uy); ux /= ul; uy /= ul
+    const cx = v.x + ov * ux, cy = v.y + ov * uy
+    // titik potong sisi (digeser ov) dengan garis pangkas
+    const hit = (a: PilePosition, d: PilePosition, nn: PilePosition) => {
+      const t = ((cx - a.x - ov * nn.x) * ux + (cy - a.y - ov * nn.y) * uy) / (d.x * ux + d.y * uy)
+      return { x: a.x + ov * nn.x + t * d.x, y: a.y + ov * nn.y + t * d.y }
+    }
+    out.push(hit(hull[pe], dir[pe], nor[pe]), hit(v, dir[i], nor[i]))
+  }
+  return out
+}
+
+/** Panjang potongan garis vertikal x = c (axis 'x') atau horizontal y = c (axis 'y') dengan poligon cembung. */
+export function chord(poly: PilePosition[], axis: 'x' | 'y', c: number): number {
+  const hits: number[] = []
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length]
+    const [a1, a2, b1, b2] = axis === 'x' ? [a.x, a.y, b.x, b.y] : [a.y, a.x, b.y, b.x]
+    if ((a1 - c) * (b1 - c) <= 0 && a1 !== b1) hits.push(a2 + ((c - a1) / (b1 - a1)) * (b2 - a2))
+  }
+  return hits.length >= 2 ? Math.max(...hits) - Math.min(...hits) : 0
+}
+
+/** Panjang ruas p→q yang berada di dalam poligon cembung CCW (Cyrus–Beck). */
+export function segmentInside(poly: PilePosition[], p: PilePosition, q: PilePosition): number {
+  let t0 = 0, t1 = 1
+  const dx = q.x - p.x, dy = q.y - p.y
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length]
+    const ex = b.x - a.x, ey = b.y - a.y
+    const num = ex * (p.y - a.y) - ey * (p.x - a.x) // ≥ 0 di dalam (kiri sisi CCW)
+    const den = ex * dy - ey * dx
+    if (Math.abs(den) < 1e-12) { if (num < 0) return 0; continue }
+    const t = -num / den
+    if (den > 0) t0 = Math.max(t0, t); else t1 = Math.min(t1, t)
+    if (t0 > t1) return 0
+  }
+  return (t1 - t0) * Math.hypot(dx, dy)
+}
+
 const clamp = (x: number, a: number, b: number): number => (x < a ? a : x > b ? b : x)
 
 /** Susunan tiang (mm), origin di titik berat = pusat kolom. */
@@ -184,7 +253,7 @@ export function pileLayout(n: number, s: number): PilePosition[] {
   return [{ x: -s, y: -s / 2 }, { x: 0, y: -s / 2 }, { x: s, y: -s / 2 }, { x: -s, y: s / 2 }, { x: 0, y: s / 2 }, { x: s, y: s / 2 }]
 }
 
-type Ready = Required<Pick<PileCapResult, 'n' | 'piles' | 'R' | 'cx' | 'cy' | 'Lx' | 'Ly' | 'xlo' | 'xhi' | 'ylo' | 'yhi' | 'dx' | 'dy' | 'davg' | 'h' | 'cov' | 'fc' | 'fy' | 'Ab' | 'dp'>>
+type Ready = Required<Pick<PileCapResult, 'n' | 'piles' | 'R' | 'cx' | 'cy' | 'Lx' | 'Ly' | 'xlo' | 'xhi' | 'ylo' | 'yhi' | 'poly' | 'shape' | 'dx' | 'dy' | 'davg' | 'h' | 'cov' | 'fc' | 'fy' | 'Ab' | 'dp'>>
 
 export function computePileCap(v: PileCapInput): PileCapResult {
   const r: PileCapResult = { warn: [], valid: true }
@@ -214,7 +283,17 @@ export function computePileCap(v: PileCapInput): PileCapResult {
   // build lama; tidak tepat untuk 3 tiang yang kotak-batasnya tak simetris — lihat TODO).
   const xlo = v.piles ? Math.min(...xs) - ov : -(spanX / 2 + ov), xhi = v.piles ? Math.max(...xs) + ov : spanX / 2 + ov
   const ylo = v.piles ? Math.min(...ys) - ov : -(spanY / 2 + ov), yhi = v.piles ? Math.max(...ys) + ov : spanY / 2 + ov
-  Object.assign(r, { spanX, spanY, Lx: spanX + 2 * ov, Ly: spanY + 2 * ov, xlo, xhi, ylo, yhi })
+  let poly: PilePosition[] = [{ x: xlo, y: ylo }, { x: xhi, y: ylo }, { x: xhi, y: yhi }, { x: xlo, y: yhi }]
+  let shape: 'persegi' | 'poligon' = 'persegi'
+  if (v.piles && v.shape === 'poligon') {
+    const hull = convexHull(P)
+    if (hull.length >= 3) { poly = offsetHull(hull, ov); shape = 'poligon' }
+    else r.warn.push('Semua tiang segaris — bentuk poligon tidak terdefinisi, dipakai poer persegi.')
+  }
+  const pxs = poly.map((q) => q.x), pys = poly.map((q) => q.y)
+  Object.assign(r, shape === 'poligon'
+    ? { spanX, spanY, Lx: Math.max(...pxs) - Math.min(...pxs), Ly: Math.max(...pys) - Math.min(...pys), xlo: Math.min(...pxs), xhi: Math.max(...pxs), ylo: Math.min(...pys), yhi: Math.max(...pys), poly, shape }
+    : { spanX, spanY, Lx: spanX + 2 * ov, Ly: spanY + 2 * ov, xlo, xhi, ylo, yhi, poly, shape })
 
   // Tinggi efektif dua lapis; lapis luar ke arah kantilever terbesar.
   const cantX = Math.max(...xs.map(Math.abs)) - cx / 2
@@ -293,7 +372,7 @@ export function computePileCap(v: PileCapInput): PileCapResult {
 function flexure(r: Ready, axis: 'x' | 'y'): CapFlexure {
   const isX = axis === 'x'
   const face = (isX ? r.cx : r.cy) / 2
-  const b = isX ? r.Ly : r.Lx
+  let b = isX ? r.Ly : r.Lx
   const d = isX ? r.dx : r.dy
   let Mp = 0, Mm = 0 // kN·mm
   for (let i = 0; i < r.n; i++) {
@@ -301,7 +380,17 @@ function flexure(r: Ready, axis: 'x' | 'y'): CapFlexure {
     if (c > face) Mp += r.R[i] * (c - face)
     else if (c < -face) Mm += r.R[i] * (-face - c)
   }
-  const Mu = Math.max(Mp, Mm)
+  let Mu = Math.max(Mp, Mm)
+  let side: '+' | '-' | undefined
+  if (r.shape === 'poligon') {
+    // lebar penampang = panjang potongan poligon di muka kolom tiap sisi; sisi penentu = momen per lebar terbesar
+    const bp = chord(r.poly, axis, face), bm = chord(r.poly, axis, -face)
+    const useP = Mp / Math.max(bp, 1e-9) >= Mm / Math.max(bm, 1e-9)
+    side = useP ? '+' : '-'
+    Mu = useP ? Mp : Mm
+    b = useP ? bp : bm
+    if (!(b > 0)) b = isX ? r.Ly : r.Lx
+  }
   const Rn = flexuralRn(Mu * 1e3, PHI_F, b, d)
   const { disc, rho: rhoOk } = rhoFromRn(Rn, r.fc, r.fy)
   const over = disc < 0
@@ -315,7 +404,7 @@ function flexure(r: Ready, axis: 'x' | 'y'): CapFlexure {
   const a = (AsProv * r.fy) / (0.85 * r.fc * b)
   const phiMn = (PHI_F * AsProv * r.fy * (d - a / 2)) / 1e6 // kNm
   const o: CapFlexure = {
-    b, d, face, Mp, Mm, Mu, Rn, rho, AsReq, rhoMin, AsMin, AsMinGov: AsReq < AsMin, As, nBar, AsProv,
+    b, d, face, Mp, Mm, ...(side ? { side } : {}), Mu, Rn, rho, AsReq, rhoMin, AsMin, AsMinGov: AsReq < AsMin, As, nBar, AsProv,
     spacing: nBar > 1 ? (b - 2 * r.cov) / (nBar - 1) : 0, sMax: Math.min(3 * r.h, 450), a, phiMn,
     dc: phiMn > 0 ? Mu / 1e3 / phiMn : Infinity,
   }
@@ -330,7 +419,7 @@ function oneWay(r: Ready, axis: 'x' | 'y'): CapOneWay {
   const isX = axis === 'x'
   const face = (isX ? r.cx : r.cy) / 2
   const d = isX ? r.dx : r.dy
-  const b = isX ? r.Ly : r.Lx
+  const bRect = isX ? r.Ly : r.Lx
   const critP = face + d, critM = -(face + d)
   let Vp = 0, Vm = 0
   for (let i = 0; i < r.n; i++) {
@@ -338,7 +427,14 @@ function oneWay(r: Ready, axis: 'x' | 'y'): CapOneWay {
     Vp += r.R[i] * fracOneWay(c, critP, r.dp)
     Vm += r.R[i] * fracOneWay(-c, -critM, r.dp) // cermin sisi −
   }
-  const Vu = Math.max(Vp, Vm)
+  let Vu = Math.max(Vp, Vm)
+  let b = bRect
+  if (r.shape === 'poligon') {
+    // lebar = panjang potongan poligon pada penampang kritis tiap sisi; sisi penentu = rasio D/C terbesar
+    const bp = chord(r.poly, axis, critP) || bRect, bm = chord(r.poly, axis, critM) || bRect
+    const dcP = Vp / (PHI_V * oneWayVc(r.fc, bp, d, LAMBDA)), dcM = Vm / (PHI_V * oneWayVc(r.fc, bm, d, LAMBDA))
+    if (dcP >= dcM) { Vu = Vp; b = bp } else { Vu = Vm; b = bm }
+  }
   const Vc = oneWayVc(r.fc, b, d, LAMBDA) / 1e3
   const phiVc = PHI_V * Vc
   return { d, b, crit: critP, Vu, Vc, phiVc, dc: phiVc > 0 ? Vu / phiVc : Infinity }
@@ -370,10 +466,19 @@ function punchPile(r: Ready): CapPunchPile {
     const px = r.piles[i].x, py = r.piles[i].y
     const xl = px - he, xr = px + he, yb = py - he, yt = py + he
     let sides = 0, b0 = 0
+    if (r.shape === 'poligon') {
+      // keliling kritis persegi di sekitar tiang dipangkas tepi poligon; sisi yang seluruhnya di luar = hilang
+      const seg: [PilePosition, PilePosition][] = [
+        [{ x: xl, y: yb }, { x: xl, y: yt }], [{ x: xr, y: yb }, { x: xr, y: yt }],
+        [{ x: xl, y: yb }, { x: xr, y: yb }], [{ x: xl, y: yt }, { x: xr, y: yt }],
+      ]
+      for (const [p, q] of seg) { const len = segmentInside(r.poly, p, q); if (len > 1e-6) { b0 += len; sides++ } }
+    } else {
     if (xl >= r.xlo) { b0 += Math.min(yt, r.yhi) - Math.max(yb, r.ylo); sides++ }
     if (xr <= r.xhi) { b0 += Math.min(yt, r.yhi) - Math.max(yb, r.ylo); sides++ }
     if (yb >= r.ylo) { b0 += Math.min(xr, r.xhi) - Math.max(xl, r.xlo); sides++ }
     if (yt <= r.yhi) { b0 += Math.min(xr, r.xhi) - Math.max(xl, r.xlo); sides++ }
+    }
     if (b0 <= 0) continue
     const missing = 4 - sides
     const alphaS = missing >= 2 ? 20 : missing === 1 ? 30 : 40

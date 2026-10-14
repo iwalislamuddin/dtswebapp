@@ -107,6 +107,17 @@ function Inputs({
           </div>
         </Field>
         {f('s', 's — spasi untuk pola', 'mm', 'Hanya dipakai tombol pola di atas.')}
+        <Field label="Bentuk poer" hint="Poligon: selubung titik pusat tiang dilebarkan sejauh overhang, sudut terpangkas (segitiga untuk 3 tiang).">
+          <Segmented
+            ariaLabel="Bentuk poer"
+            value={input.shape}
+            options={[
+              { value: 'persegi', label: 'Persegi' },
+              { value: 'poligon', label: 'Poligon' },
+            ]}
+            onChange={(shape) => setInput({ shape })}
+          />
+        </Field>
         {f('dp', 'dp — diameter tiang', 'mm')}
         {f('ov', 'Overhang pusat tiang → tepi', 'mm')}
       </Card>
@@ -141,7 +152,7 @@ function PlanPreview({ r, w, h }: { r: PileCapResult; w: number; h: number }) {
   return (
     <svg width={w} height={h} className="bp" role="img" aria-label="Denah pile cap">
       <g className="bp-plate">
-        <rect x={cx - W / 2} y={cy - H / 2} width={W} height={H} />
+        <path d={r.poly!.map((q, k) => `${k ? 'L' : 'M'}${X(q.x)},${Y(q.y)}`).join(' ') + ' Z'} />
       </g>
       <rect x={X(-pc.bx / 2)} y={Y(pc.by / 2)} width={pc.bx * sc} height={pc.by * sc} fill="none" stroke="var(--dg-y)" strokeDasharray="4 3" />
       {r.piles!.map((p, i) => {
