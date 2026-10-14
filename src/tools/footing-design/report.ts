@@ -51,34 +51,50 @@ function figPlan(r: FootingResult): Figure {
   }
 }
 
-/** Gbr. 2 — potongan memanjang (arah L): tapak, kolom, muka tanah, tulangan arah L dan B. */
+/** Gbr. 2 — potongan memanjang (arah L): tapak, kolom, muka tanah, tulangan arah L (garis) dan arah B (titik). */
 function figSection(r: FootingResult): Figure {
   const ops: FigOp[] = []
   const L = r.L!, tf = r.tf!, Df = r.Df!
-  const sc = Math.min(270 / L, 110 / Math.max(Df, tf + 0.3))
+  const sc = Math.min(200 / L, 120 / Math.max(Df, tf + 0.3))
   const x0 = 150, W = L * sc
-  const yTop = 18, ys = yTop + Math.max(0, Df - tf) * sc, yb = ys + tf * sc
+  const yTop = 22, ys = yTop + Math.max(0, Df - tf) * sc, yb = ys + tf * sc
   const colW = r.c1! * sc
+  // tanah (garis muka tanah + arsir ringan di kiri-kanan tapak)
+  ops.push({ t: 'line', x1: x0 - 30, y1: yTop, x2: x0 + W + 30, y2: yTop, lw: 0.8, c: 'muted' })
+  ops.push({ t: 'text', x: x0 - 30, y: yTop - 3, s: 'muka tanah', size: 6.5, c: 'muted' })
+  ops.push({ t: 'rect', x: x0 - 30, y: yTop, w: 30, h: yb - yTop, fill: true, c: 'muted', op: 0.1 })
+  ops.push({ t: 'rect', x: x0 + W, y: yTop, w: 30, h: yb - yTop, fill: true, c: 'muted', op: 0.1 })
   ops.push({ t: 'rect', x: x0, y: ys, w: W, h: tf * sc, fill: true, c: 'support', op: 0.12 })
   ops.push({ t: 'rect', x: x0, y: ys, w: W, h: tf * sc, lw: 1, c: 'support' })
-  ops.push({ t: 'rect', x: x0 + W / 2 - colW / 2, y: yTop - 8, w: colW, h: ys - yTop + 8, fill: true, c: 'ink', op: 0.3 })
-  ops.push({ t: 'rect', x: x0 + W / 2 - colW / 2, y: yTop - 8, w: colW, h: ys - yTop + 8, lw: 0.8, c: 'ink' })
-  ops.push({ t: 'line', x1: x0 - 24, y1: yTop, x2: x0 + W + 24, y2: yTop, lw: 0.6, c: 'muted', dash: [4, 3] })
-  ops.push({ t: 'text', x: x0 + W + 26, y: yTop + 3, s: 'muka tanah', size: 6.5, c: 'muted' })
-  const yBar = yb - Math.max(2, (r.cc! / 1000) * sc) - 1
-  const barW = Math.max(1.6, (r.db! / 1000) * sc)
-  ops.push({ t: 'line', x1: x0 + 6, y1: yBar, x2: x0 + W - 6, y2: yBar, lw: barW + 0.6, c: 'y' })
-  ops.push({ t: 'line', x1: x0 + 6, y1: yBar - barW * 2.2, x2: x0 + W - 6, y2: yBar - barW * 2.2, lw: barW + 0.6, c: 'v', dash: [6, 2] })
+  ops.push({ t: 'rect', x: x0 + W / 2 - colW / 2, y: yTop - 10, w: colW, h: ys - yTop + 10, fill: true, c: 'ink', op: 0.3 })
+  ops.push({ t: 'rect', x: x0 + W / 2 - colW / 2, y: yTop - 10, w: colW, h: ys - yTop + 10, lw: 0.8, c: 'ink' })
+  // tulangan: arah L = garis (sejajar bidang gambar), arah B = titik pada spasi sebenarnya
+  const bar = Math.max(1.4, (r.db! / 1000) * sc)
+  const yL = yb - (r.cc! / 1000) * sc - bar / 2
+  const yB = yL - (r.db! / 1000) * sc - bar * 0.2
+  ops.push({ t: 'line', x1: x0 + 3, y1: yL, x2: x0 + W - 3, y2: yL, lw: bar, c: 'y' })
+  const sB = (r.flexB!.s / 1000) * sc
+  const n = Math.max(1, Math.floor((W - 6) / sB))
+  const xStart = x0 + W / 2 - ((n - 1) * sB) / 2
+  for (let k = 0; k < n; k++) ops.push({ t: 'circle', cx: xStart + k * sB, cy: yB, r: Math.max(2, bar * 0.7), fill: true, c: 'm' })
+  // dimensi
   dimH(ops, x0, x0 + W, yb + 14, `L = ${fx(L, 2)} m`)
   dimV(ops, ys, yb, x0 - 14, '')
-  ops.push({ t: 'text', x: x0 - 18, y: (ys + yb) / 2 + 3, s: `t = ${fx(tf * 1000, 0)} mm`, size: 7, align: 'r' })
-  ops.push({ t: 'text', x: x0 + W + 8, y: yBar + 2, s: `D${fx(r.db, 0)}-${r.flexL!.s} (arah L)`, size: 7, c: 'y' })
-  ops.push({ t: 'text', x: x0 + W + 8, y: yBar - barW * 2.2 + 2, s: `D${fx(r.db, 0)}-${r.flexB!.s} (arah B)`, size: 7, c: 'v' })
+  ops.push({ t: 'text', x: x0 - 18, y: (ys + yb) / 2 + 2.5, s: `t = ${fx(tf * 1000, 0)} mm`, size: 7, align: 'r' })
+  dimV(ops, yTop, yb, x0 - 74, '')
+  ops.push({ t: 'text', x: x0 - 78, y: (yTop + yb) / 2 + 2.5, s: `Df = ${fx(Df, 2)} m`, size: 7, align: 'r' })
+  // label dengan garis penuntun (tidak bertumpuk): atas = arah B, bawah = arah L
+  const lx = x0 + W + 40
+  const yA = ys - 4, yC = ys + 10
+  ops.push({ t: 'line', x1: lx - 4, y1: yA - 2.5, x2: xStart + (n - 1) * sB, y2: yB, lw: 0.4, c: 'm' })
+  ops.push({ t: 'text', x: lx, y: yA, s: `D${fx(r.db, 0)}-${r.flexB!.s} arah B (titik)`, size: 7, c: 'm' })
+  ops.push({ t: 'line', x1: lx - 4, y1: yC - 2.5, x2: x0 + W - 3, y2: yL, lw: 0.4, c: 'y' })
+  ops.push({ t: 'text', x: lx, y: yC, s: `D${fx(r.db, 0)}-${r.flexL!.s} arah L (garis)`, size: 7, c: 'y' })
   return {
     h: figRows(yb + 22),
     ops,
     alt: 'Potongan tapak dengan tulangan dua arah',
-    caption: `Gbr. 2 — Potongan arah L: tebal ${fx(tf * 1000, 0)} mm, kedalaman dasar ${fx(Df, 2)} m. Lapis bawah arah L, di atasnya arah B.`,
+    caption: `Gbr. 2 — Potongan arah L: tebal ${fx(tf * 1000, 0)} mm, kedalaman dasar ${fx(Df, 2)} m. Tulangan arah L tampak memanjang (garis), tulangan arah B tegak lurus bidang gambar (titik, spasi sebenarnya).`,
   }
 }
 

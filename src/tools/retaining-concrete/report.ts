@@ -31,27 +31,46 @@ function figRebar(r: ConcreteWallResult): Figure {
   const cs = r.covS! / 1000, cf = r.covF! / 1000
   const xBack = g.toe + g.bBot
   const xBackTop = P.xTopBack
-  // utama stem: pada muka tanah (garis belakang), turun ke tapak dan ditekuk ke toe
-  const backPts: Pt[] =
-    g.opsi === 'tegak'
-      ? [[g.toe + g.bBot - cs, g.tf + g.H - 0.05], [g.toe + g.bBot - cs, g.tf + cf], [g.toe + 0.1, g.tf + cf]]
-      : [[xBackTop - cs * 1.2, g.tf + g.H - 0.05], [xBack - cs * 1.2, g.tf + cf], [g.toe + 0.1, g.tf + cf]]
-  ops.push({ t: 'poly', pts: backPts.map(([x, y]) => [X(x), Y(y)] as Pt), lw: 1.8, c: 'y' })
-  // toe bawah
-  ops.push({ t: 'line', x1: X(cf), y1: Y(cf), x2: X(g.B - cf), y2: Y(cf), lw: 1.8, c: 'v' })
-  // heel atas
-  ops.push({ t: 'line', x1: X(xBack), y1: Y(g.tf - cf), x2: X(g.B - cf), y2: Y(g.tf - cf), lw: 1.8, c: 'm' })
+  const bw = g.bBot - g.bTop
+  const tegak = g.opsi === 'tegak'
+  const bar = Math.max(1.4, (r.dbM! / 1000) * sc)
+  const dotR = Math.max(1.3, ((r.dbD! / 1000) * sc) / 2)
+  // x muka belakang / depan stem pada ketinggian y (dari dasar tapak), sudah dikurangi selimut
+  const xBackAt = (y: number) => (tegak ? xBack - cs : xBack - ((xBack - xBackTop) * (y - g.tf)) / g.H - cs * 1.2)
+  const xFrontAt = (y: number) => (tegak ? g.toe + (bw * (y - g.tf)) / g.H + cs * 1.2 : g.toe + cs)
+  // utama stem (merah): muka tanah, turun menembus tapak sampai dasar tapak, dibengkokkan ke arah toe
+  const yTopBar = g.tf + g.H - 0.05
+  const stemBar: Pt[] = [[xBackAt(yTopBar), yTopBar], [xBackAt(g.tf), g.tf], [xBackAt(g.tf), cf + 0.02], [Math.max(cf + 0.02, xBackAt(g.tf) - 0.35), cf + 0.02]]
+  ops.push({ t: 'poly', pts: stemBar.map(([x, y]) => [X(x), Y(y)] as Pt), lw: bar, c: 'y' })
+  // tulangan atas tapak (biru): memanjang penuh dari ujung toe sampai ujung heel
+  ops.push({ t: 'line', x1: X(cf), y1: Y(g.tf - cf), x2: X(g.B - cf), y2: Y(g.tf - cf), lw: bar, c: 'm' })
+  // tulangan bawah toe/heel
+  ops.push({ t: 'line', x1: X(cf), y1: Y(cf), x2: X(g.B - cf), y2: Y(cf), lw: bar, c: 'v' })
+  // muka depan stem: tulangan vertikal (garis) di muka depan
+  ops.push({ t: 'line', x1: X(xFrontAt(g.tf)), y1: Y(g.tf), x2: X(xFrontAt(yTopBar)), y2: Y(yTopBar), lw: Math.max(1, (r.dbD! / 1000) * sc), c: 'muted' })
+  // tulangan susut horizontal (tegak lurus bidang gambar → titik) di kedua muka stem, spasi sebenarnya
+  const sH = r.sH! / 1000
+  for (let y = g.tf + 0.08; y <= yTopBar; y += sH) {
+    for (const x of [xBackAt(y) - cs * 0.9, xFrontAt(y) + cs * 0.9]) ops.push({ t: 'circle', cx: X(x), cy: Y(y), r: dotR, fill: true, c: 'ink' })
+  }
   const st = r.stem!, to = r.toeD!, he = r.heelD!
-  ops.push({ t: 'text', x: X(xBack) + 8, y: Y(g.tf + g.H * 0.55), s: `D${fx(r.dbM, 0)}-${st.s} (stem, muka tanah)`, size: 7, c: 'y' })
-  ops.push({ t: 'text', x: X(g.toe / 2) , y: Y(0) + 11, s: `D${fx(r.dbM, 0)}-${to.s} (toe, bawah)`, size: 7, c: 'v' })
-  ops.push({ t: 'text', x: X(xBack) + 4, y: Y(g.tf) - 4, s: `D${fx(r.dbM, 0)}-${he.s} (heel, atas)`, size: 7, c: 'm' })
-  ops.push({ t: 'text', x: X(g.toe) - 4, y: Y(g.tf + g.H * 0.4), s: `D${fx(r.dbD, 0)}-${r.sFv} (muka depan)`, size: 6.5, align: 'r', c: 'muted' })
-  ops.push({ t: 'text', x: X(0), y: Y(0) + 22, s: `Bagi: horizontal D${fx(r.dbD, 0)}-${r.sH} (2 muka); tapak memanjang D${fx(r.dbD, 0)}-${r.sFt}`, size: 6.5, c: 'muted' })
+  const lx = X(g.B) + 16
+  const lab = (y: number, s: string, c: 'y' | 'v' | 'm' | 'muted' | 'ink', tx: number, ty: number) => {
+    ops.push({ t: 'line', x1: tx, y1: ty, x2: lx - 3, y2: y - 2.5, lw: 0.4, c })
+    ops.push({ t: 'text', x: lx, y, s, size: 6.5, c })
+  }
+  const yL = Y(g.tf + g.H) + 6
+  lab(yL, `D${fx(r.dbM, 0)}-${st.s} stem utama`, 'y', X(xBackAt(yTopBar)), Y(yTopBar))
+  lab(yL + 12, `D${fx(r.dbD, 0)}-${r.sH} susut horizontal (titik)`, 'ink', X(xBackAt(g.tf + 0.08 + sH * 2) - cs * 0.9), Y(g.tf + 0.08 + sH * 2))
+  lab(yL + 24, `D${fx(r.dbD, 0)}-${r.sFv} muka depan vertikal`, 'muted', X(xFrontAt(g.tf + 0.5 * g.H)), Y(g.tf + 0.5 * g.H))
+  lab(Y(g.tf) - 4, `D${fx(r.dbM, 0)}-${he.s} atas tapak (penuh)`, 'm', X(g.B - 0.3), Y(g.tf - cf))
+  lab(Y(0) + 4, `D${fx(r.dbM, 0)}-${to.s} bawah tapak`, 'v', X(g.B - 0.3), Y(cf))
+  ops.push({ t: 'text', x: X(0), y: Y(0) + 22, s: `Tapak memanjang D${fx(r.dbD, 0)}-${r.sFt}`, size: 6.5, c: 'muted' })
   return {
     h: figRows(Y(0) + 28),
     ops,
     alt: 'Skema penulangan dinding kantilever',
-    caption: 'Gbr. 2 — Skema penulangan (tidak berskala untuk bengkokan): utama stem di muka tanah, toe lapis bawah, heel lapis atas, serta tulangan bagi.',
+    caption: 'Gbr. 2 — Skema penulangan (bengkokan tidak berskala): tulangan utama stem (merah) turun sampai dasar tapak lalu dibengkokkan ke toe; lapis atas tapak (biru) memanjang penuh; lapis bawah tapak (hijau); susut horizontal stem berupa titik pada kedua muka.',
   }
 }
 

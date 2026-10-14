@@ -20,7 +20,8 @@ export function figWall(r: WallStab, caption: string, extra?: (ops: FigOp[], X: 
     ops.push({ t: 'poly', pts: q, close: true, fill: true, c, op })
     ops.push({ t: 'poly', pts: q, close: true, lw: 0.8, c })
   }
-  poly(P.front, 'muted', 0.18)
+  ops.push({ t: 'poly', pts: P.front.map(([x, y]) => [X(x), Y(y)] as Pt), lw: 1, c: 'muted' })
+  ops.push({ t: 'text', x: X(P.front[0][0]), y: Y(P.front[0][1]) - 3, s: 'muka tanah depan', size: 6, c: 'muted' })
   poly(P.back, 'm', 0.16)
   poly(P.foot, 'support', 0.22)
   poly(P.stem, 'support', 0.32)

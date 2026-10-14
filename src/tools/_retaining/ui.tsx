@@ -98,7 +98,7 @@ export function WallPreview({ r, w, h }: { r: WallStab; w: number; h: number }) 
   const yPa = Y(r.yPa!)
   return (
     <svg width={w} height={h} className="bp" role="img" aria-label="Penampang dinding penahan tanah">
-      <path d={path(P.front)} fill="color-mix(in srgb, var(--dg-axis) 18%, transparent)" stroke="var(--dg-axis)" />
+      <path d={path(P.front).replace(' Z', '')} fill="none" stroke="var(--dg-axis)" strokeWidth={1.5} />
       <path d={path(P.back)} fill="color-mix(in srgb, var(--dg-m) 16%, transparent)" stroke="var(--dg-m)" />
       <g className="bp-plate">
         <path d={path(P.foot)} />

@@ -74,7 +74,7 @@ export interface WallPolys {
   stem: Pt[]
   /** Urugan di belakang badan sampai bidang semu (x = B). */
   back: Pt[]
-  /** Tanah depan setinggi D di atas dasar tapak. */
+  /** Garis permukaan tanah depan (setinggi D dari dasar tapak) sampai muka badan. */
   front: Pt[]
   /** Puncak belakang badan (awal lereng urugan) dan ws. */
   xTopBack: number
@@ -92,6 +92,7 @@ export function wallPolys(g: WallGeom): WallPolys {
     g.opsi === 'tegak'
       ? [[toe, tf], [toe + bw, tf + H], [toe + bBot, tf + H], [toe + bBot, tf]]
       : [[toe, tf], [toe, tf + H], [toe + bTop, tf + H], [toe + bBot, tf]]
+  const xFront = g.opsi === 'tegak' && D > tf && H > 0 ? toe + (bw * Math.min(D - tf, H)) / H : toe
   const xTopBack = g.opsi === 'tegak' ? toe + bBot : toe + bTop
   const ws = B - xTopBack
   const yTopSoil = tf + H + ws * tanB
@@ -100,7 +101,7 @@ export function wallPolys(g: WallGeom): WallPolys {
     foot: [[0, 0], [B, 0], [B, tf], [0, tf]],
     stem,
     back,
-    front: [[-Math.max(0.4, B * 0.2), 0], [-Math.max(0.4, B * 0.2), D], [toe, D], [toe, 0]],
+    front: [[-Math.max(0.4, B * 0.2), D], [xFront, D]],
     xTopBack,
     ws,
     yTopSoil,

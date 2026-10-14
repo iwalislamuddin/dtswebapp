@@ -34,7 +34,7 @@ export default function FootingDesign({ tab }: ToolUIProps) {
       inputs={<Inputs input={input} setInput={setInput} errors={errors} onReset={reset} />}
       preview={
         <Panel title="Preview">
-          <Sized>{(w, h) => (r ? <div className={stale ? 'stale' : ''}><PlanPreview r={r} w={w} h={h} /></div> : null)}</Sized>
+          <Sized>{(w, h) => (r ? <div className={stale ? 'stale' : ''} style={{ display: 'flex' }}><Preview r={r} w={w} h={h} /></div> : null)}</Sized>
         </Panel>
       }
       results={<Results r={r} stale={stale} reject={reject} />}
@@ -87,6 +87,58 @@ function Inputs({
         <SelectField label="Diameter tulangan" value={input.db} options={BAR_OPTIONS} onChange={(db) => setInput({ db })} />
       </Card>
     </>
+  )
+}
+
+/** Denah (kiri) dan potongan (kanan, bila cukup lebar). */
+function Preview({ r, w, h }: { r: FootingResult; w: number; h: number }) {
+  const two = w >= 460
+  const pw = two ? Math.round(w * 0.52) : w
+  return (
+    <>
+      <PlanPreview r={r} w={pw} h={h} />
+      {two && <SectionPreview r={r} w={w - pw} h={h} />}
+    </>
+  )
+}
+
+/** Potongan arah L: tebal tapak, kedalaman dasar, kolom, muka tanah. */
+function SectionPreview({ r, w, h }: { r: FootingResult; w: number; h: number }) {
+  if (w < 160 || h < 120) return null
+  const L = r.L!, tf = r.tf!, Df = Math.max(r.Df!, tf)
+  const padL = 120, padR = 56, padT = 40, padB = 40
+  const sc = Math.min((w - padL - padR) / L, (h - padT - padB) / (Df + 0.2))
+  const x0 = padL, W = L * sc
+  const yTop = padT, ys = yTop + (Df - tf) * sc, yb = ys + tf * sc
+  const colW = r.c1! * sc
+  return (
+    <svg width={w} height={h} className="bp" role="img" aria-label="Potongan tapak">
+      <rect x={x0 - 14} y={yTop} width={14} height={yb - yTop} fill="color-mix(in srgb, var(--dg-axis) 18%, transparent)" />
+      <rect x={x0 + W} y={yTop} width={14} height={yb - yTop} fill="color-mix(in srgb, var(--dg-axis) 18%, transparent)" />
+      <line x1={x0 - 14} y1={yTop} x2={x0 + W + 14} y2={yTop} stroke="var(--dg-axis)" />
+      <text x={x0 + W + 18} y={yTop + 4} className="dg-note">tanah</text>
+      <g className="bp-plate">
+        <rect x={x0} y={ys} width={W} height={tf * sc} />
+      </g>
+      <rect x={x0 + W / 2 - colW / 2} y={yTop - 14} width={colW} height={ys - yTop + 14} fill="color-mix(in srgb, var(--dg-ink) 30%, transparent)" stroke="var(--dg-ink)" />
+      <g className="bp-dim">
+        <line x1={x0 - 22} y1={ys} x2={x0 - 22} y2={yb} />
+        <text x={x0 - 26} y={(ys + yb) / 2 + 4} textAnchor="end">
+          t {fx(tf * 1000, 0)} mm
+        </text>
+        <line x1={x0 - 54} y1={yTop} x2={x0 - 54} y2={yb} />
+        <text x={x0 - 58} y={(yTop + yb) / 2 + 4} textAnchor="end">
+          Df {fx(r.Df, 2)} m
+        </text>
+        <line x1={x0} y1={yb + 14} x2={x0 + W} y2={yb + 14} />
+        <text x={x0 + W / 2} y={yb + 28} textAnchor="middle">
+          L {fx(L, 2)} m
+        </text>
+      </g>
+      <text x={8} y={16} className="bp-label">
+        Potongan arah L
+      </text>
+    </svg>
   )
 }
 
