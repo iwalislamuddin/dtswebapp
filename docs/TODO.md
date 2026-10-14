@@ -213,7 +213,7 @@ terpisah yang memperbarui acuan golden secara sadar.
         deskripsi judul dihapus, dialog Cetak PDF + Deskripsi (diingat per tool, localStorage), jingga heading dihapus,
         rumus tanpa sorot (garis kiri tipis), jeda setelah ringkasan. Tabel/header/footer disetujui
   - [ ] **[Anda]** Tinjauan redaksi laporan (sekaligus, nanti)
-- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 20/33 tool aktif:
+- [ ] **[Claude]** Tulis ulang tiap tool di atas `src/calc` (input, preview, diagram, ringkasan, Detail) — 31/33 tool aktif:
   - [x] `steel-beam-analysis` (percontohan) — 2026-10-08
   - [x] `bolt-connection` — 2026-10-08: 4 kartu input (mutu/ulir/Fnt-Fnv kustom bersyarat, d, bidang geser
         tunggal/ganda; pola; pelat tumpu; beban), preview denah + potongan bidang geser, diagram batang kapasitas
@@ -258,7 +258,15 @@ terpisah yang memperbarui acuan golden secara sadar.
   - [x] Kelompok **Pembebanan lengkap** (1/1; `load-combo` tetap tersembunyi) — 2026-10-14: `wind-load` (elevasi gedung +
         profil windward/leeward dengan bidik qz per elevasi, diagram tekanan dinding ±GCpi & geser kumulatif dari atap,
         laporan qh/Cp/tekanan desain/geser dasar + beban minimum Ps. 27.1.5; golden identik 13 kasus). Faktor Kd/Kzt/Ke/G
-        = 0 kini ditolak validasi (build lama diam-diam memakai nilai bawaan). 28/33 tool aktif; berikutnya Hidraulika/Analisis Struktur
+        = 0 kini ditolak validasi (build lama diam-diam memakai nilai bawaan). 28/33 tool aktif
+  - [x] Kelompok **Hidraulika & Hidrologi lengkap** (3/3) — 2026-10-14. Bersama: `src/tools/_hydraulics/` (`XYChart` grafik XY
+        dengan sumbu log & bidik hover, `chartFigure` padanannya untuk laporan). `rational-method` (skema DAS + lintasan,
+        kurva IDF Mononobe + titik tc, batang Q per tutupan lahan, laporan Kirpich/Mononobe/Q + tabel pembanding; golden
+        identik 7 kasus), `open-channel` (penampang + muka air + yc, kurva debit Q(y), energi spesifik E(y), laporan
+        geometri per bentuk + Manning + yc/Fr; Q > kapasitas gorong-gorong → pesan mesin; golden identik 15 kasus),
+        `pipe-flow` (profil EGL/HGL, kurva sistem Darcy/HW terhadap Q, diagram Moody ε/D vs pipa licin, laporan Re, f
+        Swamee–Jain/64/Re, hf/hm, pembanding HW; golden identik 9 kasus). C kustom > 1, n/ν/C kustom 0 kini ditolak
+        validasi (build lama diam-diam memakai bawaan). 31/33 tool aktif; berikutnya Analisis Struktur
 - [ ] **[Claude]** Verifikasi tiap tool di browser (angka = golden, kanvas, PDF, simpan/buka), konsol bersih
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.
