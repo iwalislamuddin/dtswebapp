@@ -192,15 +192,19 @@ terpisah yang memperbarui acuan golden secara sadar.
       pemilik 2026-10-15): `tools.edifisia.com` → prod + `edifisia.com`; `*.pages.dev` (URL development) &
       localhost → dev + `staging.edifisia.com`. `VITE_AUTH_TARGET=prod` di `.env.local` memaksa prod untuk uji lokal
 - [x] **[Anda]** Uji login Google di `npm run dev` (DB dev) — berhasil 2026-10-15
-- [ ] **[Anda]** Redirect URLs project **dev**: tambahkan `https://<project>.pages.dev/**` dan
-      `https://*.<project>.pages.dev/**` (preview per commit/branch) agar login Google di URL Cloudflare kembali ke sana
+- [x] **[Anda]** Redirect URLs project **dev**: `https://dtswebapp.pages.dev/**`, `https://*.dtswebapp.pages.dev/**`
+- [ ] **[Anda]** Uji login email & Google di `https://dtswebapp.pages.dev`
+- [ ] Saat rilis v0.8.0 (`tools.edifisia.com` dipasang ke `main`): buat branch **`dev`** → URL uji tetap
+      `https://dev.dtswebapp.pages.dev` (database dev); kerja di `dev`, merge ke `main` = rilis
 - [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (`state_json` = objek input tool); Free User buka & hapus
       saja; pesan jelas saat batas 50 tercapai (hint `saved_works_limit`)
 - [ ] **[Claude]** Status "Trial/Premium s/d …", peringatan ≤ 7 hari; tombol beli disembunyikan selama
       `PREMIUM_URL` belum ada
-- [ ] **[Claude]** `src/app/premium.ts` (`usePremium`) mengacu status Supabase — satu titik gating tab Detail & PDF.
-      Kini **gating dimatikan sementara** (`PREMIUM_GATE = false`, permintaan pemilik 2026-10-08 untuk tinjauan):
-      Detail & PDF terbuka di semua build. Nyalakan saat akun tersambung — wajib sebelum rilis v0.8.0
+- [x] **[Claude]** `src/app/premium.ts` (`usePremium`) mengacu status Supabase — satu titik gating tab Detail & PDF.
+      **Dinyalakan 2026-10-17** (`PREMIUM_GATE = true`): Free User/Guest → tab Detail terkunci (daftar isi saja), PDF
+      nonaktif, Simpan Pekerjaan tetap nonaktif (sengaja). Panel terkunci: Guest → tombol Masuk + tautan daftar ("trial
+      Premium 7 hari"); trial/Premium habis → tautan Akun Edifisia; status dibaca → "Memeriksa status Premium…".
+      Trial 7 hari = trigger platform `grant_trial_on_confirm` (sama dengan Matrix), tak ada kode di Civil Tools
 - [ ] **[Claude]** Uji empat akun: Guest, Premium/trial, Free User (trial habis), Premium expired — email & Google
 - [ ] **[Anda]** Siapkan akun uji di dev; grant/expire manual lewat SQL `platform.grant_premium` (README platform)
 
@@ -289,7 +293,8 @@ terpisah yang memperbarui acuan golden secara sadar.
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.
       Pindahkan `web/index.html` & `web/public/` ke akar, hapus `root: 'web'` + alias `/src/` di `vite.config.ts`,
       favicon lama `favicon/` → `public/`
-- [ ] **[Anda]** Cloudflare Pages: build command → `npm ci && npm run build`, output `dist`, env `NODE_VERSION`
+- [x] **[Anda]** Cloudflare Pages: build command → `npm ci && npm run build`, output `dist`, env `NODE_VERSION` — 2026-10-17;
+      build baru live di `https://dtswebapp.pages.dev` (database dev) sejak commit 93439d9
 
 ## Tahap 6 — Rilis v0.8.0 di `tools.edifisia.com`
 

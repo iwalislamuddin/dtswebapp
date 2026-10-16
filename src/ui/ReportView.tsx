@@ -2,7 +2,9 @@ import { Fragment, type ReactNode } from 'react'
 import { parseMath, plainMath, type MathNode } from '../report/math'
 import { fx, okNg, type Block, type CalcStep, type FigColor, type FigOp, type Figure, type Report, type Row } from '../report/model'
 import { LEAD, FIG_W } from '../report/figure'
-import { usePremium } from '../app/premium'
+import { accountPageUrl, AUTH_ENV, registerUrl } from '../app/auth/config'
+import { login } from '../app/auth/store'
+import { usePremium, type PremiumStatus } from '../app/premium'
 
 // Tab Detail: laporan perhitungan sebagai HTML (sumber sama dengan PDF — src/report). Gaya: .rp-* di App.css.
 
@@ -321,8 +323,9 @@ export function ReportView({ report, note }: { report: Report; note?: string }) 
   )
 }
 
-/** Isi tab Detail untuk non-Premium: daftar isi laporan saja (tanpa angka) + ajakan Premium. */
-export function ReportLocked({ report }: { report: Report | null }) {
+/** Isi tab Detail untuk non-Premium: daftar isi laporan saja (tanpa angka) + ajakan masuk / Premium. */
+export function ReportLocked({ report, status }: { report: Report | null; status: PremiumStatus }) {
+  const reason = status.premium ? null : status.reason
   return (
     <div className="rp-locked">
       <div className="rp-lock-card">
@@ -341,10 +344,31 @@ export function ReportLocked({ report }: { report: Report | null }) {
             </ol>
           </>
         )}
-        <button type="button" className="btn primary" disabled title="Segera — membutuhkan akun Edifisia">
-          Masuk / Berlangganan
-        </button>
-        <p className="muted rp-lock-soon">Masuk dengan akun Edifisia segera tersedia.</p>
+        {reason === 'loading' && <p className="muted rp-lock-soon">Memeriksa status Premium…</p>}
+        {reason === 'guest' && AUTH_ENV && (
+          <>
+            <button type="button" className="btn primary" onClick={login}>
+              Masuk
+            </button>
+            <p className="muted rp-lock-soon">
+              Belum punya akun?{' '}
+              <a href={registerUrl(AUTH_ENV.accountUrl)} target="_blank" rel="noreferrer">
+                Daftar akun Edifisia
+              </a>{' '}
+              — akun baru otomatis mendapat <b>trial Premium 7 hari</b>.
+            </p>
+          </>
+        )}
+        {(reason === 'free' || reason === 'expired') && (
+          <p className="muted rp-lock-soon">
+            {reason === 'expired' ? 'Masa Premium / trial akun Anda telah berakhir.' : 'Akun Anda belum Premium.'}{' '}
+            {AUTH_ENV && (
+              <a href={accountPageUrl(AUTH_ENV.accountUrl)} target="_blank" rel="noreferrer">
+                Lihat status di Akun Edifisia
+              </a>
+            )}
+          </p>
+        )}
       </div>
     </div>
   )
@@ -355,8 +379,8 @@ export function ReportLocked({ report }: { report: Report | null }) {
  * `report` null = input belum lengkap.
  */
 export function DetailTab({ report, note, empty }: { report: Report | null; note?: string; empty?: string }) {
-  const { premium } = usePremium()
-  if (!premium) return <ReportLocked report={report} />
+  const status = usePremium()
+  if (!status.premium) return <ReportLocked report={report} status={status} />
   if (!report) return <p className="msg warn">{empty ?? 'Lengkapi input untuk melihat detail perhitungan.'}</p>
   return <ReportView report={report} note={note} />
 }

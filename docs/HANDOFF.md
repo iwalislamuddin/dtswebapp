@@ -28,8 +28,8 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 >   - Laporan v2 (`src/report/`): satu model → tab Detail (HTML) & PDF. Isinya heading bernomor, rumus → substitusi →
 >     hasil, tabel, dan gambar berwarna. PDF dibuat dengan **pdf-lib + DejaVu Sans** (A4, footer bernomor), dimuat
 >     hanya saat tombol PDF ditekan. PDF monospace lama & ekspor .txt dihapus.
->   - Gating Premium satu titik (`src/app/premium.ts`): Detail & PDF = Premium. **Sementara dimatikan**
->     (`PREMIUM_GATE = false`) agar pemilik bisa meninjau — wajib dinyalakan saat akun tersambung, sebelum rilis.
+>   - Gating Premium satu titik (`src/app/premium.ts`): Detail & PDF = Premium. **Dinyalakan 2026-10-17**
+>     (`PREMIUM_GATE = true`) setelah login akun berjalan; trial 7 hari dari trigger platform (sama dengan Matrix).
 >
 > **Tinjauan format Detail & PDF putaran 2 diterapkan (2026-10-08):** halaman PDF setengah kosong / halaman terakhir
 > berisi penutup saja diperbaiki (gambar ditunda ke halaman berikut, penutup tak pernah sendirian), deskripsi di bawah

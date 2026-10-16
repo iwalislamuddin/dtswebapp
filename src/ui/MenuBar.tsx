@@ -24,9 +24,9 @@ interface MenuDef {
   items: MenuEntry[]
 }
 
-// Simpan/Buka menunggu akun Supabase (Tahap 4); item tampil nonaktif agar susunan menu final terlihat. Download
+// Simpan/Buka sengaja belum diaktifkan (Tahap 4, Premium); item tampil nonaktif agar susunan menu final terlihat. Download
 // Report aktif bila tool yang tampil punya laporan dan pengguna Premium (src/app/premium.ts).
-const SOON = 'Segera — membutuhkan akun Edifisia'
+const SOON = 'Segera tersedia — fitur Premium'
 
 function menus(): MenuDef[] {
   const ui = useUi.getState()
