@@ -15,6 +15,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'Tema Light & Dark dengan warna olive EDFS.',
       'Kategori baru Struktur Bawah (pondasi tapak, pile cap, dinding penahan tanah); Sambungan digabung ke Baja.',
       'Mesin hitung ditulis ulang dalam TypeScript dan dikunci dengan uji terhadap versi sebelumnya.',
+      'Masuk dengan akun Edifisia (satu akun untuk semua aplikasi Edifisia).',
     ],
   },
   { version: '0.7.3', date: '2026-08-21', items: ['Tool baru Geser & Torsi Balok (35 tool).'] },

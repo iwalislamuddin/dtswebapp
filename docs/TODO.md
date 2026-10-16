@@ -184,8 +184,16 @@ terpisah yang memperbarui acuan golden secara sadar.
 > Ditunda (keputusan pemilik 2026-10-08): Tahap 5 dikerjakan lebih dulu. Titik sambung sudah disiapkan — input tool
 > = objek JSON (`useToolInput`) untuk Simpan/Buka, dan Download Report lewat satu titik (menu File / `ReportView`).
 
-- [ ] **[Claude]** Lapisan akun: `@supabase/supabase-js`, email + password + **Google**, status dari
-      `platform.premium_status()`; "Daftar"/"Lupa password" → `edifisia.com` (sementara: dialog lokal, seperti Matrix)
+- [x] **[Claude]** Lapisan akun (2026-10-15): `@supabase/ssr` + cookie `.edifisia.com` (SSO, sama dengan Matrix &
+      edifisia.com), status dari `platform.premium_status()`, tombol Masuk / menu akun (badge Trial/Premium s/d …,
+      Akun Edifisia, Keluar). **Di `*.edifisia.com` login = redirect** ke `<pusat akun>/masuk?next=<halaman>` (Site
+      URL & Redirect URLs Supabase menunjuk edifisia.com); di localhost / `*.pages.dev` dialog lokal (email + sandi,
+      Google dengan `redirectTo` halaman ini). **Database dipilih menurut alamat** (satu build untuk semua, keputusan
+      pemilik 2026-10-15): `tools.edifisia.com` → prod + `edifisia.com`; `*.pages.dev` (URL development) &
+      localhost → dev + `staging.edifisia.com`. `VITE_AUTH_TARGET=prod` di `.env.local` memaksa prod untuk uji lokal
+- [x] **[Anda]** Uji login Google di `npm run dev` (DB dev) — berhasil 2026-10-15
+- [ ] **[Anda]** Redirect URLs project **dev**: tambahkan `https://<project>.pages.dev/**` dan
+      `https://*.<project>.pages.dev/**` (preview per commit/branch) agar login Google di URL Cloudflare kembali ke sana
 - [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (`state_json` = objek input tool); Free User buka & hapus
       saja; pesan jelas saat batas 50 tercapai (hint `saved_works_limit`)
 - [ ] **[Claude]** Status "Trial/Premium s/d …", peringatan ≤ 7 hari; tombol beli disembunyikan selama

@@ -1,6 +1,8 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { APP_NAME, APP_TAGLINE, CREDIT } from '../app/appInfo'
+import { AUTH_ENV, forgotUrl, registerUrl } from '../app/auth/config'
+import { signInWithGoogle, signInWithPassword, useAuth } from '../app/auth/store'
 import { plainMath } from '../report/math'
 import { RELEASE_NOTES } from '../app/releaseNotes'
 import { downloadActivePdf, lastPdfDescription } from '../app/report-actions'
@@ -81,6 +83,89 @@ function PdfDialog({ onClose }: { onClose: () => void }) {
   )
 }
 
+/**
+ * Login lokal (localhost / IP LAN / *.pages.dev — lihat authMode). Di *.edifisia.com tombol Masuk langsung ke pusat
+ * akun, dialog ini tidak dipakai. Daftar & lupa sandi selalu di pusat akun yang memakai database yang sama.
+ */
+function LoginDialog({ onClose }: { onClose: () => void }) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const signedIn = useAuth((s) => s.status === 'user')
+  useEffect(() => {
+    if (signedIn) onClose()
+  }, [signedIn, onClose])
+  const run = async (fn: () => Promise<string | null>) => {
+    setBusy(true)
+    setError(null)
+    const err = await fn()
+    // Google: halaman berpindah ke Google; busy dibiarkan agar tombol tidak ditekan dua kali.
+    if (err) {
+      setError(err)
+      setBusy(false)
+    }
+  }
+  const acc = AUTH_ENV?.accountUrl
+  return (
+    <Dialog title="Masuk" subtitle={`Akun Edifisia${AUTH_ENV?.target === 'dev' ? ' · database development' : ''}`} onClose={onClose}>
+      <form
+        className="pdf-form login-form"
+        onSubmit={(e) => {
+          e.preventDefault()
+          void run(() => signInWithPassword(email.trim(), password))
+        }}
+      >
+        <label htmlFor="login-email">Email</label>
+        <input
+          id="login-email"
+          className="ctl"
+          type="email"
+          autoComplete="username"
+          required
+          autoFocus
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <label htmlFor="login-pass">Kata sandi</label>
+        <input
+          id="login-pass"
+          className="ctl"
+          type="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {error && (
+          <p className="login-error" role="alert">
+            {error}
+          </p>
+        )}
+        <button type="submit" className="btn primary" disabled={busy}>
+          {busy ? 'Memproses…' : 'Masuk'}
+        </button>
+        <div className="login-or">
+          <span>atau</span>
+        </div>
+        <button type="button" className="btn" disabled={busy} onClick={() => void run(signInWithGoogle)}>
+          Masuk dengan Google
+        </button>
+        {acc && (
+          <p className="muted login-links">
+            <a href={registerUrl(acc)} target="_blank" rel="noreferrer">
+              Daftar akun
+            </a>
+            <a href={forgotUrl(acc)} target="_blank" rel="noreferrer">
+              Lupa kata sandi?
+            </a>
+          </p>
+        )}
+      </form>
+    </Dialog>
+  )
+}
+
 export function DialogHost() {
   const dialog = useUi((s) => s.dialog)
   const close = () => useUi.getState().openDialog(null)
@@ -120,5 +205,6 @@ export function DialogHost() {
       </Dialog>
     )
   if (dialog === 'pdf') return <PdfDialog onClose={close} />
+  if (dialog === 'login') return <LoginDialog onClose={close} />
   return null
 }

@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { trackPageView } from './app/analytics'
+import { initAuth } from './app/auth/store'
 import { applyHead } from './app/head'
 import { headFor } from './app/seo'
 import { linkClick, parsePath, usePath } from './app/router'
@@ -17,6 +18,8 @@ export default function App() {
   const route = useMemo(() => parsePath(path), [path])
   const navOpen = useUi((s) => s.navOpen)
   const tool = route.kind === 'tool' ? toolById(route.id) : undefined
+
+  useEffect(initAuth, [])
 
   useEffect(() => {
     const h = headFor(route)

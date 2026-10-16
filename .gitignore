@@ -18,3 +18,6 @@ dist/
 
 # Node (tooling src/calc, nanti Vite)
 node_modules/
+
+# Env lokal (mis. VITE_AUTH_TARGET); konfigurasi Supabase publik ada di src/app/auth/config.ts
+*.local

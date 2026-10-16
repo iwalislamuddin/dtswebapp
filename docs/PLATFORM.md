@@ -164,15 +164,20 @@ Kode Fase A–C tidak dipakai ulang (UI ditulis ulang di React); yang dibawa han
 
 ## 4. Yang perlu dibangun
 
-1. **Lapisan akun** (React): `@supabase/supabase-js`, login email + password dan **Google**
-   (`signInWithOAuth`), status dari `platform.premium_status()`. "Daftar" & "Lupa password" mengarah ke
-   `edifisia.com` (sementara dialog lokal, seperti Matrix).
+1. **Lapisan akun** (React) — **selesai 2026-10-15** (`src/app/auth/`): `@supabase/ssr`, status dari
+   `platform.premium_status()`. Karena Site URL & Redirect URLs Supabase menunjuk `edifisia.com`, **login di
+   `*.edifisia.com` = redirect** ke `<pusat akun>/masuk?next=<halaman>`; sesi kembali lewat cookie `.edifisia.com`.
+   Di localhost / `*.pages.dev` (cookie bersama tak terbaca) dialog lokal: email + sandi dan Google
+   (`redirectTo` = halaman ini). "Daftar" & "Lupa password" selalu ke pusat akun. Database dipilih **menurut alamat**
+   (`src/app/auth/config.ts`, satu build untuk semua): `tools.edifisia.com` → `edifisia-prod` + `edifisia.com`;
+   `*.pages.dev` (URL development Cloudflare) & localhost → `edifisia-dev` + `staging.edifisia.com`. Tidak ada URL
+   staging khusus Civil Tools (keputusan pemilik 2026-10-15).
 2. **Simpan Pekerjaan** ke `tools.saved_works`; Free User hanya buka & hapus; galat batas 50 dikenali lewat
    `hint = 'saved_works_limit'`.
 3. **Status & beli**: tampilan mengikuti Matrix ("Trial s/d …", "Premium s/d …", peringatan ≤ 7 hari,
    "Premium berakhir … · Perpanjang"); tombol beli ke `edifisia.com` disembunyikan selama `PREMIUM_URL` belum ada.
-4. **Sesi lintas subdomain**: storage adapter `supabase-js` berbasis cookie `Domain=.edifisia.com`, dipakai
-   bersama Matrix. Selama belum ada, login berlaku per aplikasi (`localStorage`, seperti Matrix sekarang).
+4. **Sesi lintas subdomain** — terpasang 2026-10-15: `createBrowserClient` dengan cookie `Domain=.edifisia.com`,
+   konfigurasi sama dengan Matrix & edifisia.com (`docs/sso.md` repo platform). Keluar = keluar dari semua aplikasi.
 5. **Hapus Firebase & build lama**: `functions/`, `firebase/`, `firebase.json`, `.firebaserc`, lalu `assets/`,
    `core/`, `modules/`, `sw.js` setelah semua tool berjalan di build baru.
 6. **Domain & hosting**: Cloudflare Pages + `tools.edifisia.com` ([DOMAIN_MIGRATION.md](DOMAIN_MIGRATION.md)).

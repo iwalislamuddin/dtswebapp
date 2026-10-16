@@ -33,6 +33,8 @@ function prerender(): Plugin {
 // pembersihan Tahap 5. Kode tetap di src/; hasil build ke dist/ (sama dengan scripts/cf-build.sh — dipakai bergantian).
 export default defineConfig({
   root: 'web',
+  // .env*.local di akar repo (bukan web/), mis. VITE_AUTH_TARGET=prod untuk uji lokal ke database prod.
+  envDir: fileURLToPath(new URL('.', import.meta.url)),
   // chunk pdf-lib (lazy, hanya saat unduh PDF) memang ±1,1 MB
   build: { outDir: '../dist', emptyOutDir: true, chunkSizeWarningLimit: 1200 },
   // /src/... (entry di web/index.html) menunjuk ke src/ di akar repo, bukan web/src.

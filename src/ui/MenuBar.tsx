@@ -1,10 +1,13 @@
-import { Moon, PanelLeft, Sun, UserRound } from 'lucide-react'
+import { ExternalLink, LogOut, Moon, PanelLeft, Sun, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { APP_NAME } from '../app/appInfo'
+import { accountPageUrl, AUTH_ENV, authMode } from '../app/auth/config'
+import { premiumLabel } from '../app/auth/label'
+import { login, signOut, useAuth } from '../app/auth/store'
 import { linkClick, navigate } from '../app/router'
 import { useUi } from '../app/ui-state'
 import { openPdfDialog } from '../app/report-actions'
-import { premiumStatus } from '../app/premium'
+import { premiumStatus, usePremium } from '../app/premium'
 import { BrandMark } from './Brand'
 import { UpdatePrompt } from './UpdatePrompt'
 
@@ -60,6 +63,7 @@ export function MenuBar() {
   const theme = useUi((s) => s.theme)
   const navOpen = useUi((s) => s.navOpen)
   useUi((s) => s.report) // menu Download Report ikut aktif/nonaktif
+  usePremium() // ... dan mengikuti status Premium (login/logout)
   const [open, setOpen] = useState<string | null>(null)
   // Dinaikkan saat menu dibuka/dituju dengan keyboard: popup lalu memfokuskan item pertamanya.
   const [focusTick, setFocusTick] = useState(0)
@@ -148,12 +152,102 @@ export function MenuBar() {
         >
           {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
         </button>
-        <button type="button" className="mb-account" disabled title={SOON}>
-          <UserRound size={14} />
-          <span>Masuk</span>
-        </button>
+        <AccountButton />
       </div>
     </header>
+  )
+}
+
+/** Tombol akun di kanan menu bar: "Masuk" untuk tamu, email + menu akun setelah login. */
+function AccountButton() {
+  const { status, email, premium } = useAuth()
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onDown = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: globalThis.KeyboardEvent) => e.key === 'Escape' && setOpen(false)
+    addEventListener('pointerdown', onDown)
+    addEventListener('keydown', onKey)
+    return () => {
+      removeEventListener('pointerdown', onDown)
+      removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  if (status === 'off') return null
+  if (status !== 'user')
+    return (
+      <button
+        type="button"
+        className="mb-account"
+        disabled={status === 'loading'}
+        onClick={login}
+        title={status === 'loading' ? 'Memuat sesi…' : 'Masuk dengan akun Edifisia'}
+      >
+        <UserRound size={14} />
+        <span>Masuk</span>
+      </button>
+    )
+
+  const label = premium ? premiumLabel(premium) : null
+  return (
+    <div className="mb-menu" ref={ref}>
+      <button
+        type="button"
+        className={`mb-account user${open ? ' open' : ''}`}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        title={email ?? 'Akun'}
+      >
+        <UserRound size={14} />
+        <span>{email}</span>
+      </button>
+      {open && (
+        <div className="mb-popup mb-popup-right" role="menu">
+          <div className="mb-acct">
+            <b>{email}</b>
+            {label && <span className={`mb-badge ${label.tone}`}>{label.text}</span>}
+            {authMode(location.hostname) === 'local' && (
+              <span className="mb-acct-note">
+                Sesi di {location.hostname} terpisah dari {AUTH_ENV ? new URL(AUTH_ENV.accountUrl).host : 'pusat akun'}{' '}
+                — di sana Anda perlu masuk lagi. Satu login untuk semua aplikasi hanya berlaku di *.edifisia.com.
+              </span>
+            )}
+          </div>
+          <div className="mb-sep" role="separator" />
+          {AUTH_ENV && (
+            <a
+              className="mb-item"
+              role="menuitem"
+              href={accountPageUrl(AUTH_ENV.accountUrl)}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setOpen(false)}
+            >
+              <span>Akun Edifisia</span>
+              <ExternalLink size={13} />
+            </a>
+          )}
+          <button
+            type="button"
+            className="mb-item"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+              void signOut()
+            }}
+          >
+            <span>Keluar</span>
+            <LogOut size={13} />
+          </button>
+        </div>
+      )}
+    </div>
   )
 }
 
