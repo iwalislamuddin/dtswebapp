@@ -3,6 +3,45 @@
 Dokumen serah-terima: status terkini, lalu catatan teknis per tool dari build lama (v0.1–v0.7) sebagai referensi
 rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
+> ## ▶ Kesiapan live di `tools.edifisia.com` (dicek 2026-10-17)
+>
+> **Kesimpulan: belum siap live.** Kode build baru sudah mengarah ke domain baru, tapi langkah rilis (TODO Tahap 4–6)
+> belum tuntas. Domain tidak bisa dicek dari sesi cloud (jaringan diblokir) — status DNS/Cloudflare dicek pemilik.
+>
+> **Versi:** dalam pengembangan **v0.8.0-dev** (UI baru React; `package.json`, catatan rilis `date: null`), commit
+> terakhir `93439d9` "Akun: login akun Edifisia (Supabase) di UI baru". Build lama terakhir **v0.7.3** (2026-08-21,
+> `index.html`); live di `tools.dtsengineering.co.id` menurut README ≈ v0.5.1.
+>
+> **Sudah jadi:** 33/33 tool aktif di UI baru; login akun Edifisia (di `tools.edifisia.com` otomatis DB prod +
+> pusat akun `edifisia.com`); canonical/sitemap/robots/GA4 memakai `https://tools.edifisia.com`
+> (`src/app/appInfo.ts` `SITE_URL`, `web/public/robots.txt`, `src/app/analytics.ts`).
+>
+> **Belum jadi (penghalang rilis):**
+> 1. Gating Premium mati (`PREMIUM_GATE = false`, `src/app/premium.ts`) — bila live sekarang Detail & PDF gratis.
+> 2. Simpan/Buka Pekerjaan ke `tools.saved_works` belum dibuat (Tahap 4).
+> 3. Verifikasi tiap tool di browser (angka = golden, kanvas, PDF) belum dilakukan.
+> 4. Pembersihan build lama belum; Cloudflare Pages **masih** build command `bash scripts/cf-build.sh` (build lama:
+>    paywall Firebase + URL `tools.dtsengineering.co.id` di `index.html`, `assets/shell.js`, `robots.txt`). Karena itu
+>    TODO Tahap 1: jangan pasang custom domain dulu.
+> 5. Versi `0.8.0` + tanggal & catatan rilis belum difinalkan.
+>
+> **Yang disiapkan pemilik (dashboard):**
+> 1. Cloudflare Pages: build command `npm ci && npm run build`, output `dist`, env `NODE_VERSION` ≥ 20 → cek di `*.pages.dev`.
+> 2. Zona `edifisia.com` > Caching > Browser Cache TTL = *Respect Existing Headers*.
+> 3. Supabase production: `scripts/db_migrate.py` + `tests/run.py --applied`, Exposed schemas `tools`, Redirect URLs
+>    mencakup `https://tools.edifisia.com`.
+> 4. Pages > Custom domains > `tools.edifisia.com` (CNAME & SSL otomatis).
+> 5. Uji asap di domain asli: login email & Google, buka tool, unduh PDF.
+> 6. Search Console: Domain property `edifisia.com`, submit `https://tools.edifisia.com/sitemap.xml`; GA4 Realtime.
+> 7. cPanel `tools.dtsengineering.co.id` → `.htaccess` redirect 301 saja:
+>    `RewriteRule ^(.*)$ https://tools.edifisia.com/$1 [R=301,L]` (PWA lama perlu dipasang ulang dari domain baru).
+>
+> **Dua pilihan (menunggu keputusan pemilik):**
+> - **A. Rilis v0.8.0 apa adanya** (disarankan bila ingin live segera): semua tool gratis termasuk Detail/PDF, tanpa
+>   Simpan. Claude: bump versi `0.8.0` + tanggal/catatan rilis + `.htaccess` redirect domain lama; pemilik: langkah 1–7.
+> - **B. Tunda beberapa hari:** selesaikan Simpan Pekerjaan, nyalakan `PREMIUM_GATE`, verifikasi browser per tool,
+>   baru pindah domain.
+
 > ## ▶ MULAI DARI SINI (status per 2026-10-08)
 >
 > **Arah:** Civil Tools diselaraskan dengan platform Edifisia — Firebase dibuang, akun & Premium di Supabase
