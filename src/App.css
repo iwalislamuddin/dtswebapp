@@ -223,6 +223,11 @@ a.mb-item {
   color: var(--text);
 }
 
+.mb-badge-bar {
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
 /* --- Badan: navigasi + main -------------------------------------------------- */
 
 .body {
@@ -759,7 +764,8 @@ a.mb-item {
   }
 
   .mb-app span,
-  .mb-account span {
+  .mb-account span,
+  .mb-badge-bar {
     display: none;
   }
 

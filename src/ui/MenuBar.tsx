@@ -158,7 +158,7 @@ export function MenuBar() {
   )
 }
 
-/** Tombol akun di kanan menu bar: "Masuk" untuk tamu, email + menu akun setelah login. */
+/** Tombol akun di kanan menu bar: "Masuk" untuk tamu, email + menu akun + badge status Premium setelah login. */
 function AccountButton() {
   const { status, email, premium } = useAuth()
   const [open, setOpen] = useState(false)
@@ -195,59 +195,63 @@ function AccountButton() {
 
   const label = premium ? premiumLabel(premium) : null
   return (
-    <div className="mb-menu" ref={ref}>
-      <button
-        type="button"
-        className={`mb-account user${open ? ' open' : ''}`}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
-        title={email ?? 'Akun'}
-      >
-        <UserRound size={14} />
-        <span>{email}</span>
-      </button>
-      {open && (
-        <div className="mb-popup mb-popup-right" role="menu">
-          <div className="mb-acct">
-            <b>{email}</b>
-            {label && <span className={`mb-badge ${label.tone}`}>{label.text}</span>}
-            {authMode(location.hostname) === 'local' && (
-              <span className="mb-acct-note">
-                Sesi di {location.hostname} terpisah dari {AUTH_ENV ? new URL(AUTH_ENV.accountUrl).host : 'pusat akun'}{' '}
-                — di sana Anda perlu masuk lagi. Satu login untuk semua aplikasi hanya berlaku di *.edifisia.com.
-              </span>
+    <>
+      <div className="mb-menu" ref={ref}>
+        <button
+          type="button"
+          className={`mb-account user${open ? ' open' : ''}`}
+          aria-haspopup="menu"
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+          title={email ?? 'Akun'}
+        >
+          <UserRound size={14} />
+          <span>{email}</span>
+        </button>
+        {open && (
+          <div className="mb-popup mb-popup-right" role="menu">
+            <div className="mb-acct">
+              <b>{email}</b>
+              {label && <span className={`mb-badge ${label.tone}`}>{label.text}</span>}
+              {authMode(location.hostname) === 'local' && (
+                <span className="mb-acct-note">
+                  Sesi di {location.hostname} terpisah dari {AUTH_ENV ? new URL(AUTH_ENV.accountUrl).host : 'pusat akun'}{' '}
+                  — di sana Anda perlu masuk lagi. Satu login untuk semua aplikasi hanya berlaku di *.edifisia.com.
+                </span>
+              )}
+            </div>
+            <div className="mb-sep" role="separator" />
+            {AUTH_ENV && (
+              <a
+                className="mb-item"
+                role="menuitem"
+                href={accountPageUrl(AUTH_ENV.accountUrl)}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setOpen(false)}
+              >
+                <span>Akun Edifisia</span>
+                <ExternalLink size={13} />
+              </a>
             )}
-          </div>
-          <div className="mb-sep" role="separator" />
-          {AUTH_ENV && (
-            <a
+            <button
+              type="button"
               className="mb-item"
               role="menuitem"
-              href={accountPageUrl(AUTH_ENV.accountUrl)}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false)
+                void signOut()
+              }}
             >
-              <span>Akun Edifisia</span>
-              <ExternalLink size={13} />
-            </a>
-          )}
-          <button
-            type="button"
-            className="mb-item"
-            role="menuitem"
-            onClick={() => {
-              setOpen(false)
-              void signOut()
-            }}
-          >
-            <span>Keluar</span>
-            <LogOut size={13} />
-          </button>
-        </div>
-      )}
-    </div>
+              <span>Keluar</span>
+              <LogOut size={13} />
+            </button>
+          </div>
+        )}
+      </div>
+      {/* Status Premium di samping email, seperti EDFS Matrix (disembunyikan di layar sempit; tetap ada di menu). */}
+      {label && <span className={`mb-badge mb-badge-bar ${label.tone}`}>{label.text}</span>}
+    </>
   )
 }
 
