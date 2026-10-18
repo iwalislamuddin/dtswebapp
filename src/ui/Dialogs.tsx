@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { APP_NAME, APP_TAGLINE, CREDIT } from '../app/appInfo'
+import { APP_NAME, APP_TAGLINE, BRAND_OWNER } from '../app/appInfo'
 import { AUTH_ENV, forgotUrl, registerUrl } from '../app/auth/config'
 import { signInWithGoogle, signInWithPassword, useAuth } from '../app/auth/store'
 import { plainMath } from '../report/math'
@@ -8,7 +8,7 @@ import { RELEASE_NOTES } from '../app/releaseNotes'
 import { downloadActivePdf, lastPdfDescription } from '../app/report-actions'
 import { useUi } from '../app/ui-state'
 import { APP_VERSION, BUILD_DATE } from '../app/version'
-import { BrandMark } from './Brand'
+import { AppIcon, Logo } from './Brand'
 
 /** Dialog modal di atas <dialog> bawaan (fokus terkunci, Escape menutup). */
 function Dialog({ title, subtitle, onClose, children }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode }) {
@@ -27,7 +27,7 @@ function Dialog({ title, subtitle, onClose, children }: { title: string; subtitl
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="dlg-head">
-        <BrandMark size={26} />
+        <AppIcon size={22} />
         <div className="dlg-titles">
           <h2 id="dlg-title">{title}</h2>
           {subtitle && <div className="muted">{subtitle}</div>}
@@ -169,22 +169,48 @@ function LoginDialog({ onClose }: { onClose: () => void }) {
 export function DialogHost() {
   const dialog = useUi((s) => s.dialog)
   const close = () => useUi.getState().openDialog(null)
-  const version = `v${APP_VERSION} · ${BUILD_DATE}`
-  if (dialog === 'about')
+  if (dialog === 'about') {
+    // Pola dialog About EDFS Matrix: logo penuh + identitas, catatan rilis versi ini, disclaimer, hak cipta.
+    const latest = RELEASE_NOTES[0]
     return (
-      <Dialog title={APP_NAME} subtitle={`${version} · ${APP_TAGLINE}`} onClose={close}>
-        <p>
-          Kumpulan alat bantu perhitungan rekayasa sipil dalam satu aplikasi yang bisa dipasang (PWA). Setiap tool
-          mengikuti standar SNI, dengan diagram dan laporan yang siap dokumentasi.
-        </p>
-        <div className="dlg-disc">
-          <b>Disclaimer.</b> Hasil perhitungan adalah alat bantu dan tidak menggantikan penilaian teknis. Verifikasi
-          seluruh keluaran oleh insinyur profesional yang bertanggung jawab sebelum digunakan untuk desain, gambar
-          kerja, atau konstruksi.
+      <Dialog title={`Tentang ${APP_NAME}`} onClose={close}>
+        <div className="about-hero">
+          <Logo width={116} />
+          <div className="about-meta">
+            <div className="about-name">{APP_NAME}</div>
+            <div className="about-tagline">{APP_TAGLINE}</div>
+            <div className="about-owner">
+              Produk dari <b>{BRAND_OWNER}</b>
+            </div>
+            <dl className="about-dl">
+              <dt>Versi</dt>
+              <dd>{APP_VERSION}</dd>
+              <dt>Build</dt>
+              <dd>{BUILD_DATE}</dd>
+            </dl>
+          </div>
         </div>
-        <p className="dlg-credit">{CREDIT.join('  |  ')}</p>
+        <fieldset className="fieldset">
+          <legend>Catatan Rilis · {latest.version}</legend>
+          <ul className="about-list">
+            {latest.items.map((it) => (
+              <li key={it}>{it}</li>
+            ))}
+          </ul>
+          <button type="button" className="link-btn about-more" onClick={() => useUi.getState().openDialog('release-notes')}>
+            Semua catatan rilis
+          </button>
+        </fieldset>
+        <p className="muted small-note">
+          Hasil perhitungan adalah alat bantu dan tidak menggantikan penilaian teknis. Verifikasi seluruh keluaran oleh
+          insinyur profesional yang bertanggung jawab sebelum digunakan untuk desain, gambar kerja, atau konstruksi.
+        </p>
+        <p className="muted small-note">
+          © {new Date().getFullYear()} {BRAND_OWNER}. Hak cipta dilindungi.
+        </p>
       </Dialog>
     )
+  }
   if (dialog === 'release-notes')
     return (
       <Dialog title="Catatan Rilis" subtitle={APP_NAME} onClose={close}>

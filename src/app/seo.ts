@@ -37,7 +37,7 @@ function headTags(h: Head): string {
     `<meta property="og:title" content="${esc(h.title)}" />`,
     `<meta property="og:description" content="${esc(h.description)}" />`,
     `<meta property="og:locale" content="id_ID" />`,
-    `<meta property="og:image" content="${SITE_URL}/app-icon.svg" />`,
+    `<meta property="og:image" content="${SITE_URL}/pwa-512.png" />`,
     `<meta name="twitter:card" content="summary" />`,
   ]
   if (h.canonical) tags.push(`<meta property="og:url" content="${esc(h.canonical)}" />`)

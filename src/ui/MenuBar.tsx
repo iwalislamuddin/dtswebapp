@@ -8,7 +8,7 @@ import { linkClick, navigate } from '../app/router'
 import { useUi } from '../app/ui-state'
 import { openPdfDialog } from '../app/report-actions'
 import { premiumStatus, usePremium } from '../app/premium'
-import { BrandMark } from './Brand'
+import { AppIcon } from './Brand'
 import { UpdatePrompt } from './UpdatePrompt'
 
 interface MenuItem {
@@ -103,7 +103,7 @@ export function MenuBar() {
         <PanelLeft size={16} />
       </button>
       <a className="mb-app" href="/" onClick={linkClick} title="Halaman depan">
-        <BrandMark size={16} />
+        <AppIcon size={16} />
         <span>
           <b>EDFS</b> Civil Tools
         </span>
