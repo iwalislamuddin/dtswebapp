@@ -25,13 +25,17 @@ di repo.
 `edifisia.com` sudah dimiliki dan DNS-nya di Cloudflare (dipakai
 `matrix.edifisia.com`). Tidak perlu registrasi baru; cukup subdomain `tools`.
 
+> **Status 2026-10-19:** §2–3 selesai — `tools.edifisia.com` live dari proyek Pages `dtswebapp` (branch `main`,
+> build `npm ci && npm run build`). Sisa: §4 (Search Console, cek Redirect URLs Supabase prod, redirect 301 domain
+> lama).
+
 ## 2. Buat project Cloudflare Pages + hubungkan repo
 
 Akun Cloudflare sudah ada (dipakai Matrix).
 
 1. **Workers & Pages > Create > Pages > Connect to Git** → repo `iwalislamuddin/dtswebapp`.
 2. Konfigurasi build:
-   - **Build command:** `bash scripts/cf-build.sh`
+   - **Build command:** `npm ci && npm run build` (dulu `bash scripts/cf-build.sh` = build lama; diganti 2026-10-17)
    - **Build output directory:** `dist`
    - **Root directory:** default (root repo)
 3. Deploy pertama jalan otomatis — uji dulu di URL sementara `*.pages.dev`.

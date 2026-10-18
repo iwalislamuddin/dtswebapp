@@ -6,10 +6,11 @@ Alat bantu rekayasa sipil dalam satu aplikasi web terpasang (PWA): kumpulan kalk
 Dikembangkan oleh **Iwal · Edifisia · PT. DTS Engineering**. Bagian dari platform **Edifisia** — satu akun dan satu
 Edifisia Premium bersama EDFS Matrix ([`docs/PLATFORM.md`](docs/PLATFORM.md)).
 
-## Status (2026-10-08)
+## Status (2026-10-19)
 
-Repo sedang berada di tengah migrasi dari app **zero-build** (build lama, live) ke app **Vite + React + TypeScript**
-(build baru, belum rilis):
+Build baru **Vite + React + TypeScript** sudah **live di `https://tools.edifisia.com`** (v0.8.0-dev; Cloudflare
+Pages, otomatis dari `main` — juga di `https://dtswebapp.pages.dev`). Build lama **zero-build** masih ada di repo
+sampai pembersihan dan masih live di domain lama:
 
 | Lapisan | Lokasi | Status |
 |---|---|---|
@@ -18,10 +19,11 @@ Repo sedang berada di tengah migrasi dari app **zero-build** (build lama, live) 
 | Katalog tool build baru | `src/tools.ts` | Selesai (kategori, status, SEO) |
 | Database `tools` (Supabase) | `supabase/`, `tests/`, `scripts/db_migrate.py` | Diterapkan di development |
 | Shell React, SEO pre-render, laporan & PDF | `web/`, `src/app/`, `src/ui/`, `src/report/` | Selesai |
-| UI tool baru | `src/tools/<id>/` | Percontohan Analisis Balok Baja selesai; tool lain berikutnya ([`docs/TODO.md`](docs/TODO.md) Tahap 5) |
-| Akun & Simpan (Supabase) | — | Ditunda setelah Tahap 5 |
+| UI tool baru | `src/tools/<id>/` | 33/33 tool aktif; verifikasi browser per tool belum ([`docs/TODO.md`](docs/TODO.md) Tahap 5) |
+| Akun (Supabase) & gating Premium | `src/app/auth/`, `src/app/premium.ts` | Login akun Edifisia + Premium ON; Simpan Pekerjaan belum (Tahap 4) |
 
-Produksi akan pindah ke **`tools.edifisia.com`** (Cloudflare Pages) pada rilis v0.8.0.
+⚠️ Push ke `main` langsung ter-deploy ke production (belum ada branch staging). Status rinci:
+[`docs/HANDOFF.md`](docs/HANDOFF.md) "Status live".
 
 ## Menjalankan
 

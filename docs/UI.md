@@ -9,6 +9,8 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 - **Tipografi sama dengan Matrix**: `'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, Roboto,
   sans-serif`, dasar 13px/1.35; angka hasil & laporan monospace (`ui-monospace, Consolas`).
 - **Warna tema hijau olive `#566246`** (warna logo Civil Tools) sebagai aksen — pengganti biru `#0f6cbd` Matrix.
+  Logo/ikon (2026-10-19): mark "ct" olive `#566449` + kotak oranye `#EE8F3F` dari paket aset Edifisia
+  (`src/ui/Brand.tsx`); di tema gelap bagian olive logo memakai `--brand-ink` (olive muda).
   Latar utama **putih** seperti Matrix.
 - **Hanya 2 tema: Light & Dark.** Semua warna lewat token CSS di `[data-theme]` (pola `index.css` Matrix);
   kanvas/diagram membaca token yang sama.

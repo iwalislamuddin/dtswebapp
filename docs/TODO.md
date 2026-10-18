@@ -23,14 +23,14 @@ Nama project Supabase: **`edifisia-dev`** (Sydney, dulu `edfs-matrix`) & **`edif
 rename 2026-10-06.
 
 **Cloudflare Pages**
-- [ ] **[Anda]** Cloudflare > Workers & Pages > Create > Pages > Connect to Git → repo `iwalislamuddin/dtswebapp`
-      (otorisasi GitHub App Cloudflare). Production branch `main`. Build command sementara
-      `bash scripts/cf-build.sh`, output `dist` (diganti `npm run build` setelah Tahap 3)
-- [ ] **[Anda]** Cek hasil di URL `*.pages.dev` (tool terbuka, deep-link `/beam-flexure` tidak 404)
+- [x] **[Anda]** Cloudflare > Workers & Pages > Create > Pages > Connect to Git → repo `iwalislamuddin/dtswebapp`
+      (otorisasi GitHub App Cloudflare). Production branch `main` → proyek `dtswebapp` (`https://dtswebapp.pages.dev`).
+      Build command kini `npm ci && npm run build`, output `dist` (sejak 2026-10-17)
+- [x] **[Anda]** Cek hasil di URL `*.pages.dev` (tool terbuka, deep-link `/beam-flexure` tidak 404)
 - [ ] **[Anda]** Zona `edifisia.com` > Caching > Configuration > **Browser Cache TTL = Respect Existing Headers**
       (mungkin sudah diset saat Matrix)
-- [ ] ⚠️ **Jangan pasang custom domain `tools.edifisia.com` dulu** — build `main` masih memuat paywall Firebase
-      yang aktif otomatis. Domain dipasang di Tahap 6
+- [x] ~~Jangan pasang custom domain dulu~~ — tidak berlaku lagi: Pages membangun build baru (tanpa Firebase) dan
+      `tools.edifisia.com` sudah terpasang (terlihat live 2026-10-19). ⚠️ Push ke `main` = deploy ke production
 - [x] **[Claude]** `X-Robots-Tag: noindex` untuk host `*.pages.dev` agar URL sementara tidak terindeks
       (`_headers`, 2026-10-06) → **[Anda]** setelah deploy pertama cek: DevTools > Network > dokumen → header ada
 
@@ -194,8 +194,9 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [x] **[Anda]** Uji login Google di `npm run dev` (DB dev) — berhasil 2026-10-15
 - [x] **[Anda]** Redirect URLs project **dev**: `https://dtswebapp.pages.dev/**`, `https://*.dtswebapp.pages.dev/**`
 - [ ] **[Anda]** Uji login email & Google di `https://dtswebapp.pages.dev`
-- [ ] Saat rilis v0.8.0 (`tools.edifisia.com` dipasang ke `main`): buat branch **`dev`** → URL uji tetap
-      `https://dev.dtswebapp.pages.dev` (database dev); kerja di `dev`, merge ke `main` = rilis
+- [ ] **[Bersama]** `tools.edifisia.com` sudah dipasang ke `main` (2026-10-19) → buat branch **`dev`** agar ada
+      staging terpisah: `https://dev.dtswebapp.pages.dev` (database dev); kerja di `dev`, merge ke `main` = rilis.
+      Sampai itu ada, setiap push ke `main` langsung ke production
 - [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (`state_json` = objek input tool); Free User buka & hapus
       saja; pesan jelas saat batas 50 tercapai (hint `saved_works_limit`)
 - [ ] **[Claude]** Status "Trial/Premium s/d …", peringatan ≤ 7 hari; tombol beli disembunyikan selama
@@ -292,17 +293,20 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **[Claude]** Pembersihan build lama: `assets/`, `core/`, `modules/`, `sw.js`, `scripts/cf-build.sh`,
       `.htaccess`, Firebase (`functions/`, `firebase/`, `firebase.json`, `.firebaserc`); README/ARCHITECTURE.
       Pindahkan `web/index.html` & `web/public/` ke akar, hapus `root: 'web'` + alias `/src/` di `vite.config.ts`,
-      favicon lama `favicon/` → `public/`
+      hapus favicon lama `favicon/` (ikon baru sudah di `web/public/`, 2026-10-19)
 - [x] **[Anda]** Cloudflare Pages: build command → `npm ci && npm run build`, output `dist`, env `NODE_VERSION` — 2026-10-17;
       build baru live di `https://dtswebapp.pages.dev` (database dev) sejak commit 93439d9
+- [x] **[Claude]** Branding baru (2026-10-19, `64b849d`): logo/ikon/favicon/ikon PWA dari paket aset Edifisia
+      (`EDFS_CivilTools_*`), dialog Tentang format EDFS Matrix, kartu homepage ikon + judul (deskripsi = tooltip),
+      ikon tool di `src/icons/`
 
 ## Tahap 6 — Rilis v0.8.0 di `tools.edifisia.com`
 
-- [ ] **[Claude]** URL kanonik → `https://tools.edifisia.com` (DOMAIN_MIGRATION.md §5), sitemap, robots,
-      catatan rilis v0.8.0 di modal Tentang
+- [x] **[Claude]** URL kanonik → `https://tools.edifisia.com` (DOMAIN_MIGRATION.md §5), sitemap, robots, GA4
+- [ ] **[Claude]** Versi `0.8.0` (masih `0.8.0-dev` walau sudah live) + tanggal & catatan rilis v0.8.0
 - [ ] **[Anda]** Supabase **production**: `scripts/db_migrate.py` + `tests/run.py --applied` (Session pooler prod),
-      Exposed schemas `tools`
-- [ ] **[Anda]** Cloudflare Pages > Custom domains > `tools.edifisia.com` (CNAME & SSL otomatis)
+      Exposed schemas `tools` — status belum dikonfirmasi; domain sudah live
+- [x] **[Anda]** Cloudflare Pages > Custom domains > `tools.edifisia.com` (CNAME & SSL otomatis) — live, dicek 2026-10-19
 - [ ] **[Bersama]** Uji asap di domain asli: login email & Google, simpan, buka, unduh PDF Premium & non-Premium
 - [ ] **[Anda]** Google Search Console: **Domain property `edifisia.com`** (verifikasi TXT di DNS Cloudflare)
       → submit `https://tools.edifisia.com/sitemap.xml` → Request indexing halaman depan + beberapa tool

@@ -3,45 +3,45 @@
 Dokumen serah-terima: status terkini, lalu catatan teknis per tool dari build lama (v0.1–v0.7) sebagai referensi
 rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHITECTURE.md).
 
-> ## ▶ Kesiapan live di `tools.edifisia.com` (dicek 2026-10-17)
+> ## ▶ Status live (per 2026-10-19)
 >
-> **Kesimpulan: belum siap live.** Kode build baru sudah mengarah ke domain baru, tapi langkah rilis (TODO Tahap 4–6)
-> belum tuntas. Domain tidak bisa dicek dari sesi cloud (jaringan diblokir) — status DNS/Cloudflare dicek pemilik.
+> **Build baru (React) LIVE di `https://tools.edifisia.com`** — custom domain sudah terpasang di proyek Cloudflare
+> Pages yang sama dengan `https://dtswebapp.pages.dev`. **Satu proyek, satu branch `main`: setiap push ke `main`
+> otomatis ter-deploy ke kedua host sekaligus (±1–3 menit).** Tidak ada staging terpisah
+> (`dev.dtswebapp.pages.dev` belum ada) — jadi push ke `main` = rilis ke production. Database dipilih menurut
+> alamat: `tools.edifisia.com` → `edifisia-prod`, `*.pages.dev`/localhost → `edifisia-dev`.
 >
-> **Versi:** dalam pengembangan **v0.8.0-dev** (UI baru React; `package.json`, catatan rilis `date: null`), commit
-> terakhir `dcbc1ab` "Akun: tampilkan badge status Premium di menu bar". Build lama terakhir **v0.7.3** (2026-08-21,
-> `index.html`); live di `tools.dtsengineering.co.id` menurut README ≈ v0.5.1.
+> **Versi:** masih **v0.8.0-dev** (`package.json`, catatan rilis `date: null`) walau sudah live. Commit terakhir
+> `64b849d` (2026-10-19): branding baru + kartu homepage.
 >
-> **Sudah jadi:** 33/33 tool aktif di UI baru; login akun Edifisia (di `tools.edifisia.com` otomatis DB prod +
-> pusat akun `edifisia.com`); canonical/sitemap/robots/GA4 memakai `https://tools.edifisia.com`
-> (`src/app/appInfo.ts` `SITE_URL`, `web/public/robots.txt`, `src/app/analytics.ts`); gating Premium **ON** sejak
-> 2026-10-17 (`PREMIUM_GATE = true`, `src/app/premium.ts`): Free User/Guest → Detail & PDF terkunci; badge status
-> Premium di menu bar.
+> **Perubahan 2026-10-19 (`64b849d`, sudah live & dicek di kedua host):**
+> - Logo/ikon baru dari paket aset Edifisia (`edifisia-platform/site/product-assets/EDFS_CivilTools_*`): mark "ct"
+>   olive `#566449` + kotak oranye `#EE8F3F`. `src/ui/Brand.tsx` → `AppIcon` (menu bar, homepage, kepala dialog) &
+>   `Logo` (logo penuh + wordmark; olive memakai token `--brand-ink`, olive muda di tema gelap). Logo heksagon lama
+>   (`BrandMark`) dihapus dari build baru.
+> - `web/public/`: `favicon.svg`, `favicon.ico`, `app-icon.svg`, `pwa-192.png`, `pwa-512.png`,
+>   `pwa-maskable-512.png`. Manifest PWA memakai PNG 192/512 + maskable, `theme_color` `#566449`; apple-touch-icon
+>   & `og:image` → PNG. PWA yang sudah terpasang mengambil ikon baru setelah "Perbarui" (ikon layar utama kadang
+>   perlu pasang ulang).
+> - Dialog **Tentang** mengikuti format EDFS Matrix: logo penuh + nama, tagline, "Produk dari Edifisia",
+>   versi/build, catatan rilis versi ini (+ tautan semua catatan rilis), disclaimer, ©. Baris kredit
+>   "Iwal | Edifisia | DTS Engineering" (`CREDIT`) diganti `BRAND_OWNER = 'Edifisia'` (`src/app/appInfo.ts`).
+> - Homepage: kartu tool = ikon + judul; deskripsi (`seo.title`) jadi tooltip CSS saat hover/fokus. Ikon tool di
+>   `src/icons/{id}.svg` (disalin dari `modules/*/icon.svg` agar selamat saat pembersihan build lama; ikon
+>   `one-way-slab` dibuat baru), dimuat oleh `src/ui/ToolIcon.tsx`. Tool baru wajib menambah `src/icons/<id>.svg`.
 >
-> **Belum jadi (penghalang rilis):**
+> **Belum jadi / belum dicek:**
 > 1. Simpan/Buka Pekerjaan ke `tools.saved_works` belum dibuat (Tahap 4).
 > 2. Verifikasi tiap tool di browser (angka = golden, kanvas, PDF) belum dilakukan.
-> 3. Pembersihan build lama belum; Cloudflare Pages **masih** build command `bash scripts/cf-build.sh` (build lama:
->    paywall Firebase + URL `tools.dtsengineering.co.id` di `index.html`, `assets/shell.js`, `robots.txt`). Karena itu
->    TODO Tahap 1: jangan pasang custom domain dulu.
-> 4. Versi `0.8.0` + tanggal & catatan rilis belum difinalkan.
->
-> **Yang disiapkan pemilik (dashboard):**
-> 1. Cloudflare Pages: build command `npm ci && npm run build`, output `dist`, env `NODE_VERSION` ≥ 20 → cek di `*.pages.dev`.
-> 2. Zona `edifisia.com` > Caching > Browser Cache TTL = *Respect Existing Headers*.
-> 3. Supabase production: `scripts/db_migrate.py` + `tests/run.py --applied`, Exposed schemas `tools`, Redirect URLs
->    mencakup `https://tools.edifisia.com`.
-> 4. Pages > Custom domains > `tools.edifisia.com` (CNAME & SSL otomatis).
-> 5. Uji asap di domain asli: login email & Google, buka tool, unduh PDF.
-> 6. Search Console: Domain property `edifisia.com`, submit `https://tools.edifisia.com/sitemap.xml`; GA4 Realtime.
-> 7. cPanel `tools.dtsengineering.co.id` → `.htaccess` redirect 301 saja:
->    `RewriteRule ^(.*)$ https://tools.edifisia.com/$1 [R=301,L]` (PWA lama perlu dipasang ulang dari domain baru).
->
-> **Dua pilihan (menunggu keputusan pemilik):**
-> - **A. Rilis v0.8.0 apa adanya** (disarankan bila ingin live segera): hasil ringkas semua tool gratis, Detail & PDF
->   khusus Premium, tanpa Simpan. Claude: bump versi `0.8.0` + tanggal/catatan rilis + `.htaccess` redirect domain
->   lama; pemilik: langkah 1–7.
-> - **B. Tunda beberapa hari:** selesaikan Simpan Pekerjaan, verifikasi browser per tool, baru pindah domain.
+> 3. Belum dicek di domain asli: login email & Google, gating Premium dengan akun prod, unduh PDF; status migrasi
+>    Supabase prod (`scripts/db_migrate.py` + `tests/run.py --applied`, Exposed schemas `tools`) belum dikonfirmasi.
+> 4. Finalisasi versi `0.8.0` + tanggal & catatan rilis.
+> 5. Search Console (submit `https://tools.edifisia.com/sitemap.xml`) & cek GA4 Realtime dari domain baru.
+> 6. `tools.dtsengineering.co.id` (cPanel) masih build lama ≈ v0.5.1 → ganti dengan `.htaccess` redirect 301:
+>    `RewriteRule ^(.*)$ https://tools.edifisia.com/$1 [R=301,L]` (Tahap 7).
+> 7. Pembersihan build lama di repo (berkas tidak lagi ter-deploy, tapi masih ada).
+> 8. Bila perlu staging sungguhan: branch `dev` → preview `dev.dtswebapp.pages.dev` (database dev), merge ke `main`
+>    = rilis.
 
 > ## ▶ MULAI DARI SINI (status per 2026-10-08)
 >
@@ -95,17 +95,17 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > **Temuan yang menunggu perbaikan** (TODO "Perbaikan isi tool"): profil siku di library baja lama salah baca kolom
 > (Sx/imin) — juga di situs live; prioritas pertama setelah semua tool pindah UI.
 >
-> **Sesi ditutup 2026-10-08** — semua commit lokal di `main`, **belum di-push** (lihat `git log origin/main..`).
-> Aman di-push: deploy Cloudflare masih memakai `scripts/cf-build.sh` (build lama); setelah push, CI baru berjalan
-> pertama kali — cek hasilnya di GitHub Actions.
+> **Sesi ditutup 2026-10-19** — semua commit sudah di-push ke `origin/main` dan live. ⚠️ Push ke `main` langsung
+> ter-deploy ke production `tools.edifisia.com` (lihat "Status live" di atas); CI GitHub Actions berjalan paralel.
 >
 > **Dev lokal:** `npm run dev` (app baru, port bebas / `.claude/launch.json` → 5210) · `npm run build` + `npm run
 > preview` untuk build produksi · build lama: `python -m http.server` di akar repo.
 >
 > **Kondisi build lama:** `main` masih berisi app zero-build (`index.html`, `assets/`, `core/`, `modules/`) plus akun,
-> Simpan Pekerjaan, dan paywall versi **Firebase** (v0.7.x, sandbox). ⚠️ Jangan deploy `main` apa adanya — paywall
+> Simpan Pekerjaan, dan paywall versi **Firebase** (v0.7.x, sandbox). Berkas ini **tidak lagi ter-deploy** (Cloudflare
+> Pages memakai `npm ci && npm run build` sejak 2026-10-17); jangan unggah build lama ke hosting mana pun — paywall
 > Firebase menyala otomatis ([PLATFORM.md §7](PLATFORM.md)). Yang live di `tools.dtsengineering.co.id` (cPanel)
-> masih ≈ v0.5.1 tanpa akun.
+> masih ≈ v0.5.1 tanpa akun (menunggu redirect 301, Tahap 7).
 >
 > Runbook: [`DOMAIN_MIGRATION.md`](DOMAIN_MIGRATION.md) (Cloudflare Pages) · [`DEPLOY.md`](DEPLOY.md) (cPanel, warisan).
 
