@@ -310,7 +310,7 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **[Bersama]** Uji asap di domain asli: login email & Google, simpan, buka, unduh PDF Premium & non-Premium
 - [ ] **[Anda]** Google Search Console: **Domain property `edifisia.com`** (verifikasi TXT di DNS Cloudflare)
       → submit `https://tools.edifisia.com/sitemap.xml` → Request indexing halaman depan + beberapa tool
-- [ ] **[Anda]** GA4 `G-2MDVZFKNSE`: cek hit dari domain baru masuk (Realtime)
+- [ ] **[Anda]** GA4 `G-0PKEJMNY18` (property baru tools.edifisia.com, 2026-10-19): cek hit dari domain baru masuk (Realtime)
 
 ## Tahap 7 — Pensiunkan hosting & layanan lama
 

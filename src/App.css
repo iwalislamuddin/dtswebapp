@@ -849,6 +849,16 @@ a.mb-item {
   padding-left: 18px;
 }
 
+.legal p {
+  margin: 4px 0 0;
+}
+
+.about-legal {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
 /* --- Layar sempit: navigasi jadi laci di atas konten ------------------------------ */
 
 @media (max-width: 760px) {

@@ -9,4 +9,4 @@ export const SITE_URL = 'https://tools.edifisia.com'
 /** Pemilik merek (dialog Tentang, pola EDFS Matrix). */
 export const BRAND_OWNER = 'Edifisia'
 /** GA4 — hanya dikirim dari domain produksi (bukan *.pages.dev / localhost). */
-export const GA4_ID = 'G-2MDVZFKNSE'
+export const GA4_ID = 'G-0PKEJMNY18'

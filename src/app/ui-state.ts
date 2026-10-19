@@ -6,7 +6,7 @@ import type { Report } from '../report/model'
 
 export type Theme = 'light' | 'dark'
 export type ToolTab = 'input' | 'detail'
-export type DialogId = 'about' | 'release-notes' | 'pdf' | 'login'
+export type DialogId = 'about' | 'release-notes' | 'pdf' | 'login' | 'terms' | 'privacy'
 
 /** Kunci yang sama dibaca skrip awal di web/index.html (tema dipasang sebelum render, tanpa kedip). */
 export const PREFS_KEY = 'edfs-civil-tools:prefs'

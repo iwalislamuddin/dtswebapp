@@ -9,6 +9,7 @@ import { downloadActivePdf, lastPdfDescription } from '../app/report-actions'
 import { useUi } from '../app/ui-state'
 import { APP_VERSION, BUILD_DATE } from '../app/version'
 import { AppIcon, Logo } from './Brand'
+import { PrivacyContent, TermsContent } from './Legal'
 
 /** Dialog modal di atas <dialog> bawaan (fokus terkunci, Escape menutup). */
 function Dialog({ title, subtitle, onClose, children }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode }) {
@@ -208,6 +209,15 @@ export function DialogHost() {
         <p className="muted small-note">
           © {new Date().getFullYear()} {BRAND_OWNER}. Hak cipta dilindungi.
         </p>
+        <p className="small-note about-legal">
+          <button type="button" className="link-btn" onClick={() => useUi.getState().openDialog('terms')}>
+            Syarat Layanan
+          </button>
+          <span className="muted">·</span>
+          <button type="button" className="link-btn" onClick={() => useUi.getState().openDialog('privacy')}>
+            Kebijakan Privasi
+          </button>
+        </p>
       </Dialog>
     )
   }
@@ -228,6 +238,18 @@ export function DialogHost() {
             </section>
           ))}
         </div>
+      </Dialog>
+    )
+  if (dialog === 'terms')
+    return (
+      <Dialog title="Syarat Layanan" subtitle={APP_NAME} onClose={close}>
+        <TermsContent />
+      </Dialog>
+    )
+  if (dialog === 'privacy')
+    return (
+      <Dialog title="Kebijakan Privasi" subtitle={APP_NAME} onClose={close}>
+        <PrivacyContent />
       </Dialog>
     )
   if (dialog === 'pdf') return <PdfDialog onClose={close} />
