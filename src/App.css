@@ -413,8 +413,32 @@ a.mb-item {
 }
 
 .tool-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 12px 20px 10px;
   border-bottom: 1px solid var(--border);
+}
+
+.tool-head-icon {
+  flex: none;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  color: var(--accent);
+}
+
+.tool-head-icon:empty {
+  display: none;
+}
+
+.tool-head-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tool-head-text {
+  min-width: 0;
 }
 
 .tool-crumb {

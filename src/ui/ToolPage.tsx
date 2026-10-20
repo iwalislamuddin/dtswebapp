@@ -8,6 +8,7 @@ import { DetailTab } from './ReportView'
 import { FileDown, Loader2, Lock } from 'lucide-react'
 import { usePremium } from '../app/premium'
 import { openPdfDialog } from '../app/report-actions'
+import { ToolIcon } from './ToolIcon'
 
 const TABS: { id: ToolTab; label: string }[] = [
   { id: 'input', label: 'Input' },
@@ -19,11 +20,14 @@ export function ToolPage({ tool }: { tool: ToolEntry }) {
   const tab = useUi((s) => s.tabs[tool.id] ?? 'input')
   const header = (
     <header className="tool-head">
-      <div className="tool-crumb">{tool.category}</div>
-      <h1>{tool.name}</h1>
-      <p className="tool-desc" title={tool.seo.desc}>
-        {tool.seo.desc}
-      </p>
+      <ToolIcon id={tool.id} className="tool-head-icon" />
+      <div className="tool-head-text">
+        <div className="tool-crumb">{tool.category}</div>
+        <h1>{tool.name}</h1>
+        <p className="tool-desc" title={tool.seo.desc}>
+          {tool.seo.desc}
+        </p>
+      </div>
     </header>
   )
 
