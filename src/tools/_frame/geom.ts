@@ -95,13 +95,21 @@ export function forceCurves(v: FrameView, k: ForceKey, amp: number): MemberCurve
   })
 }
 
-/** Faktor perbesaran deformasi: perpindahan translasi terbesar → `frac` × dimensi rangka terkecil. */
-export function deformMag(v: FrameView, frac = 0.06): number {
+/** Faktor perbesaran deformasi: perpindahan translasi terbesar (termasuk di dalam batang, mis. lendutan tengah
+ *  balok yang tak bersimpul) → `frac` × dimensi rangka terkecil. */
+export function deformMag(v: FrameView, frac = 0.06, n = 24): number {
   const b = frameBox(v)
   let dmax = 0
   v.D.forEach((d, i) => {
     if (i % 3 !== 2) dmax = Math.max(dmax, Math.abs(d))
   })
+  for (const e of v.elems) {
+    const d = e.dloc as number[]
+    for (let s = 0; s <= n; s++) {
+      const t = s / n
+      dmax = Math.max(dmax, Math.hypot(d[0] * (1 - t) + d[3] * t, hermiteV(d, e.L as number, t)))
+    }
+  }
   const dim = Math.min(b.x1 - b.x0 || Infinity, b.y1 - b.y0 || Infinity) * 1000 // mm
   return dmax > 1e-9 ? (frac * dim) / dmax : 0
 }
