@@ -1,5 +1,5 @@
-import type { CapFlexure, CapOneWay, PileCapResult } from '../../calc/pile-cap'
-import { figRows } from '../../report/figure'
+import type { CapFlexure, CapOneWay, PileCapResult, PilePosition } from '../../calc/pile-cap'
+import { dimH, dimV, FIG_W, figRows } from '../../report/figure'
 import { check, fx, kv, type Block, type CalcStep, type FigOp, type Figure, type Report, type Section } from '../../report/model'
 import { CAP_DEFAULTS, computePileCapUI, type PileCapUIInput } from './model'
 
@@ -38,6 +38,140 @@ function figPlan(r: PileCapResult): Figure {
     ops,
     alt: 'Denah pile cap dengan susunan tiang',
     caption: `Gbr. 1 — Denah poer ${r.shape === 'poligon' ? 'poligon (kotak batas ' : ''}${fx(Lx, 0)} × ${fx(Ly, 0)} mm${r.shape === 'poligon' ? ')' : ''}: ${r.n} tiang D${fx(r.dp, 0)} (bernomor), kolom ${fx(r.cx, 0)} × ${fx(r.cy, 0)} mm, titik berat kelompok tiang (+ merah), dan keliling kritis pons kolom (putus-putus).`,
+  }
+}
+
+/** Rentang [min, max] potongan garis x = c (axis 'x', hasil rentang y) atau y = c (axis 'y', hasil rentang x) dengan poligon cembung. */
+function spanAt(poly: PilePosition[], axis: 'x' | 'y', c: number): [number, number] | null {
+  const hits: number[] = []
+  for (let i = 0; i < poly.length; i++) {
+    const a = poly[i], b = poly[(i + 1) % poly.length]
+    const [a1, a2, b1, b2] = axis === 'x' ? [a.x, a.y, b.x, b.y] : [a.y, a.x, b.y, b.x]
+    if ((a1 - c) * (b1 - c) <= 0 && a1 !== b1) hits.push(a2 + ((c - a1) / (b1 - a1)) * (b2 - a2))
+  }
+  return hits.length >= 2 ? [Math.min(...hits), Math.max(...hits)] : null
+}
+
+/** Posisi batang (mm) berspasi ≈ s, terpusat dan merata di [lo, hi]; minimal 2 batang. */
+function barPositions(lo: number, hi: number, s: number): number[] {
+  const L = hi - lo
+  if (!(L > 0)) return []
+  const n = s > 0 ? Math.max(2, Math.round(L / s) + 1) : 2
+  return Array.from({ length: n }, (_, k) => lo + (k * L) / (n - 1))
+}
+
+/** Gbr. 2 — denah tulangan bawah dua arah, garis potongan A–A dan B–B. */
+function figRebarPlan(r: PileCapResult): Figure {
+  const ops: FigOp[] = []
+  const Lx = r.Lx!, Ly = r.Ly!, cov = r.cov!, db = r.db!
+  const sc = Math.min(250 / Lx, 170 / Ly)
+  const W = Lx * sc, H = Ly * sc
+  const cx = 200, cy = 24 + H / 2
+  const mx = (r.xlo! + r.xhi!) / 2, my = (r.ylo! + r.yhi!) / 2
+  const X = (v: number) => cx + (v - mx) * sc
+  const Y = (v: number) => cy - (v - my) * sc
+  const outline = r.poly!.map((q) => [X(q.x), Y(q.y)] as [number, number])
+  ops.push({ t: 'poly', pts: outline, close: true, fill: true, c: 'support', op: 0.08 })
+  ops.push({ t: 'poly', pts: outline, close: true, lw: 1, c: 'support' })
+  r.piles!.forEach((p) => ops.push({ t: 'circle', cx: X(p.x), cy: Y(p.y), r: (r.dp! / 2) * sc, lw: 0.5, c: 'muted' }))
+  const lw = Math.max(0.6, Math.min(1.8, db * sc))
+  const fX = r.flexX!, fY = r.flexY!
+  // tulangan arah X (garis mendatar) tersebar sepanjang Y; arah Y (garis tegak) tersebar sepanjang X
+  const ysX = barPositions(r.ylo! + cov, r.yhi! - cov, fX.spacing)
+  const xsY = barPositions(r.xlo! + cov, r.xhi! - cov, fY.spacing)
+  const drawX = () => ysX.forEach((y) => {
+    const s = spanAt(r.poly!, 'y', y)
+    if (s && s[1] - s[0] > 2 * cov) ops.push({ t: 'line', x1: X(s[0] + cov), y1: Y(y), x2: X(s[1] - cov), y2: Y(y), lw, c: 'y' })
+  })
+  const drawY = () => xsY.forEach((x) => {
+    const s = spanAt(r.poly!, 'x', x)
+    if (s && s[1] - s[0] > 2 * cov) ops.push({ t: 'line', x1: X(x), y1: Y(s[0] + cov), x2: X(x), y2: Y(s[1] - cov), lw, c: 'm' })
+  })
+  // lapis dalam digambar dulu, lapis luar (paling bawah) di atasnya
+  if (r.xOuter) { drawY(); drawX() } else { drawX(); drawY() }
+  ops.push({ t: 'rect', x: X(-r.cx! / 2), y: Y(r.cy! / 2), w: r.cx! * sc, h: r.cy! * sc, fill: true, c: 'ink', op: 0.3 })
+  ops.push({ t: 'rect', x: X(-r.cx! / 2), y: Y(r.cy! / 2), w: r.cx! * sc, h: r.cy! * sc, lw: 0.8, c: 'ink' })
+  // garis potongan A–A (sepanjang X, melalui pusat kolom) dan B–B (sepanjang Y)
+  const cut = (x1: number, y1: number, x2: number, y2: number) => ops.push({ t: 'line', x1, y1, x2, y2, lw: 0.6, c: 'accent', dash: [6, 2, 1.5, 2] })
+  const tag = (x: number, y: number, s: string) => ops.push({ t: 'text', x, y, s, size: 7.5, bold: true, align: 'c', c: 'accent' })
+  cut(cx - W / 2 - 10, Y(0), cx + W / 2 + 10, Y(0))
+  tag(cx - W / 2 - 16, Y(0) + 2.5, 'A')
+  tag(cx + W / 2 + 16, Y(0) + 2.5, 'A')
+  cut(X(0), cy - H / 2 - 10, X(0), cy + H / 2 + 10)
+  tag(X(0), cy - H / 2 - 13, 'B')
+  tag(X(0), cy + H / 2 + 19, 'B')
+  // label dengan garis penuntun
+  const lx = cx + W / 2 + 34
+  const yX = ysX[ysX.length - 1], xY = xsY[xsY.length - 1]
+  const sxX = spanAt(r.poly!, 'y', yX), sxY = spanAt(r.poly!, 'x', xY)
+  const tX = cy - H / 2 + 6, tY = tX + 24
+  if (sxX) ops.push({ t: 'line', x1: lx - 3, y1: tX - 2.5, x2: X(sxX[1] - cov), y2: Y(yX), lw: 0.4, c: 'y' })
+  ops.push({ t: 'text', x: lx, y: tX, s: `Arah X: ${fX.nBar} D${fx(db, 0)} @ ${fx(fX.spacing, 0)} mm`, size: 7, c: 'y', bold: true })
+  ops.push({ t: 'text', x: lx, y: tX + 9, s: `lapis ${r.xOuter ? 'luar (terbawah)' : 'dalam'}, d = ${fx(r.dx, 0)} mm`, size: 6.5, c: 'muted' })
+  if (sxY) ops.push({ t: 'line', x1: lx - 3, y1: tY - 2.5, x2: X(xY), y2: Y(sxY[1] - cov), lw: 0.4, c: 'm' })
+  ops.push({ t: 'text', x: lx, y: tY, s: `Arah Y: ${fY.nBar} D${fx(db, 0)} @ ${fx(fY.spacing, 0)} mm`, size: 7, c: 'm', bold: true })
+  ops.push({ t: 'text', x: lx, y: tY + 9, s: `lapis ${r.xOuter ? 'dalam' : 'luar (terbawah)'}, d = ${fx(r.dy, 0)} mm`, size: 6.5, c: 'muted' })
+  dimH(ops, cx - W / 2, cx + W / 2, cy + H / 2 + 32, `${fx(Lx, 0)} mm`)
+  return {
+    h: figRows(cy + H / 2 + 38),
+    ops,
+    alt: 'Denah penulangan bawah pile cap dua arah',
+    caption: `Gbr. 2 — Denah tulangan bawah dua arah D${fx(db, 0)}, selimut ${fx(cov, 0)} mm: arah X (merah) dan arah Y (biru) pada spasi hasil hitungan, dipasang merata selebar poer${r.shape === 'poligon' ? ' dan dipotong mengikuti tepi poligon' : ''}. Jumlah batang dihitung pada lebar penampang di muka kolom. A–A dan B–B: potongan pada Gbr. 3.`,
+  }
+}
+
+/** Gbr. 3 — potongan A–A (sepanjang X) dan B–B (sepanjang Y): poer, kolom, kepala tiang, tulangan bawah berkait. */
+function figRebarSections(r: PileCapResult): Figure {
+  const ops: FigOp[] = []
+  const h = r.h!, cov = r.cov!, db = r.db!
+  const colH = Math.min(0.6 * h, 500), pileH = Math.max(0.5 * h, 300)
+  const sA = spanAt(r.poly!, 'y', 0) ?? [r.xlo!, r.xhi!]
+  const sB = spanAt(r.poly!, 'x', 0) ?? [r.ylo!, r.yhi!]
+  const gap = 50, xA = 44
+  const sc = Math.min((FIG_W - xA - 10 - gap) / (sA[1] - sA[0] + sB[1] - sB[0]), 150 / (colH + h + pileH))
+  const yTop = 22 + colH * sc, yb = yTop + h * sc, yPile = yb + pileH * sc
+  const lw = Math.max(1, Math.min(2.2, db * sc))
+  const dotR = Math.max(1.2, Math.min(2.2, (db / 2) * sc))
+  const zOut = cov + db / 2, zIn = cov + 1.5 * db
+  const one = (x0: number, lo: number, hi: number, along: 'x' | 'y', title: string) => {
+    const X = (v: number) => x0 + (v - lo) * sc
+    const Z = (z: number) => yb - z * sc
+    const c0 = along === 'x' ? r.cx! : r.cy!
+    // tiang terpotong (pusat dalam D/2 dari bidang potong) diarsir; tiang di belakang bidang potong putus-putus
+    r.piles!.forEach((p) => {
+      const u = along === 'x' ? p.x : p.y, w = along === 'x' ? p.y : p.x
+      const box = { x: X(u - r.dp! / 2), y: yb, w: r.dp! * sc, h: pileH * sc }
+      if (Math.abs(w) <= r.dp! / 2) {
+        ops.push({ t: 'rect', ...box, fill: true, c: 'muted', op: 0.18 })
+        ops.push({ t: 'rect', ...box, lw: 0.7, c: 'muted' })
+      } else ops.push({ t: 'rect', ...box, lw: 0.5, c: 'muted', dash: [3, 2] })
+    })
+    ops.push({ t: 'line', x1: X(lo) - 6, y1: yPile, x2: X(hi) + 6, y2: yPile, lw: 0.4, c: 'grid', dash: [2, 2] })
+    ops.push({ t: 'rect', x: X(lo), y: yTop, w: (hi - lo) * sc, h: h * sc, fill: true, c: 'support', op: 0.12 })
+    ops.push({ t: 'rect', x: X(lo), y: yTop, w: (hi - lo) * sc, h: h * sc, lw: 1, c: 'support' })
+    ops.push({ t: 'rect', x: X(-c0 / 2), y: yTop - colH * sc, w: c0 * sc, h: colH * sc, fill: true, c: 'ink', op: 0.25 })
+    ops.push({ t: 'rect', x: X(-c0 / 2), y: yTop - colH * sc, w: c0 * sc, h: colH * sc, lw: 0.8, c: 'ink' })
+    // batang sejajar bidang potong: garis + kait 90° ke atas di kedua ujung (skematik)
+    const parOuter = along === 'x' ? r.xOuter! : !r.xOuter
+    const zPar = parOuter ? zOut : zIn, zPerp = parOuter ? zIn : zOut
+    const cPar = along === 'x' ? 'y' : 'm', cPerp = along === 'x' ? 'm' : 'y'
+    const zHook = h - cov
+    ops.push({ t: 'poly', pts: [[X(lo + cov), Z(zHook)], [X(lo + cov), Z(zPar)], [X(hi - cov), Z(zPar)], [X(hi - cov), Z(zHook)]], lw, c: cPar })
+    // batang tegak lurus bidang potong: titik pada spasi hasil hitungan
+    const fPerp = along === 'x' ? r.flexY! : r.flexX!
+    barPositions(lo + cov + db, hi - cov - db, fPerp.spacing).forEach((u) => ops.push({ t: 'circle', cx: X(u), cy: Z(zPerp), r: dotR, fill: true, c: cPerp }))
+    dimH(ops, X(lo), X(hi), yPile + 14, fx(hi - lo, 0))
+    ops.push({ t: 'text', x: (X(lo) + X(hi)) / 2, y: 10, s: title, size: 7.5, bold: true, align: 'c', c: 'accent' })
+  }
+  one(xA, sA[0], sA[1], 'x', 'Potongan A–A (arah X)')
+  one(xA + (sA[1] - sA[0]) * sc + gap, sB[0], sB[1], 'y', 'Potongan B–B (arah Y)')
+  dimV(ops, yTop, yb, xA - 10, '')
+  ops.push({ t: 'text', x: xA - 14, y: (yTop + yb) / 2 + 2.5, s: `h ${fx(h, 0)}`, size: 7, align: 'r' })
+  return {
+    h: figRows(yPile + 22),
+    ops,
+    alt: 'Potongan pile cap dengan tulangan bawah dua arah',
+    caption: 'Gbr. 3 — Potongan melalui pusat kolom (mm). Tulangan arah X merah, arah Y biru: batang sejajar bidang potong berupa garis, yang tegak lurus berupa titik. Kait 90° ke atas di ujung batang skematik (panjang penyaluran belum diperiksa). Tiang terpotong diarsir, tiang di belakang bidang potong putus-putus.',
   }
 }
 
@@ -131,6 +265,7 @@ export function pileCapReport(r: PileCapResult): Report {
     },
     { title: 'Lentur arah X', blocks: flexBlocks(r.flexX!, 'X', r) },
     { title: 'Lentur arah Y', blocks: flexBlocks(r.flexY!, 'Y', r) },
+    { title: 'Skema penulangan', blocks: [{ k: 'figure', fig: figRebarPlan(r) }, { k: 'figure', fig: figRebarSections(r) }] },
     { title: 'Geser satu arah', blocks: [...oneWayBlock(r.vx!, 'arah X', r.shape === 'poligon'), ...oneWayBlock(r.vy!, 'arah Y', r.shape === 'poligon')] },
     {
       title: 'Geser pons kolom',

@@ -115,14 +115,14 @@ describe('pile cap — poer poligon (segitiga)', () => {
 })
 
 describe('pile cap — laporan', () => {
-  it('tabel reaksi memuat satu baris per tiang; satu gambar; rasio menentukan sama', () => {
+  it('tabel reaksi memuat satu baris per tiang; tiga gambar (denah, denah tulangan, potongan); rasio menentukan sama', () => {
     for (const name of ['default', '3 tiang', '6 tiang']) {
       const ui = fromGolden(name)
       const r = computePileCapUI(ui)!
       const rep = buildPileCapReport(ui)!
       const tbl = rep.sections.flatMap((s) => s.blocks).find((b) => b.k === 'table')
       expect(tbl && tbl.k === 'table' ? tbl.rows.length : 0).toBe(r.n)
-      expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(1)
+      expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(3)
       expect(rep.governing!.ratio).toBeCloseTo(r.gov!.dc, 12)
     }
   })

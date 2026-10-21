@@ -7,6 +7,8 @@ import { BEAM_DEFAULTS } from '../tools/steel-beam-analysis/model'
 import { buildBeamReport } from '../tools/steel-beam-analysis/report'
 import { GABLE_DEFAULTS } from '../tools/gable-frame/model'
 import { buildGableReport } from '../tools/gable-frame/report'
+import { CAP_DEFAULTS, patternPiles } from '../tools/pile-cap/model'
+import { buildPileCapReport } from '../tools/pile-cap/report'
 import { PORTAL_DEFAULTS } from '../tools/portal-frame/model'
 import { buildPortalReport } from '../tools/portal-frame/report'
 import { parseMath, plainMath } from './math'
@@ -66,6 +68,12 @@ describe('PDF laporan', () => {
     expect((await pdfOf(portal)).getPageCount()).toBeGreaterThanOrEqual(3)
     const gable = buildGableReport({ ...GABLE_DEFAULTS, HL1: '8', point: [{ P: '20', a: '4' }] })!
     expect((await pdfOf(gable)).getPageCount()).toBeGreaterThanOrEqual(3)
+  })
+  it('Pile Cap persegi & poligon: denah + skema penulangan dirender', async () => {
+    for (const piles of [CAP_DEFAULTS.piles, patternPiles(3, 1200)]) {
+      const rep = buildPileCapReport({ ...CAP_DEFAULTS, piles, shape: piles.length === 3 ? 'poligon' : 'persegi' })!
+      expect((await pdfOf(rep)).getPageCount()).toBeGreaterThanOrEqual(2)
+    }
   })
   it('laporan kosong tetap satu halaman valid', async () => {
     const doc = await pdfOf({ title: 'X', sections: [], warnings: [], scope: [] })
