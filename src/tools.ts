@@ -381,6 +381,17 @@ export const TOOLS: ToolEntry[] = [
     },
   },
   {
+    id: "seismic-load",
+    name: "Beban Gempa",
+    category: "Pembebanan",
+    status: "active",
+    ported: true,
+    seo: {
+      title: "Beban Gempa Gedung & Nongedung — Spektrum, KDS & Geser Dasar (SNI 1726:2019)",
+      desc: "Hitung beban gempa SNI 1726:2019 (ASCE 7-16): Ss, S1, PGA & TL langsung dari peta gempa Indonesia (cari kota/kecamatan atau koordinat), koefisien situs Fa/Fv, SDS/SD1, spektrum respons desain, kategori desain seismik, sistem struktur (R, Ω0, Cd, batas tinggi) gedung dan nongedung, periode Ta/Cu·Ta, Cs & geser dasar statik ekivalen, distribusi gaya per lantai, simpangan izin dan kombinasi beban gempa.",
+    },
+  },
+  {
     id: "bolt-connection",
     name: "Sambungan Baut",
     category: "Baja",

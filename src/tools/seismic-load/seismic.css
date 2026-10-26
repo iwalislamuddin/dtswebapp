@@ -1,0 +1,78 @@
+/* Beban Gempa — pencarian lokasi peta */
+
+.eq-loc {
+  display: grid;
+  gap: 6px;
+}
+
+.eq-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+}
+
+.eq-search > .ctl {
+  flex: 1;
+  min-width: 0;
+}
+
+.eq-hits {
+  margin: 0;
+  padding: 2px;
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+}
+
+.eq-hits > li.muted {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.eq-hits button {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.eq-hits button:hover,
+.eq-hits button:focus-visible {
+  background: var(--bg-hover);
+}
+
+.eq-hits button .muted {
+  flex: none;
+  font-size: 11px;
+}
+
+.eq-coord {
+  display: flex;
+  align-items: end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.eq-coord label {
+  display: grid;
+  gap: 2px;
+  flex: 1 1 80px;
+  min-width: 0;
+  font-size: 11px;
+}
+
+.eq-status {
+  margin: 0;
+}
