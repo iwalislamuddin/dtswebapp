@@ -376,8 +376,8 @@ export const TOOLS: ToolEntry[] = [
     status: "active",
     ported: true,
     seo: {
-      title: "Beban Angin Gedung — Prosedur Pengarah (SNI 1727:2020)",
-      desc: "Hitung tekanan angin desain dinding SPGAU/MWFRS gedung tertutup kaku: qz, Kz eksposur B/C/D, tekanan windward/leeward/samping ± internal, dan geser dasar sesuai SNI 1727:2020 (ASCE 7-16).",
+      title: "Beban Angin Gedung, Gudang, Shelter & Rangka Terbuka (SNI 1727:2020)",
+      desc: "Hitung beban angin SPGAU/MWFRS sesuai SNI 1727:2020 (ASCE 7-16): gedung tertutup (qz, Kz eksposur B/C/D, tekanan dinding ± internal, geser dasar), gudang atap pelana (Cp dinding & atap dua arah), shelter/bangunan terbuka atap bebas (CN bersih/terhalang, kasus A/B), serta rangka terbuka & menara rangka (Cf, rasio padat ε).",
     },
   },
   {

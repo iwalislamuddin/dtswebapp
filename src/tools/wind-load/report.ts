@@ -1,7 +1,8 @@
 import { EXPO } from '../../calc/wind-load'
 import { arrow, dimV, figRows } from '../../report/figure'
 import { fx, kv, type CalcStep, type FigOp, type Figure, type Report } from '../../report/model'
-import { computeWindUI, ENC_LABEL, qzAt, WIND_DEFAULTS, type WindOk, type WindUIInput } from './model'
+import { computeWindAny, ENC_LABEL, qzAt, WIND_DEFAULTS, type WindAny, type WindOk, type WindUIInput } from './model'
+import { freeRoofReport, openFrameReport, warehouseReport } from './report-types'
 
 // Laporan Beban Angin SPGAU dinding — SNI 1727:2020 (ASCE 7-16) Bab 26–27, prosedur pengarah, gedung tertutup
 // kaku: tekanan velositas, koefisien Cp dinding, tekanan desain ±GCpi, geser dasar & momen guling.
@@ -175,10 +176,24 @@ export function windReport(r: WindOk): Report {
   }
 }
 
+/** Laporan hasil tipe struktur mana pun. */
+export function windReportAny(a: WindAny): Report {
+  switch (a.type) {
+    case 'building':
+      return windReport(a.r)
+    case 'warehouse':
+      return warehouseReport(a.r)
+    case 'freeroof':
+      return freeRoofReport(a.r)
+    case 'frame':
+      return openFrameReport(a.r)
+  }
+}
+
 /** Laporan dari input (null bila input tidak valid). */
 export function buildWindReport(i: WindUIInput): Report | null {
-  const r = computeWindUI(i)
-  return r ? windReport(r) : null
+  const a = computeWindAny(i)
+  return a ? windReportAny(a) : null
 }
 
 export default {

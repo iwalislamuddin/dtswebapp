@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import golden from '../../calc/__golden__/wind-load.json'
 import { goldenDiff, type GoldenCase } from '../../calc/__golden__/golden'
-import { computeWindUI, netPressure, validate, WIND_DEFAULTS, windProfile, type WindUIInput } from './model'
+import { computeWindAny, computeWindUI, netPressure, validate, WIND_DEFAULTS, windProfile, type WindUIInput } from './model'
 import { buildWindReport } from './report'
 
 const cases = golden as GoldenCase[]
@@ -62,5 +62,25 @@ describe('beban angin — laporan', () => {
     expect(v['F_{desain}']).toBe(r.Fdesign.toFixed(1))
     expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(1)
     expect(rep.warnings).toEqual(r.warn)
+  })
+})
+
+describe('beban angin — tipe struktur lain', () => {
+  it.each(['warehouse', 'freeroof', 'frame'] as const)('%s: input bawaan sah, laporan terbentuk dengan gambar & peringatan hasil', (type) => {
+    const ui = { ...WIND_DEFAULTS, type }
+    expect(validate(ui)).toEqual({})
+    const a = computeWindAny(ui)!
+    expect(a.type).toBe(type)
+    const rep = buildWindReport(ui)!
+    expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure').length).toBeGreaterThan(0)
+    expect(rep.warnings).toEqual(a.r.warn)
+  })
+
+  it('field tipe lain tidak divalidasi; field tipe aktif divalidasi', () => {
+    expect(validate({ ...WIND_DEFAULTS, frH: '', ofEps: 'x' })).toEqual({})
+    expect(validate({ ...WIND_DEFAULTS, type: 'warehouse', whTheta: '50' })).toEqual({ whTheta: 'Maksimum 45°' })
+    expect(validate({ ...WIND_DEFAULTS, type: 'frame', ofKind: 'plane', ofEps: '0.8' })).toEqual({ ofEps: 'Maksimum 0,7 (> 0,7 = papan pejal, Ps. 29.3)' })
+    expect(validate({ ...WIND_DEFAULTS, type: 'frame', ofZ2: '0' })).toEqual({ ofZ2: 'Harus > elevasi bawah' })
+    expect(computeWindAny({ ...WIND_DEFAULTS, type: 'freeroof', frL: '0' })).toBeNull()
   })
 })

@@ -6,23 +6,24 @@ import { KzAt } from '../../calc/wind-load'
 import { Card, Field, NumField, Panel, ResetButton, Segmented, SelectField, Sized, StatTiles, SubTabs, ToolLayout } from '../../ui/kit'
 import { DetailTab } from '../../ui/ReportView'
 import type { ToolUIProps } from '../registry'
-import { computeWindUI, qzAt, validate, WIND_DEFAULTS, windProfile, type WindOk, type WindUIInput } from './model'
-import { windReport } from './report'
+import { computeWindAny, qzAt, TYPE_LABEL, validate, WIND_DEFAULTS, windProfile, type StructType, type WindOk, type WindUIInput } from './model'
+import { windReportAny } from './report'
+import { TypePreview, TypeResults } from './types-ui'
 
 const ID = 'wind-load'
 
 export default function WindLoad({ tab }: ToolUIProps) {
   const [input, setInput, reset] = useToolInput<WindUIInput>(ID, WIND_DEFAULTS)
   const errors = useMemo(() => validate(input), [input])
-  const { result: r, stale } = useAutoCompute(input, computeWindUI)
-  const report = useMemo(() => (r ? windReport(r) : null), [r])
+  const { result: a, stale } = useAutoCompute(input, computeWindAny)
+  const report = useMemo(() => (a ? windReportAny(a) : null), [a])
   useToolReport(ID, stale ? null : report)
 
   if (tab === 'detail')
     return (
       <DetailTab
         report={report}
-        empty="Lengkapi data angin dan dimensi gedung untuk melihat detail perhitungan."
+        empty="Lengkapi data angin dan dimensi struktur untuk melihat detail perhitungan."
         note={stale ? 'Input sedang tidak valid — detail di bawah dari input sah terakhir.' : undefined}
       />
     )
@@ -31,11 +32,15 @@ export default function WindLoad({ tab }: ToolUIProps) {
     <ToolLayout
       inputs={<Inputs input={input} setInput={setInput} errors={errors} onReset={reset} />}
       preview={
-        <Panel title="Preview">
-          <Sized>{(w, h) => (r ? <div className={stale ? 'stale' : ''} style={{ display: 'flex' }}><Preview r={r} w={w} h={h} /></div> : null)}</Sized>
-        </Panel>
+        a && a.type !== 'building' ? (
+          <TypePreview key={a.type} a={a} stale={stale} />
+        ) : (
+          <Panel title="Preview">
+            <Sized>{(w, h) => (a ? <div className={stale ? 'stale' : ''} style={{ display: 'flex' }}><Preview r={a.r} w={w} h={h} /></div> : null)}</Sized>
+          </Panel>
+        )
       }
-      results={<Results r={r} stale={stale} />}
+      results={a && a.type !== 'building' ? <TypeResults a={a} stale={stale} /> : <Results r={a?.r ?? null} stale={stale} />}
     />
   )
 }
@@ -54,19 +59,29 @@ function Inputs({
   const f = (key: keyof WindUIInput, label: string, unit?: string, hint?: string) => (
     <NumField label={label} unit={unit} hint={hint} value={input[key]} error={errors[key]} onChange={(v) => setInput({ [key]: v })} />
   )
+  const t = input.type ?? 'building'
   return (
     <>
-      <Card n={1} title="Angin dasar" actions={<ResetButton onReset={onReset} />}>
+      <Card n={1} title="Tipe struktur" actions={<ResetButton onReset={onReset} />}>
+        <SelectField
+          label="Tipe bangunan/struktur"
+          value={t}
+          options={(Object.keys(TYPE_LABEL) as StructType[]).map((value) => ({ value, label: TYPE_LABEL[value] }))}
+          onChange={(type) => setInput({ type })}
+        />
+        <p className="muted card-note">{TYPE_HINT[t]}</p>
+      </Card>
+      <Card n={2} title="Angin dasar">
         {f('V', 'V — kecepatan angin dasar', 'm/s', 'Peta angin SNI 1727 / kajian hazard lokal sesuai kategori risiko.')}
         <Field label="Kategori eksposur" hint="B perkotaan/berpohon · C terbuka, rintangan tersebar · D datar tanpa rintangan, tepi laut.">
           <Segmented ariaLabel="Kategori eksposur" value={input.expo} options={[{ value: 'B', label: 'B' }, { value: 'C', label: 'C' }, { value: 'D', label: 'D' }]} onChange={(expo) => setInput({ expo })} />
         </Field>
-        {f('Kd', 'Kd — faktor arah angin', undefined, 'SPGAU gedung: 0,85 (Tabel 26.6-1).')}
+        {f('Kd', 'Kd — faktor arah angin', undefined, KD_HINT[t])}
         {f('Kzt', 'Kzt — faktor topografi', undefined, '1,0 tanpa bukit/tebing (Ps. 26.8).')}
         {f('Ke', 'Ke — faktor elevasi tanah', undefined, '1,0 di permukaan laut; boleh < 1 di dataran tinggi (Tabel 26.9-1).')}
         {f('G', 'G — faktor efek hembusan', undefined, '0,85 untuk gedung kaku (n₁ ≥ 1 Hz).')}
       </Card>
-      <Card n={2} title="Gedung">
+      {t === 'building' && <Card n={3} title="Gedung">
         <SelectField
           label="Klasifikasi ketertutupan"
           value={input.enc}
@@ -80,9 +95,76 @@ function Inputs({
         {f('B', 'B — lebar tegak lurus arah angin', 'm')}
         {f('L', 'L — panjang sejajar arah angin', 'm')}
         {f('H', 'H — tinggi atap rata-rata', 'm')}
-      </Card>
+      </Card>}
+      {t === 'warehouse' && (
+        <Card n={3} title="Gudang atap pelana">
+          <SelectField
+            label="Klasifikasi ketertutupan"
+            value={input.whEnc}
+            options={[
+              { value: 'enclosed', label: 'Tertutup (GCpi ±0,18)' },
+              { value: 'partial', label: 'Tertutup sebagian (GCpi ±0,55)' },
+            ]}
+            onChange={(whEnc) => setInput({ whEnc })}
+          />
+          {f('whS', 'S — bentang (tegak lurus bubungan)', 'm')}
+          {f('whLb', 'Lb — panjang gedung (sejajar bubungan)', 'm')}
+          {f('whHe', 'he — tinggi tritisan (eave)', 'm')}
+          {f('whTheta', 'θ — sudut atap', '°', '0–45°. θ < 10°: atap per zona dari tepi windward.')}
+          {f('whS2', 's — jarak portal', 'm', 'Untuk beban garis portal w = p·s.')}
+        </Card>
+      )}
+      {t === 'freeroof' && (
+        <Card n={3} title="Atap bebas (bangunan terbuka)">
+          <Field label="Bentuk atap">
+            <Segmented ariaLabel="Bentuk atap" value={input.frShape} options={[{ value: 'pitched', label: 'Pelana' }, { value: 'mono', label: 'Monoslope' }]} onChange={(frShape) => setInput({ frShape })} />
+          </Field>
+          <Field label="Aliran angin di bawah atap" hint="Bersih: blokade ≤ 50% (shelter, carport). Terhalang: barang/penghalang > 50% (gudang terbuka penuh barang).">
+            <Segmented ariaLabel="Aliran angin" value={input.frFlow} options={[{ value: 'clear', label: 'Bersih' }, { value: 'obstructed', label: 'Terhalang' }]} onChange={(frFlow) => setInput({ frFlow })} />
+          </Field>
+          {f('frTheta', 'θ — sudut atap', '°', '0–45°. θ < 7,5° memakai koefisien θ = 0° (monoslope).')}
+          {f('frH', 'h — tinggi atap rata-rata', 'm')}
+          {f('frL', 'L — dimensi searah angin (bentang)', 'm', 'Berlaku 0,25 ≤ h/L ≤ 1,0.')}
+          {f('frB', 'B — panjang (sejajar bubungan)', 'm')}
+          {f('frS', 's — jarak rangka', 'm', 'Untuk beban garis rangka w = p·s.')}
+        </Card>
+      )}
+      {t === 'frame' && (
+        <Card n={3} title="Rangka terbuka">
+          <Field label="Jenis">
+            <Segmented ariaLabel="Jenis rangka" value={input.ofKind} options={[{ value: 'tower', label: 'Menara' }, { value: 'plane', label: 'Bidang' }]} onChange={(ofKind) => setInput({ ofKind })} />
+          </Field>
+          {input.ofKind === 'tower' && (
+            <Field label="Penampang menara">
+              <Segmented ariaLabel="Penampang menara" value={input.ofTower} options={[{ value: 'square', label: 'Bujur sangkar' }, { value: 'triangle', label: 'Segitiga' }]} onChange={(ofTower) => setInput({ ofTower })} />
+            </Field>
+          )}
+          <Field label="Bentuk batang">
+            <Segmented ariaLabel="Bentuk batang" value={input.ofMember} options={[{ value: 'flat', label: 'Bersisi datar' }, { value: 'round', label: 'Bulat (pipa)' }]} onChange={(ofMember) => setInput({ ofMember })} />
+          </Field>
+          {input.ofMember === 'round' && f('ofD', 'D — diameter batang', 'm', 'Untuk kriteria D√qz (Gbr. 29.4-2).')}
+          {f('ofEps', 'ε — rasio padat', undefined, input.ofKind === 'tower' ? 'Luas padat / luas bruto SATU muka menara.' : 'Luas padat / luas bruto; ≤ 0,7 (bukaan ≥ 30%).')}
+          {f('ofB', input.ofKind === 'tower' ? 'b — lebar muka menara' : 'b — lebar bidang', 'm')}
+          {f('ofZ1', 'z₁ — elevasi bawah', 'm')}
+          {f('ofZ2', 'z₂ — elevasi atas', 'm')}
+        </Card>
+      )}
     </>
   )
+}
+
+const TYPE_HINT: Record<StructType, string> = {
+  building: 'Gedung tertutup kaku bertingkat — SPGAU dinding, Gbr. 27.3-1.',
+  warehouse: 'Gedung rendah bentang lebar atap pelana — dinding & atap dua arah angin, Gbr. 27.3-1.',
+  freeroof: 'Shelter, carport, gudang terbuka tanpa dinding — atap bebas monoslope/pelana, Ps. 27.3.2.',
+  frame: 'Rangka bidang/papan terbuka dan menara rangka (lattice) — struktur lain, Ps. 29.4.',
+}
+
+const KD_HINT: Record<StructType, string> = {
+  building: 'SPGAU gedung: 0,85 (Tabel 26.6-1).',
+  warehouse: 'SPGAU gedung: 0,85 (Tabel 26.6-1).',
+  freeroof: 'Bangunan terbuka (SPGAU): 0,85 (Tabel 26.6-1).',
+  frame: 'Rangka terbuka & menara bujur sangkar/segitiga: 0,85; menara penampang lain 0,95 (Tabel 26.6-1).',
 }
 
 /** Elevasi gedung + profil tekanan windward (qz·G·Cp) dan isap leeward; bidik hover menampilkan qz di elevasi z. */
