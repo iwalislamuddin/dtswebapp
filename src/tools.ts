@@ -248,6 +248,17 @@ export const TOOLS: ToolEntry[] = [
     },
   },
   {
+    id: "cpt-bearing",
+    name: "Daya Dukung Tanah (CPT)",
+    category: "Geoteknik",
+    status: "active",
+    ported: true,
+    seo: {
+      title: "Daya Dukung Fondasi Dangkal dari CPT/Sondir",
+      desc: "Hitung daya dukung izin fondasi dangkal langsung dari data sondir (qc): metode Meyerhof untuk pasir (penurunan 25 mm) dan su dari qc + Skempton untuk lempung — tempel data z–qc dari Excel.",
+    },
+  },
+  {
     id: "settlement",
     name: "Penurunan Fondasi",
     category: "Geoteknik",
@@ -267,17 +278,6 @@ export const TOOLS: ToolEntry[] = [
     seo: {
       title: "Daya Dukung Tiang Tunggal (Aksial)",
       desc: "Hitung daya dukung aksial tiang tunggal (tahanan ujung + selimut) pada profil tanah berlapis, untuk kondisi tekan maupun tarik.",
-    },
-  },
-  {
-    id: "cpt-bearing",
-    name: "Daya Dukung CPT",
-    category: "Geoteknik",
-    status: "active",
-    ported: true,
-    seo: {
-      title: "Daya Dukung Fondasi Dangkal dari CPT/Sondir",
-      desc: "Hitung daya dukung izin fondasi dangkal langsung dari data sondir (qc): metode Meyerhof untuk pasir (penurunan 25 mm) dan su dari qc + Skempton untuk lempung — tempel data z–qc dari Excel.",
     },
   },
   {

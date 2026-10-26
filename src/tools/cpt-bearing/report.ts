@@ -118,5 +118,5 @@ export function buildCptBearingReport(i: CptBearingUIInput): Report | null {
 
 export default {
   defaults: CPT_BEARING_DEFAULTS,
-  build: (i: CptBearingUIInput) => buildCptBearingReport(i) ?? { title: 'Daya Dukung CPT', sections: [], warnings: ['Input belum lengkap.'], scope: [] },
+  build: (i: CptBearingUIInput) => buildCptBearingReport(i) ?? { title: 'Daya Dukung Tanah (CPT)', sections: [], warnings: ['Input belum lengkap.'], scope: [] },
 }
