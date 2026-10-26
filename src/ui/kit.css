@@ -122,6 +122,17 @@ select.ctl {
   padding-right: 2px;
 }
 
+.ctl:disabled {
+  background: var(--bg-muted, color-mix(in srgb, var(--text) 6%, var(--bg)));
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.ctl::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .num-in {
   font-variant-numeric: tabular-nums;
 }

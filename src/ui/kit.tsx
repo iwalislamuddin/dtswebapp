@@ -73,11 +73,16 @@ export function NumInput({
   onChange,
   invalid,
   ariaLabel,
+  placeholder,
+  disabled,
 }: {
   value: string
   onChange: (v: string) => void
   invalid?: boolean
   ariaLabel?: string
+  /** Nilai bawaan yang dipakai bila kosong (mis. hasil korelasi). */
+  placeholder?: string
+  disabled?: boolean
 }) {
   return (
     <input
@@ -86,6 +91,8 @@ export function NumInput({
       value={value}
       aria-invalid={invalid || undefined}
       aria-label={ariaLabel}
+      placeholder={placeholder}
+      disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
       onFocus={(e) => e.target.select()}
       spellCheck={false}

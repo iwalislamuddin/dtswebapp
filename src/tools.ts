@@ -271,13 +271,13 @@ export const TOOLS: ToolEntry[] = [
   },
   {
     id: "pile-capacity",
-    name: "Daya Dukung Tiang",
+    name: "Daya Dukung Tiang (SPT)",
     category: "Geoteknik",
     status: "active",
     ported: true,
     seo: {
-      title: "Daya Dukung Tiang Tunggal (Aksial)",
-      desc: "Hitung daya dukung aksial tiang tunggal (tahanan ujung + selimut) pada profil tanah berlapis, untuk kondisi tekan maupun tarik.",
+      title: "Daya Dukung Tiang dari Data SPT — Tekan, Tarik & Penulangan",
+      desc: "Hitung daya dukung tiang tunggal dari data N-SPT: tahanan ujung + selimut (statik α/β atau SPT Meyerhof), pile cut-off, gesekan negatif, kapasitas tarik, dan penulangan tiang beton SNI 2847:2019.",
     },
   },
   {
