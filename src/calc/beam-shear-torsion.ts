@@ -34,6 +34,8 @@ export interface ShearTorsionInput {
   /** Geser (kN) & torsi (kNm) terfaktor. */
   Vu: number
   Tu: number
+  /** Tinggi efektif (mm) bila tulangan tarik bukan satu lapis; kosong = h − cc − ds − dbBot/2. */
+  d?: number
 }
 
 export interface ShearTorsionResult {
@@ -135,7 +137,7 @@ export function computeShearTorsion(v: ShearTorsionInput): ShearTorsionResult {
 
   const sqrtfc = Math.min(Math.sqrt(fc), 8.3)
   const Ab = barArea(ds) // satu kaki sengkang
-  const d = h - cc - ds - dbBot / 2
+  const d = v.d && v.d > 0 ? v.d : h - cc - ds - dbBot / 2
   if (!(d > 0)) { r.warn.push('Tinggi efektif d ≤ 0 — periksa h, selimut, diameter sengkang & tulangan.'); return r }
 
   // Geometri torsi (as sengkang tertutup terluar).

@@ -193,6 +193,17 @@ export const TOOLS: ToolEntry[] = [
     },
   },
   {
+    id: "beam-check",
+    name: "Cek Desain Balok Beton",
+    category: "Beton Bertulang",
+    status: "active",
+    ported: true,
+    seo: {
+      title: "Cek Desain Balok Beton Bertulang — Lentur Lapangan & Tumpuan, Geser, Torsi (SNI 2847:2019)",
+      desc: "Cek desain balok beton persegi dalam satu alur: kapasitas lentur φMn lapangan (momen positif) dan tumpuan (momen negatif) dibandingkan Mu, geser φVn di tumpuan (dan opsional lapangan) dibandingkan Vu, torsi opsional, tulangan minimum, daktilitas εt, serta sengkang minimum dan spasi maksimum sesuai SNI 2847:2019 — lengkap rasio D/C, penampang, dan laporan PDF.",
+    },
+  },
+  {
     id: "steel-tension",
     name: "Batang Tarik Baja",
     category: "Baja",
