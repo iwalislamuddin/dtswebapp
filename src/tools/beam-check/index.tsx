@@ -14,7 +14,7 @@ const ID = 'beam-check'
 const BAR_OPTS = BARS.map((d) => ({ value: String(d), label: `D${d}` }))
 const STIR_OPTS = STIRRUPS.map((d) => ({ value: String(d), label: `Ø${d}` }))
 const LAYER_OPTS = ['1', '2', '3'].map((v) => ({ value: v, label: `${v} lapis` }))
-const YESNO = [
+const YESNO: { value: 'yes' | 'no'; label: string }[] = [
   { value: 'no', label: 'Tidak' },
   { value: 'yes', label: 'Ya' },
 ]
