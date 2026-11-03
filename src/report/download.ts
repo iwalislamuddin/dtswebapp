@@ -12,9 +12,9 @@ export function reportMeta(appVersion: string, now = new Date()): ReportMeta {
   }
 }
 
-/** Nama berkas: <tool>-YYYYMMDD-HHMM.pdf. */
+/** Nama berkas: <tool>-YYYYMMDD-HHMM.pdf (laporan Inggris: <tool>-YYYYMMDD-HHMM-en.pdf). */
 export function reportFileName(toolId: string, meta: ReportMeta): string {
-  return `${toolId}-${meta.date.replace(/[-:]/g, '').replace(' ', '-')}.pdf`
+  return `${toolId}-${meta.date.replace(/[-:]/g, '').replace(' ', '-')}${meta.lang === 'en' ? '-en' : ''}.pdf`
 }
 
 let fontsP: Promise<{ regular: ArrayBuffer; bold: ArrayBuffer }> | null = null
@@ -37,8 +37,8 @@ export async function downloadReportPdf(toolId: string, report: Report, meta: Re
     fontsP = null
     throw e
   })
-  const [{ buildPdf }, fonts] = await Promise.all([import('./pdf'), fontsP])
-  const bytes = await buildPdf(report, meta, fonts)
+  const [{ buildPdf }, { localizeReport }, fonts] = await Promise.all([import('./pdf'), import('./lang'), fontsP])
+  const bytes = await buildPdf(await localizeReport(report, meta.lang ?? 'id'), meta, fonts)
   const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'application/pdf' }))
   const a = document.createElement('a')
   a.href = url

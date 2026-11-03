@@ -3,12 +3,14 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { APP_NAME, APP_TAGLINE, BRAND_OWNER } from '../app/appInfo'
 import { AUTH_ENV, forgotUrl, registerUrl } from '../app/auth/config'
 import { signInWithGoogle, signInWithPassword, useAuth } from '../app/auth/store'
+import { REPORT_LANGS } from '../report/lang'
 import { plainMath } from '../report/math'
 import { RELEASE_NOTES } from '../app/releaseNotes'
-import { downloadActivePdf, lastPdfDescription } from '../app/report-actions'
+import { downloadActivePdf, lastPdfDescription, lastPdfLang } from '../app/report-actions'
 import { useUi } from '../app/ui-state'
 import { APP_VERSION, BUILD_DATE } from '../app/version'
 import { AppIcon, Logo } from './Brand'
+import { Segmented } from './kit'
 import { PrivacyContent, TermsContent } from './Legal'
 
 /** Dialog modal di atas <dialog> bawaan (fokus terkunci, Escape menutup). */
@@ -42,10 +44,14 @@ function Dialog({ title, subtitle, onClose, children }: { title: string; subtitl
   )
 }
 
-/** Cetak PDF: isian Deskripsi (opsional) yang tampil di bawah judul laporan; terisi deskripsi terakhir tool ini. */
+/**
+ * Cetak PDF: isian Deskripsi (opsional) yang tampil di bawah judul laporan (terisi deskripsi terakhir tool ini) dan
+ * bahasa laporan (terakhir dipakai). Bahasa hanya untuk isi PDF; deskripsi dicetak apa adanya.
+ */
 function PdfDialog({ onClose }: { onClose: () => void }) {
   const report = useUi((s) => s.report)
   const [desc, setDesc] = useState(() => (report ? lastPdfDescription(report.toolId) : ''))
+  const [lang, setLang] = useState(lastPdfLang)
   const ref = useRef<HTMLInputElement>(null)
   useEffect(() => ref.current?.select(), [])
   return (
@@ -55,7 +61,7 @@ function PdfDialog({ onClose }: { onClose: () => void }) {
         onSubmit={(e) => {
           e.preventDefault()
           onClose()
-          void downloadActivePdf(desc)
+          void downloadActivePdf(desc, lang)
         }}
       >
         <label htmlFor="pdf-desc">Deskripsi</label>
@@ -71,6 +77,8 @@ function PdfDialog({ onClose }: { onClose: () => void }) {
           onChange={(e) => setDesc(e.target.value)}
         />
         <p className="muted">Ditampilkan di bawah judul laporan cetak. Boleh dikosongkan.</p>
+        <span className="pdf-form-label">Bahasa laporan</span>
+        <Segmented value={lang} options={REPORT_LANGS} onChange={setLang} ariaLabel="Bahasa laporan" />
         <div className="pdf-form-actions">
           <button type="button" className="btn" onClick={onClose}>
             Batal

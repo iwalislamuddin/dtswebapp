@@ -723,8 +723,17 @@ a.mb-item {
   padding-top: 10px;
 }
 
-.pdf-form label {
+.pdf-form label,
+.pdf-form-label {
   font-weight: 600;
+}
+
+.pdf-form-label {
+  margin-top: 6px;
+}
+
+.pdf-form .seg {
+  justify-self: start;
 }
 
 .pdf-form .ctl {

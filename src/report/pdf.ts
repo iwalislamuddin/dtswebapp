@@ -14,6 +14,25 @@ export interface PdfFonts {
 }
 
 const PAGE_W = 595.28, PAGE_H = 841.89
+
+// Label tetap laporan menurut bahasa (isi laporan sudah diterjemahkan sebelum masuk ke sini, lihat ./lang).
+const LABELS = {
+  id: {
+    head: 'EDFS CIVIL TOOLS  ·  LAPORAN PERHITUNGAN',
+    summary: 'Ringkasan hasil',
+    notes: 'Catatan',
+    page: 'Halaman',
+    foot: 'Alat bantu perhitungan — verifikasi oleh insinyur penanggung jawab.',
+  },
+  en: {
+    head: 'EDFS CIVIL TOOLS  ·  CALCULATION REPORT',
+    summary: 'Summary of results',
+    notes: 'Notes',
+    page: 'Page',
+    foot: 'Calculation aid — to be verified by the engineer of record.',
+  },
+}
+const label = (meta: ReportMeta, k: keyof (typeof LABELS)['id']) => LABELS[meta.lang ?? 'id'][k]
 const ML = 48, MR = 48, MT = 54, MB = 58
 const W = PAGE_W - ML - MR
 const BODY = 9.5
@@ -382,7 +401,7 @@ function block(c: Ctx, b: Block) {
 type Item = (c: Ctx) => void
 
 /** Urutan potongan yang boleh dipisah halaman (heading selalu bersama blok pertamanya; langkah rumus per langkah). */
-function items(report: Report): Item[] {
+function items(report: Report, meta: ReportMeta): Item[] {
   const out: Item[] = []
   const blockItems = (b: Block): Item[] =>
     b.k === 'calc' && b.steps.length > 1 ? b.steps.map((st, i) => (c: Ctx) => calc(c, [st], i === b.steps.length - 1)) : [(c) => block(c, b)]
@@ -408,7 +427,7 @@ function items(report: Report): Item[] {
   })
   if (report.warnings.length)
     out.push((c) => {
-      sectionHead(c, report.sections.length + 1, 'Catatan')
+      sectionHead(c, report.sections.length + 1, label(meta, 'notes'))
       report.warnings.forEach((w) => paragraph(c, '•  ' + w, { indent: 6, gap: 2 }))
     })
   // penutup (batas cakupan) selalu utuh dalam satu halaman
@@ -439,7 +458,7 @@ async function layout(report: Report, meta: ReportMeta, fonts: PdfFonts, breakAt
   // kepala laporan (halaman pertama)
   c.page.drawRectangle({ x: 0, y: Y(10), width: PAGE_W, height: 10, color: C.accent })
   c.page.drawRectangle({ x: 0, y: Y(10), width: 120, height: 10, color: C.orange })
-  c.page.drawText('EDFS CIVIL TOOLS  ·  LAPORAN PERHITUNGAN', { x: ML, y: Y(34), size: 8, font: fb, color: C.accent })
+  c.page.drawText(label(meta, 'head'), { x: ML, y: Y(34), size: 8, font: fb, color: C.accent })
   c.page.drawText(meta.date, { x: PAGE_W - MR - f.widthOfTextAtSize(meta.date, 8), y: Y(34), size: 8, font: f, color: C.muted })
   c.y = 42
   paragraph(c, report.title, { size: 16, font: fb, gap: 0 })
@@ -450,13 +469,13 @@ async function layout(report: Report, meta: ReportMeta, fonts: PdfFonts, breakAt
   c.y += 10
 
   if (report.summary?.length) {
-    paragraph(c, 'Ringkasan hasil', { size: 10.5, font: fb, color: C.accent, gap: 3 })
+    paragraph(c, label(meta, 'summary'), { size: 10.5, font: fb, color: C.accent, gap: 3 })
     rows(c, report.summary, true)
     c.y += 12
   }
   const pos = (): Pos => ({ page: doc.getPageCount() - 1, y: c.y })
   const starts: Pos[] = [], ends: Pos[] = []
-  items(report).forEach((it, i) => {
+  items(report, meta).forEach((it, i) => {
     if (i === breakAt) newPage(c)
     starts.push(pos())
     it(c)
@@ -468,9 +487,9 @@ async function layout(report: Report, meta: ReportMeta, fonts: PdfFonts, breakAt
   pages.forEach((p, i) => {
     p.drawLine({ start: { x: ML, y: 40 }, end: { x: PAGE_W - MR, y: 40 }, thickness: 0.5, color: C.line })
     p.drawText(`EDFS Civil Tools v${meta.appVersion}  ·  tools.edifisia.com  ·  ${meta.date}`, { x: ML, y: 28, size: 7.5, font: f, color: C.muted })
-    const pg = `Halaman ${i + 1} / ${pages.length}`
+    const pg = `${label(meta, 'page')} ${i + 1} / ${pages.length}`
     p.drawText(pg, { x: PAGE_W - MR - f.widthOfTextAtSize(pg, 7.5), y: 28, size: 7.5, font: f, color: C.muted })
-    p.drawText('Alat bantu perhitungan — verifikasi oleh insinyur penanggung jawab.', { x: ML, y: 18, size: 6.5, font: f, color: C.muted })
+    p.drawText(label(meta, 'foot'), { x: ML, y: 18, size: 6.5, font: f, color: C.muted })
   })
   return { doc, starts, ends }
 }

@@ -87,6 +87,8 @@ export interface ReportMeta {
   date: string
   /** Deskripsi isian pengguna saat cetak (mis. "Balok lift lantai atap") — hanya di PDF, di bawah judul. */
   description?: string
+  /** Bahasa laporan PDF (bawaan 'id'); isi laporan diterjemahkan lebih dulu oleh localizeReport (./lang). */
+  lang?: 'id' | 'en'
 }
 
 /** Format angka laporan: '-' untuk null/NaN/±∞. */
