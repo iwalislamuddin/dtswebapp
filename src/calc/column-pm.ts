@@ -403,6 +403,75 @@ function zeroCross(geo: Geo, theta: number, key: 'Mx' | 'My'): number {
   return 0
 }
 
+export interface LoadCheck {
+  Pu: number
+  Mux: number
+  Muy: number
+  /** √(Mux² + Muy²). */
+  Mu: number
+  /** Irisan permukaan desain pada P = Pu. */
+  contour: ContourPoint[]
+  /** Kapasitas searah beban pada kontur. */
+  capM: ContourPoint | null
+  dc: number | null
+  /** Peringatan aksial (Pu di atas plafon / tarik melampaui φPnt); null bila tidak ada. */
+  axialWarn: string | null
+}
+
+/** Cek satu beban terhadap permukaan desain r.surf (r dari computeColumnPM, valid). */
+export function checkLoad(r: ColumnPMResult, Pu: number, Mux: number, Muy: number): LoadCheck {
+  const surf = r.surf!, phiPnMax = r.phiPnMax!, phiPnt = r.phiPnt!
+  let dc: number | null = null
+  let capM: ContourPoint | null = null
+  let contour: ContourPoint[] = []
+  let axialWarn: string | null = null
+  const Mu = Math.sqrt(Mux * Mux + Muy * Muy)
+  if (Pu > phiPnMax) {
+    dc = Pu / phiPnMax
+    axialWarn = 'Pu = ' + Pu.toFixed(0) + ' kN > plafon φPn,maks = ' + phiPnMax.toFixed(0) + ' kN — aksial saja sudah NG.'
+  } else if (Pu < phiPnt) {
+    dc = Math.abs(Pu / phiPnt)
+    axialWarn = 'Pu tarik melampaui φPnt.'
+  } else {
+    const sparse: (ContourPoint | undefined)[] = []
+    for (let jt = 0; jt < NTH; jt++) {
+      const rowj = surf[jt]
+      for (let jc = 0; jc < rowj.length - 1; jc++) {
+        const p1 = rowj[jc], p2 = rowj[jc + 1]
+        if ((p1.P - Pu) * (p2.P - Pu) <= 0 && p2.P !== p1.P) {
+          const t = (Pu - p1.P) / (p2.P - p1.P)
+          const Mxi = p1.Mx + t * (p2.Mx - p1.Mx)
+          const Myi = p1.My + t * (p2.My - p1.My)
+          const mm = Math.sqrt(Mxi * Mxi + Myi * Myi) // cabang luar permukaan
+          const cur = sparse[jt]
+          if (!cur || mm > cur.m) sparse[jt] = { Mx: Mxi, My: Myi, m: mm }
+        }
+      }
+    }
+    contour = sparse.filter((x): x is ContourPoint => !!x)
+    if (contour.length >= 8 && Mu > 0.001) {
+      const beta = Math.atan2(Muy, Mux)
+      let best: number | null = null
+      for (let kk = 0; kk < contour.length; kk++) {
+        const q1 = contour[kk], q2 = contour[(kk + 1) % contour.length]
+        const d1 = angDiff(beta, Math.atan2(q1.My, q1.Mx)), d2 = angDiff(beta, Math.atan2(q2.My, q2.Mx))
+        if (d1 * d2 <= 0 && Math.abs(d1) < 1 && Math.abs(d2) < 1) {
+          const tt = Math.abs(d1) + Math.abs(d2) < 1e-12 ? 0 : Math.abs(d1) / (Math.abs(d1) + Math.abs(d2))
+          const Mxc = q1.Mx + tt * (q2.Mx - q1.Mx)
+          const Myc = q1.My + tt * (q2.My - q1.My)
+          best = Math.sqrt(Mxc * Mxc + Myc * Myc)
+          capM = { Mx: Mxc, My: Myc, m: best }
+          break
+        }
+      }
+      if (best) dc = Mu / best
+    } else if (Mu <= 0.001) {
+      dc = Pu > 0 ? Pu / phiPnMax : 0
+    }
+  }
+  return { Pu, Mux, Muy, Mu, contour, capM, dc, axialWarn }
+}
+
 export function computeColumnPM(v: ColumnPMInput): ColumnPMResult {
   const shape = v.shape || 'rect'
   const fc = num(v.fc), fy = num(v.fy), db = num(v.db)
@@ -475,54 +544,10 @@ export function computeColumnPM(v: ColumnPMInput): ColumnPMResult {
   })
 
   // Cek biaksial: iris permukaan di P = Pu.
-  let dc: number | null = null
-  let capM: ContourPoint | null = null
-  let contour: ContourPoint[] = []
-  const Mu = Math.sqrt(Mux * Mux + Muy * Muy)
-  r.Mu = Mu
-  if (Pu > phiPnMax) {
-    dc = Pu / phiPnMax
-    r.warn.push('Pu = ' + Pu.toFixed(0) + ' kN > plafon φPn,maks = ' + phiPnMax.toFixed(0) + ' kN — aksial saja sudah NG.')
-  } else if (Pu < phiPnt) {
-    dc = Math.abs(Pu / phiPnt)
-    r.warn.push('Pu tarik melampaui φPnt.')
-  } else {
-    const sparse: (ContourPoint | undefined)[] = []
-    for (let jt = 0; jt < NTH; jt++) {
-      const rowj = surf[jt]
-      for (let jc = 0; jc < rowj.length - 1; jc++) {
-        const p1 = rowj[jc], p2 = rowj[jc + 1]
-        if ((p1.P - Pu) * (p2.P - Pu) <= 0 && p2.P !== p1.P) {
-          const t = (Pu - p1.P) / (p2.P - p1.P)
-          const Mxi = p1.Mx + t * (p2.Mx - p1.Mx)
-          const Myi = p1.My + t * (p2.My - p1.My)
-          const mm = Math.sqrt(Mxi * Mxi + Myi * Myi) // cabang luar permukaan
-          const cur = sparse[jt]
-          if (!cur || mm > cur.m) sparse[jt] = { Mx: Mxi, My: Myi, m: mm }
-        }
-      }
-    }
-    contour = sparse.filter((x): x is ContourPoint => !!x)
-    if (contour.length >= 8 && Mu > 0.001) {
-      const beta = Math.atan2(Muy, Mux)
-      let best: number | null = null
-      for (let kk = 0; kk < contour.length; kk++) {
-        const q1 = contour[kk], q2 = contour[(kk + 1) % contour.length]
-        const d1 = angDiff(beta, Math.atan2(q1.My, q1.Mx)), d2 = angDiff(beta, Math.atan2(q2.My, q2.Mx))
-        if (d1 * d2 <= 0 && Math.abs(d1) < 1 && Math.abs(d2) < 1) {
-          const tt = Math.abs(d1) + Math.abs(d2) < 1e-12 ? 0 : Math.abs(d1) / (Math.abs(d1) + Math.abs(d2))
-          const Mxc = q1.Mx + tt * (q2.Mx - q1.Mx)
-          const Myc = q1.My + tt * (q2.My - q1.My)
-          best = Math.sqrt(Mxc * Mxc + Myc * Myc)
-          capM = { Mx: Mxc, My: Myc, m: best }
-          break
-        }
-      }
-      if (best) dc = Mu / best
-    } else if (Mu <= 0.001) {
-      dc = Pu > 0 ? Pu / phiPnMax : 0
-    }
-  }
+  const lc = checkLoad(r, Pu, Mux, Muy)
+  if (lc.axialWarn) r.warn.push(lc.axialWarn)
+  const { contour, capM, dc } = lc
+  r.Mu = lc.Mu
   Object.assign(r, { contour, capM, dc, valid: true })
 
   if (rho < 0.01) r.warn.push('ρg = ' + (rho * 100).toFixed(2) + '% < 1% (Ps. 10.6.1.1) — tambah tulangan.')

@@ -1,10 +1,10 @@
 import { sectionLabel, type ColumnPMResult } from '../../calc/column-pm'
 import { figRows } from '../../report/figure'
 import { check, fx, kv, type FigOp, type Figure, type Report, type Section } from '../../report/model'
-import { COLUMN_DEFAULTS, computeColumn, meridian, uniaxialCurve, type ColumnInput } from './model'
+import { COLUMN_DEFAULTS, computeColumn, meridian, uniaxialCurve, type ColumnInput, type ColumnResult } from './model'
 
 // Laporan Diagram Interaksi P–M Kolom (SNI 2847:2019 Ps. 22.4, 21.2.2, 10.6): data penampang, titik acuan
-// (Po, Pn,maks, Pnt), titik seimbang, momen murni, tabel diagram interaksi, cek beban uniaksial/biaksial.
+// (Po, Pn,maks, Pnt), titik seimbang, momen murni, tabel diagram interaksi, cek tiap beban (uniaksial/biaksial).
 
 export { COLUMN_DEFAULTS }
 
@@ -34,12 +34,14 @@ function figSection(r: ColumnPMResult): Figure {
   }
 }
 
-/** Gbr. 2 — diagram interaksi uniaksial P–M (desain & nominal) + titik beban. */
-function figPM(r: ColumnPMResult, axis: 'x' | 'y'): Figure {
+/** Gbr. 2 — diagram interaksi uniaksial P–M (desain & nominal) + titik semua beban. */
+function figPM(r: ColumnResult, axis: 'x' | 'y'): Figure {
   const ops: FigOp[] = []
   const des = uniaxialCurve(r, axis), nom = uniaxialCurve(r, axis, true)
-  const Mmax = Math.max(1, ...nom.map((p) => Math.abs(p[0])), Math.abs(axis === 'x' ? r.Mux : r.Muy)) * 1.1
-  const Pmax = Math.max(r.Po!, r.Pu) * 1.05, Pmin = Math.min(r.Pnt!, r.Pu) * 1.1
+  const M = (l: { Mux: number; Muy: number }) => (axis === 'x' ? l.Mux : l.Muy)
+  const Ps = r.loads.map((l) => l.Pu)
+  const Mmax = Math.max(1, ...nom.map((p) => Math.abs(p[0])), ...r.loads.map((l) => Math.abs(M(l)))) * 1.1
+  const Pmax = Math.max(r.Po!, ...Ps) * 1.05, Pmin = Math.min(r.Pnt!, ...Ps) * 1.1
   const x0 = 80, x1 = 450, y0 = 12, y1 = 200
   const X = (m: number) => x0 + ((m + Mmax) / (2 * Mmax)) * (x1 - x0)
   const Y = (p: number) => y1 - ((p - Pmin) / (Pmax - Pmin)) * (y1 - y0)
@@ -48,9 +50,13 @@ function figPM(r: ColumnPMResult, axis: 'x' | 'y'): Figure {
   ops.push({ t: 'poly', pts: nom.map(([m, p]) => [X(m), Y(p)]), close: true, lw: 0.8, c: 'muted', dash: [3, 2] })
   ops.push({ t: 'poly', pts: des.map(([m, p]) => [X(m), Y(p)]), fill: true, c: 'm', op: 0.12 })
   ops.push({ t: 'poly', pts: des.map(([m, p]) => [X(m), Y(p)]), close: true, lw: 1.3, c: 'm' })
-  const Mu = axis === 'x' ? r.Mux : r.Muy
-  ops.push({ t: 'circle', cx: X(Mu), cy: Y(r.Pu), r: 3.2, fill: true, c: r.dc != null && r.dc > 1 ? 'bad' : 'load' })
-  ops.push({ t: 'text', x: X(Mu) + 6, y: Y(r.Pu) - 4, s: `(${fx(Mu, 0)}; ${fx(r.Pu, 0)})`, size: 7, bold: true })
+  const many = r.loads.length > 1
+  r.loads.forEach((l, k) => {
+    const gov = k === r.gov
+    ops.push({ t: 'circle', cx: X(M(l)), cy: Y(l.Pu), r: gov ? 3.2 : 2.4, fill: true, c: l.dc != null && l.dc > 1 ? 'bad' : 'load' })
+    const label = many ? (gov ? `${k + 1} (${fx(M(l), 0)}; ${fx(l.Pu, 0)})` : String(k + 1)) : `(${fx(M(l), 0)}; ${fx(l.Pu, 0)})`
+    ops.push({ t: 'text', x: X(M(l)) + 5, y: Y(l.Pu) - 4, s: label, size: gov ? 7 : 6.5, bold: gov })
+  })
   for (const p of [r.phiPnMax!, r.phiPnt!, 0]) ops.push({ t: 'text', x: x0 - 4, y: Y(p) + 2.5, s: fx(p, 0), size: 6.5, align: 'r', c: 'muted' })
   ops.push({ t: 'text', x: x1, y: Y(0) + 10, s: `M_{${axis}} (kN·m)`, size: 6.5, align: 'r', c: 'muted' })
   ops.push({ t: 'text', x: X(0) + 4, y: y0 + 6, s: 'P (kN)', size: 6.5, c: 'muted' })
@@ -59,12 +65,12 @@ function figPM(r: ColumnPMResult, axis: 'x' | 'y'): Figure {
     h: figRows(y1 + 10),
     ops,
     alt: `Diagram interaksi P–M${axis}`,
-    caption: `Gbr. ${axis === 'x' ? 2 : 3} — Diagram interaksi P–M_{${axis}}: desain φP_{n}–φM_{n} (garis tebal, plafon φP_{n,maks}) dan nominal P_{n}–M_{n} (putus-putus); titik = beban.`,
+    caption: `Gbr. ${axis === 'x' ? 2 : 3} — Diagram interaksi P–M_{${axis}}: desain φP_{n}–φM_{n} (garis tebal, plafon φP_{n,maks}) dan nominal P_{n}–M_{n} (putus-putus); titik = beban${r.loads.length > 1 ? ` (nomor sesuai tabel cek beban; koordinat ditulis untuk beban penentu ${r.gov + 1})` : ''}.`,
   }
 }
 
 /** Gbr. — kontur kapasitas Mx–My pada P = Pu (biaksial). */
-function figContour(r: ColumnPMResult): Figure {
+function figContour(r: ColumnResult): Figure {
   const ops: FigOp[] = []
   const c = r.contour!
   const Mmax = Math.max(1, ...c.map((p) => Math.max(Math.abs(p.Mx), Math.abs(p.My))), Math.abs(r.Mux), Math.abs(r.Muy)) * 1.1
@@ -88,16 +94,18 @@ function figContour(r: ColumnPMResult): Figure {
     h: figRows(cy + R + 8),
     ops,
     alt: 'Kontur kapasitas momen biaksial',
-    caption: `Gbr. 4 — Irisan permukaan desain pada P = P_{u} = ${fx(r.Pu, 0)} kN: kontur φM_{nx}–φM_{ny}, titik beban (isi) dan kapasitas searah beban (cincin).`,
+    caption: `Gbr. 4 — Irisan permukaan desain pada P = P_{u} = ${fx(r.Pu, 0)} kN${r.loads.length > 1 ? ` (beban penentu ${r.gov + 1})` : ''}: kontur φM_{nx}–φM_{ny}, titik beban (isi) dan kapasitas searah beban (cincin).`,
   }
 }
 
-export function columnReport(r: ColumnPMResult): Report {
+export function columnReport(r: ColumnResult): Report {
   const fc = fx(r.fc, 0), fy = fx(r.fy, 0)
   const tieName = r.tie === 'spiral' ? 'spiral' : 'sengkang ikat'
   const rowX = meridian(r, 90)
   const sample = rowX.filter((_, k) => k > 0 && k < rowX.length - 1 && k % 4 === 1)
   const biax = Math.abs(r.Muy) > 0.001 && Math.abs(r.Mux) > 0.001
+  const many = r.loads.length > 1
+  const anyMuy = r.loads.some((l) => Math.abs(l.Muy) > 0.001)
   const sections: Section[] = [
     {
       title: 'Data penampang & material',
@@ -174,13 +182,25 @@ export function columnReport(r: ColumnPMResult): Report {
           rows: sample.map((p) => [fx(p.c, 1), fx(p.phi, 3), fx(p.nP, 0), fx(p.nMx, 1), fx(p.P, 0), fx(p.Mx, 1)]),
         },
         { k: 'figure', fig: figPM(r, 'x') },
-        ...(Math.abs(r.Muy) > 0.001 || r.shape !== 'rect' || r.b !== r.h ? [{ k: 'figure' as const, fig: figPM(r, 'y') }] : []),
+        ...(anyMuy || r.shape !== 'rect' || r.b !== r.h ? [{ k: 'figure' as const, fig: figPM(r, 'y') }] : []),
       ],
     },
     {
       title: 'Cek beban',
       strong: true,
       blocks: [
+        ...(many
+          ? [
+              {
+                k: 'table' as const,
+                head: ['#', 'P_{u} (kN)', 'M_{ux} (kN·m)', 'M_{uy} (kN·m)', 'M_{u} (kN·m)', 'φM_{n} (kN·m)', 'D/C'],
+                align: ['l', 'r', 'r', 'r', 'r', 'r', 'r'] as ('l' | 'c' | 'r')[],
+                caption: `Semua beban terfaktor; φM_{n} = kapasitas searah beban pada irisan P = P_{u}. Beban penentu: ${r.gov + 1}.`,
+                rows: r.loads.map((l, k) => [String(k + 1), fx(l.Pu, 0), fx(l.Mux, 1), fx(l.Muy, 1), fx(l.Mu, 1), l.capM ? fx(l.capM.m, 1) : '—', l.dc != null ? fx(l.dc, 3) : '—']),
+              },
+              { k: 'p' as const, text: `Rincian beban penentu ${r.gov + 1} (D/C terbesar):` },
+            ]
+          : []),
         {
           k: 'calc',
           steps: [
@@ -201,7 +221,7 @@ export function columnReport(r: ColumnPMResult): Report {
       kv('Penampang / tulangan', `${sectionLabel(r)} mm / ${r.nBars} D${r.db} (ρ_{g} = ${fx(r.rho! * 100, 2)}%)`),
       kv('φP_{n,maks} / φP_{nt}', `${fx(r.phiPnMax, 0)} / ${fx(r.phiPnt, 0)} kN`),
       kv('φM_{n0,x} / φM_{n0,y} (P = 0)', `${fx(r.M0x, 1)} / ${fx(r.M0y, 1)} kN·m`),
-      ...(r.dc != null ? [check(`Beban P_{u} = ${fx(r.Pu, 0)} kN, M_{u} = ${fx(r.Mu, 1)} kN·m`, r.dc)] : []),
+      ...(r.dc != null ? [check(`${many ? `Beban penentu ${r.gov + 1} dari ${r.loads.length}: ` : 'Beban '}P_{u} = ${fx(r.Pu, 0)} kN, M_{u} = ${fx(r.Mu, 1)} kN·m`, r.dc)] : []),
     ],
     sections,
     ...(r.dc != null ? { governing: { label: 'D/C kolom', ratio: r.dc } } : {}),

@@ -2,16 +2,16 @@ import { useMemo, useState } from 'react'
 import { sectionLabel, type ColumnPMResult } from '../../calc/column-pm'
 import { useAutoCompute, useToolInput, useToolReport } from '../../app/tool-state'
 import { fx } from '../../report/model'
-import { Card, Field, NumField, Panel, ResetButton, Segmented, SelectField, Sized, StatTiles, SubTabs, ToolLayout } from '../../ui/kit'
+import { Card, Field, NumField, Panel, ResetButton, RowTable, Segmented, SelectField, Sized, StatTiles, SubTabs, ToolLayout } from '../../ui/kit'
 import { DetailTab } from '../../ui/ReportView'
 import type { ToolUIProps } from '../registry'
-import { COL_BARS, COLUMN_DEFAULTS, computeColumn, rejectReason, SHAPES, uniaxialCurve, validate, type ColumnInput } from './model'
+import { COL_BARS, COLUMN_DEFAULTS, computeColumn, MAX_LOADS, rejectReason, SHAPES, uniaxialCurve, validate, type ColumnInput, type ColumnResult, type LoadRow } from './model'
 import { columnReport } from './report'
 
 const ID = 'column-pm'
 
 export default function ColumnPM({ tab }: ToolUIProps) {
-  const [input, setInput, reset] = useToolInput<ColumnInput>(ID, COLUMN_DEFAULTS)
+  const [input, setInput, reset] = useToolInput<ColumnInput>(ID, COLUMN_DEFAULTS, 2)
   const errors = useMemo(() => validate(input), [input])
   const { result: r, stale } = useAutoCompute(input, computeColumn)
   const reject = useMemo(() => rejectReason(input), [input])
@@ -107,9 +107,25 @@ function Inputs({
         </Field>
       </Card>
       <Card n={3} title="Beban terfaktor">
-        <NumField label="Aksial Pu" unit="kN" value={input.Pu} error={errors.Pu} hint="Tekan positif." onChange={(Pu) => setInput({ Pu })} />
-        <NumField label="Mux (thd sumbu-x)" unit="kN·m" value={input.Mux} error={errors.Mux} hint="Menekan sisi atas/bawah (arah tinggi h)." onChange={(Mux) => setInput({ Mux })} />
-        <NumField label="Muy (thd sumbu-y)" unit="kN·m" value={input.Muy} error={errors.Muy} hint="0 = uniaksial. Sudah termasuk pembesaran momen bila langsing." onChange={(Muy) => setInput({ Muy })} />
+        <RowTable<LoadRow>
+          prefix="loads"
+          columns={[
+            { key: 'Pu', label: 'Pu', unit: 'kN' },
+            { key: 'Mux', label: 'Mux', unit: 'kN·m' },
+            { key: 'Muy', label: 'Muy', unit: 'kN·m' },
+          ]}
+          rows={input.loads}
+          onChange={(loads) => setInput({ loads })}
+          newRow={() => ({ Pu: '0', Mux: '0', Muy: '0' })}
+          max={MAX_LOADS}
+          errors={errors}
+          addLabel="Tambah beban"
+          emptyText="Belum ada beban."
+        />
+        {errors.loads && <p className="msg bad">{errors.loads}</p>}
+        <p className="muted card-note">
+          Pu tekan positif. Mux menekan sisi atas/bawah (arah tinggi h); Muy = 0 untuk uniaksial. Momen sudah termasuk pembesaran bila langsing. Semua beban diplot; D/C terbesar menentukan.
+        </p>
       </Card>
     </>
   )
@@ -152,19 +168,21 @@ function SectionPreview({ r, w, h }: { r: ColumnPMResult; w: number; h: number }
 
 type Tab = 'x' | 'y' | 'biax'
 
-/** Diagram P–M uniaksial: desain (isi) & nominal (putus), titik beban. */
-function PMChart({ r, axis, w, h }: { r: ColumnPMResult; axis: 'x' | 'y'; w: number; h: number }) {
+/** Diagram P–M uniaksial: desain (isi) & nominal (putus), titik semua beban (bernomor; penentu berlabel). */
+function PMChart({ r, axis, w, h }: { r: ColumnResult; axis: 'x' | 'y'; w: number; h: number }) {
   const des = useMemo(() => uniaxialCurve(r, axis), [r, axis])
   const nom = useMemo(() => uniaxialCurve(r, axis, true), [r, axis])
   if (w < 160 || h < 100) return null
-  const Mu = axis === 'x' ? r.Mux : r.Muy
-  const Mmax = Math.max(1, ...nom.map((p) => Math.abs(p[0])), Math.abs(Mu)) * 1.1
-  const Pmax = Math.max(r.Po!, r.Pu) * 1.05, Pmin = Math.min(r.Pnt!, r.Pu) * 1.1
+  const M = (l: { Mux: number; Muy: number }) => (axis === 'x' ? l.Mux : l.Muy)
+  const Ps = r.loads.map((l) => l.Pu)
+  const Mmax = Math.max(1, ...nom.map((p) => Math.abs(p[0])), ...r.loads.map((l) => Math.abs(M(l)))) * 1.1
+  const Pmax = Math.max(r.Po!, ...Ps) * 1.05, Pmin = Math.min(r.Pnt!, ...Ps) * 1.1
   const padL = 52, padR = 16, padT = 20, padB = 26
   const X = (m: number) => padL + ((m + Mmax) / (2 * Mmax)) * (w - padL - padR)
   const Y = (p: number) => padT + ((Pmax - p) / (Pmax - Pmin)) * (h - padT - padB)
   const path = (pts: [number, number][]) => `M${pts.map(([m, p]) => `${X(m).toFixed(1)},${Y(p).toFixed(1)}`).join(' L')} Z`
-  const bad = r.dc != null && r.dc > 1
+  const many = r.loads.length > 1
+  const g = r.loads[r.gov], gm = M(g)
   return (
     <svg width={w} height={h} className="dg" role="img" aria-label={`Diagram P–M${axis}`}>
       <line x1={padL} y1={Y(0)} x2={w - padR} y2={Y(0)} className="dg-zero" />
@@ -177,9 +195,25 @@ function PMChart({ r, axis, w, h }: { r: ColumnPMResult; axis: 'x' | 'y'; w: num
         </text>
       ))}
       <g className="dg-ext">
-        <circle cx={X(Mu)} cy={Y(r.Pu)} r={5} fill="var(--bg)" stroke={bad ? 'var(--danger)' : 'var(--dg-load)'} strokeWidth={2.2} />
-        <text x={X(Mu) + (Mu > Mmax * 0.4 ? -9 : 9)} y={Y(r.Pu) - 9} textAnchor={Mu > Mmax * 0.4 ? 'end' : 'start'}>
-          Pu {fx(r.Pu, 0)} · Mu{axis} {fx(Mu, 0)}
+        {r.loads.map((l, k) => (
+          <g key={k}>
+            <circle
+              cx={X(M(l))}
+              cy={Y(l.Pu)}
+              r={k === r.gov ? 5.5 : 4}
+              fill="var(--bg)"
+              stroke={l.dc != null && l.dc > 1 ? 'var(--danger)' : 'var(--dg-load)'}
+              strokeWidth={k === r.gov ? 2.6 : 1.8}
+            />
+            {many && (
+              <text x={X(M(l)) + 7} y={Y(l.Pu) + 13} className="dg-note">
+                {k + 1}
+              </text>
+            )}
+          </g>
+        ))}
+        <text x={X(gm) + (gm > Mmax * 0.4 ? -9 : 9)} y={Y(g.Pu) - 9} textAnchor={gm > Mmax * 0.4 ? 'end' : 'start'}>
+          {many ? `#${r.gov + 1} · ` : ''}Pu {fx(g.Pu, 0)} · Mu{axis} {fx(gm, 0)}
         </text>
       </g>
       <text x={padL} y={14} className="dg-note">
@@ -189,38 +223,73 @@ function PMChart({ r, axis, w, h }: { r: ColumnPMResult; axis: 'x' | 'y'; w: num
   )
 }
 
-/** Kontur kapasitas Mx–My pada P = Pu, titik beban. */
-function Contour({ r, w, h }: { r: ColumnPMResult; w: number; h: number }) {
+/** Kontur kapasitas Mx–My pada P = Pu beban ke-k, titik beban. */
+function Contour({ r, k, w, h }: { r: ColumnResult; k: number; w: number; h: number }) {
   if (w < 160 || h < 100) return null
-  const c = r.contour ?? []
+  const l = r.loads[k] ?? r.loads[r.gov]
+  const c = l.contour
   if (c.length < 8)
     return (
       <p className="muted card-note" style={{ padding: 12 }}>
-        Kontur biaksial tidak tersedia: Pu di luar rentang φPnt…φPn,maks.
+        Kontur biaksial tidak tersedia: Pu{r.loads.length > 1 ? ` beban ${k + 1}` : ''} di luar rentang φPnt…φPn,maks.
       </p>
     )
-  const Mmax = Math.max(1, ...c.map((p) => Math.max(Math.abs(p.Mx), Math.abs(p.My))), Math.abs(r.Mux), Math.abs(r.Muy)) * 1.1
+  const Mmax = Math.max(1, ...c.map((p) => Math.max(Math.abs(p.Mx), Math.abs(p.My))), Math.abs(l.Mux), Math.abs(l.Muy)) * 1.1
   const R = Math.min(w, h - 30) / 2 - 12, cx = w / 2, cy = 22 + R
   const T = (mx: number, my: number) => [cx + (my / Mmax) * R, cy - (mx / Mmax) * R] as const
   const d = `M${c.map((p) => T(p.Mx, p.My).map((v) => v.toFixed(1)).join(',')).join(' L')} Z`
-  const [lx, ly] = T(r.Mux, r.Muy)
+  const [lx, ly] = T(l.Mux, l.Muy)
   return (
     <svg width={w} height={h} className="dg" role="img" aria-label="Kontur momen biaksial">
       <line x1={cx - R} y1={cy} x2={cx + R} y2={cy} className="dg-zero" />
       <line x1={cx} y1={cy - R} x2={cx} y2={cy + R} className="dg-zero" />
       <path d={d} fill="color-mix(in srgb, var(--dg-m) 14%, transparent)" stroke="var(--dg-m)" strokeWidth={2} />
       <line x1={cx} y1={cy} x2={lx} y2={ly} stroke="var(--dg-load)" strokeDasharray="4 3" />
-      {r.capM && <circle cx={T(r.capM.Mx, r.capM.My)[0]} cy={T(r.capM.Mx, r.capM.My)[1]} r={4} fill="none" stroke="var(--dg-ink)" />}
-      <circle cx={lx} cy={ly} r={5} fill="var(--bg)" stroke={r.dc! > 1 ? 'var(--danger)' : 'var(--dg-load)'} strokeWidth={2.2} />
+      {l.capM && <circle cx={T(l.capM.Mx, l.capM.My)[0]} cy={T(l.capM.Mx, l.capM.My)[1]} r={4} fill="none" stroke="var(--dg-ink)" />}
+      <circle cx={lx} cy={ly} r={5} fill="var(--bg)" stroke={l.dc != null && l.dc > 1 ? 'var(--danger)' : 'var(--dg-load)'} strokeWidth={2.2} />
       <text x={8} y={14} className="dg-note">
-        P = {fx(r.Pu, 0)} kN · ↑ φMnx · → φMny · ± {fx(Mmax / 1.1, 0)} kN·m
+        {r.loads.length > 1 ? `Beban ${k + 1} · ` : ''}P = {fx(l.Pu, 0)} kN · ↑ φMnx · → φMny · ± {fx(Mmax / 1.1, 0)} kN·m
       </text>
     </svg>
   )
 }
 
-function Results({ r, stale, reject }: { r: ColumnPMResult | null; stale: boolean; reject: string | null }) {
+/** Tabel cek tiap beban; baris penentu ditebalkan. Klik baris → kontur Mx–My beban itu. */
+function LoadTable({ r, sel, onSel }: { r: ColumnResult; sel: number; onSel: (k: number) => void }) {
+  return (
+    <div className="load-wrap">
+      <table className="load-tbl">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Pu (kN)</th>
+            <th>Mux (kN·m)</th>
+            <th>Muy (kN·m)</th>
+            <th>φMn (kN·m)</th>
+            <th>D/C</th>
+          </tr>
+        </thead>
+        <tbody>
+          {r.loads.map((l, k) => (
+            <tr key={k} className={[k === r.gov && 'gov', k === sel && 'sel'].filter(Boolean).join(' ')} onClick={() => onSel(k)} title="Tampilkan kontur Mx–My beban ini">
+              <td>{k + 1}</td>
+              <td>{fx(l.Pu, 0)}</td>
+              <td>{fx(l.Mux, 1)}</td>
+              <td>{fx(l.Muy, 1)}</td>
+              <td>{l.capM ? fx(l.capM.m, 1) : '—'}</td>
+              <td className={l.dc != null && l.dc > 1 ? 'bad' : 'ok'}>{l.dc != null ? fx(l.dc, 2) : '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function Results({ r, stale, reject }: { r: ColumnResult | null; stale: boolean; reject: string | null }) {
   const [tab, setTab] = useState<Tab>('x')
+  const [pick, setPick] = useState<number | null>(null)
+  const sel = r && pick != null && pick < r.loads.length ? pick : r?.gov ?? 0
   const status = reject ?? (stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : null)
   return (
     <Panel
@@ -231,19 +300,32 @@ function Results({ r, stale, reject }: { r: ColumnPMResult | null; stale: boolea
       <div className="results">
         {status && <p className="msg bad">{status}</p>}
         <div className={`results-chart${stale ? ' stale' : ''}`}>
-          <Sized>{(w, h) => (!r ? null : tab === 'biax' ? <Contour r={r} w={w} h={h} /> : <PMChart r={r} axis={tab} w={w} h={h} />)}</Sized>
+          <Sized>{(w, h) => (!r ? null : tab === 'biax' ? <Contour r={r} k={sel} w={w} h={h} /> : <PMChart r={r} axis={tab} w={w} h={h} />)}</Sized>
         </div>
         {r && (
           <div className={stale ? 'stale' : ''}>
             <h4 className="results-h">Ringkasan</h4>
             <StatTiles
               items={[
-                ...(r.dc != null ? [{ label: 'D/C kolom', value: fx(r.dc, 2), sub: r.dc <= 1 ? 'di dalam permukaan desain' : 'di luar permukaan', tone: r.dc <= 1 ? ('ok' as const) : ('bad' as const) }] : []),
+                ...(r.dc != null ? [{ label: r.loads.length > 1 ? `D/C kolom (beban ${r.gov + 1})` : 'D/C kolom', value: fx(r.dc, 2), sub: r.dc <= 1 ? 'di dalam permukaan desain' : 'di luar permukaan', tone: r.dc <= 1 ? ('ok' as const) : ('bad' as const) }] : []),
                 { label: 'φPn,maks / φPnt', value: `${fx(r.phiPnMax, 0)} / ${fx(r.phiPnt, 0)}`, unit: 'kN' },
                 { label: 'φMn0 x / y (P = 0)', value: `${fx(r.M0x, 0)} / ${fx(r.M0y, 0)}`, unit: 'kN·m' },
                 { label: 'Seimbang x', value: `${fx(r.PbalX, 0)} kN`, sub: `Mb ${fx(r.MbalX, 0)} kN·m` },
               ]}
             />
+            {r.loads.length > 1 && (
+              <>
+                <h4 className="results-h">Cek tiap beban</h4>
+                <LoadTable
+                  r={r}
+                  sel={sel}
+                  onSel={(k) => {
+                    setPick(k)
+                    setTab('biax')
+                  }}
+                />
+              </>
+            )}
             {r.warn.length > 0 && (
               <ul className="results-warn">
                 {r.warn.map((w) => (

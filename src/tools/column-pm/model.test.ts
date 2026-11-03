@@ -11,8 +11,8 @@ const byName = (n: string) => cases.find((c) => c.name.startsWith(n))!
 function fromGolden(name: string): ColumnInput {
   const a = byName(name).args[0] as Record<string, string | number>
   const out = {} as Record<string, string>
-  for (const [k, v] of Object.entries(a)) out[k] = String(v)
-  return out as unknown as ColumnInput
+  for (const [k, v] of Object.entries(a)) if (k !== 'Pu' && k !== 'Mux' && k !== 'Muy') out[k] = String(v)
+  return { ...(out as unknown as ColumnInput), loads: [{ Pu: String(a.Pu), Mux: String(a.Mux), Muy: String(a.Muy) }] }
 }
 
 describe('diagram P–M kolom — input UI', () => {
@@ -45,6 +45,43 @@ describe('diagram P–M kolom — input UI', () => {
     expect(Math.min(...P)).toBeCloseTo(r.phiPnt!, 6)
     expect(Math.max(...c.map((p) => p[0]))).toBeGreaterThan(0)
     expect(Math.min(...c.map((p) => p[0]))).toBeLessThan(0)
+  })
+})
+
+describe('diagram P–M kolom — banyak beban', () => {
+  const multi: ColumnInput = {
+    ...COLUMN_DEFAULTS,
+    loads: [
+      { Pu: '1200', Mux: '150', Muy: '0' },
+      { Pu: '800', Mux: '60', Muy: '40' },
+      { Pu: '1500', Mux: '250', Muy: '0' },
+    ],
+  }
+
+  it('tiap beban dicek terhadap permukaan yang sama; penentu = D/C terbesar', () => {
+    const r = computeColumn(multi)!
+    expect(r.loads).toHaveLength(3)
+    // beban 1 identik dengan hitungan beban tunggal
+    expect(r.loads[0].dc).toBeCloseTo(computeColumn(COLUMN_DEFAULTS)!.dc!, 12)
+    const dcs = r.loads.map((l) => l.dc!)
+    expect(r.gov).toBe(dcs.indexOf(Math.max(...dcs)))
+    expect(r.dc).toBe(dcs[r.gov])
+    expect(r.Pu).toBe(r.loads[r.gov].Pu)
+    expect(r.loads[2].dc! > r.loads[1].dc!).toBe(true)
+  })
+
+  it('validasi per baris & minimal satu beban', () => {
+    expect(validate({ ...multi, loads: [{ Pu: '1', Mux: 'x', Muy: '0' }] })).toEqual({ 'loads.0.Mux': 'Isi angka' })
+    expect(validate({ ...multi, loads: [] })).toEqual({ loads: 'Minimal 1 beban' })
+  })
+
+  it('peringatan beban bernomor; laporan memuat tabel semua beban', () => {
+    const r = computeColumn({ ...multi, loads: [...multi.loads, { Pu: '99999', Mux: '0', Muy: '0' }] })!
+    expect(r.gov).toBe(3)
+    expect(r.warn.some((w) => w.startsWith('Beban 4: Pu = '))).toBe(true)
+    expect(r.warn.some((w) => w.startsWith('Pu = '))).toBe(false)
+    const tbl = buildColumnReport(multi)!.sections.flatMap((s) => s.blocks).find((b) => b.k === 'table' && b.head[0] === '#')
+    expect(tbl && tbl.k === 'table' && tbl.rows.length).toBe(3)
   })
 })
 
