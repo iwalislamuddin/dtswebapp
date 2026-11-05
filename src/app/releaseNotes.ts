@@ -18,6 +18,7 @@ export const RELEASE_NOTES: ReleaseNote[] = [
       'Masuk dengan akun Edifisia (satu akun untuk semua aplikasi Edifisia).',
       'Tool baru Beban Gempa (SNI 1726:2019): parameter dari peta gempa Indonesia, spektrum desain, KDS, geser dasar gedung & nongedung.',
       'Daya Dukung Tiang kini "Daya Dukung Tiang (SPT)": data tanah berupa tabel Z–N-SPT (γ/cu dari korelasi bila kosong), pile cut-off, diameter dalam mm, gesekan negatif, kapasitas tarik dan penulangan tiang beton.',
+      'Simpan & Buka Pekerjaan (Premium): input tool disimpan sebagai file .edft dan dibuka lagi kapan saja lewat menu File.',
     ],
   },
   { version: '0.7.3', date: '2026-08-21', items: ['Tool baru Geser & Torsi Balok (35 tool).'] },

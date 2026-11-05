@@ -8,6 +8,9 @@ import { plainMath } from '../report/math'
 import { RELEASE_NOTES } from '../app/releaseNotes'
 import { downloadActivePdf, lastPdfDescription, lastPdfLang } from '../app/report-actions'
 import { useUi } from '../app/ui-state'
+import { activeToolInput } from '../app/tool-state'
+import { lastWorkName, saveActiveWork } from '../app/work-file'
+import { toolById } from '../tools'
 import { APP_VERSION, BUILD_DATE } from '../app/version'
 import { AppIcon, Logo } from './Brand'
 import { Segmented } from './kit'
@@ -88,6 +91,66 @@ function PdfDialog({ onClose }: { onClose: () => void }) {
           </button>
         </div>
       </form>
+    </Dialog>
+  )
+}
+
+/** Simpan Pekerjaan: nama pekerjaan (opsional; juga nama file) lalu file .edft diunduh. */
+function SaveWorkDialog({ onClose }: { onClose: () => void }) {
+  const toolId = activeToolInput()?.toolId ?? ''
+  const [name, setName] = useState(() => lastWorkName(toolId))
+  const ref = useRef<HTMLInputElement>(null)
+  useEffect(() => ref.current?.select(), [])
+  return (
+    <Dialog title="Simpan Pekerjaan" subtitle={toolById(toolId)?.name} onClose={onClose}>
+      <form
+        className="pdf-form"
+        onSubmit={(e) => {
+          e.preventDefault()
+          onClose()
+          void saveActiveWork(name)
+        }}
+      >
+        <label htmlFor="work-name">Nama pekerjaan</label>
+        <input
+          ref={ref}
+          id="work-name"
+          className="ctl"
+          type="text"
+          maxLength={120}
+          autoComplete="off"
+          placeholder="mis. Balok lift lantai atap"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <p className="muted">Dipakai sebagai nama file (.edft). Boleh dikosongkan. Buka lagi lewat File › Buka Pekerjaan.</p>
+        <div className="pdf-form-actions">
+          <button type="button" className="btn" onClick={onClose}>
+            Batal
+          </button>
+          <button type="submit" className="btn primary">
+            Simpan
+          </button>
+        </div>
+      </form>
+    </Dialog>
+  )
+}
+
+/** Pemberitahuan singkat (mis. file pekerjaan tidak dapat dibuka). */
+function NoticeDialog({ onClose }: { onClose: () => void }) {
+  const notice = useUi((s) => s.notice)
+  if (!notice) return null
+  return (
+    <Dialog title={notice.title} onClose={onClose}>
+      <div className="pdf-form">
+        <p>{notice.text}</p>
+        <div className="pdf-form-actions">
+          <button type="button" className="btn primary" onClick={onClose} autoFocus>
+            OK
+          </button>
+        </div>
+      </div>
     </Dialog>
   )
 }
@@ -262,5 +325,7 @@ export function DialogHost() {
     )
   if (dialog === 'pdf') return <PdfDialog onClose={close} />
   if (dialog === 'login') return <LoginDialog onClose={close} />
+  if (dialog === 'save-work') return <SaveWorkDialog onClose={close} />
+  if (dialog === 'notice') return <NoticeDialog onClose={close} />
   return null
 }

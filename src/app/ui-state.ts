@@ -6,7 +6,13 @@ import type { Report } from '../report/model'
 
 export type Theme = 'light' | 'dark'
 export type ToolTab = 'input' | 'detail'
-export type DialogId = 'about' | 'release-notes' | 'pdf' | 'login' | 'terms' | 'privacy'
+export type DialogId = 'about' | 'release-notes' | 'pdf' | 'login' | 'terms' | 'privacy' | 'save-work' | 'notice'
+
+/** Isi dialog pemberitahuan (mis. file pekerjaan tidak dapat dibuka). */
+export interface Notice {
+  title: string
+  text: string
+}
 
 /** Kunci yang sama dibaca skrip awal di web/index.html (tema dipasang sebelum render, tanpa kedip). */
 export const PREFS_KEY = 'edfs-civil-tools:prefs'
@@ -35,6 +41,8 @@ interface UiState extends Prefs {
   toggleCategory: (category: string) => void
   setTab: (toolId: string, tab: ToolTab) => void
   openDialog: (d: DialogId | null) => void
+  notice: Notice | null
+  showNotice: (n: Notice) => void
 }
 
 function loadPrefs(): Partial<Prefs> {
@@ -64,6 +72,8 @@ export const useUi = create<UiState>()((set) => ({
     set((s) => ({ navCollapsed: s.navCollapsed.includes(c) ? s.navCollapsed.filter((x) => x !== c) : [...s.navCollapsed, c] })),
   setTab: (toolId, tab) => set((s) => ({ tabs: { ...s.tabs, [toolId]: tab } })),
   openDialog: (dialog) => set({ dialog }),
+  notice: null,
+  showNotice: (notice) => set({ notice, dialog: 'notice' }),
 }))
 
 // Tema di <html data-theme>, dipasang sinkron agar token CSS sudah benar saat React merender ulang.
