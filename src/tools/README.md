@@ -21,8 +21,10 @@ profil baja: **`steel-flexure/`** (kurva dari mesin hitung, bagian laporan per p
 ## Aturan
 
 1. **State input** lewat `useToolInput(id, DEFAULTS, version)` (`src/app/tool-state.ts`): bertahan saat pindah tab /
-   tool, dipulihkan dari `sessionStorage`, dan objek yang sama kelak menjadi `state_json` Simpan Pekerjaan.
-   Naikkan `version` bila bentuk input berubah.
+   tool, dipulihkan dari `sessionStorage`, dan objek yang sama disimpan/dibuka sebagai file pekerjaan `.edft`
+   (`src/app/edft.ts`) — tool tidak perlu kode simpan sendiri. Naikkan `version` bila bentuk input berubah: file
+   `.edft` versi lain ditolak dengan pesan. Input harus JSON murni; larik baris di input bawaan seragam bentuknya
+   (file dibuka dicocokkan dengan baris pertama bawaan — diuji `src/app/edft.test.ts`).
 2. **Hitung otomatis, tanpa tombol Hitung**: `useAutoCompute(input, compute)`. Field tidak valid → kontrol merah +
    pesan di bawahnya; hasil sah terakhir tetap tampil **diredupkan** (`.stale`) dengan pesan di panel hasil.
 3. **Laporan** (`report.ts`) memakai model `src/report/model.ts`: `summary`, bagian bernomor berisi `h` (subjudul),

@@ -41,7 +41,8 @@ Dua arsitektur hidup berdampingan sampai rilis v0.8.0: **build baru** (sasaran, 
 | `src/tools/<id>/index.tsx` | UI satu tool (Tahap 5): default export komponen `({ tab })`, dimuat malas lewat `src/tools/registry.ts`. Tool tanpa folder → placeholder. |
 | `src/tools/<id>/report.ts` | Laporan tool: default export `{ defaults, build(input) → Report }`. |
 | `src/report/` | `model.ts` (Report: ringkasan, bagian → heading, paragraf, baris nilai, cek D/C, langkah rumus, tabel, gambar vektor berwarna) · `math.ts` (markup rumus `_{}` `^{}` `\frac{}{}`) · `pdf.ts` (pdf-lib + DejaVu Sans, A4, footer bernomor) · `figure.ts` · `download.ts` (muat pdf-lib & font saat diperlukan) · `lang.ts` + `en.ts`/`en/*` (opsi PDF Bahasa Inggris: laporan disusun dalam Bahasa Indonesia lalu diterjemahkan saat cetak dengan kamus templat; UI tetap Bahasa Indonesia). Tab Detail: `src/ui/ReportView.tsx` (`DetailTab` = gating Premium). |
-| `src/app/premium.ts` | Satu titik gating Premium (tab Detail & PDF); `tool-state.ts` (input tool, hitung otomatis, laporan aktif); `report-actions.ts` (unduh PDF). |
+| `src/app/premium.ts` | Satu titik gating Premium (tab Detail, PDF, Simpan/Buka Pekerjaan); `tool-state.ts` (input tool, hitung otomatis, laporan aktif, tool aktif & input antrean dari file); `report-actions.ts` (unduh PDF). |
+| `src/app/edft.ts`, `work-file.ts` | File pekerjaan `.edft` untuk semua tool: `EDFT` + versi format (1 byte) + amplop JSON deflate-raw `{t: id tool, v: versi input, a: versi app, d: waktu, n: nama, i: input}`. Buka → periksa penanda/tool/versi → rute `/{t}` → `useToolInput` menerapkan input (bentuk disamakan dengan bawaan). |
 
 TypeScript dipecah: `tsconfig.calc.json` (src/calc tanpa lib DOM — menjaga kemurnian mesin hitung),
 `tsconfig.app.json` (UI), `tsconfig.node.json` (config). `npm run dev` / `npm run build` (→ `dist/`).

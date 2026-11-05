@@ -197,7 +197,11 @@ terpisah yang memperbarui acuan golden secara sadar.
 - [ ] **[Bersama]** `tools.edifisia.com` sudah dipasang ke `main` (2026-10-19) → buat branch **`dev`** agar ada
       staging terpisah: `https://dev.dtswebapp.pages.dev` (database dev); kerja di `dev`, merge ke `main` = rilis.
       Sampai itu ada, setiap push ke `main` langsung ke production
-- [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (`state_json` = objek input tool); Free User buka & hapus
+- [x] **[Claude]** Simpan/Buka Pekerjaan sebagai **file lokal `.edft`** (Premium, 2026-11-05): `src/app/edft.ts`
+      (format: penanda `EDFT` + versi format + amplop JSON deflate `{t, v, a, d, n, i}`), `src/app/work-file.ts`
+      (menu File, dialog nama, pesan galat), penerapan lewat `useToolInput` — berlaku untuk semua tool tanpa
+      perubahan per tool
+- [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (pakai amplop `.edft` yang sama sebagai `state_json`) (`state_json` = objek input tool); Free User buka & hapus
       saja; pesan jelas saat batas 50 tercapai (hint `saved_works_limit`)
 - [ ] **[Claude]** Status "Trial/Premium s/d …", peringatan ≤ 7 hari; tombol beli disembunyikan selama
       `PREMIUM_URL` belum ada

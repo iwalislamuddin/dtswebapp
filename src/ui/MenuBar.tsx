@@ -8,6 +8,8 @@ import { linkClick, navigate } from '../app/router'
 import { useUi } from '../app/ui-state'
 import { openPdfDialog } from '../app/report-actions'
 import { premiumStatus, usePremium } from '../app/premium'
+import { useActiveTool } from '../app/tool-state'
+import { canSaveWork, openSaveWorkDialog, pickWorkFile } from '../app/work-file'
 import { AppIcon } from './Brand'
 import { UpdatePrompt } from './UpdatePrompt'
 
@@ -24,9 +26,8 @@ interface MenuDef {
   items: MenuEntry[]
 }
 
-// Simpan/Buka sengaja belum diaktifkan (Tahap 4, Premium); item tampil nonaktif agar susunan menu final terlihat. Download
-// Report aktif bila tool yang tampil punya laporan dan pengguna Premium (src/app/premium.ts).
-const SOON = 'Segera tersedia — fitur Premium'
+// Simpan/Buka Pekerjaan (file .edft, src/app/work-file.ts) dan Download Report hanya untuk Premium
+// (src/app/premium.ts). Simpan perlu tool yang sedang tampil; Download Report perlu tool yang punya laporan.
 
 function menus(): MenuDef[] {
   const ui = useUi.getState()
@@ -34,6 +35,9 @@ function menus(): MenuDef[] {
   const rep = ui.report
   const premium = premiumStatus().premium
   const pdfHint = !rep ? 'Buka tool yang sudah punya laporan' : !premium ? 'Fitur Premium' : undefined
+  const canSave = canSaveWork()
+  const saveHint = !premium ? 'Fitur Premium' : !canSave ? 'Buka tool yang ingin disimpan' : 'Simpan input tool ini ke file .edft'
+  const openHint = premium ? 'Buka file pekerjaan .edft' : 'Fitur Premium'
   return [
     {
       id: 'file',
@@ -41,8 +45,8 @@ function menus(): MenuDef[] {
       items: [
         { label: 'Halaman Depan', onSelect: () => navigate('/') },
         'sep',
-        { label: 'Simpan Pekerjaan…', hint: SOON },
-        { label: 'Buka Pekerjaan…', hint: SOON },
+        { label: 'Simpan Pekerjaan…', onSelect: canSave ? openSaveWorkDialog : undefined, hint: saveHint },
+        { label: 'Buka Pekerjaan…', onSelect: premium ? pickWorkFile : undefined, hint: openHint },
         'sep',
         { label: 'Download Report (PDF)', onSelect: rep && premium ? openPdfDialog : undefined, hint: pdfHint },
       ],
@@ -63,6 +67,7 @@ export function MenuBar() {
   const theme = useUi((s) => s.theme)
   const navOpen = useUi((s) => s.navOpen)
   useUi((s) => s.report) // menu Download Report ikut aktif/nonaktif
+  useActiveTool() // menu Simpan Pekerjaan ikut aktif/nonaktif
   usePremium() // ... dan mengikuti status Premium (login/logout)
   const [open, setOpen] = useState<string | null>(null)
   // Dinaikkan saat menu dibuka/dituju dengan keyboard: popup lalu memfokuskan item pertamanya.
@@ -291,7 +296,6 @@ function MenuPopup({ items, focusTick, close }: { items: MenuEntry[]; focusTick:
             }}
           >
             <span>{it.label}</span>
-            {!it.onSelect && it.hint === SOON && <span className="mb-item-note">segera</span>}
           </button>
         ),
       )}
