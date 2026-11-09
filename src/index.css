@@ -152,6 +152,16 @@ input.ctl[type='number'] {
   white-space: nowrap;
 }
 
+/* <a class="btn"> (mis. tautan "Beli Premium") tampil sama dengan tombol. */
+a.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  text-decoration: none;
+  color: inherit;
+}
+
 .btn:hover:not(:disabled) {
   background: var(--bg-hover);
 }

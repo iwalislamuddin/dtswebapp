@@ -73,6 +73,8 @@ export default defineConfig({
         // + pembangun PDF (pdf-lib, ±1 MB) & font: dimuat saat tombol PDF ditekan, tidak perlu di-precache.
         globIgnores: ['404.html', ...TOOLS.map((t) => `${t.id}.html`), 'assets/pdf-*.js'],
         cleanupOutdatedCaches: true,
+        // Jangan tambah runtimeCaching untuk connect.facebook.net / www.facebook.com (Meta Pixel, docs/meta-pixel.md):
+        // permintaan itu harus selalu lewat jaringan. Saat ini SW hanya precache + fallback navigasi.
       },
     }),
   ],

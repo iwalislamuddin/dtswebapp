@@ -10,3 +10,6 @@ export const SITE_URL = 'https://tools.edifisia.com'
 export const BRAND_OWNER = 'Edifisia'
 /** GA4 — hanya dikirim dari domain produksi (bukan *.pages.dev / localhost). */
 export const GA4_ID = 'G-0PKEJMNY18'
+/** Meta Pixel keluarga Edifisia (docs/meta-pixel.md) — hanya dimuat di host produksi ini. */
+export const PIXEL_ID = '1250093348350553'
+export const PIXEL_HOST = 'tools.edifisia.com'

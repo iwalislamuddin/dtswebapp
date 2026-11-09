@@ -64,3 +64,5 @@ export const loginUrl = (accountUrl: string, next: string) => `${accountUrl}/mas
 export const registerUrl = (accountUrl: string) => `${accountUrl}/daftar`
 export const forgotUrl = (accountUrl: string) => `${accountUrl}/lupa-sandi`
 export const accountPageUrl = (accountUrl: string) => `${accountUrl}/akun`
+/** Halaman harga Premium (utm agar sumbernya terbaca di GA4 edifisia.com). */
+export const pricingUrl = (accountUrl: string) => `${accountUrl}/harga?utm_source=civil-tools&utm_medium=app`

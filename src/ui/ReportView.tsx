@@ -2,7 +2,8 @@ import { Fragment, type ReactNode } from 'react'
 import { parseMath, plainMath, type MathNode } from '../report/math'
 import { fx, okNg, type Block, type CalcStep, type FigColor, type FigOp, type Figure, type Report, type Row } from '../report/model'
 import { LEAD, FIG_W } from '../report/figure'
-import { accountPageUrl, AUTH_ENV, registerUrl } from '../app/auth/config'
+import { accountPageUrl, AUTH_ENV, pricingUrl, registerUrl } from '../app/auth/config'
+import { trackLead } from '../app/pixel'
 import { login } from '../app/auth/store'
 import { usePremium, type PremiumStatus } from '../app/premium'
 
@@ -358,6 +359,17 @@ export function ReportLocked({ report, status }: { report: Report | null; status
               — akun baru otomatis mendapat <b>trial Premium 7 hari</b>.
             </p>
           </>
+        )}
+        {(reason === 'free' || reason === 'expired') && AUTH_ENV && (
+          <a
+            className="btn primary"
+            href={pricingUrl(AUTH_ENV.accountUrl)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={trackLead}
+          >
+            Beli Premium
+          </a>
         )}
         {(reason === 'free' || reason === 'expired') && (
           <p className="muted rp-lock-soon">

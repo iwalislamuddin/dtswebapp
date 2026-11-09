@@ -1,7 +1,8 @@
 import { ExternalLink, LogOut, Moon, PanelLeft, Sun, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { APP_NAME } from '../app/appInfo'
-import { accountPageUrl, AUTH_ENV, authMode } from '../app/auth/config'
+import { accountPageUrl, AUTH_ENV, authMode, pricingUrl } from '../app/auth/config'
+import { trackLead } from '../app/pixel'
 import { premiumLabel } from '../app/auth/label'
 import { login, signOut, useAuth } from '../app/auth/store'
 import { linkClick, navigate } from '../app/router'
@@ -226,6 +227,22 @@ function AccountButton() {
               )}
             </div>
             <div className="mb-sep" role="separator" />
+            {AUTH_ENV && premium && !premium.active && (
+              <a
+                className="mb-item"
+                role="menuitem"
+                href={pricingUrl(AUTH_ENV.accountUrl)}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => {
+                  trackLead()
+                  setOpen(false)
+                }}
+              >
+                <span>Beli Premium</span>
+                <ExternalLink size={13} />
+              </a>
+            )}
             {AUTH_ENV && (
               <a
                 className="mb-item"
