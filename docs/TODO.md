@@ -109,6 +109,10 @@ ditulis ulang dengan UI baru di Tahap 5. Arah UI: [UI.md](UI.md).
 - [x] **[Claude]** `base-plate` keluar dari navigasi: status baru `moved` (`movedTo: 'EDFS Nexus'`), rute
       `/base-plate` menampilkan pemberitahuan pindah (noindex); `src/calc/base-plate.ts` disimpan sebagai bahan
       Nexus — 2026-10-07. Tautan ke Nexus ditambahkan saat Nexus rilis
+- [x] **[Claude]** `base-plate` KEMBALI ke Civil Tools (permintaan pemilik 2026-11-12) sebagai tool baru, bukan
+      port 1:1: sendi & jepit; kolom WF/UNP/SHS/pipa; beban aktual atau desain kapasitas (SNI 7860 D2.6); tumpuan
+      pedestal/slab/tepi manual; tumpu, tebal pelat (DG1), angkur tarik & geser lengkap (Ps. 17), gesekan, las.
+      Golden build lama dihapus, diganti uji hitung tangan (`src/calc/base-plate.test.ts`); input `.edft` versi 2
 - [x] **[Anda]** `anchor-bolt-group` tetap di Civil Tools; pondasi Civil Tools = pondasi tunggal (Radix = seluruh
       bangunan); baut & las → kategori Baja, "Sambungan" dihapus; Radix & Nexus ikut satu Edifisia Premium — 2026-10-07
 - [x] **[Claude]** `src/tools.ts`: baut, las, `anchor-bolt-group` → Baja; kategori Sambungan dihapus; kategori

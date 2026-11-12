@@ -109,7 +109,7 @@ Tujuan: data yang sama (tanah, sondir, N-SPT, material) tidak diinput berulang d
 - **`load-combo`** (Kombinasi Beban) disembunyikan di UI baru; akan dihapus atau diganti formatnya. Mekanisme
   handoff "Kirim ke…" (Pu/Mu ke tool baja, pile cap, base plate) ditinjau bersamanya.
 - **Sambungan** (keputusan 2026-10-07, lihat [PLATFORM.md](PLATFORM.md) §1a): sambungan lengkap menjadi aplikasi
-  terpisah **EDFS Nexus**. **`base-plate` pindah ke Nexus** (keluar dari katalog Civil Tools). **Baut & las sederhana
+  terpisah **EDFS Nexus**. ~~`base-plate` pindah ke Nexus~~ — **dibatalkan 2026-11-12**: `base-plate` kembali di Civil Tools (Baja) sebagai kalkulator cepat sendi & jepit; sambungan berbasis proyek tetap ranah Nexus. **Baut & las sederhana
   (`bolt-connection`, `weld-connection`) tetap di Civil Tools** → di-port seperti tool lain. **`anchor-bolt-group`
   tetap di Civil Tools.** Baut & las masuk kategori **Baja**; kategori "Sambungan" dihapus.
 - **Batas dengan EDFS Radix** (2026-10-07): tool pondasi Civil Tools hanya **pondasi tunggal (satu titik tumpuan)**;

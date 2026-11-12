@@ -27,17 +27,16 @@ describe('katalog tool', () => {
     for (const t of TOOLS) expect(TOOL_CATEGORIES).toContain(t.category)
   })
 
-  it('keputusan 2026-10-07: Pembebanan, Struktur Bawah, sambungan → Baja, base-plate → EDFS Nexus', () => {
+  it('keputusan 2026-10-07: Pembebanan, Struktur Bawah, sambungan → Baja; base-plate kembali aktif (2026-11-12)', () => {
     const t = (id: string) => TOOLS.find((x) => x.id === id)
     expect(t('wind-load')?.category).toBe('Pembebanan')
     expect(t('load-combo')?.status).toBe('hidden')
     for (const id of ['footing-design', 'pile-cap', 'retaining-stone', 'retaining-concrete'])
       expect(t(id)?.category).toBe('Struktur Bawah')
-    for (const id of ['bolt-connection', 'weld-connection', 'anchor-bolt-group']) {
+    for (const id of ['bolt-connection', 'weld-connection', 'anchor-bolt-group', 'base-plate']) {
       expect(t(id)?.category).toBe('Baja')
       expect(t(id)).toMatchObject({ status: 'active', ported: true })
     }
-    expect(t('base-plate')).toMatchObject({ status: 'moved', movedTo: 'EDFS Nexus' })
     for (const x of TOOLS) expect(x.status === 'moved', x.id).toBe(!!x.movedTo)
   })
 

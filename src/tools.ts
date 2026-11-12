@@ -3,7 +3,8 @@
 //   - kategori "Umum" → "Pembebanan" (keputusan pemilik 2026-10-07);
 //   - load-combo disembunyikan (akan dihapus atau diganti formatnya);
 //   - kategori "Struktur Bawah" (pondasi tunggal & dinding penahan, dari Beton Bertulang/Geoteknik) dan
-//     kategori "Sambungan" dihapus: baut, las, angkur → Baja; base-plate pindah ke EDFS Nexus (2026-10-07);
+//     kategori "Sambungan" dihapus: baut, las, angkur → Baja; base-plate pindah ke EDFS Nexus (2026-10-07), lalu
+//     kembali ke Civil Tools sebagai tool baru sendi & jepit (keputusan pemilik 2026-11-12);
 //   - icon/entry/accepts (khusus build lama & handoff Kombinasi Beban) tidak dibawa.
 // Rencana revisi isi tool: docs/TOOL-REVISIONS.md.
 
@@ -370,14 +371,13 @@ export const TOOLS: ToolEntry[] = [
   },
   {
     id: "base-plate",
-    name: "Base Plate & Anchor",
+    name: "Base Plate",
     category: "Baja",
-    status: "moved",
-    movedTo: "EDFS Nexus",
+    status: "active",
     ported: true,
     seo: {
-      title: "Base Plate & Anchor Rod Kolom Baja — Tumpu, Tebal Pelat & Tarik Angkur (AISC Design Guide 1)",
-      desc: "Desain pelat landas (base plate) & angkur kolom baja satu sistem: tumpu beton (AISC 360-22 J8 / ACI 318-19), tebal pelat leleh lentur, rezim konsentrik / momen kecil / momen besar (e vs ecrit) dengan gaya tarik angkur, dan geser dasar gesekan — metode Drake & Elkin (AISC Design Guide 1, 2nd Ed.), lengkap elevasi blok tumpu & denah interaktif.",
+      title: "Base Plate Kolom Baja Sendi & Jepit — Tumpu, Tebal Pelat, Angkur & Las (AISC DG1 / SNI)",
+      desc: "Desain base plate kolom WF, UNP, SHS & pipa perletakan sendi atau jepit: tumpu beton pada pedestal/slab, tebal pelat, angkur tarik-geser (baja, jebol beton, cabut, ledakan sisi, cungkil — SNI 2847:2019 Ps. 17), gesekan, las kolom–pelat, beban aktual atau desain kapasitas SNI 7860 — metode AISC Design Guide 1.",
     },
   },
   {

@@ -24,7 +24,7 @@ describe('headFor', () => {
     expect(h.canonical).toBe('https://tools.edifisia.com/beam-flexure')
   })
   it('tool tidak aktif & 404 tidak diindeks', () => {
-    for (const id of ['base-plate', 'load-combo'])
+    for (const id of ['load-combo'])
       expect(headFor({ kind: 'tool', id }).canonical).toBeNull()
     expect(headFor({ kind: 'notfound', path: '/x' }).canonical).toBeNull()
   })
@@ -47,10 +47,9 @@ describe('pre-render', () => {
   })
   it('karakter HTML di-escape', () => {
     const html = renderPage(TEMPLATE, { kind: 'tool', id: 'base-plate' })
-    expect(html).toContain('Base Plate &amp; Anchor Rod')
+    expect(html).toContain('Tumpu, Tebal Pelat, Angkur &amp; Las')
     expect(html).not.toMatch(/<h1>[^<]*&(?!amp;|quot;|lt;|gt;)/)
-    expect(html).toContain('<meta name="robots" content="noindex" />')
-    expect(html).not.toContain('rel="canonical"')
+    expect(html).toContain('<link rel="canonical" href="https://tools.edifisia.com/base-plate" />')
   })
   it('halaman depan memuat tautan ke setiap tool yang tampil', () => {
     const html = renderPage(TEMPLATE, { kind: 'home' })
@@ -73,6 +72,6 @@ describe('sitemap', () => {
     const xml = sitemapXml('2026-10-07')
     const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1])
     expect(locs).toEqual(['https://tools.edifisia.com/', ...visibleTools().map((t) => `https://tools.edifisia.com/${t.id}`)])
-    expect(xml).not.toContain('base-plate')
+    expect(xml).not.toContain('load-combo')
   })
 })

@@ -9,6 +9,7 @@ import tools4 from './en/tools-4'
 import tools5 from './en/tools-5'
 import tools6 from './en/tools-6'
 import tools7 from './en/tools-7'
+import tools8 from './en/tools-8'
 
 // Kamus laporan Bahasa Inggris (dimuat malas saat cetak PDF berbahasa Inggris). Kunci = teks Indonesia persis seperti
 // disusun laporan/modul hitung; {0}, {1}, … = bagian yang berubah (angka, nama profil, teks lain yang ikut
@@ -64,6 +65,6 @@ const common: Record<string, string> = {
 }
 
 export const EN: Dictionary = {
-  phrases: { ...common, ...calc1, ...calc2, ...calc3, ...tools1, ...tools2, ...tools3, ...tools4, ...tools5, ...tools6, ...tools7 },
+  phrases: { ...common, ...calc1, ...calc2, ...calc3, ...tools1, ...tools2, ...tools3, ...tools4, ...tools5, ...tools6, ...tools7, ...tools8 },
   subscripts,
 }
