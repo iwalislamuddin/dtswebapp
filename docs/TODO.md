@@ -205,8 +205,12 @@ terpisah yang memperbarui acuan golden secara sadar.
       (format: penanda `EDFT` + versi format + amplop JSON deflate `{t, v, a, d, n, i}`), `src/app/work-file.ts`
       (menu File, dialog nama, pesan galat), penerapan lewat `useToolInput` — berlaku untuk semua tool tanpa
       perubahan per tool
-- [ ] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (pakai amplop `.edft` yang sama sebagai `state_json`) (`state_json` = objek input tool); Free User buka & hapus
-      saja; pesan jelas saat batas 50 tercapai (hint `saved_works_limit`)
+- [x] **[Claude]** Simpan Pekerjaan → `tools.saved_works` (2026-11-13): `src/app/cloud-works.ts` (state_json = amplop
+      `.edft` tanpa nama `{t, v, a, d, i}`), dialog Simpan (tujuan Cloud/File, nama sama = Timpa) & Buka (daftar cloud
+      per tool/semua, buka, hapus, buka file .edft) di `src/ui/WorkDialogs.tsx`; Free User buka & hapus saja; pesan
+      batas 50 lewat hint `saved_works_limit`. Skema `tools` terekspos & migrasi terpasang di dev dan prod (dicek
+      2026-11-13: anon → `permission denied for schema tools`)
+- [ ] **[Anda]** Uji Simpan/Buka cloud dengan akun Premium sungguhan (dev: `dtswebapp.pages.dev`, lalu production)
 - [ ] **[Claude]** Status "Trial/Premium s/d …", peringatan ≤ 7 hari; tombol beli disembunyikan selama
       `PREMIUM_URL` belum ada
 - [x] **[Claude]** `src/app/premium.ts` (`usePremium`) mengacu status Supabase — satu titik gating tab Detail & PDF.

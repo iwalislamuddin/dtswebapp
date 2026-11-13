@@ -1,5 +1,4 @@
-import { X } from 'lucide-react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { APP_NAME, APP_TAGLINE, BRAND_OWNER } from '../app/appInfo'
 import { AUTH_ENV, forgotUrl, registerUrl } from '../app/auth/config'
 import { signInWithGoogle, signInWithPassword, useAuth } from '../app/auth/store'
@@ -8,44 +7,12 @@ import { plainMath } from '../report/math'
 import { RELEASE_NOTES } from '../app/releaseNotes'
 import { downloadActivePdf, lastPdfDescription, lastPdfLang } from '../app/report-actions'
 import { useUi } from '../app/ui-state'
-import { activeToolInput } from '../app/tool-state'
-import { lastWorkName, saveActiveWork } from '../app/work-file'
-import { toolById } from '../tools'
 import { APP_VERSION, BUILD_DATE } from '../app/version'
-import { AppIcon, Logo } from './Brand'
+import { Logo } from './Brand'
+import { Dialog } from './Dialog'
 import { Segmented } from './kit'
 import { PrivacyContent, TermsContent } from './Legal'
-
-/** Dialog modal di atas <dialog> bawaan (fokus terkunci, Escape menutup). */
-function Dialog({ title, subtitle, onClose, children }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode }) {
-  const ref = useRef<HTMLDialogElement>(null)
-  useEffect(() => {
-    const d = ref.current
-    if (d && !d.open) d.showModal()
-  }, [])
-  return (
-    <dialog
-      ref={ref}
-      className="dlg"
-      aria-labelledby="dlg-title"
-      onClose={onClose}
-      // Klik di backdrop (target = <dialog> itu sendiri) menutup.
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div className="dlg-head">
-        <AppIcon size={22} />
-        <div className="dlg-titles">
-          <h2 id="dlg-title">{title}</h2>
-          {subtitle && <div className="muted">{subtitle}</div>}
-        </div>
-        <button type="button" className="mb-icon" onClick={onClose} aria-label="Tutup">
-          <X size={16} />
-        </button>
-      </div>
-      <div className="dlg-body">{children}</div>
-    </dialog>
-  )
-}
+import { NoticeDialog, OpenWorkDialog, SaveWorkDialog } from './WorkDialogs'
 
 /**
  * Cetak PDF: isian Deskripsi (opsional) yang tampil di bawah judul laporan (terisi deskripsi terakhir tool ini) dan
@@ -91,66 +58,6 @@ function PdfDialog({ onClose }: { onClose: () => void }) {
           </button>
         </div>
       </form>
-    </Dialog>
-  )
-}
-
-/** Simpan Pekerjaan: nama pekerjaan (opsional; juga nama file) lalu file .edft diunduh. */
-function SaveWorkDialog({ onClose }: { onClose: () => void }) {
-  const toolId = activeToolInput()?.toolId ?? ''
-  const [name, setName] = useState(() => lastWorkName(toolId))
-  const ref = useRef<HTMLInputElement>(null)
-  useEffect(() => ref.current?.select(), [])
-  return (
-    <Dialog title="Simpan Pekerjaan" subtitle={toolById(toolId)?.name} onClose={onClose}>
-      <form
-        className="pdf-form"
-        onSubmit={(e) => {
-          e.preventDefault()
-          onClose()
-          void saveActiveWork(name)
-        }}
-      >
-        <label htmlFor="work-name">Nama pekerjaan</label>
-        <input
-          ref={ref}
-          id="work-name"
-          className="ctl"
-          type="text"
-          maxLength={120}
-          autoComplete="off"
-          placeholder="mis. Balok lift lantai atap"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <p className="muted">Dipakai sebagai nama file (.edft). Boleh dikosongkan. Buka lagi lewat File › Buka Pekerjaan.</p>
-        <div className="pdf-form-actions">
-          <button type="button" className="btn" onClick={onClose}>
-            Batal
-          </button>
-          <button type="submit" className="btn primary">
-            Simpan
-          </button>
-        </div>
-      </form>
-    </Dialog>
-  )
-}
-
-/** Pemberitahuan singkat (mis. file pekerjaan tidak dapat dibuka). */
-function NoticeDialog({ onClose }: { onClose: () => void }) {
-  const notice = useUi((s) => s.notice)
-  if (!notice) return null
-  return (
-    <Dialog title={notice.title} onClose={onClose}>
-      <div className="pdf-form">
-        <p>{notice.text}</p>
-        <div className="pdf-form-actions">
-          <button type="button" className="btn primary" onClick={onClose} autoFocus>
-            OK
-          </button>
-        </div>
-      </div>
     </Dialog>
   )
 }
@@ -326,6 +233,7 @@ export function DialogHost() {
   if (dialog === 'pdf') return <PdfDialog onClose={close} />
   if (dialog === 'login') return <LoginDialog onClose={close} />
   if (dialog === 'save-work') return <SaveWorkDialog onClose={close} />
+  if (dialog === 'open-work') return <OpenWorkDialog onClose={close} />
   if (dialog === 'notice') return <NoticeDialog onClose={close} />
   return null
 }

@@ -7,6 +7,7 @@ import { linkClick, parsePath, usePath } from './app/router'
 import { useUi } from './app/ui-state'
 import { toolById } from './tools'
 import { DialogHost } from './ui/Dialogs'
+import { Toast } from './ui/WorkDialogs'
 import { HomePage } from './ui/HomePage'
 import { MenuBar } from './ui/MenuBar'
 import { NavPanel } from './ui/NavPanel'
@@ -54,6 +55,7 @@ export default function App() {
         </main>
       </div>
       <DialogHost />
+      <Toast />
     </div>
   )
 }

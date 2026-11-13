@@ -780,6 +780,131 @@ a.mb-item {
   margin-top: 8px;
 }
 
+/* Dialog Simpan/Buka Pekerjaan (src/ui/WorkDialogs.tsx). */
+.works-list {
+  display: grid;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.works-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 4px 6px;
+}
+
+.works-list li + li {
+  border-top: 1px solid var(--border);
+}
+
+.works-list li.busy {
+  opacity: 0.6;
+}
+
+.works-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.works-open {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.works-open:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.works-open > svg {
+  flex: none;
+  color: var(--accent);
+}
+
+.works-open > span {
+  display: grid;
+  min-width: 0;
+}
+
+.works-open b,
+.works-open .muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.works-open .muted {
+  font-size: 12px;
+}
+
+.works-empty {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.works-actions {
+  align-items: center;
+}
+
+.works-actions > .muted {
+  margin-right: auto;
+  font-size: 12px;
+}
+
+.works-actions .btn,
+.works-list .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+  font-size: 13px;
+}
+
 /* Dialog Tentang (pola EDFS Matrix). */
 .about-hero {
   display: flex;
