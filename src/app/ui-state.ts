@@ -6,7 +6,7 @@ import type { Report } from '../report/model'
 
 export type Theme = 'light' | 'dark'
 export type ToolTab = 'input' | 'detail'
-export type DialogId = 'about' | 'release-notes' | 'pdf' | 'login' | 'terms' | 'privacy' | 'save-work' | 'notice'
+export type DialogId = 'about' | 'release-notes' | 'pdf' | 'login' | 'terms' | 'privacy' | 'save-work' | 'open-work' | 'notice'
 
 /** Isi dialog pemberitahuan (mis. file pekerjaan tidak dapat dibuka). */
 export interface Notice {
@@ -43,6 +43,9 @@ interface UiState extends Prefs {
   openDialog: (d: DialogId | null) => void
   notice: Notice | null
   showNotice: (n: Notice) => void
+  /** Pesan singkat yang hilang sendiri (mis. "Tersimpan di cloud"); `id` berganti tiap pesan baru. */
+  toast: { id: number; text: string } | null
+  showToast: (text: string | null) => void
 }
 
 function loadPrefs(): Partial<Prefs> {
@@ -74,6 +77,8 @@ export const useUi = create<UiState>()((set) => ({
   openDialog: (dialog) => set({ dialog }),
   notice: null,
   showNotice: (notice) => set({ notice, dialog: 'notice' }),
+  toast: null,
+  showToast: (text) => set((s) => ({ toast: text ? { id: (s.toast?.id ?? 0) + 1, text } : null })),
 }))
 
 // Tema di <html data-theme>, dipasang sinkron agar token CSS sudah benar saat React merender ulang.

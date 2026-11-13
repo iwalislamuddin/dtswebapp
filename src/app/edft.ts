@@ -105,6 +105,14 @@ export async function decodeEdft(bytes: Uint8Array): Promise<EdftEnvelope> {
     if (e instanceof EdftError) throw e
     throw new EdftError('corrupt', 'File pekerjaan rusak dan tidak dapat dibaca.')
   }
+  return parseEnvelope(env)
+}
+
+/**
+ * Objek JSON → amplop tervalidasi (bentuknya saja; kecocokan tool & versi diperiksa pemanggil). Dipakai file .edft
+ * dan Simpan Pekerjaan cloud (`tools.saved_works.state_json` berisi amplop yang sama).
+ */
+export function parseEnvelope(env: unknown): EdftEnvelope {
   if (
     !isPlainObject(env) ||
     typeof env.t !== 'string' ||

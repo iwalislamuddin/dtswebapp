@@ -10,7 +10,7 @@ import { useUi } from '../app/ui-state'
 import { openPdfDialog } from '../app/report-actions'
 import { premiumStatus, usePremium } from '../app/premium'
 import { useActiveTool } from '../app/tool-state'
-import { canSaveWork, openSaveWorkDialog, pickWorkFile } from '../app/work-file'
+import { canSaveWork, openOpenWorkDialog, openSaveWorkDialog } from '../app/work-file'
 import { AppIcon } from './Brand'
 import { UpdatePrompt } from './UpdatePrompt'
 
@@ -27,8 +27,9 @@ interface MenuDef {
   items: MenuEntry[]
 }
 
-// Simpan/Buka Pekerjaan (file .edft, src/app/work-file.ts) dan Download Report hanya untuk Premium
-// (src/app/premium.ts). Simpan perlu tool yang sedang tampil; Download Report perlu tool yang punya laporan.
+// Simpan Pekerjaan (cloud / file .edft, src/app/work-file.ts) dan Download Report hanya untuk Premium
+// (src/app/premium.ts). Simpan perlu tool yang sedang tampil; Download Report perlu tool yang punya laporan. Buka
+// Pekerjaan untuk semua: dialognya menampilkan daftar cloud (login) dan tombol buka file .edft (Premium).
 
 function menus(): MenuDef[] {
   const ui = useUi.getState()
@@ -37,8 +38,9 @@ function menus(): MenuDef[] {
   const premium = premiumStatus().premium
   const pdfHint = !rep ? 'Buka tool yang sudah punya laporan' : !premium ? 'Fitur Premium' : undefined
   const canSave = canSaveWork()
-  const saveHint = !premium ? 'Fitur Premium' : !canSave ? 'Buka tool yang ingin disimpan' : 'Simpan input tool ini ke file .edft'
-  const openHint = premium ? 'Buka file pekerjaan .edft' : 'Fitur Premium'
+  const saveHint = !premium ? 'Fitur Premium' : !canSave ? 'Buka tool yang ingin disimpan' : 'Simpan input tool ini ke cloud atau file .edft'
+  const canOpen = premium || useAuth.getState().status !== 'off'
+  const openHint = 'Buka pekerjaan dari cloud atau file .edft'
   return [
     {
       id: 'file',
@@ -47,7 +49,7 @@ function menus(): MenuDef[] {
         { label: 'Halaman Depan', onSelect: () => navigate('/') },
         'sep',
         { label: 'Simpan Pekerjaan…', onSelect: canSave ? openSaveWorkDialog : undefined, hint: saveHint },
-        { label: 'Buka Pekerjaan…', onSelect: premium ? pickWorkFile : undefined, hint: openHint },
+        { label: 'Buka Pekerjaan…', onSelect: canOpen ? openOpenWorkDialog : undefined, hint: openHint },
         'sep',
         { label: 'Download Report (PDF)', onSelect: rep && premium ? openPdfDialog : undefined, hint: pdfHint },
       ],

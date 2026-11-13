@@ -28,7 +28,8 @@ let premiumReadAt = 0
 /** Status Premium dibaca ulang paling sering sekali semenit (saat tab kembali aktif). */
 const PREMIUM_STALE_MS = 60_000
 
-function getClient(): Promise<Supabase> {
+/** Klien Supabase bersama (sesi akun yang sama) — juga dipakai Simpan Pekerjaan cloud (src/app/cloud-works.ts). */
+export function getClient(): Promise<Supabase> {
   if (!AUTH_ENV) return Promise.reject(new Error('Akun Edifisia belum dikonfigurasi (.env)'))
   client ??= import('./supabase').then((m) => m.createClient(AUTH_ENV!))
   return client
