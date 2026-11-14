@@ -6,7 +6,7 @@ import type { Report } from '../report/model'
 
 export type Theme = 'light' | 'dark'
 export type ToolTab = 'input' | 'detail'
-export type DialogId = 'about' | 'release-notes' | 'pdf' | 'login' | 'terms' | 'privacy' | 'save-work' | 'open-work' | 'notice'
+export type DialogId = 'about' | 'pdf' | 'login' | 'terms' | 'privacy' | 'save-work' | 'open-work' | 'notice'
 
 /** Isi dialog pemberitahuan (mis. file pekerjaan tidak dapat dibuka). */
 export interface Notice {

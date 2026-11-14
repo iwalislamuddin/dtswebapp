@@ -58,8 +58,6 @@ function menus(): MenuDef[] {
       id: 'help',
       label: 'Help',
       items: [
-        { label: 'Catatan Rilis', onSelect: () => ui.openDialog('release-notes') },
-        'sep',
         { label: `Tentang ${APP_NAME}`, onSelect: () => ui.openDialog('about') },
       ],
     },

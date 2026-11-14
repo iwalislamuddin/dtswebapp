@@ -315,7 +315,8 @@ terpisah yang memperbarui acuan golden secara sadar.
 ## Tahap 6 — Rilis v0.8.0 di `tools.edifisia.com`
 
 - [x] **[Claude]** URL kanonik → `https://tools.edifisia.com` (DOMAIN_MIGRATION.md §5), sitemap, robots, GA4
-- [ ] **[Claude]** Versi `0.8.0` (masih `0.8.0-dev` walau sudah live) + tanggal & catatan rilis v0.8.0
+- [x] **[Claude]** Rilis sebagai **v1.0.0** (build 2026-11-14); catatan rilis internal di `docs/CHANGELOG.md` — 2026-11-14
+- [ ] **[Anda]** Tampilkan catatan rilis v1.0.0 (`docs/CHANGELOG.md`) di halaman produk homepage
 - [ ] **[Anda]** Supabase **production**: `scripts/db_migrate.py` + `tests/run.py --applied` (Session pooler prod),
       Exposed schemas `tools` — status belum dikonfirmasi; domain sudah live
 - [x] **[Anda]** Cloudflare Pages > Custom domains > `tools.edifisia.com` (CNAME & SSL otomatis) — live, dicek 2026-10-19

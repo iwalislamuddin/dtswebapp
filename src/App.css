@@ -963,18 +963,6 @@ a.mb-item {
   font-weight: 600;
 }
 
-.about-list {
-  margin: 0;
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.about-more {
-  margin-top: 6px;
-}
-
 .link-btn {
   padding: 0;
   border: 0;
