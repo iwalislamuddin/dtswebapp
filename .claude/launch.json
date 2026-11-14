@@ -25,6 +25,20 @@
       "port": 5210
     },
     {
+      "name": "civil-tools-lan",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "--port",
+        "5212",
+        "--strictPort"
+      ],
+      "port": 5212
+    },
+    {
       "name": "civil-tools-preview",
       "runtimeExecutable": "npm",
       "runtimeArgs": [

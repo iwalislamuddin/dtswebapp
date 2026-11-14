@@ -769,3 +769,90 @@ select.ctl {
   max-height: 42vh;
   overflow: auto;
 }
+
+/* --- Mode sentuh (HP): label di atas, tombol −/+ besar, chip nilai umum (NumField, useTouchMode) --- */
+
+.fld-touch {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.fld-touch .fld-unit-inline {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.fld-touch .fld-ctl {
+  gap: 0;
+}
+
+.fld-touch .fld-ctl > .ctl {
+  height: 40px;
+  font-size: 16px; /* ≥16px: iOS tidak auto-zoom saat fokus */
+  text-align: center;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+.num-step {
+  flex: none;
+  width: 48px;
+  height: 40px;
+  border: 1px solid var(--border-strong);
+  background: color-mix(in srgb, var(--text) 5%, var(--bg));
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.num-step:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.num-step:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.num-step:active {
+  background: color-mix(in srgb, var(--accent) 18%, var(--bg));
+}
+
+.fld-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  min-width: 44px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.chip.on {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg));
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.fld-touch .fld-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.fld-touch .fld-err {
+  grid-column: 1;
+}

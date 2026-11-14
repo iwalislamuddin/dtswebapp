@@ -100,11 +100,109 @@ export function NumInput({
   )
 }
 
-export function NumField(p: { label: ReactNode; unit?: string; hint?: string; error?: string; value: string; onChange: (v: string) => void }) {
+/** Mode sentuh: layar HP (atau tablet sentuh sempit). Dipakai NumField untuk tombol −/+ dan chip nilai umum. */
+const TOUCH_QUERY = '(max-width: 640px), (pointer: coarse) and (max-width: 900px)'
+
+export function useTouchMode() {
+  const get = () => typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia(TOUCH_QUERY).matches
+  const [on, setOn] = useState(get)
+  useEffect(() => {
+    if (!window.matchMedia) return
+    const mq = window.matchMedia(TOUCH_QUERY)
+    const f = () => setOn(mq.matches)
+    mq.addEventListener('change', f)
+    return () => mq.removeEventListener('change', f)
+  }, [])
+  return on
+}
+
+function parseNum(s: string): number | null {
+  const t = s.trim().replace(',', '.')
+  if (t === '') return null
+  const n = Number(t)
+  return Number.isFinite(n) ? n : null
+}
+
+/** Langkah otomatis mengikuti besaran nilai: 250 → 10, 20 → 1, 1,2 → 0,1. */
+function autoStep(v: number): number {
+  const a = Math.abs(v)
+  if (a === 0) return 1
+  return Math.pow(10, Math.floor(Math.log10(a)) - 1)
+}
+
+function fmtStep(n: number, step: number, comma: boolean): string {
+  const dec = Math.max(0, -Math.floor(Math.log10(step)))
+  const s = String(Number(n.toFixed(dec)))
+  return comma ? s.replace('.', ',') : s
+}
+
+/** Tombol − / + (mode sentuh). Langkah = `step` bila diberikan, selain itu otomatis dari besaran nilai. */
+function Stepper({ value, onChange, step, min, dir, disabled }: { value: string; onChange: (v: string) => void; step?: number; min?: number; dir: 1 | -1; disabled?: boolean }) {
+  const bump = () => {
+    const cur = parseNum(value) ?? 0
+    const st = step ?? autoStep(cur)
+    let next = Math.round((cur + dir * st) / st) * st
+    if (min !== undefined && next < min) next = min
+    onChange(fmtStep(next, st, value.includes(',')))
+  }
   return (
-    <Field label={p.label} unit={p.unit} hint={p.hint} error={p.error}>
-      <NumInput value={p.value} onChange={p.onChange} invalid={!!p.error} />
-    </Field>
+    <button type="button" className="num-step" aria-label={dir > 0 ? 'Tambah' : 'Kurangi'} disabled={disabled} onClick={bump}>
+      {dir > 0 ? '+' : '−'}
+    </button>
+  )
+}
+
+export function NumField(p: {
+  label: ReactNode
+  unit?: string
+  hint?: string
+  error?: string
+  value: string
+  onChange: (v: string) => void
+  /** Langkah tombol −/+ di mode sentuh (default otomatis). */
+  step?: number
+  /** Batas bawah tombol − (default 0 bila nilai ≥ 0, bebas bila nilai negatif). */
+  min?: number
+  /** Nilai umum yang ditampilkan sebagai chip di mode sentuh. */
+  presets?: (number | string)[]
+}) {
+  const touch = useTouchMode()
+  if (!touch) {
+    return (
+      <Field label={p.label} unit={p.unit} hint={p.hint} error={p.error}>
+        <NumInput value={p.value} onChange={p.onChange} invalid={!!p.error} />
+      </Field>
+    )
+  }
+  const cur = parseNum(p.value)
+  const min = p.min ?? (cur !== null && cur < 0 ? undefined : 0)
+  return (
+    <div className={`fld fld-touch${p.error ? ' invalid' : ''}`}>
+      <label className="fld-label">
+        {p.label}
+        {p.unit !== undefined && p.unit !== '' && <span className="fld-unit-inline"> ({p.unit})</span>}
+      </label>
+      <span className="fld-ctl">
+        <Stepper value={p.value} onChange={p.onChange} step={p.step} min={min} dir={-1} />
+        <NumInput value={p.value} onChange={p.onChange} invalid={!!p.error} ariaLabel={typeof p.label === 'string' ? p.label : undefined} />
+        <Stepper value={p.value} onChange={p.onChange} step={p.step} dir={1} />
+      </span>
+      {p.presets && p.presets.length > 0 && (
+        <span className="fld-chips">
+          {p.presets.map((v) => {
+            const s = String(v)
+            const active = cur !== null && parseNum(s) === cur
+            return (
+              <button key={s} type="button" className={`chip${active ? ' on' : ''}`} aria-pressed={active} onClick={() => p.onChange(s)}>
+                {s}
+              </button>
+            )
+          })}
+        </span>
+      )}
+      {p.hint && <span className="fld-hint">{p.hint}</span>}
+      {p.error && <span className="fld-err">{p.error}</span>}
+    </div>
   )
 }
 

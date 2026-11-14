@@ -78,9 +78,9 @@ function Inputs({ input, setInput, errors, onReset }: { input: BasePlateUIInput;
       </Card>
 
       <Card n={2} title="Pelat landas (end plate)">
-        <NumField label="N — panjang (sejajar d kolom)" unit="mm" value={input.N} error={errors.N} onChange={(N) => setInput({ N })} />
-        <NumField label="B — lebar" unit="mm" value={input.B} error={errors.B} onChange={(B) => setInput({ B })} />
-        <NumField label="tp — tebal" unit="mm" value={input.tp} error={errors.tp} onChange={(tp) => setInput({ tp })} />
+        <NumField label="N — panjang (sejajar d kolom)" unit="mm" value={input.N} presets={[300, 400, 500, 600, 700]} error={errors.N} onChange={(N) => setInput({ N })} />
+        <NumField label="B — lebar" unit="mm" value={input.B} presets={[300, 400, 500, 600]} error={errors.B} onChange={(B) => setInput({ B })} />
+        <NumField label="tp — tebal" unit="mm" value={input.tp} presets={[12, 16, 20, 25, 30, 40]} error={errors.tp} onChange={(tp) => setInput({ tp })} />
         <SelectField
           label="Mutu pelat"
           value={input.plateGrade}
@@ -88,17 +88,17 @@ function Inputs({ input, setInput, errors, onReset }: { input: BasePlateUIInput;
           onChange={(plateGrade) => setInput({ plateGrade })}
         />
         {input.plateGrade === CUSTOM && <NumField label="Fy pelat" unit="MPa" value={input.plateFy} error={errors.plateFy} onChange={(plateFy) => setInput({ plateFy })} />}
-        <NumField label="Las sudut kolom–pelat w" unit="mm" value={input.weld} error={errors.weld} hint="0 = las tidak ditinjau." onChange={(weld) => setInput({ weld })} />
-        <NumField label="FEXX elektroda" unit="MPa" value={input.FEXX} error={errors.FEXX} hint="E70xx = 490 MPa." onChange={(FEXX) => setInput({ FEXX })} />
+        <NumField label="Las sudut kolom–pelat w" unit="mm" value={input.weld} presets={[0, 6, 8, 10, 12]} error={errors.weld} hint="0 = las tidak ditinjau." onChange={(weld) => setInput({ weld })} />
+        <NumField label="FEXX elektroda" unit="MPa" value={input.FEXX} presets={[490]} error={errors.FEXX} hint="E70xx = 490 MPa." onChange={(FEXX) => setInput({ FEXX })} />
       </Card>
 
       <Card n={3} title="Angkur">
         <SelectField label="Mutu angkur" value={input.anchorGrade} error={errors.anchorGrade} options={ANCHOR_GRADES.map((g) => ({ value: g.key, label: `${g.label} (Fu ${g.Fu})` }))} onChange={(anchorGrade) => setInput({ anchorGrade })} />
         <SelectField label="Diameter da" value={input.da} error={errors.da} options={ANCHOR_SIZES.map((s) => ({ value: String(s.d), label: `M${s.d} (Ase ${s.Ase} mm²)` }))} onChange={(da) => setInput({ da })} />
-        <NumField label="Jumlah per baris (2 baris)" value={input.nRow} error={errors.nRow} hint="Baris angkur di kedua ujung N; total = 2 × jumlah." onChange={(nRow) => setInput({ nRow })} />
-        <NumField label="aN — tepi pelat (arah N) → sumbu angkur" unit="mm" value={input.aN} error={errors.aN} onChange={(aN) => setInput({ aN })} />
-        <NumField label="aB — tepi pelat (arah B) → angkur terluar" unit="mm" value={input.aB} error={errors.aB} onChange={(aB) => setInput({ aB })} />
-        <NumField label="hef — kedalaman tanam" unit="mm" value={input.hef} error={errors.hef} onChange={(hef) => setInput({ hef })} />
+        <NumField label="Jumlah per baris (2 baris)" value={input.nRow} presets={[1, 2, 3, 4]} error={errors.nRow} hint="Baris angkur di kedua ujung N; total = 2 × jumlah." onChange={(nRow) => setInput({ nRow })} />
+        <NumField label="aN — tepi pelat (arah N) → sumbu angkur" unit="mm" value={input.aN} presets={[40, 50, 60, 75]} error={errors.aN} onChange={(aN) => setInput({ aN })} />
+        <NumField label="aB — tepi pelat (arah B) → angkur terluar" unit="mm" value={input.aB} presets={[40, 50, 60, 75]} error={errors.aB} onChange={(aB) => setInput({ aB })} />
+        <NumField label="hef — kedalaman tanam" unit="mm" value={input.hef} presets={[150, 200, 300, 400, 500]} error={errors.hef} onChange={(hef) => setInput({ hef })} />
         <Field label="Ujung angkur">
           <Segmented
             ariaLabel="Ujung angkur"
@@ -146,8 +146,8 @@ function Inputs({ input, setInput, errors, onReset }: { input: BasePlateUIInput;
           hint={input.support === 'slab' ? 'Slab: tanpa tepi dekat; A2 dari frustum 1V:2H.' : undefined}
           onChange={(ha) => setInput({ ha })}
         />
-        <NumField label="f'c — mutu beton" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
-        <NumField label="Tebal grout" unit="mm" value={input.grout} error={errors.grout} hint="0 = pelat langsung di atas beton." onChange={(grout) => setInput({ grout })} />
+        <NumField label="f'c — mutu beton" unit="MPa" value={input.fc} presets={[20, 25, 30, 35, 40]} error={errors.fc} onChange={(fc) => setInput({ fc })} />
+        <NumField label="Tebal grout" unit="mm" value={input.grout} presets={[0, 25, 40, 50]} error={errors.grout} hint="0 = pelat langsung di atas beton." onChange={(grout) => setInput({ grout })} />
         <Field label="Kondisi beton">
           <Segmented
             ariaLabel="Kondisi beton"
@@ -202,7 +202,7 @@ function Inputs({ input, setInput, errors, onReset }: { input: BasePlateUIInput;
         {cap && !fixed && (
           <>
             <p className="muted card-note">Pu = φc·Pn kolom (SNI 1729 Ps. E3, tekuk sumbu lemah, Lc = K·H).</p>
-            <NumField label="K — faktor panjang efektif" value={input.K} error={errors.K} onChange={(K) => setInput({ K })} />
+            <NumField label="K — faktor panjang efektif" value={input.K} presets={[0.65, 0.8, 1, 1.2, 2]} error={errors.K} onChange={(K) => setInput({ K })} />
             <NumField label="H — tinggi kolom" unit="mm" value={input.H} error={errors.H} onChange={(H) => setInput({ H })} />
             <NumField label="Vu — geser terfaktor" unit="kN" value={input.Vu} error={errors.Vu} onChange={(Vu) => setInput({ Vu })} />
           </>
