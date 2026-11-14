@@ -94,11 +94,11 @@ function Inputs({
   return (
     <>
       <Card n={++card} title="Bentang & penampang" actions={<ResetButton onReset={onReset} />}>
-        <NumField label="Jumlah bentang" value={input.n} error={errors.n} hint="1–12." onChange={(n2) => setInput({ n: n2 })} />
-        <NumField label={n >= 3 ? 'Bentang ujung L (as–as)' : 'Bentang L (as–as)'} unit="m" value={input.L} error={errors.L} onChange={(L) => setInput({ L })} />
-        {n >= 3 && <NumField label="Bentang dalam Li (as–as)" unit="m" value={input.Li} error={errors.Li} onChange={(Li) => setInput({ Li })} />}
-        <NumField label="Lebar tumpuan" unit="mm" value={input.bsup} error={errors.bsup} hint="Bentang bersih ln = L − lebar tumpuan." onChange={(bsup) => setInput({ bsup })} />
-        {balok && <NumField label="Lebar balok bw" unit="mm" value={input.b} error={errors.b} onChange={(b) => setInput({ b })} />}
+        <NumField presets={[1, 2, 3, 4, 5]} label="Jumlah bentang" value={input.n} error={errors.n} hint="1–12." onChange={(n2) => setInput({ n: n2 })} />
+        <NumField presets={[3, 4, 5, 6, 8]} label={n >= 3 ? 'Bentang ujung L (as–as)' : 'Bentang L (as–as)'} unit="m" value={input.L} error={errors.L} onChange={(L) => setInput({ L })} />
+        {n >= 3 && <NumField presets={[3, 4, 5, 6, 8]} label="Bentang dalam Li (as–as)" unit="m" value={input.Li} error={errors.Li} onChange={(Li) => setInput({ Li })} />}
+        <NumField presets={[250, 300, 400, 500]} label="Lebar tumpuan" unit="mm" value={input.bsup} error={errors.bsup} hint="Bentang bersih ln = L − lebar tumpuan." onChange={(bsup) => setInput({ bsup })} />
+        {balok && <NumField presets={[200, 250, 300, 400]} label="Lebar balok bw" unit="mm" value={input.b} error={errors.b} onChange={(b) => setInput({ b })} />}
         <NumField label={balok ? 'Tinggi balok h (total)' : 'Tebal pelat h'} unit="mm" value={input.h} error={errors.h} onChange={(h) => setInput({ h })} />
       </Card>
       {balok && (
@@ -123,7 +123,7 @@ function Inputs({
             hint={input.sect === 'L' ? 'Dari sumbu balok ke tepi pelat yang dipikul.' : 'Lebar pelat yang dipikul (balok T interior: jarak antar balok).'}
             onChange={(bt) => setInput({ bt })}
           />
-          <NumField label="Tebal pelat sayap hf" unit="mm" value={input.hf} error={errors.hf} hint="Beban pelat × lebar tributari ikut dihitung; sayap efektif Tabel 6.3.2.1." onChange={(hf) => setInput({ hf })} />
+          <NumField presets={[100, 120, 150]} label="Tebal pelat sayap hf" unit="mm" value={input.hf} error={errors.hf} hint="Beban pelat × lebar tributari ikut dihitung; sayap efektif Tabel 6.3.2.1." onChange={(hf) => setInput({ hf })} />
         </Card>
       )}
       <Card n={++card} title="Beban & tumpuan">
@@ -135,7 +135,7 @@ function Inputs({
           hint="Di luar berat sendiri."
           onChange={(qDs) => setInput({ qDs })}
         />
-        <NumField label={balok ? 'Beban hidup pelat' : 'Beban hidup'} unit="kN/m²" value={input.qLs} error={errors.qLs} onChange={(qLs) => setInput({ qLs })} />
+        <NumField presets={[1.92, 2.4, 2.87, 4.79]} label={balok ? 'Beban hidup pelat' : 'Beban hidup'} unit="kN/m²" value={input.qLs} error={errors.qLs} onChange={(qLs) => setInput({ qLs })} />
         {balok && (
           <>
             <NumField label="Beban mati garis tambahan" unit="kN/m" value={input.qDb} error={errors.qDb} hint="Mis. dinding di atas balok." onChange={(qDb) => setInput({ qDb })} />
@@ -228,13 +228,13 @@ function Inputs({
         </Field>
         {input.design === 'ya' && (
           <>
-            <NumField label="f'c" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
-            <NumField label="fy — tul. lentur" unit="MPa" value={input.fy} error={errors.fy} onChange={(fy) => setInput({ fy })} />
-            <NumField label="Selimut bersih" unit="mm" value={input.cc} error={errors.cc} onChange={(cc) => setInput({ cc })} />
+            <NumField presets={[20, 25, 30, 35, 40]} label="f'c" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
+            <NumField presets={[280, 420]} label="fy — tul. lentur" unit="MPa" value={input.fy} error={errors.fy} onChange={(fy) => setInput({ fy })} />
+            <NumField presets={[20, 25, 30, 40]} label="Selimut bersih" unit="mm" value={input.cc} error={errors.cc} onChange={(cc) => setInput({ cc })} />
             <SelectField label="Ø tulangan utama" value={input.db} options={CB_BARS.map((d) => ({ value: String(d), label: `D${d}` }))} onChange={(db) => setInput({ db })} />
             {balok && (
               <>
-                <NumField label="fyt — sengkang" unit="MPa" value={input.fyt} error={errors.fyt} onChange={(fyt) => setInput({ fyt })} />
+                <NumField presets={[280, 420]} label="fyt — sengkang" unit="MPa" value={input.fyt} error={errors.fyt} onChange={(fyt) => setInput({ fyt })} />
                 <SelectField label="Ø sengkang" value={input.ds} options={CB_STIRRUPS.map((d) => ({ value: String(d), label: `Ø${d}` }))} onChange={(ds) => setInput({ ds })} />
               </>
             )}
@@ -257,7 +257,7 @@ function Inputs({
           {input.defl === 'ya' && (
             <>
               <SelectField label="Durasi beban tetap (ξ)" value={input.xi} options={CB_XI.map((o) => ({ value: o.value, label: o.label }))} onChange={(xi) => setInput({ xi })} />
-              <NumField label="Beban hidup tetap" unit="%" value={input.sustL} error={errors.sustL} hint="Porsi beban hidup yang bekerja lama." onChange={(sustL) => setInput({ sustL })} />
+              <NumField presets={[0, 25, 50, 100]} label="Beban hidup tetap" unit="%" value={input.sustL} error={errors.sustL} hint="Porsi beban hidup yang bekerja lama." onChange={(sustL) => setInput({ sustL })} />
               <SelectField label="Batas sesudah pemasangan non-struktural" value={input.lim} options={CB_LIMITS.map((o) => ({ value: o.value, label: o.label }))} onChange={(lim) => setInput({ lim })} />
             </>
           )}

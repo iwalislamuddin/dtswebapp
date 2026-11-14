@@ -59,11 +59,11 @@ function Inputs({
           <Segmented ariaLabel="Bentuk penampang" value={s} options={SHAPES} onChange={(shape) => setInput({ shape })} />
         </Field>
         {s === 'circle' ? (
-          <NumField label="Diameter D" unit="mm" value={input.D} error={errors.D} onChange={(D) => setInput({ D })} />
+          <NumField presets={[400, 500, 600, 800]} label="Diameter D" unit="mm" value={input.D} error={errors.D} onChange={(D) => setInput({ D })} />
         ) : (
           <>
-            <NumField label={s === 'rect' ? 'Lebar b' : 'Lebar B'} unit="mm" value={input.b} error={errors.b} onChange={(b) => setInput({ b })} />
-            <NumField label={s === 'rect' ? 'Tinggi h' : 'Tinggi H'} unit="mm" value={input.h} error={errors.h} onChange={(h) => setInput({ h })} />
+            <NumField presets={[300, 400, 500, 600]} label={s === 'rect' ? 'Lebar b' : 'Lebar B'} unit="mm" value={input.b} error={errors.b} onChange={(b) => setInput({ b })} />
+            <NumField presets={[300, 400, 500, 600]} label={s === 'rect' ? 'Tinggi h' : 'Tinggi H'} unit="mm" value={input.h} error={errors.h} onChange={(h) => setInput({ h })} />
           </>
         )}
         {s === 'L' && (
@@ -78,19 +78,19 @@ function Inputs({
             <NumField label="Tebal sayap tf" unit="mm" value={input.tf} error={errors.tf} onChange={(tf) => setInput({ tf })} />
           </>
         )}
-        <NumField label="d' — selimut ke pusat tulangan" unit="mm" value={input.dp} error={errors.dp} hint="cc + Ø sengkang + db/2 (≈ 60 mm untuk cc 40, Ø10, D19)." onChange={(dp) => setInput({ dp })} />
+        <NumField presets={[50, 60, 65, 75]} label="d' — selimut ke pusat tulangan" unit="mm" value={input.dp} error={errors.dp} hint="cc + Ø sengkang + db/2 (≈ 60 mm untuk cc 40, Ø10, D19)." onChange={(dp) => setInput({ dp })} />
       </Card>
       <Card n={2} title="Material & tulangan">
-        <NumField label="f'c" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
-        <NumField label="fy" unit="MPa" value={input.fy} error={errors.fy} onChange={(fy) => setInput({ fy })} />
+        <NumField presets={[20, 25, 30, 35, 40]} label="f'c" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
+        <NumField presets={[280, 420]} label="fy" unit="MPa" value={input.fy} error={errors.fy} onChange={(fy) => setInput({ fy })} />
         <SelectField label="Diameter batang" value={input.db} options={COL_BARS.map((d) => ({ value: String(d), label: `D${d}` }))} onChange={(db) => setInput({ db })} />
         {s === 'rect' && (
           <>
-            <NumField label="Batang per muka lebar (nx)" value={input.nx} error={errors.nx} hint="Termasuk sudut." onChange={(nx) => setInput({ nx })} />
-            <NumField label="Batang per muka tinggi (ny)" value={input.ny} error={errors.ny} hint="Termasuk sudut. Total = 2nx + 2(ny − 2)." onChange={(ny) => setInput({ ny })} />
+            <NumField presets={[2, 3, 4, 5]} label="Batang per muka lebar (nx)" value={input.nx} error={errors.nx} hint="Termasuk sudut." onChange={(nx) => setInput({ nx })} />
+            <NumField presets={[2, 3, 4, 5]} label="Batang per muka tinggi (ny)" value={input.ny} error={errors.ny} hint="Termasuk sudut. Total = 2nx + 2(ny − 2)." onChange={(ny) => setInput({ ny })} />
           </>
         )}
-        {s === 'circle' && <NumField label="Jumlah batang keliling" value={input.ncirc} error={errors.ncirc} onChange={(ncirc) => setInput({ ncirc })} />}
+        {s === 'circle' && <NumField presets={[6, 8, 10, 12]} label="Jumlah batang keliling" value={input.ncirc} error={errors.ncirc} onChange={(ncirc) => setInput({ ncirc })} />}
         {(s === 'L' || s === 'T') && (
           <NumField label="Spasi maksimum keliling" unit="mm" value={input.spac} error={errors.spac} hint="Batang sudut selalu ada; sisi disisipi agar spasi ≤ nilai ini." onChange={(spac) => setInput({ spac })} />
         )}

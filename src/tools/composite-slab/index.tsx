@@ -56,8 +56,8 @@ function Inputs({
   return (
     <>
       <Card n={1} title="Pelat & bentang" actions={<ResetButton onReset={onReset} />}>
-        <NumField label="L — bentang bersih" unit="m" value={input.L} error={errors.L} onChange={(L) => setInput({ L })} />
-        <NumField label="D — tebal total slab" unit="mm" value={input.D} error={errors.D} onChange={(D) => setInput({ D })} />
+        <NumField presets={[2, 2.5, 3, 3.5]} label="L — bentang bersih" unit="m" value={input.L} error={errors.L} onChange={(L) => setInput({ L })} />
+        <NumField presets={[100, 120, 125, 150]} label="D — tebal total slab" unit="mm" value={input.D} error={errors.D} onChange={(D) => setInput({ D })} />
         <SelectField
           label="Jumlah bentang"
           value={input.spans}
@@ -111,14 +111,14 @@ function Inputs({
         <NumField label="Σ lebar bawah rusuk" unit="mm/m" value={input.bc} error={errors.bc} hint="Lebar tekan pada momen negatif." onChange={(bc) => setInput({ bc })} />
       </Card>
       <Card n={3} title="Beban">
-        <NumField label="SDL — mati tambahan" unit="kN/m²" value={input.SDL} error={errors.SDL} hint="Di luar berat slab + dek (dihitung otomatis)." onChange={(SDL) => setInput({ SDL })} />
-        <NumField label="LL — beban hidup" unit="kN/m²" value={input.LL} error={errors.LL} onChange={(LL) => setInput({ LL })} />
-        <NumField label="Beban hidup konstruksi" unit="kN/m²" value={input.cLL} error={errors.cLL} hint="Pekerja + peralatan saat cor (SDI ≈ 1,0)." onChange={(cLL) => setInput({ cLL })} />
+        <NumField presets={[1, 1.5, 2]} label="SDL — mati tambahan" unit="kN/m²" value={input.SDL} error={errors.SDL} hint="Di luar berat slab + dek (dihitung otomatis)." onChange={(SDL) => setInput({ SDL })} />
+        <NumField presets={[1.92, 2.4, 2.87, 4.79]} label="LL — beban hidup" unit="kN/m²" value={input.LL} error={errors.LL} onChange={(LL) => setInput({ LL })} />
+        <NumField presets={[1, 1.5]} label="Beban hidup konstruksi" unit="kN/m²" value={input.cLL} error={errors.cLL} hint="Pekerja + peralatan saat cor (SDI ≈ 1,0)." onChange={(cLL) => setInput({ cLL })} />
       </Card>
       <Card n={4} title="Beton, tulangan & konektor">
-        <NumField label="f'c" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
-        <NumField label="fy — tulangan" unit="MPa" value={input.fy} error={errors.fy} onChange={(fy) => setInput({ fy })} />
-        <NumField label="Selimut atas" unit="mm" value={input.cover} error={errors.cover} onChange={(cover) => setInput({ cover })} />
+        <NumField presets={[20, 25, 30, 35, 40]} label="f'c" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
+        <NumField presets={[280, 420]} label="fy — tulangan" unit="MPa" value={input.fy} error={errors.fy} onChange={(fy) => setInput({ fy })} />
+        <NumField presets={[15, 20, 25]} label="Selimut atas" unit="mm" value={input.cover} error={errors.cover} onChange={(cover) => setInput({ cover })} />
         <SelectField label="Ø tul. negatif (atas)" value={input.db} options={opts([8, 10, 13, 16])} onChange={(db) => setInput({ db })} />
         {input.composite === 'noncomp' && <SelectField label="Ø tul. bawah" value={input.dbBot} options={opts([8, 10, 13, 16])} onChange={(dbBot) => setInput({ dbBot })} />}
         <SelectField label="Ø tul. susut" value={input.dbSt} options={opts([6, 8, 10])} onChange={(dbSt) => setInput({ dbSt })} />

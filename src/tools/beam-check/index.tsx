@@ -64,14 +64,14 @@ function Inputs({
   return (
     <>
       <Card n={1} title="Material" actions={<ResetButton onReset={onReset} />}>
-        <NumField label="f'c — mutu beton" unit="MPa" {...f('fc')} onChange={(fc) => setInput({ fc })} />
-        <NumField label="fy — tul. longitudinal" unit="MPa" {...f('fy')} onChange={(fy) => setInput({ fy })} />
-        <NumField label="fyt — sengkang" unit="MPa" {...f('fyt')} onChange={(fyt) => setInput({ fyt })} />
+        <NumField presets={[20, 25, 30, 35, 40]} label="f'c — mutu beton" unit="MPa" {...f('fc')} onChange={(fc) => setInput({ fc })} />
+        <NumField presets={[280, 420]} label="fy — tul. longitudinal" unit="MPa" {...f('fy')} onChange={(fy) => setInput({ fy })} />
+        <NumField presets={[280, 420]} label="fyt — sengkang" unit="MPa" {...f('fyt')} onChange={(fyt) => setInput({ fyt })} />
       </Card>
       <Card n={2} title="Penampang & sengkang">
-        <NumField label="b — lebar" unit="mm" {...f('b')} onChange={(b) => setInput({ b })} />
-        <NumField label="h — tinggi total" unit="mm" {...f('h')} onChange={(h) => setInput({ h })} />
-        <NumField label="Selimut bersih ke sengkang" unit="mm" {...f('cc')} onChange={(cc) => setInput({ cc })} />
+        <NumField presets={[200, 250, 300, 350, 400]} label="b — lebar" unit="mm" {...f('b')} onChange={(b) => setInput({ b })} />
+        <NumField presets={[300, 400, 500, 600, 700]} label="h — tinggi total" unit="mm" {...f('h')} onChange={(h) => setInput({ h })} />
+        <NumField presets={[25, 30, 40, 50]} label="Selimut bersih ke sengkang" unit="mm" {...f('cc')} onChange={(cc) => setInput({ cc })} />
         <SelectField label="Diameter sengkang" value={input.ds} options={STIR_OPTS} onChange={(ds) => setInput({ ds })} />
         <Field label="Jumlah kaki">
           <Segmented
@@ -85,15 +85,15 @@ function Inputs({
             onChange={(nLegs) => setInput({ nLegs })}
           />
         </Field>
-        <NumField label="Spasi sengkang tumpuan" unit="mm" {...f('sSup')} onChange={(sSup) => setInput({ sSup })} />
+        <NumField presets={[75, 100, 125, 150]} label="Spasi sengkang tumpuan" unit="mm" {...f('sSup')} onChange={(sSup) => setInput({ sSup })} />
       </Card>
       <Card n={3} title="Tulangan memanjang">
         <SelectField label="Diameter (lapangan & tumpuan)" value={input.db} options={BAR_OPTS} onChange={(db) => setInput({ db })} />
-        <NumField label="Lapangan — tarik bawah" {...f('nPosT')} onChange={(nPosT) => setInput({ nPosT })} />
-        <NumField label="Lapangan — tekan atas" {...f('nPosC')} onChange={(nPosC) => setInput({ nPosC })} />
+        <NumField presets={[2, 3, 4, 5, 6]} label="Lapangan — tarik bawah" {...f('nPosT')} onChange={(nPosT) => setInput({ nPosT })} />
+        <NumField presets={[2, 3, 4]} label="Lapangan — tekan atas" {...f('nPosC')} onChange={(nPosC) => setInput({ nPosC })} />
         <SelectField label="Lapangan — lapis tarik" value={input.layPos} options={LAYER_OPTS} onChange={(layPos) => setInput({ layPos: layPos as BeamCheckForm['layPos'] })} />
-        <NumField label="Tumpuan — tarik atas" {...f('nNegT')} onChange={(nNegT) => setInput({ nNegT })} />
-        <NumField label="Tumpuan — tekan bawah" {...f('nNegC')} onChange={(nNegC) => setInput({ nNegC })} />
+        <NumField presets={[2, 3, 4, 5, 6]} label="Tumpuan — tarik atas" {...f('nNegT')} onChange={(nNegT) => setInput({ nNegT })} />
+        <NumField presets={[2, 3, 4]} label="Tumpuan — tekan bawah" {...f('nNegC')} onChange={(nNegC) => setInput({ nNegC })} />
         <SelectField label="Tumpuan — lapis tarik" value={input.layNeg} options={LAYER_OPTS} onChange={(layNeg) => setInput({ layNeg: layNeg as BeamCheckForm['layNeg'] })} />
       </Card>
       <Card n={4} title="Beban terfaktor">
@@ -107,7 +107,7 @@ function Inputs({
         </Field>
         {input.midStir === 'yes' && (
           <>
-            <NumField label="Spasi sengkang lapangan" unit="mm" {...f('sMid')} onChange={(sMid) => setInput({ sMid })} />
+            <NumField presets={[100, 150, 200, 250]} label="Spasi sengkang lapangan" unit="mm" {...f('sMid')} onChange={(sMid) => setInput({ sMid })} />
             <NumField label="Vu — geser lapangan" unit="kN" {...f('VuMid')} onChange={(VuMid) => setInput({ VuMid })} />
           </>
         )}
@@ -117,7 +117,7 @@ function Inputs({
         {input.torsion === 'yes' && (
           <>
             <NumField label="Tu — torsi" unit="kN·m" {...f('Tu')} onChange={(Tu) => setInput({ Tu })} />
-            <NumField label="Tul. samping — jumlah" hint="Total kedua sisi (kiri = kanan)." {...f('nSide')} onChange={(nSide) => setInput({ nSide })} />
+            <NumField presets={[0, 2, 4]} label="Tul. samping — jumlah" hint="Total kedua sisi (kiri = kanan)." {...f('nSide')} onChange={(nSide) => setInput({ nSide })} />
             <SelectField label="Tul. samping — diameter" value={input.dbSide} options={BAR_OPTS} onChange={(dbSide) => setInput({ dbSide })} />
           </>
         )}

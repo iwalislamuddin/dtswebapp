@@ -56,10 +56,10 @@ function Inputs({
   return (
     <>
       <Card n={1} title="Pola angkur" actions={<ResetButton onReset={onReset} />}>
-        <NumField label="Jumlah arah X" value={input.nx} error={errors.nx} onChange={(nx) => setInput({ nx })} />
-        <NumField label="Jumlah arah Y" value={input.ny} error={errors.ny} onChange={(ny) => setInput({ ny })} />
-        {nx > 1 && <NumField label="Spasi arah X" unit="mm" value={input.sx} error={errors.sx} onChange={(sx) => setInput({ sx })} />}
-        {ny > 1 && <NumField label="Spasi arah Y" unit="mm" value={input.sy} error={errors.sy} onChange={(sy) => setInput({ sy })} />}
+        <NumField presets={[1, 2, 3, 4]} label="Jumlah arah X" value={input.nx} error={errors.nx} onChange={(nx) => setInput({ nx })} />
+        <NumField presets={[1, 2, 3, 4]} label="Jumlah arah Y" value={input.ny} error={errors.ny} onChange={(ny) => setInput({ ny })} />
+        {nx > 1 && <NumField presets={[100, 150, 200, 250]} label="Spasi arah X" unit="mm" value={input.sx} error={errors.sx} onChange={(sx) => setInput({ sx })} />}
+        {ny > 1 && <NumField presets={[100, 150, 200, 250]} label="Spasi arah Y" unit="mm" value={input.sy} error={errors.sy} onChange={(sy) => setInput({ sy })} />}
       </Card>
       <Card n={2} title="Angkur">
         <NumField
@@ -74,8 +74,8 @@ function Inputs({
           }}
         />
         <NumField label="Luas tarik efektif Ase" unit="mm²" value={input.Ase} error={errors.Ase} onChange={(Ase) => setInput({ Ase })} />
-        <NumField label="Kedalaman tanam hef" unit="mm" value={input.hef} error={errors.hef} onChange={(hef) => setInput({ hef })} />
-        <NumField label="Kuat tarik baut futa" unit="MPa" value={input.futa} error={errors.futa} onChange={(futa) => setInput({ futa })} />
+        <NumField presets={[150, 200, 300, 400]} label="Kedalaman tanam hef" unit="mm" value={input.hef} error={errors.hef} onChange={(hef) => setInput({ hef })} />
+        <NumField presets={[400, 517, 862]} label="Kuat tarik baut futa" unit="MPa" value={input.futa} error={errors.futa} onChange={(futa) => setInput({ futa })} />
         <Field label="Pelat di atas grout">
           <Segmented
             ariaLabel="Pelat di atas grout"
@@ -89,7 +89,7 @@ function Inputs({
         </Field>
       </Card>
       <Card n={3} title="Beton">
-        <NumField label="Mutu beton f'c" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
+        <NumField presets={[20, 25, 30, 35, 40]} label="Mutu beton f'c" unit="MPa" value={input.fc} error={errors.fc} onChange={(fc) => setInput({ fc })} />
         <NumField
           label="Jarak tepi ca (semua sisi)"
           unit="mm"
@@ -98,7 +98,7 @@ function Inputs({
           hint="Dari angkur terluar ke tepi beton. 0 = tanpa tepi dekat (jebol geser tidak ditinjau)."
           onChange={(ca) => setInput({ ca })}
         />
-        <NumField label="Tebal beton ha" unit="mm" value={input.ha} error={errors.ha} hint="0 = tak dibatasi." onChange={(ha) => setInput({ ha })} />
+        <NumField presets={[0, 300, 400, 500, 600]} label="Tebal beton ha" unit="mm" value={input.ha} error={errors.ha} hint="0 = tak dibatasi." onChange={(ha) => setInput({ ha })} />
         {hef !== null && hef > 0 && <p className="muted card-note">1,5·hef = {fx(1.5 * hef, 0)} mm · spasi bebas tumpang-tindih ≥ 3·hef = {fx(3 * hef, 0)} mm</p>}
         <Field label="Kondisi beton">
           <Segmented
