@@ -4,7 +4,6 @@ import { AUTH_ENV, forgotUrl, registerUrl } from '../app/auth/config'
 import { signInWithGoogle, signInWithPassword, useAuth } from '../app/auth/store'
 import { REPORT_LANGS } from '../report/lang'
 import { plainMath } from '../report/math'
-import { RELEASE_NOTES } from '../app/releaseNotes'
 import { downloadActivePdf, lastPdfDescription, lastPdfLang } from '../app/report-actions'
 import { useUi } from '../app/ui-state'
 import { APP_VERSION, BUILD_DATE } from '../app/version'
@@ -149,8 +148,7 @@ export function DialogHost() {
   const dialog = useUi((s) => s.dialog)
   const close = () => useUi.getState().openDialog(null)
   if (dialog === 'about') {
-    // Pola dialog About EDFS Matrix: logo penuh + identitas, catatan rilis versi ini, disclaimer, hak cipta.
-    const latest = RELEASE_NOTES[0]
+    // Pola dialog About EDFS Matrix: logo penuh + identitas, disclaimer, hak cipta. Catatan rilis: docs/CHANGELOG.md.
     return (
       <Dialog title={`Tentang ${APP_NAME}`} onClose={close}>
         <div className="about-hero">
@@ -169,17 +167,6 @@ export function DialogHost() {
             </dl>
           </div>
         </div>
-        <fieldset className="fieldset">
-          <legend>Catatan Rilis · {latest.version}</legend>
-          <ul className="about-list">
-            {latest.items.map((it) => (
-              <li key={it}>{it}</li>
-            ))}
-          </ul>
-          <button type="button" className="link-btn about-more" onClick={() => useUi.getState().openDialog('release-notes')}>
-            Semua catatan rilis
-          </button>
-        </fieldset>
         <p className="muted small-note">
           Hasil perhitungan adalah alat bantu dan tidak menggantikan penilaian teknis. Verifikasi seluruh keluaran oleh
           insinyur profesional yang bertanggung jawab sebelum digunakan untuk desain, gambar kerja, atau konstruksi.
@@ -199,25 +186,6 @@ export function DialogHost() {
       </Dialog>
     )
   }
-  if (dialog === 'release-notes')
-    return (
-      <Dialog title="Catatan Rilis" subtitle={APP_NAME} onClose={close}>
-        <div className="relnotes">
-          {RELEASE_NOTES.map((r) => (
-            <section key={r.version}>
-              <h3>
-                v{r.version} <span className="muted">— {r.date ?? 'dalam pengembangan'}</span>
-              </h3>
-              <ul>
-                {r.items.map((it) => (
-                  <li key={it}>{it}</li>
-                ))}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </Dialog>
-    )
   if (dialog === 'terms')
     return (
       <Dialog title="Syarat Layanan" subtitle={APP_NAME} onClose={close}>

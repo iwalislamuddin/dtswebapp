@@ -29,7 +29,7 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 └──────────────┴──────────────────────────────────────────────────────┘
 ```
 
-- **Menu bar**: `File` (Simpan / Buka pekerjaan, Download Report, …) dan `Help` (Tentang, catatan rilis, …).
+- **Menu bar**: `File` (Simpan / Buka pekerjaan, Download Report, …) dan `Help` (Tentang).
   Di kanan: status Premium/Trial dan menu akun.
 - **Panel navigasi kiri**: bisa dibuka-tutup (seperti sekarang), **scrollable sendiri**, dikelompokkan per
   kategori, item aktif disorot hijau, ada kotak **Cari tool**. Kategori & urutannya dari `src/tools.ts`
@@ -61,7 +61,7 @@ bersama penulisan ulang tiap tool di React. Detail visual per tool menyusul; dok
 ## Shell terpasang (2026-10-07)
 
 - Menu `File`: Halaman Depan · Simpan Pekerjaan… · Buka Pekerjaan… (tampil "segera" sampai akun Supabase Tahap 4)
-  · Download Report (PDF) (Premium). Menu `Help`: Catatan Rilis · Tentang. Kanan: Perbarui aplikasi (PWA),
+  · Download Report (PDF) (Premium). Menu `Help`: Tentang (catatan rilis internal di `docs/CHANGELOG.md`, tampil di halaman produk homepage). Kanan: Perbarui aplikasi (PWA),
   tema, akun ("Masuk", nonaktif sampai Tahap 4). Tombol panel di kiri menu bar membuka/menutup navigasi.
 - Header tool: kategori, nama, deskripsi SEO (2 baris). Tool tanpa UI baru menampilkan placeholder di kedua tab.
 

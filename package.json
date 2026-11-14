@@ -1,7 +1,7 @@
 {
   "name": "civil-tools",
   "private": true,
-  "version": "0.8.0-dev",
+  "version": "1.0.0",
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {

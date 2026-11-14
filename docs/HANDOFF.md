@@ -11,7 +11,8 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > (`dev.dtswebapp.pages.dev` belum ada) — jadi push ke `main` = rilis ke production. Database dipilih menurut
 > alamat: `tools.edifisia.com` → `edifisia-prod`, `*.pages.dev`/localhost → `edifisia-dev`.
 >
-> **Versi:** masih **v0.8.0-dev** (`package.json`, catatan rilis `date: null`) walau sudah live. Commit terakhir
+> **Versi:** **v1.0.0** (build 2026-11-14). Catatan rilis kini internal di `docs/CHANGELOG.md` (untuk halaman
+> produk homepage) — tidak lagi tampil di aplikasi; dialog Tentang hanya versi & build. Commit terakhir
 > `64b849d` (2026-10-19): branding baru + kartu homepage.
 >
 > **Perubahan 2026-10-19 (`64b849d`, sudah live & dicek di kedua host):**
@@ -24,7 +25,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 >   & `og:image` → PNG. PWA yang sudah terpasang mengambil ikon baru setelah "Perbarui" (ikon layar utama kadang
 >   perlu pasang ulang).
 > - Dialog **Tentang** mengikuti format EDFS Matrix: logo penuh + nama, tagline, "Produk dari Edifisia",
->   versi/build, catatan rilis versi ini (+ tautan semua catatan rilis), disclaimer, ©. Baris kredit
+>   versi/build, disclaimer, © (catatan rilis dihapus dari aplikasi 2026-11-14 → `docs/CHANGELOG.md`). Baris kredit
 >   "Iwal | Edifisia | DTS Engineering" (`CREDIT`) diganti `BRAND_OWNER = 'Edifisia'` (`src/app/appInfo.ts`).
 > - Homepage: kartu tool = ikon + judul; deskripsi (`seo.title`) jadi tooltip CSS saat hover/fokus. Ikon tool di
 >   `src/icons/{id}.svg` (disalin dari `modules/*/icon.svg` agar selamat saat pembersihan build lama; ikon
@@ -35,7 +36,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > 2. Verifikasi tiap tool di browser (angka = golden, kanvas, PDF) belum dilakukan.
 > 3. Belum dicek di domain asli: login email & Google, gating Premium dengan akun prod, unduh PDF; status migrasi
 >    Supabase prod (`scripts/db_migrate.py` + `tests/run.py --applied`, Exposed schemas `tools`) belum dikonfirmasi.
-> 4. Finalisasi versi `0.8.0` + tanggal & catatan rilis.
+> 4. ~~Finalisasi versi + tanggal & catatan rilis~~ — selesai sebagai v1.0.0 (2026-11-14).
 > 5. Search Console (submit `https://tools.edifisia.com/sitemap.xml`) & cek GA4 Realtime dari domain baru.
 > 6. `tools.dtsengineering.co.id` (cPanel) masih build lama ≈ v0.5.1 → ganti dengan `.htaccess` redirect 301:
 >    `RewriteRule ^(.*)$ https://tools.edifisia.com/$1 [R=301,L]` (Tahap 7).
