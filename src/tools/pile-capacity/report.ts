@@ -10,7 +10,7 @@ import { PILE_DEFAULTS, computePileUI, type PileOk, type PileUIInput } from './m
 export { PILE_DEFAULTS }
 
 export const soilName = (s: string): string => (s === 'clay' || s === 'L' ? 'Lempung' : 'Pasir')
-export const methodName = (m: string): string => (m === 'spt' ? 'SPT' : 'Statik')
+export const methodName = (m: string): string => (m === 'spt' ? 'SPT' : m === 'oneill' ? 'O′Neill–Reese' : 'Statik')
 
 /** Gbr. 1 — profil tanah, tiang (cut-off → ujung), MAT, zona NSF (kiri) dan batang fs per segmen (kanan). */
 function figProfile(r: PileOk): Figure {
@@ -112,6 +112,9 @@ function segRow(s: ShaftSegment): string[] {
 
 export function pileReport(r: PileOk): Report {
   const statik = r.method === 'static'
+  const oneill = r.method === 'oneill'
+  /** Kolom c_{u} tampil bila c_{u} dipakai (statik & O'Neill–Reese); φ hanya statik. */
+  const withCu = statik || oneill
   const corr = (v: number, c: boolean, d: number) => fx(v, d) + (c ? '*' : '')
   const data: Section = {
     title: 'Data',
@@ -126,22 +129,23 @@ export function pileReport(r: PileOk): Report {
           kv('Keliling / luas ujung', `${fx(r.perim, 3)} m / ${fx(r.Ap, 4)} m²`),
           kv('D_{w} (muka air)', `${fx(r.Dw, 2)} m`),
           kv('FS tekan / tarik', `${fx(r.FS, 2)} / ${fx(r.FSt, 2)}`),
-          kv('Metode', statik ? 'Statik (lempung α/9c_{u}, pasir β/N_{q})' : 'SPT (Meyerhof)'),
+          kv('Metode', statik ? 'Statik (lempung α/9c_{u}, pasir β/N_{q})' : oneill ? 'O′Neill & Reese (1999), FHWA-IF-99-025' : 'SPT (Meyerhof)'),
           kv('Beban layan P / T', `${fx(r.P, 1)} / ${fx(r.T, 1)} kN`),
         ],
       },
       {
         k: 'table',
-        head: ['Z (m)', 'N-SPT', 'Jenis', 'γ (kN/m³)', ...(statik ? ['c_{u} (kPa)', 'φ (°)'] : [])],
-        align: ['r', 'r', 'l', 'r', ...(statik ? (['r', 'r'] as const) : [])],
+        head: ['Z (m)', 'N-SPT', 'Jenis', 'γ (kN/m³)', ...(withCu ? ['c_{u} (kPa)'] : []), ...(statik ? ['φ (°)'] : [])],
+        align: ['r', 'r', 'l', 'r', ...(withCu ? (['r'] as const) : []), ...(statik ? (['r'] as const) : [])],
         rows: r.rows.map((x) => [
           x.bot !== null ? `${fx(x.z, 2)}–${fx(x.bot, 2)}` : `≥ ${fx(x.z, 2)}`,
           fx(x.N, 0),
           soilName(x.soil),
           corr(x.gamma, x.gammaCorr, 1),
-          ...(statik ? [x.soil === 'L' ? corr(x.cu, x.cuCorr, 1) : '–', x.soil === 'P' ? fx(x.phi, 1) + '*' : '–'] : []),
+          ...(withCu ? [x.soil === 'L' ? corr(x.cu, x.cuCorr, 1) : '–'] : []),
+          ...(statik ? [x.soil === 'P' ? fx(x.phi, 1) + '*' : '–'] : []),
         ]),
-        caption: `* korelasi N-SPT: γ dari tabel konsistensi/kepadatan (Terzaghi–Peck, Bowles)${statik ? '; c_{u} = 6,25 N kPa (Terzaghi–Peck); φ = 27,1 + 0,3 N − 0,00054 N² (Peck–Hanson–Thornburn)' : ''}. Lapis terakhir dianggap menerus ke bawah.`,
+        caption: `* korelasi N-SPT: γ dari tabel konsistensi/kepadatan (Terzaghi–Peck, Bowles)${statik ? '; c_{u} = 6,25 N kPa (Terzaghi–Peck); φ = 27,1 + 0,3 N − 0,00054 N² (Peck–Hanson–Thornburn)' : oneill ? '; c_{u} = 6,25 N kPa (Terzaghi–Peck)' : ''}. Lapis terakhir dianggap menerus ke bawah.`,
       },
     ],
   }
@@ -153,6 +157,8 @@ export function pileReport(r: PileOk): Report {
         k: 'p',
         text: statik
           ? `Lempung (API): f_{s} = α c_{u}, ψ = c_{u}/σ′_{v}, α = 0,5 ψ^{−0,5} (ψ ≤ 1) atau 0,5 ψ^{−0,25} (ψ > 1), α ≤ 1. Pasir: f_{s} = K σ′_{v} tanδ, K = ${fx(r.cK, 1)}(1 − sinφ), δ = ${fx(r.cDelta, 1)} φ. f_{s} dibatasi 120 kPa. σ′_{v} di tengah segmen, γ′ = γ − ${fx(GAMMA_W, 2)} di bawah MAT. Selimut dihitung dari cut-off ${fx(r.zc, 2)} m.`
+          : oneill
+          ? `O′Neill & Reese (1999). Lempung: f_{s} = α c_{u}, α = 0,55 (c_{u}/p_{a} ≤ 1,5) atau 0,55 − 0,1 (c_{u}/p_{a} − 1,5) ≥ 0,45; ${r.orExcl ? '1,5 m teratas (dari cut-off) dan 1D terbawah diabaikan' : 'seluruh panjang selimut diperhitungkan'}. Pasir: f_{s} = β σ′_{v} ≤ 200 kPa, β = 1,5 − 0,245 √z (0,25 ≤ β ≤ 1,2; z dari permukaan, m), dikali N/15 bila N < 15 (N dianggap N_{60}). σ′_{v} di tengah segmen, γ′ = γ − ${fx(GAMMA_W, 2)} di bawah MAT. Selimut dihitung dari cut-off ${fx(r.zc, 2)} m.`
           : `SPT (Meyerhof): f_{s} = ${fx(r.nfSPT, 0)} N kPa (${r.ptype === 'driven' ? 'tiang pancang' : 'tiang bor'}), dibatasi 120 kPa. Selimut dihitung dari cut-off ${fx(r.zc, 2)} m.`,
       },
       {
@@ -169,7 +175,30 @@ export function pileReport(r: PileOk): Report {
 
   const tipSteps: CalcStep[] = []
   const t = r.tipLayer
-  if (t.method === 'spt') {
+  if (t.method === 'oneill' && t.soil === 'clay') {
+    const cu = Number(t.cu)
+    tipSteps.push({ desc: 'Ujung di lempung (O′Neill & Reese)', lhs: 'N_{c}^{*}', expr: '6,5 (c_{u} ≤ 24) → 8,0 (48) → 9,0 (c_{u} ≥ 96 kPa)', subst: `c_{u} = ${fx(cu, 1)} kPa`, value: fx(r.NcStar, 2) })
+    if (r.kShort < 1) tipSteps.push({ desc: 'Tiang pendek (L < 3D)', lhs: 'k_{L}', expr: '\\frac{2}{3} (1 + \\frac{L}{6D})', subst: `\\frac{2}{3} (1 + \\frac{${fx(r.Leff, 2)}}{6 × ${fx(r.D, 3)}})`, value: fx(r.kShort, 3) })
+    tipSteps.push({
+      lhs: 'q_{p}',
+      expr: `${r.kShort < 1 ? 'k_{L} ' : ''}N_{c}^{*} c_{u} ≤ 3830`,
+      subst: `${r.kShort < 1 ? fx(r.kShort, 3) + ' × ' : ''}${fx(r.NcStar, 2)} × ${fx(cu, 1)}`,
+      value: fx(r.qp, 1),
+      unit: 'kPa',
+    })
+  } else if (t.method === 'oneill') {
+    const N = Number(t.N)
+    const red = r.kBase < 1
+    if (red) tipSteps.push({ desc: 'Reduksi diameter besar (D > 1,27 m)', lhs: 'k_{b}', expr: '\\frac{1,27}{D}', subst: `\\frac{1,27}{${fx(r.D, 3)}}`, value: fx(r.kBase, 3) })
+    tipSteps.push({
+      desc: 'Ujung di pasir (O′Neill & Reese)',
+      lhs: 'q_{p}',
+      expr: `${red ? 'k_{b} ' : ''}min(57,5 N; 4300)`,
+      subst: `${red ? fx(r.kBase, 3) + ' × ' : ''}min(57,5 × ${fx(N, 0)}; 4300)`,
+      value: fx(r.qp, 1),
+      unit: 'kPa',
+    })
+  } else if (t.method === 'spt') {
     const sand = t.soil === 'sand'
     const N = Number(t.N)
     const bor = r.ptype === 'bored'
@@ -310,6 +339,8 @@ export function pileReport(r: PileOk): Report {
     scope: [
       statik
         ? 'Selimut: lempung α (API RP2A), pasir β (Meyerhof/Das); ujung: lempung 9 c_{u}, pasir Meyerhof. Parameter tanah dari korelasi N-SPT bila tidak diisi.'
+        : oneill
+        ? 'Selimut & ujung: O′Neill & Reese (1999) untuk tiang bor — lempung α c_{u} & N_{c}^{*} c_{u} ≤ 3830 kPa; pasir β σ′_{v} ≤ 200 kPa & 57,5 N ≤ 4300 kPa. c_{u} dari korelasi N-SPT bila tidak diisi.'
         : 'Selimut & ujung: SPT Meyerhof (f_{s} = n N, q_{p} = 40 N L/D ≤ 400 N / 300 N; tiang bor 1/3-nya).',
       'Tarik: gesekan selimut tereduksi + berat efektif tiang. Penulangan: aksial tekan/tarik murni SNI 2847:2019 (tanpa momen/lateral).',
       'Belum termasuk: efisiensi kelompok, beban lateral & momen, penurunan tiang, beban gempa. Verifikasi dengan uji beban/PDA oleh insinyur penanggung jawab.',

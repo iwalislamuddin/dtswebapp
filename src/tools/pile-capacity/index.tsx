@@ -8,7 +8,7 @@ import { Card, Field, NumField, NumInput, Panel, ResetButton, Segmented, SelectF
 import { DetailTab } from '../../ui/ReportView'
 import type { ToolUIProps } from '../registry'
 import { parseNum } from '../form'
-import { computePileUI, MAX_ROWS, newRow, PILE_DEFAULTS, validate, type PileOk, type PileUIInput, type SptRowUI } from './model'
+import { computePileUI, MAX_ROWS, newRow, uiMethod, PILE_DEFAULTS, validate, type PileOk, type PileUIInput, type SptRowUI } from './model'
 import { pileReport } from './report'
 
 const ID = 'pile-capacity'
@@ -89,9 +89,14 @@ function Inputs({
         </Field>
       </Card>
       <Card n={3} title="Data tanah (SPT)">
-        <Field label="Metode" hint="Berlaku untuk semua lapis. Statik: lempung α·cu & 9cu, pasir β & Nq (φ dari N). SPT: Meyerhof dari N.">
-          <Segmented ariaLabel="Metode" value={input.method} options={[{ value: 'static', label: 'Statik' }, { value: 'spt', label: 'SPT' }]} onChange={(method) => setInput({ method })} />
+        <Field label="Metode" hint="Berlaku untuk semua lapis. Statik: lempung α·cu & 9cu, pasir β & Nq (φ dari N). O'Neill & Reese (FHWA, tiang bor): lempung α·cu & Nc*·cu, pasir β·σ′v & 57,5N.">
+          <Segmented ariaLabel="Metode" value={uiMethod(input.method)} options={[{ value: 'static', label: 'Statik' }, { value: 'oneill', label: "O'Neill & Reese" }]} onChange={(method) => setInput({ method })} />
         </Field>
+        {uiMethod(input.method) === 'oneill' && (
+          <Field label="Abaikan zona atas & bawah" hint="O'Neill & Reese: selimut lempung 1,5 m teratas (dari cut-off) dan 1D terbawah tidak diperhitungkan — pakai bila kadar air berubah musiman (retak susut), ada casing, atau tanah terganggu.">
+            <Segmented ariaLabel="Abaikan zona atas dan bawah" value={input.orExcl} options={[{ value: 'no', label: 'Tidak' }, { value: 'yes', label: 'Ya' }]} onChange={(orExcl) => setInput({ orExcl })} />
+          </Field>
+        )}
         <SptTable input={input} errors={errors} onChange={(rows) => setInput({ rows })} />
       </Card>
       <Card n={4} title="Gesekan negatif">
@@ -124,7 +129,7 @@ function Inputs({
 function SptTable({ input, errors, onChange }: { input: PileUIInput; errors: Record<string, string>; onChange: (rows: SptRowUI[]) => void }) {
   const rows = input.rows
   const set = (i: number, p: Partial<SptRowUI>) => onChange(rows.map((r, k) => (k === i ? { ...r, ...p } : r)))
-  const spt = input.method === 'spt'
+  const oneill = uiMethod(input.method) === 'oneill'
   const full = rows.length >= MAX_ROWS
   return (
     <div className="rt">
@@ -155,7 +160,7 @@ function SptTable({ input, errors, onChange }: { input: PileUIInput; errors: Rec
             {rows.map((r, i) => {
               const e = (k: string) => errors[`rows.${i}.${k}`]
               const N = parseNum(r.N)
-              const cuOff = spt || r.soil === 'P'
+              const cuOff = r.soil === 'P'
               return (
                 <tr key={i}>
                   {(['z', 'N'] as const).map((k) => (
@@ -202,7 +207,7 @@ function SptTable({ input, errors, onChange }: { input: PileUIInput; errors: Rec
       <p className="muted" style={{ margin: 0, fontSize: 11, lineHeight: 1.45 }}>
         Z = kedalaman atas lapis dari permukaan (baris pertama 0); lapis berlaku sampai Z baris berikutnya, baris terakhir menerus ke bawah.
         Jenis: <b>L</b> = Lempung, <b>P</b> = Pasir. γ dan cu kosong = korelasi N-SPT (angka miring): γ dari tabel Terzaghi–Peck/Bowles, cu = 6,25 N kPa.
-        {spt ? ' cu tidak dipakai pada metode SPT.' : ' Pasir statik: φ = 27,1 + 0,3N − 0,00054N².'}
+        {oneill ? ' Pasir O′Neill & Reese: β dari kedalaman & N (N dianggap N60).' : ' Pasir statik: φ = 27,1 + 0,3N − 0,00054N².'}
       </p>
       <button type="button" className="btn small" disabled={full} onClick={() => onChange([...rows, newRow(rows)])} title={full ? `Maksimum ${MAX_ROWS}` : undefined}>
         <Plus size={14} /> Tambah baris

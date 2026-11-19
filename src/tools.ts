@@ -289,7 +289,7 @@ export const TOOLS: ToolEntry[] = [
     ported: true,
     seo: {
       title: "Daya Dukung Tiang dari Data SPT — Tekan, Tarik & Penulangan",
-      desc: "Hitung daya dukung tiang tunggal dari data N-SPT: tahanan ujung + selimut (statik α/β atau SPT Meyerhof), pile cut-off, gesekan negatif, kapasitas tarik, dan penulangan tiang beton SNI 2847:2019.",
+      desc: "Hitung daya dukung tiang tunggal dari data N-SPT: tahanan ujung + selimut (statik α/β atau O'Neill & Reese), pile cut-off, gesekan negatif, kapasitas tarik, dan penulangan tiang beton SNI 2847:2019.",
     },
   },
   {

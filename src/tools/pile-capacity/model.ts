@@ -1,4 +1,4 @@
-import { computePileSpt, type LayerMethod, type PileShape, type PileSptInput, type PileSptResult, type SptSoil } from '../../calc/pile-capacity'
+import { computePileSpt, type PileShape, type PileSptInput, type PileSptResult, type SptSoil } from '../../calc/pile-capacity'
 import { anyNum, checker, nonneg, num, parseNum, pos, type FieldErrors } from '../form'
 
 // Input UI Daya Dukung Tiang (SPT): angka sebagai teks form; data tanah sebagai tabel Z – N-SPT – jenis – γ – cu
@@ -32,8 +32,11 @@ export interface PileUIInput {
   FS: string
   FSt: string
   inclW: 'yes' | 'no'
-  method: LayerMethod
+  /** Statik (α/β) atau O'Neill & Reese. Nilai lama 'spt' (Meyerhof, input versi sebelumnya) dibaca sebagai O'Neill & Reese. */
+  method: UIMethod
   rows: SptRowUI[]
+  /** O'Neill & Reese: abaikan selimut lempung 1,5 m teratas (dari cut-off) & 1D terbawah. */
+  orExcl: 'yes' | 'no'
   nsf: 'yes' | 'no'
   /** Dasar zona gesekan negatif (m dari permukaan). */
   zn: string
@@ -51,12 +54,18 @@ export interface PileUIInput {
   rhoMin: string
 }
 
+export type UIMethod = 'static' | 'oneill'
+
+/** Metode efektif dari input UI (nilai tak dikenal/lama → O'Neill & Reese). */
+export const uiMethod = (m: string): UIMethod => (m === 'static' ? 'static' : 'oneill')
+
 const row = (z: number, N: number, soil: SptSoil): SptRowUI => ({ z: String(z), N: String(N), soil, gamma: '', cu: '' })
 
 export const PILE_DEFAULTS: PileUIInput = {
   shape: 'circular', D: '600', zc: '1.5', L: '15', ptype: 'bored', material: 'concrete',
-  Dw: '2', FS: '2.5', FSt: '3', inclW: 'no', method: 'spt',
+  Dw: '2', FS: '2.5', FSt: '3', inclW: 'no', method: 'oneill',
   rows: [row(0, 3, 'L'), row(2, 5, 'L'), row(4, 7, 'L'), row(6, 12, 'P'), row(8, 16, 'P'), row(10, 21, 'P'), row(12, 27, 'P'), row(14, 34, 'P'), row(16, 45, 'P'), row(18, 50, 'P')],
+  orExcl: 'no',
   nsf: 'no', zn: '6',
   P: '800', T: '150',
   Pu: '1100', Tu: '220', fc: '30', fy: '420', db: '16', ds: '10', cover: '75', rhoMin: '0.5',
@@ -104,7 +113,7 @@ export function validate(i: PileUIInput): FieldErrors {
     set('z', nonneg)
     set('N', nonneg)
     if (r.gamma.trim() !== '') set('gamma', pos)
-    if (i.method === 'static' && r.soil === 'L' && r.cu.trim() !== '') set('cu', pos)
+    if (r.soil === 'L' && r.cu.trim() !== '') set('cu', pos)
     const z = parseNum(r.z)
     if (!e[`rows.${k}.z`] && z !== null) {
       if (k === 0 && z !== 0) e[`rows.${k}.z`] = 'Baris pertama Z = 0'
@@ -120,8 +129,9 @@ export function toCalcInput(i: PileUIInput): PileSptInput {
   const opt = (s: string) => (s.trim() === '' ? null : num(s))
   return {
     shape: i.shape, Dmm: num(i.D), zc: num(i.zc), L: num(i.L), ptype: i.ptype, material: i.material,
-    Dw: num(i.Dw), FS: num(i.FS), FSt: num(i.FSt), inclW: i.inclW, method: i.method,
-    rows: i.rows.map((r) => ({ z: num(r.z), N: num(r.N), soil: r.soil, gamma: opt(r.gamma), cu: i.method === 'static' ? opt(r.cu) : null })),
+    Dw: num(i.Dw), FS: num(i.FS), FSt: num(i.FSt), inclW: i.inclW, method: uiMethod(i.method),
+    rows: i.rows.map((r) => ({ z: num(r.z), N: num(r.N), soil: r.soil, gamma: opt(r.gamma), cu: opt(r.cu) })),
+    orExcl: uiMethod(i.method) === 'oneill' && i.orExcl === 'yes',
     nsf: i.nsf === 'yes', zn: num(i.zn),
     P: num(i.P), T: num(i.T),
     rebar: i.material === 'concrete'
