@@ -11,7 +11,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 > (`dev.dtswebapp.pages.dev` belum ada) — jadi push ke `main` = rilis ke production. Database dipilih menurut
 > alamat: `tools.edifisia.com` → `edifisia-prod`, `*.pages.dev`/localhost → `edifisia-dev`.
 >
-> **Versi:** **v1.0.0** (build 2026-11-14). Catatan rilis kini internal di `docs/CHANGELOG.md` (untuk halaman
+> **Versi:** **v1.0.0** (build ulang 2026-11-20, termasuk O'Neill & Reese). Catatan rilis kini internal di `docs/CHANGELOG.md` (untuk halaman
 > produk homepage) — tidak lagi tampil di aplikasi; dialog Tentang hanya versi & build. Commit terakhir
 > `64b849d` (2026-10-19): branding baru + kartu homepage.
 >
