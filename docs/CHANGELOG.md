@@ -4,11 +4,13 @@ Catatan rilis **internal**: tidak lagi ditampilkan di dalam aplikasi (dialog Ten
 build). Teks di sini disiapkan untuk halaman produk di homepage Edifisia. Terbaru di atas.
 
 Saat rilis: naikkan `version` di `package.json` (tampil di dialog Tentang; tanggal build otomatis dari
-`vite.config.ts`) lalu tambahkan bagian baru di sini.
+`vite.config.ts`) lalu tambahkan bagian baru di sini. Salinan untuk situs Edifisia (format
+`web/src/content/changelog/civil-tools/<versi>.<id|en>.md` di edifisia-platform, juga sumber newsletter bulanan) ada
+di [`docs/release-notes/civil-tools/`](release-notes/civil-tools/).
 
 ---
 
-## v1.0.0 — 2026-11-14
+## v1.0.0 — 2026-11-20
 
 Rilis stabil pertama EDFS Civil Tools: 37 kalkulator rekayasa sipil sesuai SNI dalam 7 kategori — Beton, Baja,
 Struktur Bawah, Geoteknik, Pembebanan, Hidraulika, dan Analisis Struktur.
@@ -18,6 +20,7 @@ Struktur Bawah, Geoteknik, Pembebanan, Hidraulika, dan Analisis Struktur.
 - Tema Light & Dark dengan warna olive EDFS, logo & ikon baru Civil Tools.
 - Input yang nyaman di ponsel: tombol −/+ dan pilihan nilai umum (chip) pada isian angka.
 - Bisa dipasang sebagai aplikasi (PWA) dan dibuka langsung lewat alamat per tool.
+- Tautan contoh perhitungan (tombol "Lihat detail" di halaman Coba edifisia.com) membuka tool dengan input terisi.
 
 **Akun & Premium**
 - Masuk dengan akun Edifisia (email atau Google) — satu akun untuk semua aplikasi Edifisia.
@@ -33,6 +36,11 @@ Struktur Bawah, Geoteknik, Pembebanan, Hidraulika, dan Analisis Struktur.
 - Cek Desain Balok Beton: lentur lapangan & tumpuan, geser, dan torsi opsional.
 - Base Plate: tumpuan sendi & jepit, dengan beban aktual atau desain kapasitas.
 - Diagram P–M Kolom menerima banyak kombinasi beban sekaligus; D/C terbesar menentukan.
+- Daya Dukung Tiang (SPT): metode O'Neill & Reese (FHWA, tiang bor) menggantikan SPT Meyerhof; pilihan metode Statik
+  (α/β) atau O'Neill & Reese. Lempung: fs = α·cu (α = 0,55 → 0,45), ujung Nc*·cu ≤ 3.830 kPa (faktor tiang pendek
+  L < 3D). Pasir: fs = β·σ′v ≤ 200 kPa (β = 1,5 − 0,245√z, × N/15 bila N < 15), ujung 57,5N ≤ 4.300 kPa (× 1,27/D
+  bila D > 1,27 m). Opsi abaikan selimut lempung 1,5 m teratas & 1D terbawah; cu lempung dipakai. Pekerjaan lama
+  bermetode SPT dibuka sebagai O'Neill & Reese (hasil bisa berbeda).
 - Daya Dukung Tiang (SPT): data tanah berupa tabel Z–N-SPT (γ/cu dari korelasi bila kosong), pile cut-off,
   diameter dalam mm, gesekan negatif, kapasitas tarik, dan penulangan tiang beton.
 - Daya Dukung Tanah (CPT) dipindah ke kelompok Daya Dukung Tanah.
