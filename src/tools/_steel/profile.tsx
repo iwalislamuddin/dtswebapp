@@ -129,9 +129,9 @@ export function GradeFields({
   )
 }
 
-/** Sub-teks & warna kartu ringkasan dari rasio D/C (null = beban belum diisi). */
+/** Sub-teks & warna kartu ringkasan dari rasio (null = beban belum diisi). */
 export const dcSub = (v: number | null | undefined) =>
-  v == null ? { sub: 'beban belum diisi' } : { sub: `D/C ${fx(v, 2)} · ${v <= 1 ? 'OK' : 'NG'}`, tone: v <= 1 ? ('ok' as const) : ('bad' as const) }
+  v == null ? { sub: 'beban belum diisi' } : { sub: `Rasio ${fx(v, 2)} · ${v <= 1 ? 'OK' : 'NG'}`, tone: v <= 1 ? ('ok' as const) : ('bad' as const) }
 
 /** Baris laporan: profil & mutu. */
 export function profileRows(ptype: string, p: SteelProfile, Fy: number, Fu?: number): Row[] {

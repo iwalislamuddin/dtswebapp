@@ -336,9 +336,9 @@ function Results({ r, stale }: { r: AnchorBoltGroupResult | null; stale: boolean
             <h4 className="results-h">Ringkasan</h4>
             <StatTiles
               items={[
-                { label: `D/C menentukan (${r.gov})`, value: Number.isFinite(r.govDC) ? fx(r.govDC, 2) : '∞', sub: r.govDC <= 1 ? 'OK' : 'NG', tone: r.govDC <= 1 ? 'ok' : 'bad' },
-                { label: 'D/C tarik (baja · jebol)', value: `${fx(r.dcSteel, 2)} · ${fx(r.dcConc, 2)}`, sub: `Tmaks ${fx(r.Tmax, 1)} kN · ΣT ${fx(r.sumTt, 1)} kN` },
-                ...(r.Vu > 0 ? [{ label: `D/C geser (${r.govShear})`, value: fx(r.dcShear, 2), sub: `Vu/n ${fx(r.Vbolt, 1)} kN` }] : []),
+                { label: `Rasio menentukan (${r.gov})`, value: Number.isFinite(r.govDC) ? fx(r.govDC, 2) : '∞', sub: r.govDC <= 1 ? 'OK' : 'NG', tone: r.govDC <= 1 ? 'ok' : 'bad' },
+                { label: 'Rasio tarik (baja · jebol)', value: `${fx(r.dcSteel, 2)} · ${fx(r.dcConc, 2)}`, sub: `Tmaks ${fx(r.Tmax, 1)} kN · ΣT ${fx(r.sumTt, 1)} kN` },
+                ...(r.Vu > 0 ? [{ label: `Rasio geser (${r.govShear})`, value: fx(r.dcShear, 2), sub: `Vu/n ${fx(r.Vbolt, 1)} kN` }] : []),
                 ...(r.combined != null ? [{ label: 'Interaksi 5/3', value: fx(r.combined, 2), sub: r.combined <= 1 ? 'OK' : 'NG', tone: r.combined <= 1 ? ('ok' as const) : ('bad' as const) }] : []),
               ]}
             />

@@ -30,7 +30,7 @@ export interface CptPileUIInput {
   /** FS ujung (kosong/0 = 3) dan selimut (kosong/0 = 5). */
   FSp: string
   FSs: string
-  /** Beban kerja (kN); 0 = tanpa rasio D/C. */
+  /** Beban kerja (kN); 0 = tanpa rasio. */
   Pw: string
 }
 

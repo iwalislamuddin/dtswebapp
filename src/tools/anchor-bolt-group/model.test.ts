@@ -68,7 +68,7 @@ describe('anchor bolt group — laporan', () => {
     const tbl = rep.sections[1].blocks.find((b) => b.k === 'table')
     const T = tbl?.k === 'table' ? tbl.rows.slice(0, -1).map((x) => Number(x[3])) : []
     expect(T.reduce((a, b) => a + b, 0)).toBeCloseTo(r.Nu, 1)
-    expect(rep.governing).toEqual({ label: `D/C menentukan (${r.gov})`, ratio: r.govDC })
+    expect(rep.governing).toEqual({ label: `Rasio menentukan (${r.gov})`, ratio: r.govDC })
   })
 
   it('tanpa geser: bagian geser tidak ada; interaksi 5/3 dilaporkan bila keduanya > 0,2', () => {

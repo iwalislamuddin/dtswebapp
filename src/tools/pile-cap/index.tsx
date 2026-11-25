@@ -260,7 +260,7 @@ function Results({ r, stale, reject }: { r: PileCapResult | null; stale: boolean
     <Panel
       title="Pemeriksaan"
       className="results-panel"
-      tools={<SubTabs ariaLabel="Diagram" value={tab} tabs={[{ id: 'rasio', label: 'Rasio D/C' }, { id: 'reaksi', label: 'Reaksi tiang' }]} onChange={setTab} />}
+      tools={<SubTabs ariaLabel="Diagram" value={tab} tabs={[{ id: 'rasio', label: 'Rasio' }, { id: 'reaksi', label: 'Reaksi tiang' }]} onChange={setTab} />}
     >
       <div className="results">
         {status && <p className="msg bad">{status}</p>}

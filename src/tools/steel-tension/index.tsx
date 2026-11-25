@@ -94,8 +94,8 @@ function Inputs({
       </Card>
       <Card n={3} title="Batang & beban">
         <NumField label="Panjang batang L" unit="mm" value={input.L} error={errors.L} hint="Untuk cek kelangsingan L/r ≤ 300." onChange={(L) => setInput({ L })} />
-        <NumField label="Pu — tarik terfaktor (DFBK)" unit="kN" value={input.Pu} error={errors.Pu} hint="0 = lewati D/C." onChange={(Pu) => setInput({ Pu })} />
-        <NumField label="Pa — tarik layan (ASD)" unit="kN" value={input.Pa} error={errors.Pa} hint="0 = lewati D/C." onChange={(Pa) => setInput({ Pa })} />
+        <NumField label="Pu — tarik terfaktor (DFBK)" unit="kN" value={input.Pu} error={errors.Pu} hint="0 = lewati rasio." onChange={(Pu) => setInput({ Pu })} />
+        <NumField label="Pa — tarik layan (ASD)" unit="kN" value={input.Pa} error={errors.Pa} hint="0 = lewati rasio." onChange={(Pa) => setInput({ Pa })} />
       </Card>
     </>
   )
@@ -182,7 +182,7 @@ type Tab = 'lrfd' | 'asd'
 
 function Results({ r, stale }: { r: SteelTensionResult | null; stale: boolean }) {
   const [tab, setTab] = useState<Tab>('lrfd')
-  const status = stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : r && !(r.Pu! > 0) && !(r.Pa_dem! > 0) ? 'Isi Pu (DFBK) atau Pa (ASD) untuk menghitung D/C.' : null
+  const status = stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : r && !(r.Pu! > 0) && !(r.Pa_dem! > 0) ? 'Isi Pu (DFBK) atau Pa (ASD) untuk menghitung rasio.' : null
   const lrfd = tab === 'lrfd'
   return (
     <Panel

@@ -102,8 +102,8 @@ function Inputs({
         )}
       </Card>
       <Card n={3} title="Momen">
-        <NumField label="Mu — momen terfaktor (DFBK)" unit="kN·m" value={input.Mu} error={errors.Mu} hint="0 = lewati D/C." onChange={(Mu) => setInput({ Mu })} />
-        <NumField label="Ma — momen layan (ASD)" unit="kN·m" value={input.Ma} error={errors.Ma} hint="0 = lewati D/C." onChange={(Ma) => setInput({ Ma })} />
+        <NumField label="Mu — momen terfaktor (DFBK)" unit="kN·m" value={input.Mu} error={errors.Mu} hint="0 = lewati rasio." onChange={(Mu) => setInput({ Mu })} />
+        <NumField label="Ma — momen layan (ASD)" unit="kN·m" value={input.Ma} error={errors.Ma} hint="0 = lewati rasio." onChange={(Ma) => setInput({ Ma })} />
       </Card>
     </>
   )
@@ -271,7 +271,7 @@ function Results({ o, stale }: { o: Outcome | null; stale: boolean }) {
   const [tabSel, setTab] = useState<Tab>('kurva')
   const tab: Tab = ltb ? tabSel : 'batas'
   const tabs = ltb ? [{ id: 'kurva' as const, label: 'Kurva Mn–Lb' }, { id: 'batas' as const, label: 'Keadaan batas' }] : [{ id: 'batas' as const, label: 'Keadaan batas' }]
-  const status = stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : r && !(r.Mu! > 0) && !(r.MaDem! > 0) ? 'Isi Mu (DFBK) atau Ma (ASD) untuk menghitung D/C.' : null
+  const status = stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : r && !(r.Mu! > 0) && !(r.MaDem! > 0) ? 'Isi Mu (DFBK) atau Ma (ASD) untuk menghitung rasio.' : null
   return (
     <Panel title="Kapasitas" className="results-panel" tools={<SubTabs ariaLabel="Diagram" value={tab} tabs={tabs} onChange={setTab} />}>
       <div className="results">

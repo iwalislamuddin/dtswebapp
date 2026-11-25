@@ -44,7 +44,7 @@ export interface BearingInput {
   method?: BearingMethod
   tfail?: 'general' | 'local'
   FS: NumLike
-  /** Tekanan kerja (kPa), 0 = tanpa rasio D/C. */
+  /** Tekanan kerja (kPa), 0 = tanpa rasio. */
   qapp: NumLike
 }
 

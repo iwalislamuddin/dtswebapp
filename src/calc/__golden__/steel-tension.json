@@ -1270,7 +1270,7 @@
   }
  },
  {
-  "name": "D/C terlampaui",
+  "name": "Rasio terlampaui",
   "fn": "compute",
   "args": [
    {
@@ -1357,7 +1357,7 @@
   }
  },
  {
-  "name": "D/C aman",
+  "name": "Rasio aman",
   "fn": "compute",
   "args": [
    {

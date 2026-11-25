@@ -141,7 +141,7 @@ function Inputs({
   )
 }
 
-/** Kartu D/C; `info` = hanya informasi (tidak menentukan, tanpa warna OK/NG). */
+/** Kartu rasio; `info` = hanya informasi (tidak menentukan, tanpa warna OK/NG). */
 const dcTile = (label: string, dc: number, info?: string) => ({
   label,
   value: Number.isFinite(dc) ? fx(dc, 2) : '∞',
@@ -164,12 +164,12 @@ function Results({ r, stale }: { r: BoltConnectionResult | null; stale: boolean 
             <h4 className="results-h">Ringkasan</h4>
             <StatTiles
               items={[
-                dcTile(`D/C menentukan (${r.gov})`, r.govDC),
+                dcTile(`Rasio menentukan (${r.gov})`, r.govDC),
                 { label: 'φRn geser grup efektif', value: fx(r.phiRge, 1), unit: 'kN', sub: `${r.n} baut M${fx(r.d, 0)}` },
-                // geser murni: D/C geser = D/C menentukan, tak perlu kartu kedua
-                ...(r.Vu > 0 && r.Tu > 0 ? [dcTile('D/C geser grup', r.dcShear)] : []),
-                ...(r.Tu > 0 ? [dcTile('D/C tarik', r.dcTension)] : []),
-                ...(r.Vu > 0 && r.Tu > 0 ? [dcTile('D/C kombinasi J3.7', r.dcComboInfo, r.comboNeeded ? undefined : 'info, tak wajib')] : []),
+                // geser murni: Rasio geser = Rasio menentukan, tak perlu kartu kedua
+                ...(r.Vu > 0 && r.Tu > 0 ? [dcTile('Rasio geser grup', r.dcShear)] : []),
+                ...(r.Tu > 0 ? [dcTile('Rasio tarik', r.dcTension)] : []),
+                ...(r.Vu > 0 && r.Tu > 0 ? [dcTile('Rasio kombinasi J3.7', r.dcComboInfo, r.comboNeeded ? undefined : 'info, tak wajib')] : []),
               ]}
             />
             {r.warn.length > 0 && (

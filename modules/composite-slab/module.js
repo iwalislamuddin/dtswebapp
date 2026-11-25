@@ -621,7 +621,7 @@
     if (r.comp) {
       results.appendChild(UI.kv('dp (ke titik berat dek)', UI.fmt(r.dp, 0) + ' mm · a ' + UI.fmt(r.aPos, 1) + ' mm'));
       results.appendChild(UI.kv('Gaya tarik dek T = Ase·fyd', UI.fmt(r.Tpos, 0) + ' kN/m'));
-      results.appendChild(UI.kv('φMn+ ≥ Mu+', UI.fmt(r.phiMnPos, 2) + ' ≥ ' + UI.fmt(r.Mpos, 2) + ' kN·m/m · D/C ' + UI.fmt(r.posDCR, 2), posTone));
+      results.appendChild(UI.kv('φMn+ ≥ Mu+', UI.fmt(r.phiMnPos, 2) + ' ≥ ' + UI.fmt(r.Mpos, 2) + ' kN·m/m · Rasio ' + UI.fmt(r.posDCR, 2), posTone));
       if (r.aInRib) results.appendChild(UI.kv('Catatan', 'a > tc — blok tekan masuk rusuk; tinjau lebih teliti', 'bad'));
     } else {
       results.appendChild(UI.kv('Tul. bawah (non-komposit) d ' + UI.fmt(r.dBot, 0), 'D' + r.dbBot + '-' + r.asBot.s + ' (As ' + UI.fmt(r.asBot.AsProv, 0) + ' mm²/m)' + (r.asBot.govMin ? ' As,min' : ''), r.asBot.infeasible ? 'bad' : 'ok'));

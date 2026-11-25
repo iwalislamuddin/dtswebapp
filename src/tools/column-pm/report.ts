@@ -193,12 +193,12 @@ export function columnReport(r: ColumnResult): Report {
           ? [
               {
                 k: 'table' as const,
-                head: ['#', 'P_{u} (kN)', 'M_{ux} (kN·m)', 'M_{uy} (kN·m)', 'M_{u} (kN·m)', 'φM_{n} (kN·m)', 'D/C'],
+                head: ['#', 'P_{u} (kN)', 'M_{ux} (kN·m)', 'M_{uy} (kN·m)', 'M_{u} (kN·m)', 'φM_{n} (kN·m)', 'Rasio'],
                 align: ['l', 'r', 'r', 'r', 'r', 'r', 'r'] as ('l' | 'c' | 'r')[],
                 caption: `Semua beban terfaktor; φM_{n} = kapasitas searah beban pada irisan P = P_{u}. Beban penentu: ${r.gov + 1}.`,
                 rows: r.loads.map((l, k) => [String(k + 1), fx(l.Pu, 0), fx(l.Mux, 1), fx(l.Muy, 1), fx(l.Mu, 1), l.capM ? fx(l.capM.m, 1) : '—', l.dc != null ? fx(l.dc, 3) : '—']),
               },
-              { k: 'p' as const, text: `Rincian beban penentu ${r.gov + 1} (D/C terbesar):` },
+              { k: 'p' as const, text: `Rincian beban penentu ${r.gov + 1} (rasio terbesar):` },
             ]
           : []),
         {
@@ -206,10 +206,10 @@ export function columnReport(r: ColumnResult): Report {
           steps: [
             { lhs: 'M_{u}', expr: '√(M_{ux}^{2} + M_{uy}^{2})', subst: `√(${fx(r.Mux, 1)}^{2} + ${fx(r.Muy, 1)}^{2})`, value: fx(r.Mu, 1), unit: 'kN·m' },
             ...(r.capM ? [{ desc: `Irisan permukaan pada P_{u} = ${fx(r.Pu, 0)} kN, searah beban`, lhs: 'φM_{n}', value: fx(r.capM.m, 1), unit: 'kN·m' }] : []),
-            ...(r.dc != null ? [{ lhs: 'D/C', expr: r.capM ? '\\frac{M_{u}}{φM_{n}}' : r.Pu > r.phiPnMax! ? '\\frac{P_{u}}{φP_{n,maks}}' : undefined, value: fx(r.dc, 3) }] : []),
+            ...(r.dc != null ? [{ lhs: 'Rasio', expr: r.capM ? '\\frac{M_{u}}{φM_{n}}' : r.Pu > r.phiPnMax! ? '\\frac{P_{u}}{φP_{n,maks}}' : undefined, value: fx(r.dc, 3) }] : []),
           ],
         },
-        ...(r.dc != null ? [{ k: 'rows' as const, rows: [check('D/C kolom', r.dc)] }] : []),
+        ...(r.dc != null ? [{ k: 'rows' as const, rows: [check('Rasio kolom', r.dc)] }] : []),
         ...(biax && r.contour && r.contour.length >= 8 ? [{ k: 'figure' as const, fig: figContour(r) }] : []),
       ],
     },
@@ -224,7 +224,7 @@ export function columnReport(r: ColumnResult): Report {
       ...(r.dc != null ? [check(`${many ? `Beban penentu ${r.gov + 1} dari ${r.loads.length}: ` : 'Beban '}P_{u} = ${fx(r.Pu, 0)} kN, M_{u} = ${fx(r.Mu, 1)} kN·m`, r.dc)] : []),
     ],
     sections,
-    ...(r.dc != null ? { governing: { label: 'D/C kolom', ratio: r.dc } } : {}),
+    ...(r.dc != null ? { governing: { label: 'Rasio kolom', ratio: r.dc } } : {}),
     warnings: r.warn,
     scope: [
       'Kolom pendek: M_{ux}, M_{uy} harus sudah termasuk pembesaran momen orde-2 (6.6.4). Penampang L/T dihitung terhadap sentroid geometris.',

@@ -138,7 +138,7 @@
     /* ---- Pons tiang terkritis ---- */
     r.punchPile = punchPile(r);
 
-    // Rekap D/C governing
+    // Rekap rasio governing
     var checks = [
       { name: 'Lentur X', dc: r.flexX.dc }, { name: 'Lentur Y', dc: r.flexY.dc },
       { name: 'Geser 1-arah X', dc: r.vx.dc }, { name: 'Geser 1-arah Y', dc: r.vy.dc },
@@ -441,7 +441,7 @@
       ' · Ru,maks ' + UI.fmt(r.Rmax, 0) + ' kN');
 
     results.appendChild(UI.heroRow([
-      { label: 'D/C — ' + r.gov.name, value: UI.fmt(r.gov.dc, 2), unit: r.ok ? 'AMAN' : 'NG', tone: r.ok ? 'ok' : 'bad' },
+      { label: 'Rasio — ' + r.gov.name, value: UI.fmt(r.gov.dc, 2), unit: r.ok ? 'AMAN' : 'NG', tone: r.ok ? 'ok' : 'bad' },
       { label: 'Ru maks / tiang', value: UI.fmt(r.Rmax, 1), unit: 'kN' },
       { label: 'Ru min / tiang', value: UI.fmt(r.Rmin, 1), unit: 'kN', tone: r.Rmin >= -1e-6 ? '' : 'bad' }
     ]));
@@ -478,7 +478,7 @@
     results.appendChild(UI.rhead('Pons dua-arah kolom (Ps. 22.6)'));
     results.appendChild(UI.kv('b0 keliling (d/2)', UI.fmt(pc.b0, 0) + ' mm  ·  β = ' + UI.fmt(pc.beta, 2)));
     results.appendChild(UI.kv('vc', UI.fmt(pc.vc, 3) + ' MPa  →  φVc = ' + UI.fmt(pc.phiVc, 0) + ' kN'));
-    results.appendChild(UI.kv('Vu / φVc', UI.fmt(pc.Vu, 0) + ' / ' + UI.fmt(pc.phiVc, 0) + ' kN  (D/C ' + UI.fmt(pc.dc, 2) + ')', dcState(pc.dc)));
+    results.appendChild(UI.kv('Vu / φVc', UI.fmt(pc.Vu, 0) + ' / ' + UI.fmt(pc.phiVc, 0) + ' kN  (rasio ' + UI.fmt(pc.dc, 2) + ')', dcState(pc.dc)));
 
     // Pons tiang
     var pp = r.punchPile;
@@ -486,7 +486,7 @@
     results.appendChild(UI.kv('Tiang # / posisi', (pp.i != null ? (pp.i + 1) : '—') + ' · ' +
       (pp.sides === 4 ? 'dalam' : pp.sides === 3 ? 'tepi' : 'sudut') + ' (αs=' + pp.alphaS + ')'));
     results.appendChild(UI.kv('b0 keliling terpangkas', UI.fmt(pp.b0, 0) + ' mm'));
-    results.appendChild(UI.kv('Vu(=Ru) / φVc', UI.fmt(pp.Vu, 0) + ' / ' + UI.fmt(pp.phiVc, 0) + ' kN  (D/C ' + UI.fmt(pp.dc, 2) + ')', dcState(pp.dc)));
+    results.appendChild(UI.kv('Vu(=Ru) / φVc', UI.fmt(pp.Vu, 0) + ' / ' + UI.fmt(pp.phiVc, 0) + ' kN  (rasio ' + UI.fmt(pp.dc, 2) + ')', dcState(pp.dc)));
 
     if (r.warn.length)
       results.appendChild(UI.note('Peringatan',
@@ -507,12 +507,12 @@
     results.appendChild(UI.kv('As pakai ' + tag + (o.AsMinGov ? ' (As,min)' : ''),
       o.nBar + 'D' + r.db + ' = ' + UI.fmt(o.AsProv, 0) + ' mm² @' + UI.fmt(o.spacing, 0) + ' mm',
       o.spacing <= o.sMax ? 'ok' : 'bad'));
-    results.appendChild(UI.kv('φMn ' + tag + '  (D/C)', UI.fmt(o.phiMn, 0) + ' kNm  (' + UI.fmt(o.dc, 2) + ')', dcState(o.dc)));
+    results.appendChild(UI.kv('φMn ' + tag + '  (rasio)', UI.fmt(o.phiMn, 0) + ' kNm  (' + UI.fmt(o.dc, 2) + ')', dcState(o.dc)));
   }
 
   function shearRow(results, UI, tag, o) {
     results.appendChild(UI.kv(tag + ' — Vu / φVc',
-      state.UI.fmt(o.Vu, 0) + ' / ' + state.UI.fmt(o.phiVc, 0) + ' kN  (D/C ' + state.UI.fmt(o.dc, 2) + ')', dcState(o.dc)));
+      state.UI.fmt(o.Vu, 0) + ' / ' + state.UI.fmt(o.phiVc, 0) + ' kN  (rasio ' + state.UI.fmt(o.dc, 2) + ')', dcState(o.dc)));
   }
 
   /* ================= KANVAS (denah) ================= */
@@ -698,7 +698,7 @@
     }
     var yCap = Y(-r.Ly / 2) + 34;
     ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Denah poer ' + r.n + ' tiang (angka = reaksi kN) - ' +
-      'governing: ' + tolatin(r.gov.name) + ' D/C ' + numR(r.gov.dc, 2), size: 7.5, align: 'c' });
+      'governing: ' + tolatin(r.gov.name) + ' Rasio ' + numR(r.gov.dc, 2), size: 7.5, align: 'c' });
     return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
       alt: 'Gbr. 1 Denah poer & reaksi tiang - lihat versi PDF' } };
   }
@@ -769,8 +769,8 @@
     L.push('');
     L.push(' OUTPUT');
     L.push(ruleR('='));
-    L.push(rowR('>> GOVERNING', r.gov.name + '  D/C = ' + numR(r.gov.dc, 2)));
-    L.push(rowR('>> STATUS', r.ok ? 'AMAN (semua D/C <= 1,0)' : 'TIDAK OK - perbesar poer/tebal'));
+    L.push(rowR('>> GOVERNING', r.gov.name + '  Rasio = ' + numR(r.gov.dc, 2)));
+    L.push(rowR('>> STATUS', r.ok ? 'AMAN (semua rasio <= 1,0)' : 'TIDAK OK - perbesar poer/tebal'));
     L.push(ruleR('='));
     if (r.warn.length) {
       L.push('');

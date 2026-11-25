@@ -4,7 +4,7 @@
 //   Penampang = poligon (lingkaran: 128 sisi) dipusatkan di sentroid geometris. Untuk tiap arah sumbu netral θ dan
 //   kedalaman c: ε = 0,003(c − u)/c, fs klem ±fy, baja di blok tekan dikoreksi −0,85f'c; blok a = β1·c hasil clip
 //   Sutherland–Hodgman (berlaku cembung/cekung). φ dari εt baja terjauh (0,65/0,75 → 0,90); φPn ≤ φ·(0,80|0,85)·Po.
-//   Cek biaksial: iris permukaan desain di P = Pu → kontur; D/C = |Mu|/|Mkap| pada arah atan2(Muy, Mux).
+//   Cek biaksial: iris permukaan desain di P = Pu → kontur; Rasio = |Mu|/|Mkap| pada arah atan2(Muy, Mux).
 // TIDAK termasuk: kelangsingan/orde-2 (Mu sudah diperbesar), detail gempa, sentroid plastis untuk L/T.
 // Urutan operasi sengaja identik dengan build lama (banyak nilai mendekati nol yang peka pembulatan).
 
@@ -570,7 +570,7 @@ export function computeColumnPM(v: ColumnPMInput): ColumnPMResult {
   }
   if (shape === 'L' || shape === 'T')
     r.warn.push('Penampang tak-simetris: momen dihitung terhadap SENTROID GEOMETRIS beton bruto (bukan sentroid plastis) — disarankan verifikasi tambahan untuk kombinasi beban kritis pada kolom ' + shape + '.')
-  if (dc != null && dc > 1) r.warn.push('D/C = ' + dc.toFixed(2) + ' > 1 — titik beban di LUAR permukaan desain.')
+  if (dc != null && dc > 1) r.warn.push('Rasio = ' + dc.toFixed(2) + ' > 1 — titik beban di LUAR permukaan desain.')
   r.warn.push('Kelangsingan/momen orde-2 TIDAK diperhitungkan — Mux & Muy harus sudah termasuk pembesaran momen (Ps. 6.6.4).')
   return r
 }

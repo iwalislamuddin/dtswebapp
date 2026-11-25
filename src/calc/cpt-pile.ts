@@ -26,7 +26,7 @@ export interface CptPileInput {
   FSp: NumLike
   /** FS selimut, 0 = 5. */
   FSs: NumLike
-  /** Beban kerja (kN), 0 = tanpa cek D/C. */
+  /** Beban kerja (kN), 0 = tanpa cek rasio. */
   Pw: NumLike
 }
 
@@ -117,6 +117,6 @@ export function computeCptPile(v: CptPileInput, pts: CptPoint[]): CptPileResult 
     r.warn.push('qp = ' + (qp / 1000).toFixed(1) + ' MPa sangat tinggi — pastikan tiang benar-benar mencapai lapisan ini dan tinjau batas struktural penampang tiang.')
   if (Lp - 8 * D < 0) r.warn.push('Zona 8D di atas ujung terpotong permukaan (L < 8D) — qc2 dirata-rata dari 0.')
   r.warn.push('Kapasitas STRUKTURAL penampang tiang (bahan) tidak dicek di sini.')
-  if (dc > 1) r.warn.push('D/C = ' + dc.toFixed(2) + ' > 1 — beban kerja melampaui Q izin.')
+  if (dc > 1) r.warn.push('Rasio = ' + dc.toFixed(2) + ' > 1 — beban kerja melampaui Q izin.')
   return r
 }

@@ -128,7 +128,7 @@
     if (soil === 'sand')
       r.warn.push('q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).');
     r.warn.push('σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual.');
-    if (r.dc > 1) r.warn.push('D/C = ' + r.dc.toFixed(2) + ' > 1 — beban kerja melampaui daya dukung izin.');
+    if (r.dc > 1) r.warn.push('Rasio = ' + r.dc.toFixed(2) + ' > 1 — beban kerja melampaui daya dukung izin.');
 
     return r;
   }
@@ -277,7 +277,7 @@
       { type: 'number', id: 'FS', label: 'Faktor keamanan FS (lempung)', value: 3, min: 1.5, step: 0.5 },
 
       { type: 'group', label: 'Beban (opsional)' },
-      { type: 'number', id: 'qw', label: 'Tekanan kerja neto q', unit: 'kPa', value: 0, min: 0, step: 10, hint: '0 = tanpa cek D/C.' }
+      { type: 'number', id: 'qw', label: 'Tekanan kerja neto q', unit: 'kPa', value: 0, min: 0, step: 10, hint: '0 = tanpa cek rasio.' }
     ];
 
     var results = UI.el('div', 'cb-res');
@@ -356,7 +356,7 @@
       { label: 'q izin NETO (' + r.method + ')', value: UI.fmt(r.qaNet, 0), unit: 'kPa' },
       { label: 'q izin BRUTO', value: UI.fmt(r.qaGross, 0), unit: 'kPa' },
       r.dc > 0
-        ? { label: 'D/C = qkerja/qizin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
+        ? { label: 'Rasio = qkerja/qizin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
         : { label: 'qc̄ rata-rata', value: (r.qcb / 1000).toFixed(2), unit: 'MPa' }
     ]));
 
@@ -379,7 +379,7 @@
     }
     results.appendChild(UI.kv('q,izin BRUTO (+σv0)', UI.fmt(r.qaGross, 0) + ' kPa'));
     if (r.dc > 0)
-      results.appendChild(UI.kv('D/C = q kerja / q izin neto', UI.fmt(r.dc, 2), r.dc <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio = q kerja / q izin neto', UI.fmt(r.dc, 2), r.dc <= 1 ? 'ok' : 'bad'));
 
     var warnHtml = r.warn.length
       ? '<ul style="margin:6px 0 0 16px">' + r.warn.map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>'
@@ -502,7 +502,7 @@
     }
     L.push(rowR('>> q IZIN NETO', numR(r.qaNet, 0) + ' kPa'));
     L.push(rowR('   q izin BRUTO (+sigv0)', numR(r.qaGross, 0) + ' kPa'));
-    if (r.dc > 0) L.push(rowR('>> D/C (q kerja ' + numR(r.qw, 0) + ')', numR(r.dc, 2) + (r.dc <= 1 ? ' OK' : ' NG')));
+    if (r.dc > 0) L.push(rowR('>> Rasio (q kerja ' + numR(r.qw, 0) + ')', numR(r.dc, 2) + (r.dc <= 1 ? ' OK' : ' NG')));
     L.push(ruleR('='));
 
     if (r.warn.length) {

@@ -215,10 +215,10 @@ export function computeBoltConnection(v: BoltConnectionInput): BoltConnectionRes
   if (Vu > 0 && Tu > 0 && !comboNeeded)
     warn.push('Interaksi J3.7 tidak wajib ditinjau (tegangan perlu ≤ 30% tersedia) — nilai tetap ditampilkan sebagai info.')
   if (r.dcShear > 1)
-    warn.push('D/C geser grup = ' + r.dcShear.toFixed(2) + ' > 1 — tambah baut/diameter, atau perbaiki tumpu (t, le, s).')
-  if (r.dcTension > 1) warn.push('D/C tarik = ' + r.dcTension.toFixed(2) + ' > 1 — tambah baut atau perbesar diameter.')
+    warn.push('Rasio geser grup = ' + r.dcShear.toFixed(2) + ' > 1 — tambah baut/diameter, atau perbaiki tumpu (t, le, s).')
+  if (r.dcTension > 1) warn.push('Rasio tarik = ' + r.dcTension.toFixed(2) + ' > 1 — tambah baut atau perbesar diameter.')
   if (r.dcCombo > 1)
-    warn.push('D/C kombinasi tarik+geser = ' + r.dcCombo.toFixed(2) + ' > 1 (J3.7) — kombinasi menentukan.')
+    warn.push('Rasio kombinasi tarik+geser = ' + r.dcCombo.toFixed(2) + ' > 1 (J3.7) — kombinasi menentukan.')
 
   return r
 }

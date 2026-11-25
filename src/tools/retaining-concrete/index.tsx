@@ -108,7 +108,7 @@ function Results({ r, stale, reject }: { r: ConcreteWallResult | null; stale: bo
     <Panel
       title="Pemeriksaan"
       className="results-panel"
-      tools={<SubTabs ariaLabel="Diagram" value={tab} tabs={[{ id: 'rasio', label: 'Rasio D/C' }, { id: 'tumpu', label: 'Tumpu terfaktor' }]} onChange={setTab} />}
+      tools={<SubTabs ariaLabel="Diagram" value={tab} tabs={[{ id: 'rasio', label: 'Rasio' }, { id: 'tumpu', label: 'Tumpu terfaktor' }]} onChange={setTab} />}
     >
       <div className="results">
         {status && <p className="msg bad">{status}</p>}

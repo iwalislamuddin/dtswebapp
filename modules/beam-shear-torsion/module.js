@@ -270,7 +270,7 @@
     }
 
     var worst = Math.max(r.ratioV, r.torsionNeglig ? 0 : r.ratioT, r.ratioSec, r.ratioTrans, r.ratioAl);
-    state.cap.set('φVn ' + UI.fmt(r.phiVnkN, 0) + ' kN · φTn ' + UI.fmt(r.phiTnkNm, 1) + ' kN·m · D/C ' + UI.fmt(worst, 2));
+    state.cap.set('φVn ' + UI.fmt(r.phiVnkN, 0) + ' kN · φTn ' + UI.fmt(r.phiTnkNm, 1) + ' kN·m · Rasio ' + UI.fmt(worst, 2));
 
     results.appendChild(UI.heroRow([
       { label: 'φVn (geser)', value: UI.fmt(r.phiVnkN, 0), unit: 'kN' },
@@ -647,7 +647,7 @@
     L.push(rowR('phiVn', numR(r.phiVnkN, 1) + ' kN'));
     L.push(rowR('phiTn', numR(r.phiTnkNm, 2) + ' kN.m'));
     var worst = Math.max(r.ratioV, r.torsionNeglig ? 0 : r.ratioT, r.ratioSec, r.ratioTrans, r.ratioAl);
-    L.push(rowR('>> D/C maksimum', numR(worst, 3) + (worst <= 1 ? ' OK' : ' GAGAL')));
+    L.push(rowR('>> Rasio maksimum', numR(worst, 3) + (worst <= 1 ? ' OK' : ' GAGAL')));
     L.push(ruleR('='));
 
     var notes = r.warn.slice();

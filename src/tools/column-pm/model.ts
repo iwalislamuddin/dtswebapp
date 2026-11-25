@@ -2,7 +2,7 @@ import { checkLoad, computeColumnPM, type ColumnPMInput, type ColumnPMResult, ty
 import { checker, intRange, num, parseNum, pos, type FieldErrors } from '../form'
 
 // Input UI Diagram P–M Kolom: angka sebagai teks form; field per bentuk penampang; beban terfaktor bisa banyak
-// (semua diplot, D/C terbesar menentukan). toCalcInput() → compute lama dengan beban pertama.
+// (semua diplot, rasio terbesar menentukan). toCalcInput() → compute lama dengan beban pertama.
 
 export type { FieldErrors }
 
@@ -93,7 +93,7 @@ export function toCalcInput(i: ColumnInput): ColumnPMInput {
 /** Hasil kolom + cek tiap beban; Pu, Mux, Muy, Mu, contour, capM, dc milik beban penentu `gov`. */
 export type ColumnResult = ColumnPMResult & { loads: LoadCheck[]; gov: number }
 
-const isLoadWarn = (w: string) => w.startsWith('Pu = ') || w.startsWith('Pu tarik') || w.startsWith('D/C = ')
+const isLoadWarn = (w: string) => w.startsWith('Pu = ') || w.startsWith('Pu tarik') || w.startsWith('Rasio = ')
 
 /** Hitung; null bila input tidak valid atau geometri tidak konsisten. */
 export function computeColumn(i: ColumnInput): ColumnResult | null {
@@ -106,7 +106,7 @@ export function computeColumn(i: ColumnInput): ColumnResult | null {
   // Banyak beban: peringatan beban diberi nomor; data cek di r diganti milik beban penentu.
   const perLoad = loads.flatMap((l, k) => [
     ...(l.axialWarn ? [`Beban ${k + 1}: ${l.axialWarn}`] : []),
-    ...(l.dc != null && l.dc > 1 ? [`Beban ${k + 1}: D/C = ${l.dc.toFixed(2)} > 1 — titik beban di LUAR permukaan desain.`] : []),
+    ...(l.dc != null && l.dc > 1 ? [`Beban ${k + 1}: Rasio = ${l.dc.toFixed(2)} > 1 — titik beban di LUAR permukaan desain.`] : []),
   ])
   const warn = r.warn.filter((w) => !isLoadWarn(w))
   warn.splice(Math.max(0, warn.length - 1), 0, ...perLoad)

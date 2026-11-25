@@ -258,7 +258,7 @@ function Preview({ r, stale }: { r: BasePlateResult | null; stale: boolean }) {
   )
 }
 
-/** Batang D/C tiap pemeriksaan; garis putus = 1,0. */
+/** Batang rasio tiap pemeriksaan; garis putus = 1,0. */
 function DcBars({ checks, w, h }: { checks: BaseCheck[]; w: number; h: number }) {
   if (w < 180 || h < 80 || !checks.length) return null
   const padL = Math.min(230, w * 0.5), padR = 48, padT = 10, padB = 22
@@ -268,7 +268,7 @@ function DcBars({ checks, w, h }: { checks: BaseCheck[]; w: number; h: number })
   const X = (v: number) => padL + (Math.min(Number.isFinite(v) ? v : top, top) / top) * (w - padL - padR)
   const gov = checks.reduce((a, c) => (c.dc > a.dc ? c : a), checks[0])
   return (
-    <svg width={w} height={h} className="dg" role="img" aria-label="Rasio D/C tiap pemeriksaan">
+    <svg width={w} height={h} className="dg" role="img" aria-label="Rasio tiap pemeriksaan">
       {checks.map((c, i) => {
         const y = padT + i * rowH + (rowH - barH) / 2
         const bad = c.dc > 1
@@ -287,7 +287,7 @@ function DcBars({ checks, w, h }: { checks: BaseCheck[]; w: number; h: number })
       })}
       <line x1={X(1)} y1={padT - 4} x2={X(1)} y2={h - padB + 4} stroke="var(--danger)" strokeDasharray="4 3" />
       <text x={padL} y={h - 6} className="dg-note">
-        D/C = kebutuhan / kapasitas rencana · garis putus = 1,0
+        Rasio = kebutuhan / kapasitas rencana · garis putus = 1,0
       </text>
     </svg>
   )
@@ -307,7 +307,7 @@ function Results({ r, stale }: { r: BasePlateResult | null; stale: boolean }) {
             <StatTiles
               items={[
                 {
-                  label: `D/C menentukan${r.gov ? ` (${r.gov.label})` : ''}`,
+                  label: `Rasio menentukan${r.gov ? ` (${r.gov.label})` : ''}`,
                   value: r.gov ? fx(r.gov.dc, 2) : '-',
                   sub: r.gov ? (r.gov.dc <= 1 ? 'OK' : 'NG') : undefined,
                   tone: r.gov ? (r.gov.dc <= 1 ? ('ok' as const) : ('bad' as const)) : undefined,

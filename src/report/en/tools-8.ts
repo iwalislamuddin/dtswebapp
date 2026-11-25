@@ -115,14 +115,14 @@ export default {
 
   // rekap & ringkasan
   "Rekapitulasi": "Summary of checks",
-  "Rasio D/C tiap pemeriksaan": "D/C ratio of each check",
+  "Rasio tiap pemeriksaan": "Ratio of each check",
   "Gbr. 3 — Rasio kebutuhan / kapasitas tiap pemeriksaan.": "Fig. 3 — Demand / capacity ratio of each check.",
   "Perletakan / rezim": "Base / regime",
   "Beban rencana P_{u} / M_{u} / V_{u}": "Design loads P_{u} / M_{u} / V_{u}",
   "Tebal pelat perlu / pasang": "Plate thickness required / provided",
   "Tarik per angkur T_{angkur}": "Tension per anchor T_{anchor}",
   "Menentukan: {0}": "Governing: {0}",
-  "D/C menentukan ({0})": "Governing D/C ({0})",
+  "Rasio menentukan ({0})": "Governing ratio ({0})",
 
   // label pemeriksaan (src/calc/base-plate.ts)
   "Tumpu beton fp ≤ φc·fp(max)": "Concrete bearing fp ≤ φc·fp(max)",
@@ -165,5 +165,5 @@ export default {
   "Gaya angkat (uplift): tidak ada tumpu beton, seluruh gaya ditahan angkur.": "Uplift: no concrete bearing, the entire force is resisted by the anchors.",
   "Desain kapasitas jepit: las kolom–pelat sebaiknya CJP (SNI 7860 Ps. D2.6c); cek las sudut di sini sebagai pembanding.": "Fixed capacity design: the column–plate weld should be CJP (SNI 7860 Sec. D2.6c); the fillet weld check here is for comparison.",
   "tp < 12 mm — DG1 menganjurkan tebal minimum ±12 mm untuk ereksi dan kerataan.": "tp < 12 mm — DG1 recommends a minimum thickness of about 12 mm for erection and flatness.",
-  "D/C menentukan = {0} > 1 ({1}) — ubah dimensi/mutu.": "Governing D/C = {0} > 1 ({1}) — revise dimensions/grades.",
+  "Rasio menentukan = {0} > 1 ({1}) — ubah dimensi/mutu.": "Governing ratio = {0} > 1 ({1}) — revise dimensions/grades.",
 } as Record<string, string>

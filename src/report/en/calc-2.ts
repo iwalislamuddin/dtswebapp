@@ -26,7 +26,7 @@ export default {
   "e = {0} m > B/6 = {1} m — resultan layan di luar inti tengah.": "e = {0} m > B/6 = {1} m — service resultant outside the middle third.",
   "qmax = {0} kPa > q_izin = {1} kPa — daya dukung TIDAK memadai.": "qmax = {0} kPa > q_all = {1} kPa — bearing capacity NOT adequate.",
   "STEM: {0}": "STEM: {0}",
-  "kapasitas lentur tidak cukup (D/C {0}).": "insufficient flexural capacity (D/C {0}).",
+  "kapasitas lentur tidak cukup (rasio {0}).": "insufficient flexural capacity (ratio {0}).",
   "STEM: geser Vu {0} kN > φVc {1} kN — pertebal dasar stem.": "STEM: shear Vu {0} kN > φVc {1} kN — thicken the stem base.",
   "TOE: {0}": "TOE: {0}",
   "kapasitas lentur tidak cukup.": "insufficient flexural capacity.",
@@ -260,7 +260,7 @@ export default {
   "Las longitudinal end-loaded dengan Lw/w = {0} > 100 — reduksi β = {1} diterapkan.": "End-loaded longitudinal weld with Lw/w = {0} > 100 — reduction β = {1} applied.",
   "Data logam dasar (t, Fy, Fu) belum lengkap — cek logam dasar dilewati; kapasitas = las saja.": "Base metal data (t, Fy, Fu) incomplete — base metal check skipped; capacity = weld only.",
   "Faktor arah kd = {0} hanya sah untuk las sudut SATU arah beban seragam — jangan pakai untuk grup las multi-arah tanpa J2.4(c).": "Directional factor kd = {0} is valid only for fillet welds with uniform load in ONE direction — do not use for multi-orientation weld groups without J2.4(c).",
-  "D/C = {0} > 1 — perbesar w / perpanjang Lw{1}.": "D/C = {0} > 1 — increase w / lengthen Lw{1}.",
+  "Rasio = {0} > 1 — perbesar w / perpanjang Lw{1}.": "Ratio = {0} > 1 — increase w / lengthen Lw{1}.",
   " (logam dasar menentukan: perbesar t)": " (base metal governs: increase t)",
   // wind-load
   "Lengkapi V, B, L, dan H (> 0).": "Enter V, B, L, and H (> 0).",

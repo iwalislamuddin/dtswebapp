@@ -445,8 +445,8 @@
       { type: 'number', id: 'Cbval', label: 'Cb manual', unit: '', value: 1.0, min: 1.0, max: 3.0, step: 0.01, hint: 'Cb=1,0 konservatif. Cb memperhitungkan gradien momen pada segmen tak-terkekang.' },
 
       { type: 'group', label: 'Beban (momen)' },
-      { type: 'number', id: 'Mu', label: 'Mu — momen terfaktor (DFBK)', unit: 'kN·m', value: 0, min: 0, step: 5, hint: '0 = lewati rasio D/C.' },
-      { type: 'number', id: 'Ma', label: 'Ma — momen layan (ASD)', unit: 'kN·m', value: 0, min: 0, step: 5, hint: '0 = lewati rasio D/C.' }
+      { type: 'number', id: 'Mu', label: 'Mu — momen terfaktor (DFBK)', unit: 'kN·m', value: 0, min: 0, step: 5, hint: '0 = lewati rasio.' },
+      { type: 'number', id: 'Ma', label: 'Ma — momen layan (ASD)', unit: 'kN·m', value: 0, min: 0, step: 5, hint: '0 = lewati rasio.' }
     ];
 
     function ltbApplies(vals) {

@@ -112,7 +112,7 @@ export interface BasePlateInput {
 export interface BaseCheck {
   key: string
   label: string
-  /** Kebutuhan & kapasitas (satuan `unit`), rasio D/C. */
+  /** Kebutuhan & kapasitas (satuan `unit`), rasio. */
   dem: number
   cap: number
   dc: number
@@ -572,7 +572,7 @@ export function computeBasePlate(v: BasePlateInput): BasePlateResult {
   if (regime === 'uplift') warn.push('Gaya angkat (uplift): tidak ada tumpu beton, seluruh gaya ditahan angkur.')
   if (!pinned && v.loadMode === 'capacity') warn.push('Desain kapasitas jepit: las kolom–pelat sebaiknya CJP (SNI 7860 Ps. D2.6c); cek las sudut di sini sebagai pembanding.')
   if (pinned && tp > 0 && tp < 12) warn.push('tp < 12 mm — DG1 menganjurkan tebal minimum ±12 mm untuk ereksi dan kerataan.')
-  if (gov && gov.dc > 1) warn.push('D/C menentukan = ' + gov.dc.toFixed(2) + ' > 1 (' + gov.label + ') — ubah dimensi/mutu.')
+  if (gov && gov.dc > 1) warn.push('Rasio menentukan = ' + gov.dc.toFixed(2) + ' > 1 (' + gov.label + ') — ubah dimensi/mutu.')
 
   return {
     valid: true, noSol,

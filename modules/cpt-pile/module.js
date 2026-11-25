@@ -138,7 +138,7 @@
     if (Lp - 8 * D < 0)
       r.warn.push('Zona 8D di atas ujung terpotong permukaan (L < 8D) — qc2 dirata-rata dari 0.');
     r.warn.push('Kapasitas STRUKTURAL penampang tiang (bahan) tidak dicek di sini.');
-    if (r.dc > 1) r.warn.push('D/C = ' + r.dc.toFixed(2) + ' > 1 — beban kerja melampaui Q izin.');
+    if (r.dc > 1) r.warn.push('Rasio = ' + r.dc.toFixed(2) + ' > 1 — beban kerja melampaui Q izin.');
 
     return r;
   }
@@ -411,7 +411,7 @@
       { label: 'Q izin total', value: UI.fmt(r.Qall, 0), unit: 'kN' },
       { label: 'Qp ujung (ult)', value: UI.fmt(r.Qp, 0), unit: 'kN' },
       r.dc > 0
-        ? { label: 'D/C = P/Qizin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
+        ? { label: 'Rasio = P/Qizin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
         : { label: 'Qs selimut (ult)', value: UI.fmt(r.Qs, 0), unit: 'kN' }
     ]));
 
@@ -432,7 +432,7 @@
     results.appendChild(UI.kv('Q izin (FS terpisah ' + r.FSp + '/' + r.FSs + ')', UI.fmt(r.Qall, 0) + ' kN', 'ok'));
     results.appendChild(UI.kv('Pembanding: Qu/2,5 (FS global)', UI.fmt(r.QallGlobal, 0) + ' kN'));
     if (r.dc > 0)
-      results.appendChild(UI.kv('D/C = P/Q izin', UI.fmt(r.dc, 2), r.dc <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio = P/Q izin', UI.fmt(r.dc, 2), r.dc <= 1 ? 'ok' : 'bad'));
 
     var warnHtml = r.warn.length
       ? '<ul style="margin:6px 0 0 16px">' + r.warn.map(function (w) { return '<li>' + w + '</li>'; }).join('') + '</ul>'
@@ -572,7 +572,7 @@
     L.push(rowR('Qu = Qp + Qs', numR(r.Qu, 0) + ' kN'));
     L.push(rowR('>> Q IZIN (Qp/' + r.FSp + ' + Qs/' + r.FSs + ')', numR(r.Qall, 0) + ' kN'));
     L.push(rowR('   pembanding Qu/2.5', numR(r.QallGlobal, 0) + ' kN'));
-    if (r.dc > 0) L.push(rowR('>> D/C (P=' + numR(r.Pw, 0) + ' kN)', numR(r.dc, 2) + (r.dc <= 1 ? ' OK' : ' NG')));
+    if (r.dc > 0) L.push(rowR('>> Rasio (P=' + numR(r.Pw, 0) + ' kN)', numR(r.dc, 2) + (r.dc <= 1 ? ' OK' : ' NG')));
     L.push(ruleR('='));
 
     if (r.warn.length) {

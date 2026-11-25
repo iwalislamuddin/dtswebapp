@@ -65,9 +65,9 @@ describe('sambungan las — laporan', () => {
     expect(v['R_{nw}']).toBe(r.Rnw.toFixed(2))
     expect(v['φR_{n,leleh}']).toBe(r.phiRyBase.toFixed(2))
     expect(v['φR_{n}']).toBe(r.phiRn.toFixed(2))
-    expect(v['D/C']).toBe(r.dc.toFixed(3))
+    expect(v['Rasio']).toBe(r.dc.toFixed(3))
     expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(2)
-    expect(rep.governing).toEqual({ label: 'D/C (las menentukan)', ratio: r.dc })
+    expect(rep.governing).toEqual({ label: 'Rasio (las menentukan)', ratio: r.dc })
   })
 
   it('end-loaded Lw/w 150: langkah β (J2-1)', () => {
@@ -76,7 +76,7 @@ describe('sambungan las — laporan', () => {
     expect(v['β']).toBe(computeWeld(ui)!.beta.toFixed(3))
   })
 
-  it('logam dasar kosong & tanpa beban: bagian dilewati, tanpa D/C menentukan', () => {
+  it('logam dasar kosong & tanpa beban: bagian dilewati, tanpa rasio menentukan', () => {
     const rep = buildWeldReport(fromGolden('logam dasar kosong'))!
     expect(steps(rep).some((s) => s.lhs === 'A_{gv}')).toBe(false)
     expect(buildWeldReport(fromGolden('tanpa beban'))!.governing).toBeUndefined()

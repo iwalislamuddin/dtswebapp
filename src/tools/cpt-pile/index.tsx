@@ -80,7 +80,7 @@ function Inputs({
         {(input.fsrc === 'rf' || !hasFs) && f('Rf', 'Rf — rasio gesek', '%', hasFs ? 'fs = Rf × qc. Kosong/0 = 1.' : 'Data tanpa kolom fs: fs = Rf × qc. Kosong/0 = 1.')}
         {f('FSp', 'FS ujung', undefined, 'Kosong/0 = 3.')}
         {f('FSs', 'FS selimut', undefined, 'Kosong/0 = 5.')}
-        {f('Pw', 'P — beban kerja (opsional)', 'kN', '0 = lewati rasio D/C.')}
+        {f('Pw', 'P — beban kerja (opsional)', 'kN', '0 = lewati rasio.')}
       </Card>
     </>
   )

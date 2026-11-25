@@ -422,8 +422,8 @@
    "valid": true,
    "warn": [
     "Interaksi J3.7 tidak wajib ditinjau (tegangan perlu ≤ 30% tersedia) — nilai tetap ditampilkan sebagai info.",
-    "D/C geser grup = Infinity > 1 — tambah baut/diameter, atau perbaiki tumpu (t, le, s).",
-    "D/C tarik = Infinity > 1 — tambah baut atau perbesar diameter."
+    "Rasio geser grup = Infinity > 1 — tambah baut/diameter, atau perbaiki tumpu (t, le, s).",
+    "Rasio tarik = Infinity > 1 — tambah baut atau perbesar diameter."
    ],
    "grade": "custom",
    "gradeLabel": "Kustom",
@@ -1625,7 +1625,7 @@
   "output": {
    "valid": true,
    "warn": [
-    "D/C kombinasi tarik+geser = 1.16 > 1 (J3.7) — kombinasi menentukan."
+    "Rasio kombinasi tarik+geser = 1.16 > 1 (J3.7) — kombinasi menentukan."
    ],
    "grade": "a325",
    "gradeLabel": "A325 / Gr.8.8",
@@ -2026,7 +2026,7 @@
   "output": {
    "valid": true,
    "warn": [
-    "D/C geser grup = 1.71 > 1 — tambah baut/diameter, atau perbaiki tumpu (t, le, s)."
+    "Rasio geser grup = 1.71 > 1 — tambah baut/diameter, atau perbaiki tumpu (t, le, s)."
    ],
    "grade": "a325",
    "gradeLabel": "A325 / Gr.8.8",

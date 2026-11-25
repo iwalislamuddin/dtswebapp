@@ -23,7 +23,7 @@ describe('batang tekan baja — input UI', () => {
     expect(goldenDiff(computeCompression(COMPRESSION_DEFAULTS)!, byName('default').output)).toEqual([])
   })
 
-  it.each(['L 9000', 'torsi menentukan', 'Kz & Lz kosong', 'K preset jepit', 'K manual', 'sumbu kuat', 'KL/r > 200', 'WF sayap langsing', 'UNP', 'siku', 'SHS langsing', 'RHS', 'pipa langsing', 'CNP', 'D/C'])(
+  it.each(['L 9000', 'torsi menentukan', 'Kz & Lz kosong', 'K preset jepit', 'K manual', 'sumbu kuat', 'KL/r > 200', 'WF sayap langsing', 'UNP', 'siku', 'SHS langsing', 'RHS', 'pipa langsing', 'CNP', 'Rasio'])(
     'kasus golden "%s" lewat input UI identik',
     (name) => {
       const ui = fromGolden(name)
@@ -61,12 +61,12 @@ describe('batang tekan baja — laporan', () => {
     expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(2)
   })
 
-  it('elastis memakai E3-3; HSS tanpa bagian torsi; D/C menentukan', () => {
+  it('elastis memakai E3-3; HSS tanpa bagian torsi; Rasio menentukan', () => {
     const rep = buildCompressionReport(fromGolden('L 9000'))!
     expect(steps(rep).find((s) => s.lhs === 'F_{cr}')!.ref).toBe('E3-3')
     const hss = buildCompressionReport(fromGolden('RHS'))!
     expect(hss.sections.some((s) => s.title.includes('torsi'))).toBe(false)
-    const d = buildCompressionReport(fromGolden('D/C'))!
-    expect(d.governing?.label).toBe('D/C DFBK menentukan')
+    const d = buildCompressionReport(fromGolden('Rasio'))!
+    expect(d.governing?.label).toBe('Rasio DFBK menentukan')
   })
 })

@@ -61,7 +61,7 @@ export function rejectReason(i: ConcreteWallUIInput): string | null {
   return r.valid ? null : r.warn[0] ?? 'Input tidak dapat dihitung.'
 }
 
-/** Rasio D/C struktur: lentur & geser stem, toe, heel (toe/heel yang tidak ada dilewati). ∞ bila penampang tak cukup. */
+/** Rasio struktur: lentur & geser stem, toe, heel (toe/heel yang tidak ada dilewati). ∞ bila penampang tak cukup. */
 export function structRatios(r: ConcreteWallResult): { label: string; ratio: number }[] {
   const one = (f: WallFlexure | undefined, label: string) => {
     if (!f) return []

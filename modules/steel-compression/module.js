@@ -269,8 +269,8 @@
       { type: 'number', id: 'Lz', label: 'Lz — panjang tak-terkekang torsi (WF)', unit: 'mm', value: 3000, min: 0, step: 100, hint: 'Jarak antar pengaku puntir. Umumnya = panjang penuh; tekuk torsi menentukan bila Lz > Ly.' },
 
       { type: 'group', label: 'Beban' },
-      { type: 'number', id: 'Pu', label: 'Pu — gaya tekan terfaktor (DFBK)', unit: 'kN', value: 0, min: 0, step: 10, hint: '0 = lewati rasio D/C.' },
-      { type: 'number', id: 'Pa', label: 'Pa — gaya tekan layan (ASD)', unit: 'kN', value: 0, min: 0, step: 10, hint: '0 = lewati rasio D/C.' }
+      { type: 'number', id: 'Pu', label: 'Pu — gaya tekan terfaktor (DFBK)', unit: 'kN', value: 0, min: 0, step: 10, hint: '0 = lewati rasio.' },
+      { type: 'number', id: 'Pa', label: 'Pa — gaya tekan layan (ASD)', unit: 'kN', value: 0, min: 0, step: 10, hint: '0 = lewati rasio.' }
     ];
 
     function syncVisibility(vals) {

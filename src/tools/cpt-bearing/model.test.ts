@@ -56,7 +56,7 @@ describe('daya dukung CPT — laporan', () => {
     expect(v['q_{a,bruto}']).toBe(r.qaGross.toFixed(1))
   })
 
-  it('satu gambar; rasio D/C hanya bila q kerja diisi; lempung memakai su', () => {
+  it('satu gambar; rasio hanya bila q kerja diisi; lempung memakai su', () => {
     const rep = buildCptBearingReport(CPT_BEARING_DEFAULTS)!
     expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(1)
     expect(rep.governing).toBeUndefined()

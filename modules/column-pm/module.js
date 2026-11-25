@@ -25,7 +25,7 @@
    - φ dari εt baja tarik terjauh (Tabel 21.2.2): 0,65/0,75 → 0,90
      transisi εty..εty+0,003; plafon aksial φPn ≤ φ·(0,80|0,85)·Po (22.4.2).
    - Cek biaksial: IRIS permukaan desain pada P = Pu → kontur (φMnx, φMny);
-     D/C = |Mu| / |Mkap| pada arah β = atan2(Muy, Mux) (metode kontur beban
+     Rasio = |Mu| / |Mkap| pada arah β = atan2(Muy, Mux) (metode kontur beban
      eksak dari permukaan — bukan pendekatan Bresler).
    - Tulangan: Persegi = pola keliling nx×ny (existing). Lingkaran = n
      batang tersebar merata sudut. L/T = batang WAJIB di tiap sudut
@@ -467,7 +467,7 @@
     }
     if (shape === 'L' || shape === 'T')
       r.warn.push('Penampang tak-simetris: momen dihitung terhadap SENTROID GEOMETRIS beton bruto (bukan sentroid plastis) — disarankan verifikasi tambahan untuk kombinasi beban kritis pada kolom ' + shape + '.');
-    if (dc != null && dc > 1) r.warn.push('D/C = ' + dc.toFixed(2) + ' > 1 — titik beban di LUAR permukaan desain.');
+    if (dc != null && dc > 1) r.warn.push('Rasio = ' + dc.toFixed(2) + ' > 1 — titik beban di LUAR permukaan desain.');
     r.warn.push('Kelangsingan/momen orde-2 TIDAK diperhitungkan — Mux & Muy harus sudah termasuk pembesaran momen (Ps. 6.6.4).');
 
     return r;
@@ -852,7 +852,7 @@
     panel.appendChild(UI.el('h2', null, 'Diagram P–M Kolom'));
     panel.appendChild(UI.el('div', 'sub', 'Permukaan interaksi 3D aksial–momen dua arah (P–Mx–My) kolom beton — ' +
       'persegi, lingkaran, L, atau T — via kompatibilitas regangan sumbu netral miring, SNI 2847:2019. ' +
-      'Cek biaksial: iris permukaan di P = Pu, D/C pada arah momen resultan. Putar: seret · Zoom: roda · Geser: klik-kanan.'));
+      'Cek biaksial: iris permukaan di P = Pu, rasio pada arah momen resultan. Putar: seret · Zoom: roda · Geser: klik-kanan.'));
     layout.appendChild(panel);
 
     var schema = [
@@ -996,11 +996,11 @@
 
     var biax = Math.abs(r.Muy) > 0.001 && Math.abs(r.Mux) > 0.001;
     state.cap.set(sectionLabel(r) + ' · ' + r.nBars + 'D' + r.db +
-      (r.dc != null ? ' · D/C ' + r.dc.toFixed(2) + (biax ? ' (biaksial)' : '') : ''));
+      (r.dc != null ? ' · Rasio ' + r.dc.toFixed(2) + (biax ? ' (biaksial)' : '') : ''));
 
     if (r.dc != null)
       results.appendChild(UI.heroRow([
-        { label: 'D/C ' + (biax ? 'biaksial' : 'uniaksial'), value: UI.fmt(r.dc, 2),
+        { label: 'Rasio ' + (biax ? 'biaksial' : 'uniaksial'), value: UI.fmt(r.dc, 2),
           unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' },
         { label: '|Mu| resultan', value: UI.fmt(r.Mu, 1), unit: 'kN·m' },
         r.capM
@@ -1040,7 +1040,7 @@
       if (r.capM)
         results.appendChild(UI.kv('Kapasitas se-arah di iris Pu', 'φMnx ' + UI.fmt(r.capM.Mx, 1) +
           ' · φMny ' + UI.fmt(r.capM.My, 1) + ' → |φMn| ' + UI.fmt(r.capM.m, 1) + ' kN·m'));
-      results.appendChild(UI.kv('D/C = |Mu| / |φMn|', UI.fmt(r.dc, 2), r.dc <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio = |Mu| / |φMn|', UI.fmt(r.dc, 2), r.dc <= 1 ? 'ok' : 'bad'));
     }
 
     var warnHtml = r.warn.length
@@ -1270,7 +1270,7 @@
     ops.push({ t: 'text', x: dx + 6, y: dy - 3, s: '(Mux, Muy)', size: 6 });
     var yCap = cyc + half + 28;
     ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 3  Kontur kapasitas biaksial di P = Pu = ' +
-      numR(r.Pu, 0) + ' kN' + (r.dc != null ? '  (D/C = ' + numR(r.dc, 2) + ')' : ''), size: 7.5, align: 'c' });
+      numR(r.Pu, 0) + ' kN' + (r.dc != null ? '  (rasio = ' + numR(r.dc, 2) + ')' : ''), size: 7.5, align: 'c' });
     return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
       alt: 'Gbr. 3 Kontur kapasitas biaksial - lihat versi PDF' } };
   }
@@ -1319,7 +1319,7 @@
       L.push(rowR('Pu / Mux / Muy', numR(r.Pu, 0) + ' kN / ' + numR(r.Mux, 1) + ' / ' + numR(r.Muy, 1) + ' kNm'));
       L.push(rowR('|Mu| resultan', numR(r.Mu, 1) + ' kNm'));
       if (r.capM) L.push(rowR('|phiMn| se-arah di P=Pu', numR(r.capM.m, 1) + ' kNm'));
-      L.push(rowR('>> D/C = |Mu|/|phiMn|', numR(r.dc, 2) + (r.dc <= 1 ? ' OK' : ' NG')));
+      L.push(rowR('>> Rasio = |Mu|/|phiMn|', numR(r.dc, 2) + (r.dc <= 1 ? ' OK' : ' NG')));
       L.push(ruleR('='));
     }
     if (r.contour && r.contour.length >= 8) {

@@ -24,7 +24,7 @@ export interface TensionInput extends SteelGradeInput {
   Uval: string
   /** mm */
   L: string
-  /** kN; 0 = lewati D/C. */
+  /** kN; 0 = lewati rasio. */
   Pu: string
   Pa: string
 }

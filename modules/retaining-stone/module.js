@@ -605,7 +605,7 @@
       { nm: 'Guling', val: r.FSot, lim: r.FSotT, ok: r.okOt, txt: 'FS ' + r.FSot.toFixed(2) },
       { nm: 'Geser', val: r.FSsl, lim: r.FSslT, ok: r.okSl, txt: 'FS ' + r.FSsl.toFixed(2) },
       { nm: 'D.dukung', val: (r.dcQ !== null) ? r.dcQ : null, lim: 1, ok: r.okQ, inv: true,
-        txt: (r.dcQ !== null) ? ('D/C ' + r.dcQ.toFixed(2)) : 'q_izin = 0' },
+        txt: (r.dcQ !== null) ? ('Rasio ' + r.dcQ.toFixed(2)) : 'q_izin = 0' },
       { nm: 'e ≤ B/6', val: Math.abs(r.e) / (r.B / 6), lim: 1, ok: r.okE, inv: true,
         txt: 'e ' + r.e.toFixed(3) + ' m' }
     ];

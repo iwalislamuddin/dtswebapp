@@ -9,7 +9,7 @@ import { FOOTING_DEFAULTS, computeFootingUI, type FootingUIInput } from './model
 
 export { FOOTING_DEFAULTS }
 
-/** Rasio D/C tiap pemeriksaan (≤ 1 = OK) — dipakai UI (diagram) dan laporan. */
+/** Rasio tiap pemeriksaan (≤ 1 = OK) — dipakai UI (diagram) dan laporan. */
 export function footingRatios(r: FootingResult): { label: string; ratio: number }[] {
   const out = [{ label: 'Daya dukung qmax/qa', ratio: r.qmax! / r.qa! }]
   if (Number.isFinite(r.SFot)) out.push({ label: 'Guling 1,5/SF', ratio: 1.5 / r.SFot! })

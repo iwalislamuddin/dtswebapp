@@ -22,7 +22,7 @@ export interface CptBearingUIInput {
   /** Lempung: faktor kerucut Nk (kosong = 14), FS (kosong = 3). */
   Nk: string
   FS: string
-  /** Tekanan kerja neto (kPa); 0 = tanpa rasio D/C. */
+  /** Tekanan kerja neto (kPa); 0 = tanpa rasio. */
   qw: string
 }
 

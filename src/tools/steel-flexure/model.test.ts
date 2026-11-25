@@ -21,7 +21,7 @@ function fromGolden(name: string): FlexureInput {
 const UI_CASES = [
   'Lb 9000', 'Lb kecil', 'Lb 0', 'Cb 1,14', 'Cb kantilever', 'Cb manual', 'WF sayap non-kompak', 'WF sayap langsing', 'WF sumbu lemah',
   'WF sumbu lemah non-kompak', 'UNP sumbu kuat', 'SHS (leleh', 'SHS sayap non-kompak', 'SHS sayap langsing', 'RHS LTB elastis', 'RHS LTB inelastis',
-  'RHS sumbu lemah', 'RHS badan non-kompak', 'pipa kompak', 'pipa non-kompak', 'pipa langsing / di luar', 'siku', 'CNP', 'D/C',
+  'RHS sumbu lemah', 'RHS badan non-kompak', 'pipa kompak', 'pipa non-kompak', 'pipa langsing / di luar', 'siku', 'CNP', 'Rasio',
 ]
 
 describe('balok baja lentur — input UI', () => {
@@ -83,8 +83,8 @@ describe('balok baja lentur — laporan', () => {
     expect(fl.ref).toBe('F8-2')
   })
 
-  it('D/C menentukan', () => {
-    const rep = buildFlexureReport(fromGolden('D/C'))!
-    expect(rep.governing?.label).toBe('D/C DFBK menentukan')
+  it('Rasio menentukan', () => {
+    const rep = buildFlexureReport(fromGolden('Rasio'))!
+    expect(rep.governing?.label).toBe('Rasio DFBK menentukan')
   })
 })

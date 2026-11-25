@@ -207,10 +207,10 @@ export function boltReport(r: BoltConnectionResult): Report {
           k: 'calc',
           steps: [
             { lhs: 'φR_{n}', expr: 'n · φr_{nv}', subst: `${r.n} × ${fx(r.phiRnv, 2)}`, value: fx(r.phiRge, 2), unit: 'kN' },
-            ...(r.Vu > 0 ? [dcStep('D/C_{geser}', 'V_{u}', 'φR_{n}', r.Vu, r.phiRge, r.dcShear)] : []),
+            ...(r.Vu > 0 ? [dcStep('Rasio_{geser}', 'V_{u}', 'φR_{n}', r.Vu, r.phiRge, r.dcShear)] : []),
           ],
         },
-        ...(r.Vu > 0 ? [{ k: 'rows' as const, rows: [check('D/C geser grup', r.dcShear)] }] : []),
+        ...(r.Vu > 0 ? [{ k: 'rows' as const, rows: [check('Rasio geser grup', r.dcShear)] }] : []),
       ],
     },
   ]
@@ -225,10 +225,10 @@ export function boltReport(r: BoltConnectionResult): Report {
           steps: [
             { lhs: 'r_{nt}', expr: 'F_{nt} · A_{b}', subst: `${fx(r.Fnt, 0)} × ${fx(r.Ab, 1)} / 10^{3}`, value: fx(r.rnt, 2), unit: 'kN', ref: 'J3-1' },
             { lhs: 'φr_{nt}', expr: 'φ · r_{nt}', subst: `${PHI} × ${fx(r.rnt, 2)}`, value: fx(r.phiRnt, 2), unit: 'kN' },
-            dcStep('D/C_{tarik}', 'r_{t}', 'φr_{nt}', r.rt, r.phiRnt, r.dcTension),
+            dcStep('Rasio_{tarik}', 'r_{t}', 'φr_{nt}', r.rt, r.phiRnt, r.dcTension),
           ],
         },
-        { k: 'rows', rows: [check('D/C tarik', r.dcTension)] },
+        { k: 'rows', rows: [check('Rasio tarik', r.dcTension)] },
       ],
     })
 
@@ -265,25 +265,25 @@ export function boltReport(r: BoltConnectionResult): Report {
               ref: 'J3-3a',
             },
             { lhs: "φr'_{nt}", expr: "φ · F'_{nt} · A_{b}", subst: `${PHI} × ${fx(r.FntMod, 1)} × ${fx(r.Ab, 1)} / 10^{3}`, value: fx(r.phiRntMod, 2), unit: 'kN' },
-            dcStep('D/C_{kombinasi}', 'r_{t}', "φr'_{nt}", r.rt, r.phiRntMod!, r.dcComboInfo),
+            dcStep('Rasio_{kombinasi}', 'r_{t}', "φr'_{nt}", r.rt, r.phiRntMod!, r.dcComboInfo),
           ],
         },
-        { k: 'rows', rows: [check('D/C kombinasi', r.dcComboInfo, r.comboNeeded ? undefined : 'informasi, tidak wajib')] },
+        { k: 'rows', rows: [check('Rasio kombinasi', r.dcComboInfo, r.comboNeeded ? undefined : 'informasi, tidak wajib')] },
       ],
     })
 
   const summary: Row[] = [
     kv('Kapasitas geser grup efektif φR_{n}', `${fx(r.phiRge, 1)} kN`),
-    ...(r.Vu > 0 ? [check('D/C geser grup', r.dcShear)] : []),
-    ...(r.Tu > 0 ? [check('D/C tarik', r.dcTension)] : []),
-    ...(r.comboNeeded ? [check('D/C kombinasi tarik–geser', r.dcCombo)] : []),
+    ...(r.Vu > 0 ? [check('Rasio geser grup', r.dcShear)] : []),
+    ...(r.Tu > 0 ? [check('Rasio tarik', r.dcTension)] : []),
+    ...(r.comboNeeded ? [check('Rasio kombinasi tarik–geser', r.dcCombo)] : []),
   ]
 
   return {
     title: 'Sambungan Baut (SNI 1729:2020 Ps. J3)',
     summary,
     sections,
-    governing: { label: `D/C menentukan (${r.gov})`, ratio: r.govDC },
+    governing: { label: `Rasio menentukan (${r.gov})`, ratio: r.govDC },
     warnings: r.warn,
     scope: [
       'DFBK, φ = 0,75. Sambungan tipe tumpu (bearing-type), lubang standar, deformasi lubang diperhitungkan, beban konsentris dibagi rata ke semua baut.',
@@ -292,7 +292,7 @@ export function boltReport(r: BoltConnectionResult): Report {
   }
 }
 
-/** Langkah D/C = kebutuhan / kapasitas. */
+/** Langkah rasio = kebutuhan / kapasitas. */
 function dcStep(lhs: string, dem: string, cap: string, demV: number, capV: number, dc: number): CalcStep {
   return { lhs, expr: `\\frac{${dem}}{${cap}}`, subst: `\\frac{${fx(demV, 2)}}{${fx(capV, 2)}}`, value: fx(dc, 3) }
 }
@@ -346,11 +346,11 @@ function bearingBlocks(r: BoltConnectionResult): Section['blocks'] {
       k: 'calc',
       steps: [
         { lhs: 'φR_{n}', expr: 'φ · Σ min(r_{nv}; r_{n,tumpu})', subst: `${PHI} × ${fx(r.Rge, 2)}`, value: fx(r.phiRge, 2), unit: 'kN' },
-        ...(r.Vu > 0 ? [dcStep('D/C_{geser}', 'V_{u}', 'φR_{n}', r.Vu, r.phiRge, r.dcShear)] : []),
+        ...(r.Vu > 0 ? [dcStep('Rasio_{geser}', 'V_{u}', 'φR_{n}', r.Vu, r.phiRge, r.dcShear)] : []),
       ],
     },
     { k: 'figure', fig: figPerBolt(r) },
-    ...(r.Vu > 0 ? [{ k: 'rows' as const, rows: [check('D/C geser grup', r.dcShear)] }] : []),
+    ...(r.Vu > 0 ? [{ k: 'rows' as const, rows: [check('Rasio geser grup', r.dcShear)] }] : []),
   ]
 }
 

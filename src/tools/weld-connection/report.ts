@@ -225,10 +225,10 @@ export function weldReport(r: WeldConnectionResult): Report {
           r.baseOk
             ? { lhs: 'φR_{n}', expr: 'min(φR_{nw}; φR_{n,dasar})', subst: `min(${fx(r.phiRnw, 2)}; ${fx(r.phiBase, 2)})`, value: fx(r.phiRn, 2), unit: 'kN' }
             : { lhs: 'φR_{n}', expr: 'φR_{nw}', value: fx(r.phiRn, 2), unit: 'kN' },
-          ...(r.Ru > 0 ? [{ lhs: 'D/C', expr: '\\frac{R_{u}}{φR_{n}}', subst: `\\frac{${fx(r.Ru, 2)}}{${fx(r.phiRn, 2)}}`, value: fx(r.dc, 3) }] : []),
+          ...(r.Ru > 0 ? [{ lhs: 'Rasio', expr: '\\frac{R_{u}}{φR_{n}}', subst: `\\frac{${fx(r.Ru, 2)}}{${fx(r.phiRn, 2)}}`, value: fx(r.dc, 3) }] : []),
         ],
       },
-      ...(r.Ru > 0 ? [{ k: 'rows' as const, rows: [check('D/C sambungan las', r.dc)] }] : []),
+      ...(r.Ru > 0 ? [{ k: 'rows' as const, rows: [check('Rasio sambungan las', r.dc)] }] : []),
       { k: 'p', text: r.weldGoverns ? 'Kuat las menentukan.' : 'Logam dasar menentukan — perbesar tebal t atau mutu bagian tersambung.' },
       { k: 'figure', fig: figCapacity(r) },
     ],
@@ -238,14 +238,14 @@ export function weldReport(r: WeldConnectionResult): Report {
     kv('Kuat rencana las φR_{nw}', `${fx(r.phiRnw, 1)} kN`),
     ...(r.baseOk ? [kv(`Logam dasar (${r.baseGov} geser)`, `${fx(r.phiBase, 1)} kN`)] : []),
     kv('Kapasitas desain φR_{n}', `${fx(r.phiRn, 1)} kN (${r.weldGoverns ? 'las' : 'logam dasar'})`),
-    ...(r.Ru > 0 ? [check('D/C sambungan las', r.dc)] : []),
+    ...(r.Ru > 0 ? [check('Rasio sambungan las', r.dc)] : []),
   ]
 
   return {
     title: 'Sambungan Las Sudut (SNI 1729:2020 Ps. J2 & J4)',
     summary,
     sections,
-    ...(r.Ru > 0 ? { governing: { label: `D/C (${r.weldGoverns ? 'las' : 'logam dasar'} menentukan)`, ratio: r.dc } } : {}),
+    ...(r.Ru > 0 ? { governing: { label: `Rasio (${r.weldGoverns ? 'las' : 'logam dasar'} menentukan)`, ratio: r.dc } } : {}),
     warnings: r.warn,
     scope: [
       'DFBK. Las sudut (fillet) kaki sama, satu arah beban seragam sepanjang las; logam dasar ditinjau pada bagian tertipis.',

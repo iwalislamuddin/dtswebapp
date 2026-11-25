@@ -106,7 +106,7 @@
     if (useDir && theta > 0)
       r.warn.push('Faktor arah kd = ' + kd.toFixed(2) + ' hanya sah untuk las sudut SATU arah beban seragam — jangan pakai untuk grup las multi-arah tanpa J2.4(c).');
     if (r.dc > 1)
-      r.warn.push('D/C = ' + r.dc.toFixed(2) + ' > 1 — perbesar w / perpanjang Lw' + (r.weldGoverns ? '' : ' (logam dasar menentukan: perbesar t)') + '.');
+      r.warn.push('Rasio = ' + r.dc.toFixed(2) + ' > 1 — perbesar w / perpanjang Lw' + (r.weldGoverns ? '' : ' (logam dasar menentukan: perbesar t)') + '.');
 
     return r;
   }
@@ -136,7 +136,7 @@
       state.UI.canvasTip(ctx, {
         mx: state.mouse.x, my: state.mouse.y, w: w, h: h, topBand: 34,
         text: 'φRn ' + r.phiRn.toFixed(1) + ' kN (' + (r.weldGoverns ? 'las' : 'logam dasar') + ')' +
-          (r.Ru > 0 ? ' · D/C ' + r.dc.toFixed(2) : '')
+          (r.Ru > 0 ? ' · Rasio ' + r.dc.toFixed(2) : '')
       });
     }
   }
@@ -343,13 +343,13 @@
     results.innerHTML = '';
 
     state.cap.set('w' + r.w + ' × ' + r.Lw + ' mm · φRn ' + UI.fmt(r.phiRn, 1) + ' kN' +
-      (r.Ru > 0 ? ' · D/C ' + (isFinite(r.dc) ? r.dc.toFixed(2) : '—') : ''));
+      (r.Ru > 0 ? ' · Rasio ' + (isFinite(r.dc) ? r.dc.toFixed(2) : '—') : ''));
 
     results.appendChild(UI.heroRow([
       { label: 'φRn desain — ' + (r.weldGoverns ? 'las' : 'logam dasar'), value: UI.fmt(r.phiRn, 1), unit: 'kN' },
       { label: 'φRn las', value: UI.fmt(r.phiRnw, 1), unit: 'kN', tone: r.weldGoverns ? 'ok' : '' },
       (r.Ru > 0)
-        ? { label: 'D/C = Ru/φRn', value: isFinite(r.dc) ? UI.fmt(r.dc, 2) : '—', unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
+        ? { label: 'Rasio = Ru/φRn', value: isFinite(r.dc) ? UI.fmt(r.dc, 2) : '—', unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
         : (r.baseOk
           ? { label: 'φRn logam dasar', value: UI.fmt(r.phiBase, 1), unit: 'kN', tone: !r.weldGoverns ? 'ok' : '' }
           : { label: 'FEXX', value: r.Fexx, unit: 'MPa' })
@@ -379,7 +379,7 @@
 
     if (r.Ru > 0) {
       results.appendChild(UI.rhead('Rasio pemanfaatan'));
-      results.appendChild(UI.kv('D/C = Ru/φRn', UI.fmt(r.dc, 2), r.dc <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio = Ru/φRn', UI.fmt(r.dc, 2), r.dc <= 1 ? 'ok' : 'bad'));
       results.appendChild(UI.kv('Kebutuhan panjang (w tetap)', UI.fmt(r.Lw * Math.max(1, r.dc), 0) + ' mm'));
     }
 
@@ -512,7 +512,7 @@
     }
     L.push(ruleR('='));
     L.push(rowR('>> phi*Rn DESAIN (' + (r.weldGoverns ? 'las' : 'logam dasar') + ')', numR(r.phiRn, 1) + ' kN'));
-    if (r.Ru > 0) L.push(rowR('>> D/C = Ru/phiRn', numR(r.dc, 2) + (r.dc <= 1 ? ' OK' : ' NG')));
+    if (r.Ru > 0) L.push(rowR('>> Rasio = Ru/phiRn', numR(r.dc, 2) + (r.dc <= 1 ? ' OK' : ' NG')));
     L.push(ruleR('='));
     L.push('');
     L.push(' BATAS UKURAN (J2.2b)'); L.push(ruleR('-'));

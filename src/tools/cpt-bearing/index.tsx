@@ -75,7 +75,7 @@ function Inputs({
         </Field>
         {input.soil === 'clay' && f('Nk', 'Nk — faktor kerucut', undefined, 'Kosong/0 = 14.')}
         {input.soil === 'clay' && f('FS', 'FS — faktor keamanan', undefined, 'Kosong/0 = 3.')}
-        {f('qw', 'q — tekanan kerja neto (opsional)', 'kPa', '0 = lewati rasio D/C.')}
+        {f('qw', 'q — tekanan kerja neto (opsional)', 'kPa', '0 = lewati rasio.')}
       </Card>
     </>
   )

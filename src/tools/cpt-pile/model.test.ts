@@ -63,7 +63,7 @@ describe('daya dukung tiang CPT — laporan', () => {
     expect(v['Q_{izin}']).toBe(r.Qall.toFixed(1))
   })
 
-  it('satu gambar; rasio D/C hanya bila beban kerja diisi', () => {
+  it('satu gambar; rasio hanya bila beban kerja diisi', () => {
     const rep = buildCptPileReport(CPT_PILE_DEFAULTS)!
     expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(1)
     expect(rep.governing).toBeUndefined()

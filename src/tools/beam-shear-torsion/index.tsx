@@ -190,7 +190,7 @@ function Results({ r, stale, reject }: { r: ShearTorsionResult | null; stale: bo
         </div>
         {r && (
           <div className={stale ? 'stale' : ''}>
-            <h4 className="results-h">Rasio D/C</h4>
+            <h4 className="results-h">Rasio</h4>
             <StatTiles
               items={[
                 dc(r.ratioV!, 'Geser Vu/φVn', `φVn ${fx(r.phiVnkN, 0)} kN`),

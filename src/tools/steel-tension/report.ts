@@ -91,8 +91,8 @@ export function tensionReport(i: TensionInput, r: SteelTensionResult): Report {
   ]
 
   const dcRows: Row[] = [
-    ...(r.dcL != null ? [check('D/C DFBK = P_{u} / φ_{t}P_{n}', r.dcL)] : []),
-    ...(r.dcA != null ? [check('D/C ASD = P_{a} / (P_{n}/Ω_{t})', r.dcA)] : []),
+    ...(r.dcL != null ? [check('Rasio DFBK = P_{u} / φ_{t}P_{n}', r.dcL)] : []),
+    ...(r.dcA != null ? [check('Rasio ASD = P_{a} / (P_{n}/Ω_{t})', r.dcA)] : []),
   ]
   sections.push({
     title: 'Kekuatan tarik desain',
@@ -103,8 +103,8 @@ export function tensionReport(i: TensionInput, r: SteelTensionResult): Report {
         steps: [
           { desc: `DFBK — menentukan: ${r.govLRFD}`, lhs: 'φ_{t}P_{n}', expr: 'min(leleh; fraktur)', subst: `min(${fx(r.phiPnY, 1)}; ${fx(r.phiPnR, 1)})`, value: fx(r.phiPn, 1), unit: 'kN' },
           { desc: `ASD — menentukan: ${r.govASD}`, lhs: '\\frac{P_{n}}{Ω_{t}}', expr: 'min(leleh; fraktur)', subst: `min(${fx(r.PaY, 1)}; ${fx(r.PaR, 1)})`, value: fx(r.Pa, 1), unit: 'kN' },
-          ...(r.dcL != null ? [{ lhs: 'D/C_{DFBK}', expr: '\\frac{P_{u}}{φ_{t}P_{n}}', subst: `\\frac{${fx(r.Pu, 1)}}{${fx(r.phiPn, 1)}}`, value: fx(r.dcL, 3) }] : []),
-          ...(r.dcA != null ? [{ lhs: 'D/C_{ASD}', expr: '\\frac{P_{a}}{P_{n}/Ω_{t}}', subst: `\\frac{${fx(r.Pa_dem, 1)}}{${fx(r.Pa, 1)}}`, value: fx(r.dcA, 3) }] : []),
+          ...(r.dcL != null ? [{ lhs: 'Rasio_{DFBK}', expr: '\\frac{P_{u}}{φ_{t}P_{n}}', subst: `\\frac{${fx(r.Pu, 1)}}{${fx(r.phiPn, 1)}}`, value: fx(r.dcL, 3) }] : []),
+          ...(r.dcA != null ? [{ lhs: 'Rasio_{ASD}', expr: '\\frac{P_{a}}{P_{n}/Ω_{t}}', subst: `\\frac{${fx(r.Pa_dem, 1)}}{${fx(r.Pa, 1)}}`, value: fx(r.dcA, 3) }] : []),
         ],
       },
       ...(dcRows.length ? [{ k: 'rows' as const, rows: dcRows }] : [{ k: 'p' as const, text: 'Gaya perlu P_{u} / P_{a} belum diisi — hanya kapasitas yang dilaporkan.' }]),
@@ -150,7 +150,7 @@ export function tensionReport(i: TensionInput, r: SteelTensionResult): Report {
     ...dcRows,
     ...(r.slender != null ? [kv('Kelangsingan L/r', `${fx(r.slender, 0)} (anjuran ≤ 300)`)] : []),
   ]
-  const gov = r.dcL != null ? { label: 'D/C DFBK menentukan', ratio: r.dcL } : r.dcA != null ? { label: 'D/C ASD menentukan', ratio: r.dcA } : undefined
+  const gov = r.dcL != null ? { label: 'Rasio DFBK menentukan', ratio: r.dcL } : r.dcA != null ? { label: 'Rasio ASD menentukan', ratio: r.dcA } : undefined
 
   return {
     title: 'Batang Tarik Baja (SNI 1729:2020 Bab D)',

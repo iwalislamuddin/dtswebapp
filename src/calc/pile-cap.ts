@@ -430,7 +430,7 @@ function oneWay(r: Ready, axis: 'x' | 'y'): CapOneWay {
   let Vu = Math.max(Vp, Vm)
   let b = bRect
   if (r.shape === 'poligon') {
-    // lebar = panjang potongan poligon pada penampang kritis tiap sisi; sisi penentu = rasio D/C terbesar
+    // lebar = panjang potongan poligon pada penampang kritis tiap sisi; sisi penentu = rasio terbesar
     const bp = chord(r.poly, axis, critP) || bRect, bm = chord(r.poly, axis, critM) || bRect
     const dcP = Vp / (PHI_V * oneWayVc(r.fc, bp, d, LAMBDA)), dcM = Vm / (PHI_V * oneWayVc(r.fc, bm, d, LAMBDA))
     if (dcP >= dcM) { Vu = Vp; b = bp } else { Vu = Vm; b = bm }

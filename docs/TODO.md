@@ -267,7 +267,7 @@ terpisah yang memperbarui acuan golden secara sadar.
         lentur positif sebagai T, negatif b_w (`shared/tee.ts`). Lendutan selalu dari solver (δD, δL, λΔ, L/360 &
         L/480|360|240). **Gambar penulangan** (`_continuous/rebar.ts`, tab Preview "Penulangan" + bagian laporan/PDF): balok = elevasi sengkang per zona Vu(x) + potongan lapangan & tumpuan; pelat = potongan memanjang + melintang lajur 1 m (tulangan bagi). Spasi sengkang & tulangan pelat kelipatan 25 mm; tulangan atas dipotong ≈ 0,3 ln (indikatif, panjang penyaluran belum dicek). Catatan: ujung eksterior solver dipilih sendi/jepit manual (tanpa pegas kolom); tulangan
         tunggal; pembersihan: ID lama `continuous-beam` kini khusus balok (URL pelat lama → `/one-way-slab`)
-  - [x] Kelompok **Struktur Bawah lengkap** (4/4) — 2026-10-14: `footing-design` (denah tekanan sudut + kern, rasio D/C,
+  - [x] Kelompok **Struktur Bawah lengkap** (4/4) — 2026-10-14: `footing-design` (denah tekanan sudut + kern, rasio,
         laporan stabilitas + lentur 2 arah + geser 1 arah + pons), `pile-cap` (2–6 tiang, denah reaksi, mode beban kolom /
         kapasitas tiang, lentur, geser, pons kolom & tiang), `retaining-stone` & `retaining-concrete` (penampang bersama
         di `src/tools/_retaining/`: geometri, tekanan dasar, stabilitas; beton + tumpu terfaktor, stem/toe/heel, susut,

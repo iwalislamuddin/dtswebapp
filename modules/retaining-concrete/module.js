@@ -333,7 +333,7 @@
     if (!r.okSl) r.warn.push('FS geser ' + FSsl.toFixed(2) + ' < ' + FSslT.toFixed(1) + ' — TIDAK AMAN; pertimbangkan shear key / tambah tanam / aktifkan pasif.');
     if (!r.okE) r.warn.push('e = ' + e.toFixed(3) + ' m > B/6 = ' + (B / 6).toFixed(3) + ' m — resultan layan di luar inti tengah.');
     if (r.dcQ !== null && r.dcQ > 1) r.warn.push('qmax = ' + qmax.toFixed(1) + ' kPa > q_izin = ' + qall.toFixed(1) + ' kPa — daya dukung TIDAK memadai.');
-    if (stem.ng) r.warn.push('STEM: ' + (stem.note || 'kapasitas lentur tidak cukup (D/C ' + stem.dc.toFixed(2) + ').'));
+    if (stem.ng) r.warn.push('STEM: ' + (stem.note || 'kapasitas lentur tidak cukup (rasio ' + stem.dc.toFixed(2) + ').'));
     if (stem.dcV > 1) r.warn.push('STEM: geser Vu ' + VuStem.toFixed(1) + ' kN > φVc ' + stem.phiVc.toFixed(1) + ' kN — pertebal dasar stem.');
     if (toeD.ng && toe > 0.01) r.warn.push('TOE: ' + (toeD.note || 'kapasitas lentur tidak cukup.'));
     if (toeD.dcV > 1 && toe > 0.01) r.warn.push('TOE: geser > φVc — pertebal tapak.');
@@ -485,11 +485,11 @@
     results.appendChild(UI.heroRow([
       { label: 'FS Guling (≥' + r.FSotT.toFixed(1) + ')', value: UI.fmt(Math.min(r.FSot, 99), 2), unit: r.okOt ? 'OK' : 'NG', tone: r.okOt ? 'ok' : 'bad' },
       { label: 'FS Geser (≥' + r.FSslT.toFixed(1) + ')', value: UI.fmt(Math.min(r.FSsl, 99), 2), unit: r.okSl ? 'OK' : 'NG', tone: r.okSl ? 'ok' : 'bad' },
-      { label: 'D/C struktur maks', value: UI.fmt(maxDC, 2), unit: okStruct ? 'OK' : 'NG', tone: okStruct ? 'ok' : 'bad' }
+      { label: 'Rasio struktur maks', value: UI.fmt(maxDC, 2), unit: okStruct ? 'OK' : 'NG', tone: okStruct ? 'ok' : 'bad' }
     ]));
     results.appendChild(UI.el('div', 'ck-empty',
       'B = ' + r.B.toFixed(2) + ' m · e = ' + r.e.toFixed(3) + ' m (' + (r.okE ? 'dalam' : 'LUAR') + ' B/6) · qmax = ' +
-      (isFinite(r.qmax) ? UI.fmt(r.qmax, 1) : '∞') + ' kPa' + (r.dcQ !== null ? ' (D/C ' + r.dcQ.toFixed(2) + (r.okQ ? ' OK' : ' NG') + ')' : '') + '.'));
+      (isFinite(r.qmax) ? UI.fmt(r.qmax, 1) : '∞') + ' kPa' + (r.dcQ !== null ? ' (rasio ' + r.dcQ.toFixed(2) + (r.okQ ? ' OK' : ' NG') + ')' : '') + '.'));
 
     // Stabilitas ringkas
     results.appendChild(UI.rhead('Stabilitas (beban layan)'));
@@ -510,7 +510,7 @@
     // Tabel tulangan
     results.appendChild(UI.rhead('Penulangan (SNI 2847:2019) — per meter'));
     var tbl = UI.el('table', 'rc-tbl');
-    tbl.innerHTML = '<thead><tr><th>Lokasi</th><th>Mu<br>(kN·m)</th><th>d<br>(mm)</th><th>As perlu<br>(mm²)</th><th>Dipakai</th><th>φMn<br>(kN·m)</th><th>D/C</th></tr></thead>';
+    tbl.innerHTML = '<thead><tr><th>Lokasi</th><th>Mu<br>(kN·m)</th><th>d<br>(mm)</th><th>As perlu<br>(mm²)</th><th>Dipakai</th><th>φMn<br>(kN·m)</th><th>Rasio</th></tr></thead>';
     var tb = document.createElement('tbody');
     function rowFlex(nm, f, active) {
       var tr = document.createElement('tr');
@@ -534,7 +534,7 @@
     results.appendChild(UI.rhead('Geser satu arah (φVc = 0,75·0,17·√fc′·b·d)'));
     function kvShear(nm, f, active) {
       if (!active) return;
-      results.appendChild(UI.kv(nm, 'Vu ' + UI.fmt(f.Vu, 1) + ' / φVc ' + UI.fmt(f.phiVc, 1) + ' kN → D/C ' + f.dcV.toFixed(2), f.dcV <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv(nm, 'Vu ' + UI.fmt(f.Vu, 1) + ' / φVc ' + UI.fmt(f.phiVc, 1) + ' kN → Rasio ' + f.dcV.toFixed(2), f.dcV <= 1 ? 'ok' : 'bad'));
     }
     kvShear('Stem (dasar)', r.stem, true);
     kvShear('Toe (muka stem)', r.toeD, r.toe > 0.01);
@@ -602,7 +602,7 @@
     if (state.mouse) {
       state.UI.canvasTip(ctx, {
         mx: state.mouse.x, my: state.mouse.y, w: w, h: h,
-        text: 'FS ot ' + r.FSot.toFixed(2) + ' · FS sl ' + r.FSsl.toFixed(2) + ' · stem D/C ' + r.stem.dc.toFixed(2)
+        text: 'FS ot ' + r.FSot.toFixed(2) + ' · FS sl ' + r.FSsl.toFixed(2) + ' · stem rasio ' + r.stem.dc.toFixed(2)
       });
     }
   }
@@ -786,13 +786,13 @@
       { nm: 'Guling', val: r.FSot, lim: r.FSotT, ok: r.okOt, txt: 'FS ' + r.FSot.toFixed(2) },
       { nm: 'Geser', val: r.FSsl, lim: r.FSslT, ok: r.okSl, txt: 'FS ' + r.FSsl.toFixed(2) },
       { nm: 'D.dukung', val: (r.dcQ !== null) ? r.dcQ : null, lim: 1, ok: r.okQ, inv: true,
-        txt: (r.dcQ !== null) ? 'D/C ' + r.dcQ.toFixed(2) : 'q_izin = 0' },
+        txt: (r.dcQ !== null) ? 'Rasio ' + r.dcQ.toFixed(2) : 'q_izin = 0' },
       { nm: 'Stem', val: Math.max(r.stem.dc, r.stem.dcV), lim: 1, ok: r.okStem, inv: true,
-        txt: 'D/C ' + Math.max(r.stem.dc, r.stem.dcV).toFixed(2) },
+        txt: 'Rasio ' + Math.max(r.stem.dc, r.stem.dcV).toFixed(2) },
       { nm: 'Toe', val: (r.toe > 0.01) ? Math.max(r.toeD.dc, r.toeD.dcV) : null, lim: 1, ok: r.okToe, inv: true,
-        txt: (r.toe > 0.01) ? 'D/C ' + Math.max(r.toeD.dc, r.toeD.dcV).toFixed(2) : '—' },
+        txt: (r.toe > 0.01) ? 'Rasio ' + Math.max(r.toeD.dc, r.toeD.dcV).toFixed(2) : '—' },
       { nm: 'Heel', val: (r.B - r.xb > 0.01) ? Math.max(r.heelD.dc, r.heelD.dcV) : null, lim: 1, ok: r.okHeel, inv: true,
-        txt: (r.B - r.xb > 0.01) ? 'D/C ' + Math.max(r.heelD.dc, r.heelD.dcV).toFixed(2) : '—' }
+        txt: (r.B - r.xb > 0.01) ? 'Rasio ' + Math.max(r.heelD.dc, r.heelD.dcV).toFixed(2) : '—' }
     ];
     var n = rows.length, gap = 10;
     var rowH = (gy1 - gy0 - gap * (n - 1)) / n;

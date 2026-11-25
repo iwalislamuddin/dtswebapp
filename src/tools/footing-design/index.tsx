@@ -188,7 +188,7 @@ function PlanPreview({ r, w, h }: { r: FootingResult; w: number; h: number }) {
 
 type Tab = 'rasio' | 'tekanan'
 
-/** Batang rasio D/C; garis 1,0 = batas. */
+/** Batang rasio; garis 1,0 = batas. */
 function RatioChart({ r, w, h }: { r: FootingResult; w: number; h: number }) {
   const items = footingRatios(r)
   if (w < 200 || h < 100) return null
@@ -270,7 +270,7 @@ function Results({ r, stale, reject }: { r: FootingResult | null; stale: boolean
     <Panel
       title="Pemeriksaan"
       className="results-panel"
-      tools={<SubTabs ariaLabel="Diagram" value={tab} tabs={[{ id: 'rasio', label: 'Rasio D/C' }, { id: 'tekanan', label: 'Tekanan tanah' }]} onChange={setTab} />}
+      tools={<SubTabs ariaLabel="Diagram" value={tab} tabs={[{ id: 'rasio', label: 'Rasio' }, { id: 'tekanan', label: 'Tekanan tanah' }]} onChange={setTab} />}
     >
       <div className="results">
         {status && <p className="msg bad">{status}</p>}
@@ -284,8 +284,8 @@ function Results({ r, stale, reject }: { r: FootingResult | null; stale: boolean
               items={[
                 { label: 'qmax / qa', value: `${fx(r.qmax, 1)} / ${fx(r.qa, 0)}`, unit: 'kPa', sub: `SF ${fx(r.SFbear, 2)}`, tone: r.qmax! <= r.qa! ? 'ok' : 'bad' },
                 { label: 'Tulangan L / B', value: `D${fx(r.db, 0)}-${r.flexL!.s} / ${r.flexB!.s}`, sub: `As ${fx(r.flexL!.AsProv, 0)} / ${fx(r.flexB!.AsProv, 0)} mm²/m` },
-                { label: 'Pons Vu / φVc', value: `${fx(r.Vup, 0)} / ${fx(r.phiVcp, 0)}`, unit: 'kN', sub: `D/C ${fx(r.dcPunch, 2)}`, tone: r.dcPunch! <= 1 ? 'ok' : 'bad' },
-                { label: 'Geser 1 arah D/C', value: `${fx(r.dc1L, 2)} / ${fx(r.dc1B, 2)}`, sub: 'L / B', tone: Math.max(r.dc1L!, r.dc1B!) <= 1 ? 'ok' : 'bad' },
+                { label: 'Pons Vu / φVc', value: `${fx(r.Vup, 0)} / ${fx(r.phiVcp, 0)}`, unit: 'kN', sub: `Rasio ${fx(r.dcPunch, 2)}`, tone: r.dcPunch! <= 1 ? 'ok' : 'bad' },
+                { label: 'Geser 1 arah rasio', value: `${fx(r.dc1L, 2)} / ${fx(r.dc1B, 2)}`, sub: 'L / B', tone: Math.max(r.dc1L!, r.dc1B!) <= 1 ? 'ok' : 'bad' },
               ]}
             />
             {r.warn.length > 0 && (

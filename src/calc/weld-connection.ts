@@ -134,7 +134,7 @@ export function computeWeldConnection(v: WeldConnectionInput): WeldConnectionRes
   if (useDir && theta > 0)
     warn.push('Faktor arah kd = ' + kd.toFixed(2) + ' hanya sah untuk las sudut SATU arah beban seragam — jangan pakai untuk grup las multi-arah tanpa J2.4(c).')
   if (dc > 1)
-    warn.push('D/C = ' + dc.toFixed(2) + ' > 1 — perbesar w / perpanjang Lw' + (weldGoverns ? '' : ' (logam dasar menentukan: perbesar t)') + '.')
+    warn.push('Rasio = ' + dc.toFixed(2) + ' > 1 — perbesar w / perpanjang Lw' + (weldGoverns ? '' : ' (logam dasar menentukan: perbesar t)') + '.')
 
   return {
     valid: true, warn, electrode: v.electrode, Fexx, w, Lw, theta, useDir, endLoaded, t, Fy, Fu, Ru,

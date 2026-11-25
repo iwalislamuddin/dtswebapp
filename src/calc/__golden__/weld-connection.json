@@ -707,7 +707,7 @@
    "valid": true,
    "warn": [
     "Ukuran las w = 6 mm > maksimum sepanjang tepi = 5 mm (J2.2b) — kurangi w atau pakai groove.",
-    "D/C = 1.04 > 1 — perbesar w / perpanjang Lw (logam dasar menentukan: perbesar t)."
+    "Rasio = 1.04 > 1 — perbesar w / perpanjang Lw (logam dasar menentukan: perbesar t)."
    ],
    "electrode": "e70",
    "Fexx": 482,
@@ -816,7 +816,7 @@
    "valid": true,
    "warn": [
     "Ukuran las w = 4 mm < minimum Tabel J2.4 = 5 mm (untuk t = 13 mm) — TIDAK memenuhi.",
-    "D/C = 1.22 > 1 — perbesar w / perpanjang Lw."
+    "Rasio = 1.22 > 1 — perbesar w / perpanjang Lw."
    ],
    "electrode": "e70",
    "Fexx": 482,
@@ -925,7 +925,7 @@
    "valid": true,
    "warn": [
     "Panjang las Lw = 20 mm < 4·w = 24 mm — panjang efektif dianggap 25% Lw (J2.2b); hasil di atas TIDAK berlaku.",
-    "D/C = 8.15 > 1 — perbesar w / perpanjang Lw."
+    "Rasio = 8.15 > 1 — perbesar w / perpanjang Lw."
    ],
    "electrode": "e70",
    "Fexx": 482,
@@ -980,7 +980,7 @@
    "valid": true,
    "warn": [
     "Faktor arah kd = 1.50 hanya sah untuk las sudut SATU arah beban seragam — jangan pakai untuk grup las multi-arah tanpa J2.4(c).",
-    "D/C = 3.47 > 1 — perbesar w / perpanjang Lw (logam dasar menentukan: perbesar t)."
+    "Rasio = 3.47 > 1 — perbesar w / perpanjang Lw (logam dasar menentukan: perbesar t)."
    ],
    "electrode": "e70",
    "Fexx": 482,
@@ -1066,7 +1066,7 @@
   }
  },
  {
-  "name": "D/C > 1",
+  "name": "Rasio > 1",
   "fn": "compute",
   "args": [
    {
@@ -1086,7 +1086,7 @@
   "output": {
    "valid": true,
    "warn": [
-    "D/C = 3.26 > 1 — perbesar w / perpanjang Lw."
+    "Rasio = 3.26 > 1 — perbesar w / perpanjang Lw."
    ],
    "electrode": "e70",
    "Fexx": 482,
@@ -1193,7 +1193,7 @@
    "valid": true,
    "warn": [
     "Ukuran las w = 0 mm < minimum Tabel J2.4 = 5 mm (untuk t = 10 mm) — TIDAK memenuhi.",
-    "D/C = Infinity > 1 — perbesar w / perpanjang Lw."
+    "Rasio = Infinity > 1 — perbesar w / perpanjang Lw."
    ],
    "electrode": "e70",
    "Fexx": 482,

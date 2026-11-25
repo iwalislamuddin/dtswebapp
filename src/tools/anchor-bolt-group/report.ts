@@ -145,7 +145,7 @@ export function anchorReport(r: AnchorBoltGroupResult): Report {
           steps: [
             { lhs: 'N_{sa}', expr: 'A_{se,N} · f_{uta}', subst: `${fx(r.Ase, 0)} × ${fx(r.futa, 0)} / 10^{3}`, value: fx(r.Nsa, 2), unit: 'kN', ref: '17.6.1.2' },
             { desc: 'φ = 0,75 (baja daktail)', lhs: 'φN_{sa}', subst: `0.75 × ${fx(r.Nsa, 2)}`, value: fx(r.phiNsa, 2), unit: 'kN' },
-            dcStep('D/C_{baja,N}', 'T_{maks}', 'φN_{sa}', r.Tmax, r.phiNsa, r.dcSteel),
+            dcStep('Rasio_{baja,N}', 'T_{maks}', 'φN_{sa}', r.Tmax, r.phiNsa, r.dcSteel),
           ],
         },
       ],
@@ -189,7 +189,7 @@ export function anchorReport(r: AnchorBoltGroupResult): Report {
               ref: '17.6.2.1b',
             },
             { lhs: 'φN_{cbg}', subst: `${phiC} × ${fx(r.Ncbg, 2)}`, value: fx(r.phiNcbg, 2), unit: 'kN' },
-            dcStep('D/C_{jebol,N}', 'ΣT_{tarik}', 'φN_{cbg}', r.sumTt, r.phiNcbg, r.dcConc),
+            dcStep('Rasio_{jebol,N}', 'ΣT_{tarik}', 'φN_{cbg}', r.sumTt, r.phiNcbg, r.dcConc),
           ],
         },
       ],
@@ -201,7 +201,7 @@ export function anchorReport(r: AnchorBoltGroupResult): Report {
       { desc: `Kuat baja geser per angkur${r.grout ? ', pelat di atas grout ×0,8' : ''}`, lhs: 'V_{sa}', expr: `0.6 A_{se,V} f_{uta}${r.grout ? ' × 0.8' : ''}`, subst: `0.6 × ${fx(r.Ase, 0)} × ${fx(r.futa, 0)}${r.grout ? ' × 0.8' : ''} / 10^{3}`, value: fx(r.Vsa, 2), unit: 'kN', ref: '17.7.1.2b' },
       { desc: 'φ = 0,65', lhs: 'φV_{sa}', subst: `0.65 × ${fx(r.Vsa, 2)}`, value: fx(r.phiVsa, 2), unit: 'kN' },
       { lhs: 'V_{u}/n', subst: `\\frac{${fx(r.Vu, 1)}}{${r.n}}`, value: fx(r.Vbolt, 2), unit: 'kN' },
-      dcStep('D/C_{baja,V}', 'V_{u}/n', 'φV_{sa}', r.Vbolt, r.phiVsa, r.dcVsteel),
+      dcStep('Rasio_{baja,V}', 'V_{u}/n', 'φV_{sa}', r.Vbolt, r.phiVsa, r.dcVsteel),
     ]
     sections.push({ title: 'Kuat baja angkur geser (17.7.1)', blocks: [{ k: 'calc', steps: shear }] })
     sections.push({
@@ -225,7 +225,7 @@ export function anchorReport(r: AnchorBoltGroupResult): Report {
                   ref: '17.7.2.1b',
                 },
                 { lhs: 'φV_{cbg}', subst: `${phiC} × ${fx(r.Vcbg, 2)}`, value: fx(r.phiVcbg, 2), unit: 'kN' },
-                dcStep('D/C_{jebol,V}', 'V_{u}', 'φV_{cbg}', r.Vu, r.phiVcbg, r.dcVbreak),
+                dcStep('Rasio_{jebol,V}', 'V_{u}', 'φV_{cbg}', r.Vu, r.phiVcbg, r.dcVbreak),
               ],
             },
           ]
@@ -240,7 +240,7 @@ export function anchorReport(r: AnchorBoltGroupResult): Report {
             { desc: `k_{cp} = ${r.kcp} (h_{ef} ${r.hef < 65 ? '<' : '≥'} 65 mm); N_{cpg} = N_{cbg} dengan ψ_{ec,N} = 1`, lhs: 'N_{cpg}', value: fx(r.Ncbg0, 2), unit: 'kN' },
             { lhs: 'V_{cpg}', expr: 'k_{cp} N_{cpg}', subst: `${r.kcp} × ${fx(r.Ncbg0, 2)}`, value: fx(r.Vcpg, 2), unit: 'kN', ref: '17.7.3.1b' },
             { lhs: 'φV_{cpg}', subst: `${phiC} × ${fx(r.Vcpg, 2)}`, value: fx(r.phiVcpg, 2), unit: 'kN' },
-            dcStep('D/C_{pryout}', 'V_{u}', 'φV_{cpg}', r.Vu, r.phiVcpg, r.dcVpry),
+            dcStep('Rasio_{pryout}', 'V_{u}', 'φV_{cpg}', r.Vu, r.phiVcpg, r.dcVpry),
           ],
         },
       ],
@@ -254,8 +254,8 @@ export function anchorReport(r: AnchorBoltGroupResult): Report {
     rows.push(check('Geser — pryout (17.7.3)', r.dcVpry))
   }
   const inter: CalcStep[] = [
-    { lhs: '\\frac{N_{ua}}{φN_{n}}', expr: 'maks D/C tarik', value: fx(r.UN, 3) },
-    ...(r.Vu > 0 ? [{ lhs: '\\frac{V_{ua}}{φV_{n}}', expr: 'maks D/C geser', value: fx(r.UV, 3) }] : []),
+    { lhs: '\\frac{N_{ua}}{φN_{n}}', expr: 'maks rasio tarik', value: fx(r.UN, 3) },
+    ...(r.Vu > 0 ? [{ lhs: '\\frac{V_{ua}}{φV_{n}}', expr: 'maks rasio geser', value: fx(r.UV, 3) }] : []),
     ...(r.combined != null
       ? [{ desc: 'Keduanya > 0,2 → interaksi', lhs: 'Σ', expr: '(\\frac{N_{ua}}{φN_{n}})^{5/3} + (\\frac{V_{ua}}{φV_{n}})^{5/3}', subst: `${fx(r.UN, 3)}^{5/3} + ${fx(r.UV, 3)}^{5/3}`, value: fx(r.combined, 3), ref: '17.8.3' }]
       : []),
@@ -285,11 +285,11 @@ export function anchorReport(r: AnchorBoltGroupResult): Report {
     summary: [
       kv('Gaya tarik baut maksimum T_{maks} / total ΣT', `${fx(r.Tmax, 2)} / ${fx(r.sumTt, 2)} kN`),
       kv('φN_{sa} / φN_{cbg}', `${fx(r.phiNsa, 1)} / ${fx(r.phiNcbg, 1)} kN`),
-      ...(r.Vu > 0 ? [kv(`Geser menentukan: ${r.govShear}`, `D/C ${fx(r.dcShear, 2)}`)] : []),
+      ...(r.Vu > 0 ? [kv(`Geser menentukan: ${r.govShear}`, `Rasio ${fx(r.dcShear, 2)}`)] : []),
       check(`Menentukan: ${r.gov}`, r.govDC),
     ],
     sections,
-    governing: { label: `D/C menentukan (${r.gov})`, ratio: r.govDC },
+    governing: { label: `Rasio menentukan (${r.gov})`, ratio: r.govDC },
     warnings: r.warn,
     scope: [
       'Angkur cor di tempat berkepala, pelat dasar kaku (distribusi elastis linear), geser dibagi rata dan bekerja ke arah satu tepi; beton normal (λ = 1).',

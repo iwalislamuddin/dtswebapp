@@ -22,7 +22,7 @@ export interface BearingUIInput {
   Dw: string
   method: BearingMethod
   tfail: 'general' | 'local'
-  /** Faktor keamanan (kosong/0 = 3) dan tekanan kerja opsional (kPa; 0 = tanpa rasio D/C). */
+  /** Faktor keamanan (kosong/0 = 3) dan tekanan kerja opsional (kPa; 0 = tanpa rasio). */
   FS: string
   qapp: string
 }

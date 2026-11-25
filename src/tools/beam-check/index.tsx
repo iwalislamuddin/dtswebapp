@@ -199,7 +199,7 @@ function Results({ r, stale, reject }: { r: BeamCheckResult | null; stale: boole
         </div>
         {r && (
           <div className={stale ? 'stale' : ''}>
-            <h4 className="results-h">Rasio D/C</h4>
+            <h4 className="results-h">Rasio</h4>
             <StatTiles
               items={[
                 dc(r.pos!.ratioM, 'Lentur lapangan Mu+/φMn', `φMn ${fx(r.pos!.flex.phiMnkNm, 1)} kN·m`),

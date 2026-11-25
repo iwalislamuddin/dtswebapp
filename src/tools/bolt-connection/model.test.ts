@@ -36,7 +36,7 @@ describe('sambungan baut — input UI', () => {
     const bad: BoltInput = { ...BOLT_DEFAULTS, d: '0', nr: '1.5', nc: '', le: '-5', Vu: 'abc' }
     expect(validate(bad)).toEqual({ d: 'Harus > 0', nr: 'Bilangan bulat ≥ 1', nc: 'Isi angka', le: 'Tidak boleh negatif', Vu: 'Isi angka' })
     expect(computeBolt(bad)).toBeNull()
-    // Fnt/Fnv hanya diperiksa untuk mutu kustom (kasus golden Fnt = 0 → D/C tak hingga)
+    // Fnt/Fnv hanya diperiksa untuk mutu kustom (kasus golden Fnt = 0 → Rasio tak hingga)
     expect(validate({ ...BOLT_DEFAULTS, Fnt: '0' })).toEqual({})
     expect(validate({ ...BOLT_DEFAULTS, grade: 'custom', Fnt: '0', Fnv: '' })).toEqual({ Fnt: 'Harus > 0', Fnv: 'Isi angka' })
     // s / g hanya diperiksa bila lebih dari satu baris / kolom
@@ -66,13 +66,13 @@ describe('sambungan baut — laporan', () => {
     expect(v['φr_{nv}']).toBe(r.phiRnv.toFixed(2))
     expect(v['r_{n,tepi}']).toBe(r.rnBrgEdge.toFixed(2))
     expect(v['φR_{n}']).toBe(r.phiRge.toFixed(2))
-    expect(v['D/C_{geser}']).toBe(r.dcShear.toFixed(3))
+    expect(v['Rasio_{geser}']).toBe(r.dcShear.toFixed(3))
     // tabel kapasitas grup: subtotal menjumlah ke Rn grup
     const tbl = rep.sections[4].blocks.find((b) => b.k === 'table')
     const sub = tbl?.k === 'table' ? tbl.rows.slice(0, -1).map((x) => Number(x[5])) : []
     expect(sub.reduce((a, b) => a + b, 0)).toBeCloseTo(r.Rge, 1)
     expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(2)
-    expect(rep.governing).toEqual({ label: 'D/C menentukan (geser)', ratio: r.govDC })
+    expect(rep.governing).toEqual({ label: 'Rasio menentukan (geser)', ratio: r.govDC })
   })
 
   it('tarik + geser: bagian tarik & kombinasi J3.7 dengan F′nt', () => {
@@ -82,8 +82,8 @@ describe('sambungan baut — laporan', () => {
     expect(rep.sections.map((s) => s.title).slice(-2)).toEqual(['Kuat tarik baut (J3.6)', 'Kombinasi tarik dan geser (J3.7)'])
     const v = Object.fromEntries(steps(rep).map((s) => [s.lhs, s.value]))
     expect(v["F'_{nt}"]).toBe(r.FntMod!.toFixed(1))
-    expect(v['D/C_{kombinasi}']).toBe(r.dcComboInfo.toFixed(3))
-    expect(rep.governing?.label).toBe(`D/C menentukan (${r.gov})`)
+    expect(v['Rasio_{kombinasi}']).toBe(r.dcComboInfo.toFixed(3))
+    expect(rep.governing?.label).toBe(`Rasio menentukan (${r.gov})`)
   })
 
   it('data pelat kosong: tumpu dilewati, kapasitas = n·φrnv', () => {

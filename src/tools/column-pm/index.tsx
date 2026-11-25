@@ -124,7 +124,7 @@ function Inputs({
         />
         {errors.loads && <p className="msg bad">{errors.loads}</p>}
         <p className="muted card-note">
-          Pu tekan positif. Mux menekan sisi atas/bawah (arah tinggi h); Muy = 0 untuk uniaksial. Momen sudah termasuk pembesaran bila langsing. Semua beban diplot; D/C terbesar menentukan.
+          Pu tekan positif. Mux menekan sisi atas/bawah (arah tinggi h); Muy = 0 untuk uniaksial. Momen sudah termasuk pembesaran bila langsing. Semua beban diplot; Rasio terbesar menentukan.
         </p>
       </Card>
     </>
@@ -266,7 +266,7 @@ function LoadTable({ r, sel, onSel }: { r: ColumnResult; sel: number; onSel: (k:
             <th>Mux (kN·m)</th>
             <th>Muy (kN·m)</th>
             <th>φMn (kN·m)</th>
-            <th>D/C</th>
+            <th>Rasio</th>
           </tr>
         </thead>
         <tbody>
@@ -307,7 +307,7 @@ function Results({ r, stale, reject }: { r: ColumnResult | null; stale: boolean;
             <h4 className="results-h">Ringkasan</h4>
             <StatTiles
               items={[
-                ...(r.dc != null ? [{ label: r.loads.length > 1 ? `D/C kolom (beban ${r.gov + 1})` : 'D/C kolom', value: fx(r.dc, 2), sub: r.dc <= 1 ? 'di dalam permukaan desain' : 'di luar permukaan', tone: r.dc <= 1 ? ('ok' as const) : ('bad' as const) }] : []),
+                ...(r.dc != null ? [{ label: r.loads.length > 1 ? `Rasio kolom (beban ${r.gov + 1})` : 'Rasio kolom', value: fx(r.dc, 2), sub: r.dc <= 1 ? 'di dalam permukaan desain' : 'di luar permukaan', tone: r.dc <= 1 ? ('ok' as const) : ('bad' as const) }] : []),
                 { label: 'φPn,maks / φPnt', value: `${fx(r.phiPnMax, 0)} / ${fx(r.phiPnt, 0)}`, unit: 'kN' },
                 { label: 'φMn0 x / y (P = 0)', value: `${fx(r.M0x, 0)} / ${fx(r.M0y, 0)}`, unit: 'kN·m' },
                 { label: 'Seimbang x', value: `${fx(r.PbalX, 0)} kN`, sub: `Mb ${fx(r.MbalX, 0)} kN·m` },

@@ -275,8 +275,8 @@ export function flexureReport(i: FlexureInput, r: SteelFlexureResult): Report {
   const f = r.f!
   const p = r.p!
   const dcRows: Row[] = [
-    ...(r.dcL != null ? [check('D/C DFBK = M_{u} / φ_{b}M_{n}', r.dcL)] : []),
-    ...(r.dcA != null ? [check('D/C ASD = M_{a} / (M_{n}/Ω_{b})', r.dcA)] : []),
+    ...(r.dcL != null ? [check('Rasio DFBK = M_{u} / φ_{b}M_{n}', r.dcL)] : []),
+    ...(r.dcA != null ? [check('Rasio ASD = M_{a} / (M_{n}/Ω_{b})', r.dcA)] : []),
   ]
   const cands: { label: string; cap: number; c: 'v' | 'm' | 'y' }[] = [{ label: 'Leleh φ_{b}M_{p}', cap: 0.9 * r.Mp!, c: 'v' }]
   if (f.ltb && f.Mn_ltb !== undefined) cands.push({ label: 'Tekuk torsi-lateral', cap: (0.9 * f.Mn_ltb) / 1e6, c: 'm' })
@@ -297,8 +297,8 @@ export function flexureReport(i: FlexureInput, r: SteelFlexureResult): Report {
             { desc: `Menentukan: ${f.gov}`, lhs: 'M_{n}', expr: 'min(keadaan batas)', value: fx(r.Mn, 2), unit: 'kN·m' },
             { desc: 'DFBK, φ_{b} = 0,90', lhs: 'φ_{b}M_{n}', subst: `0.90 × ${fx(r.Mn, 2)}`, value: fx(r.phiMn, 2), unit: 'kN·m' },
             { desc: 'ASD, Ω_{b} = 1,67', lhs: '\\frac{M_{n}}{Ω_{b}}', subst: `\\frac{${fx(r.Mn, 2)}}{1.67}`, value: fx(r.Ma, 2), unit: 'kN·m' },
-            ...(r.dcL != null ? [{ lhs: 'D/C_{DFBK}', expr: '\\frac{M_{u}}{φ_{b}M_{n}}', subst: `\\frac{${fx(r.Mu, 2)}}{${fx(r.phiMn, 2)}}`, value: fx(r.dcL, 3) }] : []),
-            ...(r.dcA != null ? [{ lhs: 'D/C_{ASD}', expr: '\\frac{M_{a}}{M_{n}/Ω_{b}}', subst: `\\frac{${fx(r.MaDem, 2)}}{${fx(r.Ma, 2)}}`, value: fx(r.dcA, 3) }] : []),
+            ...(r.dcL != null ? [{ lhs: 'Rasio_{DFBK}', expr: '\\frac{M_{u}}{φ_{b}M_{n}}', subst: `\\frac{${fx(r.Mu, 2)}}{${fx(r.phiMn, 2)}}`, value: fx(r.dcL, 3) }] : []),
+            ...(r.dcA != null ? [{ lhs: 'Rasio_{ASD}', expr: '\\frac{M_{a}}{M_{n}/Ω_{b}}', subst: `\\frac{${fx(r.MaDem, 2)}}{${fx(r.Ma, 2)}}`, value: fx(r.dcA, 3) }] : []),
           ],
         },
         ...(dcRows.length ? [{ k: 'rows' as const, rows: dcRows }] : [{ k: 'p' as const, text: 'Momen perlu M_{u} / M_{a} belum diisi — hanya kapasitas yang dilaporkan.' }]),
@@ -312,7 +312,7 @@ export function flexureReport(i: FlexureInput, r: SteelFlexureResult): Report {
     },
   ]
 
-  const gov = r.dcL != null ? { label: 'D/C DFBK menentukan', ratio: r.dcL } : r.dcA != null ? { label: 'D/C ASD menentukan', ratio: r.dcA } : undefined
+  const gov = r.dcL != null ? { label: 'Rasio DFBK menentukan', ratio: r.dcL } : r.dcA != null ? { label: 'Rasio ASD menentukan', ratio: r.dcA } : undefined
   return {
     title: 'Balok Baja — Lentur (SNI 1729:2020 Bab F)',
     summary: [

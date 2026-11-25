@@ -217,13 +217,13 @@
       r.warn.push('Jarak tepi ca = ' + caMin.toFixed(0) + ' mm < 1,5·hef = ' + (1.5 * hef).toFixed(0) + ' mm — efek tepi mengurangi kapasitas (ψed = ' + psiEd.toFixed(2) + ').');
     if (ha > 0 && ha < 1.5 * hef)
       r.warn.push('Tebal beton ha = ' + ha.toFixed(0) + ' mm < 1,5·hef — kemungkinan breakout tembus / perlu tinjauan hef,maks (ACI 17.6.2.1.2). Tidak dikoreksi otomatis di v1.');
-    if (r.dcSteel > 1) r.warn.push('D/C baja tarik = ' + r.dcSteel.toFixed(2) + ' > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.');
-    if (r.dcConc > 1) r.warn.push('D/C breakout beton (tarik) = ' + r.dcConc.toFixed(2) + ' > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.');
+    if (r.dcSteel > 1) r.warn.push('Rasio baja tarik = ' + r.dcSteel.toFixed(2) + ' > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.');
+    if (r.dcConc > 1) r.warn.push('Rasio breakout beton (tarik) = ' + r.dcConc.toFixed(2) + ' > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.');
     if (Vu > 0 && ca1 <= 0)
       r.warn.push('Geser Vu > 0 tetapi ca = 0 — breakout geser tidak ditinjau (dianggap tepi jauh). Bila ada tepi, isi ca agar breakout geser dihitung.');
-    if (r.dcVsteel > 1) r.warn.push('D/C geser baja = ' + r.dcVsteel.toFixed(2) + ' > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).');
-    if (r.dcVbreak > 1) r.warn.push('D/C breakout geser = ' + r.dcVbreak.toFixed(2) + ' > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.');
-    if (r.dcVpry > 1) r.warn.push('D/C pryout = ' + r.dcVpry.toFixed(2) + ' > 1 — pryout menentukan (hef dangkal relatif terhadap geser). Perdalam hef.');
+    if (r.dcVsteel > 1) r.warn.push('Rasio geser baja = ' + r.dcVsteel.toFixed(2) + ' > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).');
+    if (r.dcVbreak > 1) r.warn.push('Rasio breakout geser = ' + r.dcVbreak.toFixed(2) + ' > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.');
+    if (r.dcVpry > 1) r.warn.push('Rasio pryout = ' + r.dcVpry.toFixed(2) + ' > 1 — pryout menentukan (hef dangkal relatif terhadap geser). Perdalam hef.');
     if (r.combined != null && r.combined > 1.0)
       r.warn.push('Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = ' + r.combined.toFixed(2) + ' > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1.');
 
@@ -578,12 +578,12 @@
     results.innerHTML = '';
 
     var dc = r.govDC;
-    state.cap.set(r.n + ' baut · D/C ' + (isFinite(dc) ? dc.toFixed(2) : '—') + ' · menentukan: ' + r.gov);
+    state.cap.set(r.n + ' baut · Rasio ' + (isFinite(dc) ? dc.toFixed(2) : '—') + ' · menentukan: ' + r.gov);
 
     results.appendChild(UI.heroRow([
-      { label: 'D/C — ' + r.gov, value: isFinite(dc) ? UI.fmt(dc, 2) : '—', unit: dc <= 1 ? 'OK' : 'NG', tone: dc <= 1 ? 'ok' : 'bad' },
-      { label: 'D/C baja tarik', value: isFinite(r.dcSteel) ? UI.fmt(r.dcSteel, 2) : '—', tone: r.dcSteel <= 1 ? 'ok' : 'bad' },
-      { label: 'D/C jebol beton', value: isFinite(r.dcConc) ? UI.fmt(r.dcConc, 2) : '—', tone: r.dcConc <= 1 ? 'ok' : 'bad' }
+      { label: 'Rasio — ' + r.gov, value: isFinite(dc) ? UI.fmt(dc, 2) : '—', unit: dc <= 1 ? 'OK' : 'NG', tone: dc <= 1 ? 'ok' : 'bad' },
+      { label: 'Rasio baja tarik', value: isFinite(r.dcSteel) ? UI.fmt(r.dcSteel, 2) : '—', tone: r.dcSteel <= 1 ? 'ok' : 'bad' },
+      { label: 'Rasio jebol beton', value: isFinite(r.dcConc) ? UI.fmt(r.dcConc, 2) : '—', tone: r.dcConc <= 1 ? 'ok' : 'bad' }
     ]));
 
     results.appendChild(UI.rhead('Gaya baut (elastis)'));
@@ -594,7 +594,7 @@
     results.appendChild(UI.rhead('Kuat baja tarik (per angkur · 17.6.1)'));
     results.appendChild(UI.kv('Nsa = Ase·futa', UI.fmt(r.Nsa, 1) + ' kN'));
     results.appendChild(UI.kv('φNsa (φ=0,75)', UI.fmt(r.phiNsa, 1) + ' kN'));
-    results.appendChild(UI.kv('D/C baja = Tmax/φNsa', isFinite(r.dcSteel) ? UI.fmt(r.dcSteel, 2) : '—',
+    results.appendChild(UI.kv('Rasio baja = Tmax/φNsa', isFinite(r.dcSteel) ? UI.fmt(r.dcSteel, 2) : '—',
       r.dcSteel <= 1 ? 'ok' : 'bad'));
 
     results.appendChild(UI.rhead('Jebol beton grup (17.6.2)'));
@@ -603,7 +603,7 @@
     results.appendChild(UI.kv('ψec · ψed · ψc · ψcp', r.psiEc.toFixed(2) + ' · ' + r.psiEd.toFixed(2) + ' · ' + r.psiC.toFixed(2) + ' · ' + r.psiCp.toFixed(2)));
     results.appendChild(UI.kv('Ncbg', UI.fmt(r.Ncbg, 1) + ' kN'));
     results.appendChild(UI.kv('φNcbg (φ=' + r.phiC.toFixed(2) + ')', UI.fmt(r.phiNcbg, 1) + ' kN'));
-    results.appendChild(UI.kv('D/C breakout = ΣTt/φNcbg', isFinite(r.dcConc) ? UI.fmt(r.dcConc, 2) : '—',
+    results.appendChild(UI.kv('Rasio breakout = ΣTt/φNcbg', isFinite(r.dcConc) ? UI.fmt(r.dcConc, 2) : '—',
       r.dcConc <= 1 ? 'ok' : 'bad'));
 
     if (r.Vu > 0) {
@@ -611,7 +611,7 @@
       results.appendChild(UI.kv('Geser per baut Vu/n', UI.fmt(r.Vbolt, 1) + ' kN'));
       results.appendChild(UI.kv('Vsa = 0,6·Ase·futa' + (r.grout ? ' ·0,8' : ''), UI.fmt(r.Vsa, 1) + ' kN'));
       results.appendChild(UI.kv('φVsa (φ=0,65)', UI.fmt(r.phiVsa, 1) + ' kN'));
-      results.appendChild(UI.kv('D/C geser baja', isFinite(r.dcVsteel) ? UI.fmt(r.dcVsteel, 2) : '—', r.dcVsteel <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio geser baja', isFinite(r.dcVsteel) ? UI.fmt(r.dcVsteel, 2) : '—', r.dcVsteel <= 1 ? 'ok' : 'bad'));
 
       results.appendChild(UI.rhead('Geser — breakout beton grup (17.7.2)'));
       if (r.breakoutApplic) {
@@ -619,7 +619,7 @@
         results.appendChild(UI.kv('AVc / AVco', UI.fmt(r.AVc, 0) + ' / ' + UI.fmt(r.AVco, 0) + ' = ' + r.ratioAV.toFixed(2)));
         results.appendChild(UI.kv('ψed,V · ψc,V · ψh,V', r.psiEdV.toFixed(2) + ' · ' + r.psiCV.toFixed(2) + ' · ' + r.psiHV.toFixed(2)));
         results.appendChild(UI.kv('φVcbg (φ=' + r.phiC.toFixed(2) + ')', UI.fmt(r.phiVcbg, 1) + ' kN'));
-        results.appendChild(UI.kv('D/C breakout geser = Vu/φVcbg', isFinite(r.dcVbreak) ? UI.fmt(r.dcVbreak, 2) : '—', r.dcVbreak <= 1 ? 'ok' : 'bad'));
+        results.appendChild(UI.kv('Rasio breakout geser = Vu/φVcbg', isFinite(r.dcVbreak) ? UI.fmt(r.dcVbreak, 2) : '—', r.dcVbreak <= 1 ? 'ok' : 'bad'));
       } else {
         results.appendChild(UI.el('div', 'ck-empty', 'ca = 0 → tanpa tepi; breakout geser tidak ditinjau (dianggap tepi jauh).'));
       }
@@ -627,7 +627,7 @@
       results.appendChild(UI.rhead('Geser — pryout (17.7.3)'));
       results.appendChild(UI.kv('kcp', r.kcp.toFixed(1) + (r.hef < 65 ? ' (hef<65)' : ' (hef≥65)')));
       results.appendChild(UI.kv('φVcpg = φ·kcp·Ncbg', UI.fmt(r.phiVcpg, 1) + ' kN'));
-      results.appendChild(UI.kv('D/C pryout = Vu/φVcpg', isFinite(r.dcVpry) ? UI.fmt(r.dcVpry, 2) : '—', r.dcVpry <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio pryout = Vu/φVcpg', isFinite(r.dcVpry) ? UI.fmt(r.dcVpry, 2) : '—', r.dcVpry <= 1 ? 'ok' : 'bad'));
     }
 
     if (r.combined != null) {
@@ -652,7 +652,7 @@
 
     // inspektur baut
     results.appendChild(UI.rhead('Inspektur Baut'));
-    state.inspector = UI.el('div', 'ck-empty', 'Klik sebuah baut di tampilan 3D untuk melihat gaya & D/C baut tersebut.');
+    state.inspector = UI.el('div', 'ck-empty', 'Klik sebuah baut di tampilan 3D untuk melihat gaya & Rasio baut tersebut.');
     results.appendChild(state.inspector);
 
     rebuild(r);
@@ -663,7 +663,7 @@
     if (!state.inspector) return;
     if (state.selected == null || state.selected < 0 || !r) {
       state.inspector.className = 'ck-empty';
-      state.inspector.innerHTML = 'Klik sebuah baut di tampilan 3D untuk melihat gaya & D/C baut tersebut.';
+      state.inspector.innerHTML = 'Klik sebuah baut di tampilan 3D untuk melihat gaya & Rasio baut tersebut.';
       return;
     }
     var bt = r.bolts[state.selected];
@@ -675,12 +675,12 @@
         bt.x.toFixed(0) + ', ' + bt.y.toFixed(0) + ' mm</span></div>' +
       '<div class="ck-kv"><span class="k">Gaya tarik T</span><span class="v ' + (bt.T > 0 ? 'ok' : '') + '">' +
         UI.fmt(bt.T, 1) + ' kN ' + (bt.T > 0 ? '(tarik)' : '(tekan)') + '</span></div>' +
-      '<div class="ck-kv"><span class="k">D/C baja tarik</span><span class="v ' + (dcS <= 1 ? 'ok' : 'bad') + '">' +
+      '<div class="ck-kv"><span class="k">Rasio baja tarik</span><span class="v ' + (dcS <= 1 ? 'ok' : 'bad') + '">' +
         (bt.T > 0 && isFinite(dcS) ? UI.fmt(dcS, 2) : '—') + '</span></div>';
     if (r.Vu > 0) {
       rows +=
         '<div class="ck-kv"><span class="k">Geser Vu/n</span><span class="v">' + UI.fmt(r.Vbolt, 1) + ' kN</span></div>' +
-        '<div class="ck-kv"><span class="k">D/C baja geser</span><span class="v ' + (dcVs <= 1 ? 'ok' : 'bad') + '">' +
+        '<div class="ck-kv"><span class="k">Rasio baja geser</span><span class="v ' + (dcVs <= 1 ? 'ok' : 'bad') + '">' +
           (isFinite(dcVs) ? UI.fmt(dcVs, 2) : '—') + '</span></div>';
     }
     state.inspector.innerHTML = rows;
@@ -799,7 +799,7 @@
     L.push(' KUAT BAJA TARIK (17.6.1)'); L.push(ruleR('='));
     L.push(rowR('Nsa = Ase*futa', numR(r.Nsa, 1) + ' kN'));
     L.push(rowR('phiNsa (phi=0.75)', numR(r.phiNsa, 1) + ' kN'));
-    L.push(rowR('>> D/C baja', numR(r.dcSteel, 2) + (r.dcSteel <= 1 ? ' OK' : ' NG')));
+    L.push(rowR('>> Rasio baja', numR(r.dcSteel, 2) + (r.dcSteel <= 1 ? ' OK' : ' NG')));
     L.push('');
     L.push(' JEBOL BETON GRUP (17.6.2)'); L.push(ruleR('='));
     L.push(rowR('Nb = 10*sqrt(fc)*hef^1.5', numR(r.Nb, 1) + ' kN'));
@@ -809,7 +809,7 @@
     L.push(rowR('psi_c / psi_cp', numR(r.psiC, 2) + ' / ' + numR(r.psiCp, 2)));
     L.push(rowR('Ncbg', numR(r.Ncbg, 1) + ' kN'));
     L.push(rowR('phiNcbg (phi=' + numR(r.phiC, 2) + ')', numR(r.phiNcbg, 1) + ' kN'));
-    L.push(rowR('>> D/C breakout', numR(r.dcConc, 2) + (r.dcConc <= 1 ? ' OK' : ' NG')));
+    L.push(rowR('>> Rasio breakout', numR(r.dcConc, 2) + (r.dcConc <= 1 ? ' OK' : ' NG')));
     L.push(ruleR('='));
     if (r.Vu > 0) {
       L.push('');
@@ -817,18 +817,18 @@
       L.push(rowR('Geser per baut Vu/n', numR(r.Vbolt, 1) + ' kN'));
       L.push(rowR('Vsa = 0.6*Ase*futa' + (r.grout ? ' *0.8' : ''), numR(r.Vsa, 1) + ' kN'));
       L.push(rowR('phiVsa (phi=0.65)', numR(r.phiVsa, 1) + ' kN'));
-      L.push(rowR('>> D/C geser baja', numR(r.dcVsteel, 2) + (r.dcVsteel <= 1 ? ' OK' : ' NG')));
+      L.push(rowR('>> Rasio geser baja', numR(r.dcVsteel, 2) + (r.dcVsteel <= 1 ? ' OK' : ' NG')));
       if (r.breakoutApplic) {
         L.push(rowR('Vb dasar', numR(r.Vb, 1) + ' kN'));
         L.push(rowR('AVc / AVco', numR(r.AVc, 0) + ' / ' + numR(r.AVco, 0)));
         L.push(rowR('psi_edV/cV/hV', numR(r.psiEdV, 2) + '/' + numR(r.psiCV, 2) + '/' + numR(r.psiHV, 2)));
         L.push(rowR('phiVcbg', numR(r.phiVcbg, 1) + ' kN'));
-        L.push(rowR('>> D/C breakout geser', numR(r.dcVbreak, 2) + (r.dcVbreak <= 1 ? ' OK' : ' NG')));
+        L.push(rowR('>> Rasio breakout geser', numR(r.dcVbreak, 2) + (r.dcVbreak <= 1 ? ' OK' : ' NG')));
       } else {
         L.push(' Breakout geser: ca=0 (tanpa tepi) - tidak ditinjau.');
       }
       L.push(rowR('kcp / phiVcpg', numR(r.kcp, 1) + ' / ' + numR(r.phiVcpg, 1) + ' kN'));
-      L.push(rowR('>> D/C pryout', numR(r.dcVpry, 2) + (r.dcVpry <= 1 ? ' OK' : ' NG')));
+      L.push(rowR('>> Rasio pryout', numR(r.dcVpry, 2) + (r.dcVpry <= 1 ? ' OK' : ' NG')));
       L.push(ruleR('='));
     }
     if (r.combined != null) {
@@ -838,7 +838,7 @@
       L.push(rowR('>> UN^5/3 + UV^5/3 <= 1.0', numR(r.combined, 2) + (r.combined <= 1 ? ' OK' : ' NG')));
       L.push(ruleR('='));
     }
-    L.push(rowR('>> D/C MENENTUKAN (' + r.gov + ')', numR(r.govDC, 2)));
+    L.push(rowR('>> Rasio MENENTUKAN (' + r.gov + ')', numR(r.govDC, 2)));
     L.push(ruleR('='));
 
     if (r.warn.length) {

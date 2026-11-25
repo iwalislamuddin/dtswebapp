@@ -821,8 +821,8 @@
    "warn": [
     "Kerucut breakout tumpang-tindih (spasi 250 mm < 3·hef = 1125 mm) — kapasitas grup < Σ kapasitas tunggal; sudah tercermin di ANc/ANco = 0.33.",
     "Jarak tepi ca = 200 mm < 1,5·hef = 563 mm — efek tepi mengurangi kapasitas (ψed = 0.81).",
-    "D/C breakout beton (tarik) = 2.50 > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.",
-    "D/C breakout geser = 1.71 > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.",
+    "Rasio breakout beton (tarik) = 2.50 > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.",
+    "Rasio breakout geser = 1.71 > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.",
     "Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = 7.06 > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1."
    ],
    "nx": 2,
@@ -956,8 +956,8 @@
     "Kerucut breakout tumpang-tindih (spasi 250 mm < 3·hef = 1125 mm) — kapasitas grup < Σ kapasitas tunggal; sudah tercermin di ANc/ANco = 0.57.",
     "Jarak tepi ca = 300 mm < 1,5·hef = 563 mm — efek tepi mengurangi kapasitas (ψed = 0.86).",
     "Tebal beton ha = 300 mm < 1,5·hef — kemungkinan breakout tembus / perlu tinjauan hef,maks (ACI 17.6.2.1.2). Tidak dikoreksi otomatis di v1.",
-    "D/C breakout beton (tarik) = 1.37 > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.",
-    "D/C breakout geser = 1.27 > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.",
+    "Rasio breakout beton (tarik) = 1.37 > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.",
+    "Rasio breakout geser = 1.27 > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.",
     "Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = 3.17 > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1."
    ],
    "nx": 2,
@@ -1221,7 +1221,7 @@
    "warn": [
     "My > 0 tetapi hanya 1 kolom baut arah-Y (Σyi²=0) — grup tak dapat menahan momen arah ini.",
     "Kerucut breakout tumpang-tindih (spasi 250 mm < 3·hef = 1125 mm) — kapasitas grup < Σ kapasitas tunggal; sudah tercermin di ANc/ANco = 1.22.",
-    "D/C baja tarik = 1.32 > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
+    "Rasio baja tarik = 1.32 > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
     "Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = 2.18 > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1."
    ],
    "nx": 2,
@@ -1463,8 +1463,8 @@
   "output": {
    "valid": true,
    "warn": [
-    "D/C baja tarik = 1.13 > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
-    "D/C geser baja = 1.45 > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).",
+    "Rasio baja tarik = 1.13 > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
+    "Rasio geser baja = 1.45 > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).",
     "Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = 3.10 > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1."
    ],
    "nx": 1,
@@ -2230,10 +2230,10 @@
    "warn": [
     "Kerucut breakout tumpang-tindih (spasi 250 mm < 3·hef = 1125 mm) — kapasitas grup < Σ kapasitas tunggal; sudah tercermin di ANc/ANco = 0.87.",
     "Jarak tepi ca = 400 mm < 1,5·hef = 563 mm — efek tepi mengurangi kapasitas (ψed = 0.91).",
-    "D/C baja tarik = 1.46 > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
-    "D/C breakout beton (tarik) = 1.87 > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.",
-    "D/C geser baja = 1.13 > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).",
-    "D/C breakout geser = 2.22 > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.",
+    "Rasio baja tarik = 1.46 > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
+    "Rasio breakout beton (tarik) = 1.87 > 1 — perbesar hef, spasi, jarak tepi, atau pasang tulangan angkur.",
+    "Rasio geser baja = 1.13 > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).",
+    "Rasio breakout geser = 2.22 > 1 — perbesar jarak tepi ca1/tebal ha, atau pasang tulangan tepi.",
     "Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = 6.62 > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1."
    ],
    "nx": 2,
@@ -2365,8 +2365,8 @@
    "valid": true,
    "warn": [
     "Kerucut breakout tumpang-tindih (spasi 250 mm < 3·hef = 1125 mm) — kapasitas grup < Σ kapasitas tunggal; sudah tercermin di ANc/ANco = 1.49.",
-    "D/C baja tarik = 3.83 > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
-    "D/C geser baja = 1.28 > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).",
+    "Rasio baja tarik = 3.83 > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
+    "Rasio geser baja = 1.28 > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).",
     "Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = 10.90 > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1."
    ],
    "nx": 2,
@@ -2498,8 +2498,8 @@
    "valid": true,
    "warn": [
     "Kerucut breakout tumpang-tindih (spasi 250 mm < 3·hef = 1125 mm) — kapasitas grup < Σ kapasitas tunggal; sudah tercermin di ANc/ANco = 1.49.",
-    "D/C baja tarik = Infinity > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
-    "D/C geser baja = Infinity > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).",
+    "Rasio baja tarik = Infinity > 1 — baut leleh/putus. Perbesar diameter atau jumlah baut.",
+    "Rasio geser baja = Infinity > 1 — perbesar diameter/jumlah baut atau tambah kunci geser (shear key).",
     "Interaksi tarik+geser (Nua/φNn)^5/3 + (Vua/φVn)^5/3 = Infinity > 1,0 (ACI 17.8) — kombinasi menentukan meski masing-masing < 1."
    ],
    "nx": 2,

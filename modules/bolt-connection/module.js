@@ -169,9 +169,9 @@
       r.warn.push('A307: ulir selalu dianggap termasuk bidang geser (tidak ada opsi X).');
     if (Vu > 0 && Tu > 0 && !comboNeeded)
       r.warn.push('Interaksi J3.7 tidak wajib ditinjau (tegangan perlu ≤ 30% tersedia) — nilai tetap ditampilkan sebagai info.');
-    if (r.dcShear > 1) r.warn.push('D/C geser grup = ' + r.dcShear.toFixed(2) + ' > 1 — tambah baut/diameter, atau perbaiki tumpu (t, le, s).');
-    if (r.dcTension > 1) r.warn.push('D/C tarik = ' + r.dcTension.toFixed(2) + ' > 1 — tambah baut atau perbesar diameter.');
-    if (r.dcCombo > 1) r.warn.push('D/C kombinasi tarik+geser = ' + r.dcCombo.toFixed(2) + ' > 1 (J3.7) — kombinasi menentukan.');
+    if (r.dcShear > 1) r.warn.push('Rasio geser grup = ' + r.dcShear.toFixed(2) + ' > 1 — tambah baut/diameter, atau perbaiki tumpu (t, le, s).');
+    if (r.dcTension > 1) r.warn.push('Rasio tarik = ' + r.dcTension.toFixed(2) + ' > 1 — tambah baut atau perbesar diameter.');
+    if (r.dcCombo > 1) r.warn.push('Rasio kombinasi tarik+geser = ' + r.dcCombo.toFixed(2) + ' > 1 (J3.7) — kombinasi menentukan.');
 
     return r;
   }
@@ -203,7 +203,7 @@
       var g = r.govDC;
       state.UI.canvasTip(ctx, {
         mx: state.mouse.x, my: state.mouse.y, w: w, h: h, topBand: 34,
-        text: 'D/C ' + (isFinite(g) ? g.toFixed(2) : '—') + ' (' + r.gov + ') · ' + r.n + ' baut ' + r.gradeLabel
+        text: 'Rasio ' + (isFinite(g) ? g.toFixed(2) : '—') + ' (' + r.gov + ') · ' + r.n + ' baut ' + r.gradeLabel
       });
     }
   }
@@ -429,11 +429,11 @@
     state.result = r;
     results.innerHTML = '';
 
-    state.cap.set(r.n + '×M' + r.d + ' ' + r.gradeLabel + ' · D/C ' +
+    state.cap.set(r.n + '×M' + r.d + ' ' + r.gradeLabel + ' · Rasio ' +
       (isFinite(r.govDC) ? r.govDC.toFixed(2) : '—') + ' (' + r.gov + ')');
 
     results.appendChild(UI.heroRow([
-      { label: 'D/C menentukan (' + r.gov + ')', value: isFinite(r.govDC) ? UI.fmt(r.govDC, 2) : '—',
+      { label: 'Rasio menentukan (' + r.gov + ')', value: isFinite(r.govDC) ? UI.fmt(r.govDC, 2) : '—',
         unit: r.govDC <= 1 ? 'OK' : 'NG', tone: r.govDC <= 1 ? 'ok' : 'bad' },
       { label: 'φRn grup efektif', value: UI.fmt(r.phiRge, 1), unit: 'kN' },
       { label: 'Vu terpakai', value: UI.fmt(r.Vu, 1), unit: 'kN' }
@@ -455,13 +455,13 @@
       results.appendChild(UI.kv('Batas atas 2,4·d·t·Fu (×φ)', UI.fmt(0.75 * r.rnBrgCap, 1) + ' kN'));
     }
     results.appendChild(UI.kv('φRn grup efektif Σmin(geser,tumpu)', UI.fmt(r.phiRge, 1) + ' kN'));
-    results.appendChild(UI.kv('D/C geser grup = Vu/φRn', r.Vu > 0 ? UI.fmt(r.dcShear, 2) : '—',
+    results.appendChild(UI.kv('Rasio geser grup = Vu/φRn', r.Vu > 0 ? UI.fmt(r.dcShear, 2) : '—',
       r.dcShear <= 1 ? 'ok' : 'bad'));
 
     if (r.Tu > 0) {
       results.appendChild(UI.rhead('Tarik baut (J3.6)'));
       results.appendChild(UI.kv('φrn tarik per baut', UI.fmt(r.phiRnt, 1) + ' kN'));
-      results.appendChild(UI.kv('D/C tarik = rt/φrnt', UI.fmt(r.dcTension, 2), r.dcTension <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio tarik = rt/φrnt', UI.fmt(r.dcTension, 2), r.dcTension <= 1 ? 'ok' : 'bad'));
 
       if (r.FntMod != null) {
         results.appendChild(UI.rhead('Kombinasi tarik + geser (J3.7)'));
@@ -469,7 +469,7 @@
         results.appendChild(UI.kv('Rasio thd tersedia', (r.ratioV * 100).toFixed(0) + '% / ' + (r.ratioT * 100).toFixed(0) + '%' +
           (r.comboNeeded ? ' → interaksi WAJIB' : ' → ≤30%, tak wajib')));
         results.appendChild(UI.kv("F'nt termodifikasi", UI.fmt(r.FntMod, 1) + ' MPa'));
-        results.appendChild(UI.kv("D/C kombinasi = rt/φr'nt", UI.fmt(r.dcComboInfo, 2),
+        results.appendChild(UI.kv("Rasio kombinasi = rt/φr'nt", UI.fmt(r.dcComboInfo, 2),
           (r.comboNeeded ? (r.dcComboInfo <= 1 ? 'ok' : 'bad') : '')));
       }
     }
@@ -579,7 +579,7 @@
     }
     var yCap = by2 + rows.length * 17 + 26;
     ops.push({ t: 'text', x: 264, y: yCap, s: 'Gbr. 1  Pola baut ' + r.nr + 'x' + r.nc + ' M' + r.d +
-      ' - phiRn grup = ' + numR(r.phiRge, 1) + ' kN, D/C ' + tolatin(r.gov) + ' = ' + numR(r.govDC, 2), size: 7.5, align: 'c' });
+      ' - phiRn grup = ' + numR(r.phiRge, 1) + ' kN, rasio ' + tolatin(r.gov) + ' = ' + numR(r.govDC, 2), size: 7.5, align: 'c' });
     return { fig: { h: Math.ceil((yCap + 10) / 11.5), ops: ops,
       alt: 'Gbr. 1 Denah pola baut & kapasitas - lihat versi PDF' } };
   }
@@ -617,20 +617,20 @@
       L.push(rowR('phi*rn tumpu tepi/dalam', numR(0.75 * r.rnBrgEdge, 1) + ' / ' + (r.nr > 1 ? numR(0.75 * r.rnBrgInner, 1) : '-') + ' kN'));
     }
     L.push(rowR('phi*Rn grup efektif', numR(r.phiRge, 1) + ' kN'));
-    L.push(rowR('>> D/C geser grup', numR(r.dcShear, 2) + (r.dcShear <= 1 ? ' OK' : ' NG')));
+    L.push(rowR('>> Rasio geser grup', numR(r.dcShear, 2) + (r.dcShear <= 1 ? ' OK' : ' NG')));
     if (r.Tu > 0) {
       L.push('');
       L.push(' TARIK & KOMBINASI (J3.6, J3.7)'); L.push(ruleR('='));
       L.push(rowR('phi*rn tarik per baut', numR(r.phiRnt, 1) + ' kN'));
-      L.push(rowR('>> D/C tarik', numR(r.dcTension, 2) + (r.dcTension <= 1 ? ' OK' : ' NG')));
+      L.push(rowR('>> Rasio tarik', numR(r.dcTension, 2) + (r.dcTension <= 1 ? ' OK' : ' NG')));
       if (r.FntMod != null) {
         L.push(rowR("F'nt termodifikasi", numR(r.FntMod, 1) + ' MPa'));
-        L.push(rowR('>> D/C kombinasi', numR(r.dcComboInfo, 2) + (r.dcComboInfo <= 1 ? ' OK' : ' NG') +
+        L.push(rowR('>> Rasio kombinasi', numR(r.dcComboInfo, 2) + (r.dcComboInfo <= 1 ? ' OK' : ' NG') +
           (r.comboNeeded ? '' : ' (tak wajib)')));
       }
     }
     L.push(ruleR('='));
-    L.push(rowR('>> D/C MENENTUKAN (' + tolatin(r.gov) + ')', numR(r.govDC, 2)));
+    L.push(rowR('>> Rasio MENENTUKAN (' + tolatin(r.gov) + ')', numR(r.govDC, 2)));
     L.push(ruleR('='));
 
     if (r.warn.length) {

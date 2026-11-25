@@ -24,7 +24,7 @@ describe('batang tarik baja — input UI', () => {
     expect(goldenDiff(computeTension(TENSION_DEFAULTS)!, byName('default').output)).toEqual([])
   })
 
-  it.each(['baut default', 'las', 'fraktur menentukan', 'U manual', 'An sangat kecil', 'L/r tepat', 'pipa', 'siku', 'UNP', 'SHS hitung', 'CNP', 'D/C terlampaui', 'D/C aman'])(
+  it.each(['baut default', 'las', 'fraktur menentukan', 'U manual', 'An sangat kecil', 'L/r tepat', 'pipa', 'siku', 'UNP', 'SHS hitung', 'CNP', 'Rasio terlampaui', 'Rasio aman'])(
     'kasus golden "%s" lewat input UI identik',
     (name) => {
       const ui = fromGolden(name)
@@ -53,7 +53,7 @@ describe('batang tarik baja — laporan', () => {
     rep.sections.flatMap((s) => s.blocks).flatMap((b) => (b.k === 'calc' ? b.steps : []))
 
   it('bagian & langkah rumus konsisten dengan hasil hitung', () => {
-    const ui = fromGolden('D/C aman')
+    const ui = fromGolden('Rasio aman')
     const rep = buildTensionReport(ui)!
     const r = computeTension(ui)!
     expect(rep.sections.map((s) => s.title)).toEqual([
@@ -67,12 +67,12 @@ describe('batang tarik baja — laporan', () => {
     expect(val('P_{n}', 0)).toBe(r.PnY!.toFixed(1))
     expect(val('P_{n}', 1)).toBe(r.PnR!.toFixed(1))
     expect(val('φ_{t}P_{n}', 2)).toBe(r.phiPn!.toFixed(1))
-    expect(val('D/C_{DFBK}')).toBe(r.dcL!.toFixed(3))
-    expect(rep.governing).toEqual({ label: 'D/C DFBK menentukan', ratio: r.dcL })
+    expect(val('Rasio_{DFBK}')).toBe(r.dcL!.toFixed(3))
+    expect(rep.governing).toEqual({ label: 'Rasio DFBK menentukan', ratio: r.dcL })
     expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(2)
   })
 
-  it('las: tanpa langkah lubang; tanpa beban: tanpa D/C menentukan', () => {
+  it('las: tanpa langkah lubang; tanpa beban: tanpa rasio menentukan', () => {
     const rep = buildTensionReport(fromGolden('las'))!
     expect(steps(rep).some((s) => s.lhs === 'd_{h}')).toBe(false)
     expect(rep.governing).toBeUndefined()

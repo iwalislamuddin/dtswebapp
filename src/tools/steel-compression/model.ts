@@ -20,7 +20,7 @@ export interface CompressionInput extends SteelGradeInput {
   /** Tekuk torsi WF: Kz & Lz (mm); 0 = 1,0 / maks(Lx, Ly). */
   Kz: string
   Lz: string
-  /** kN; 0 = lewati D/C. */
+  /** kN; 0 = lewati rasio. */
   Pu: string
   Pa: string
 }

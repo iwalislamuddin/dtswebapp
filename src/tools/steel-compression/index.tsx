@@ -90,8 +90,8 @@ function Inputs({
         )}
       </Card>
       <Card n={3} title="Beban">
-        <NumField label="Pu — tekan terfaktor (DFBK)" unit="kN" value={input.Pu} error={errors.Pu} hint="0 = lewati D/C." onChange={(Pu) => setInput({ Pu })} />
-        <NumField label="Pa — tekan layan (ASD)" unit="kN" value={input.Pa} error={errors.Pa} hint="0 = lewati D/C." onChange={(Pa) => setInput({ Pa })} />
+        <NumField label="Pu — tekan terfaktor (DFBK)" unit="kN" value={input.Pu} error={errors.Pu} hint="0 = lewati rasio." onChange={(Pu) => setInput({ Pu })} />
+        <NumField label="Pa — tekan layan (ASD)" unit="kN" value={input.Pa} error={errors.Pa} hint="0 = lewati rasio." onChange={(Pa) => setInput({ Pa })} />
       </Card>
     </>
   )
@@ -232,7 +232,7 @@ function ColumnCurve({ r, w, h }: { r: SteelCompressionResult; w: number; h: num
 
 function Results({ r, stale }: { r: SteelCompressionResult | null; stale: boolean }) {
   const [tab, setTab] = useState<Tab>('kurva')
-  const status = stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : r && !(r.Pu! > 0) && !(r.Pa_dem! > 0) ? 'Isi Pu (DFBK) atau Pa (ASD) untuk menghitung D/C.' : null
+  const status = stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : r && !(r.Pu! > 0) && !(r.Pa_dem! > 0) ? 'Isi Pu (DFBK) atau Pa (ASD) untuk menghitung rasio.' : null
   return (
     <Panel
       title="Kapasitas"

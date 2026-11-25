@@ -20,7 +20,7 @@ describe('diagram P–M kolom — input UI', () => {
     expect(goldenDiff(computeColumn(COLUMN_DEFAULTS)!, byName('default').output)).toEqual([])
   })
 
-  it.each(['persegi biaksial', 'persegi persegi panjang', 'persegi spiral', 'persegi Pu melebihi', 'persegi tarik', 'persegi tanpa momen', 'persegi D/C > 1', 'persegi rho < 1%', 'persegi rho > 4%', 'lingkaran', 'lingkaran spiral', 'L', 'T', 'fc 40'])(
+  it.each(['persegi biaksial', 'persegi persegi panjang', 'persegi spiral', 'persegi Pu melebihi', 'persegi tarik', 'persegi tanpa momen', 'persegi rasio > 1', 'persegi rho < 1%', 'persegi rho > 4%', 'lingkaran', 'lingkaran spiral', 'L', 'T', 'fc 40'])(
     'kasus golden "%s" lewat input UI identik',
     (name) => {
       const ui = fromGolden(name)
@@ -58,7 +58,7 @@ describe('diagram P–M kolom — banyak beban', () => {
     ],
   }
 
-  it('tiap beban dicek terhadap permukaan yang sama; penentu = D/C terbesar', () => {
+  it('tiap beban dicek terhadap permukaan yang sama; penentu = Rasio terbesar', () => {
     const r = computeColumn(multi)!
     expect(r.loads).toHaveLength(3)
     // beban 1 identik dengan hitungan beban tunggal
@@ -86,12 +86,12 @@ describe('diagram P–M kolom — banyak beban', () => {
 })
 
 describe('diagram P–M kolom — laporan', () => {
-  it('titik acuan & D/C konsisten; biaksial menambah kontur', () => {
+  it('titik acuan & Rasio konsisten; biaksial menambah kontur', () => {
     const r = computeColumn(COLUMN_DEFAULTS)!
     const rep = buildColumnReport(COLUMN_DEFAULTS)!
     const steps = rep.sections.flatMap((s) => s.blocks).flatMap((b) => (b.k === 'calc' ? b.steps : []))
     expect(steps.find((s) => s.lhs === 'P_{o}')!.value).toBe(r.Po!.toFixed(0))
-    expect(steps.find((s) => s.lhs === 'D/C')!.value).toBe(r.dc!.toFixed(3))
+    expect(steps.find((s) => s.lhs === 'Rasio')!.value).toBe(r.dc!.toFixed(3))
     const fig = (i: ColumnInput) => buildColumnReport(i)!.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure').length
     expect(fig(fromGolden('persegi biaksial'))).toBe(fig(COLUMN_DEFAULTS) + 2) // + P–My + kontur
   })

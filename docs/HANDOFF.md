@@ -189,7 +189,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
   φPn/Pa desain = keadaan batas terkecil; keadaan menentukan ditandai.
 - Luas neto baut: `An=Ag−Σ(dh·t)`, `dh=db+kelonggaran` (default 2 mm), tebal berlubang auto dari `SP.tGov`
   (WF/UNP→tf, siku/hollow→t). Las/tanpa lubang → An=Ag. **Shear lag U** preset (1,0/0,90/0,85/0,80/0,70) + manual.
-- Kelangsingan `L/rmin ≤ 300` (rekomendasi). Rasio D/C opsional: input Pu (DFBK) dan/atau Pa (ASD).
+- Kelangsingan `L/rmin ≤ 300` (rekomendasi). Rasio opsional: input Pu (DFBK) dan/atau Pa (ASD).
 - Profil dipilih dari **library** (`runtime.steel`): dropdown tipe → ukuran (repopulasi dinamis, tampil kg/m).
   Mutu baja preset (BJ37/41/50/55, SS400, A36, A572, A992, custom) auto-isi Fy/Fu.
 - Kanvas 2D: **penampang tergambar to-scale per shape** (I/C/L/box/pipa, bibir CNP), marker lubang baut skematik,
@@ -256,7 +256,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
   (`k=Df/B` bila ≤1, else `atan(Df/B)`). Bentuk: menerus / bujur sangkar / lingkaran / persegi panjang.
 - **Koreksi muka air tanah (Das)**: 4 kasus (Dw≥Df+B tanpa efek · baji Df..Df+B γ efektif rata-rata · 0..Df berlapis,
   suku Nγ pakai γ′ · Dw≤0 seluruh γ′), `γ′=γsat−9,81`. **Keruntuhan lokal Terzaghi** (opsi): `c*=⅔c, tanφ*=⅔tanφ`
-  (hanya Terzaghi). FS (default 3) → `q_izin=qu/FS` gross & net; input `q kerja` opsional → rasio D/C.
+  (hanya Terzaghi). FS (default 3) → `q_izin=qu/FS` gross & net; input `q kerja` opsional → rasio.
 - Kanvas: **penampang fondasi to-scale** (permukaan tanah + arsir, telapak+kolom, beban P, garis MAT ▽ biru, baji
   keruntuhan skematik, dimensi B & Df, label q) + **bar perbandingan qu 3 metode** (metode utama di-amber, garis q_izin
   biru, garis q-kerja). Tabel perbandingan Nc/Nq/Nγ/qu/q_izin di panel hasil. Download PDF/Teks (ASCII-only tervalidasi).
@@ -376,7 +376,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
   Handoff klik: Pu=248 & Mu=300 terisi di tool tujuan + toast "diterima dari Kombinasi Beban" + sessionStorage terkonsumsi.
   Kanvas tetap 1 (unmount bersih ×4 navigasi); nol console error. **Versi cache SW dinaikkan ke `civil-tools-v20`**.
 
-⚠️ **OPSI 2 masih DITUNDA** (lihat di bawah) — beam-flexure & geoteknik jadi penerima (butuh field demand + D/C).
+⚠️ **OPSI 2 masih DITUNDA** (lihat di bawah) — beam-flexure & geoteknik jadi penerima (butuh field demand + Rasio).
 
 ### Rencana asli & arsitektur (disepakati 2026-07-13)
 
@@ -397,7 +397,7 @@ rumus, cakupan, dan angka validasi. Arsitektur: [`../ARCHITECTURE.md`](../ARCHIT
 - **Scope retrofit awal = OPSI 1**: hanya **3 tool baja** yang sudah punya field beban terfaktor tunggal →
   `steel-tension` (`Pu`←axial), `steel-compression` (`Pu`←axial), `steel-flexure` (`Mu`←moment). Backward-compatible.
 - ⏳ **OPSI 2 — DITUNDA (jangan lupa)**: agar **beam-flexure & tool geoteknik (pile/bearing)** bisa jadi penerima juga,
-  perlu **tambah field beban demand + cek D/C** ke tool-tool itu dulu (sekarang capacity-only/ASD tanpa slot demand):
+  perlu **tambah field beban demand + cek rasio** ke tool-tool itu dulu (sekarang capacity-only/ASD tanpa slot demand):
   beam-flexure ← `Mu` (bandingkan φMn), pile/bearing ← beban layan (bandingkan Q_izin/q_izin, jalur ASD).
   Begitu field demand ada, retrofit-nya identik pola Opsi 1 (accepts + buildForm ID). Kerjakan pada iterasi berikutnya.
 
@@ -441,13 +441,13 @@ Referensi **ACI 318-19 Ch. 17** (adopsi **SNI 2847:2019 Ps. 17**), beton normal 
 - **Visual 3D**: blok beton semi-transparan, pelat dasar, baut silinder + mur, **KERUCUT BREAKOUT** tiap angkur
   (apex di −hef, radius 1,5hef di permukaan) + lingkaran proyeksi; **overlap kerucut di-highlight** amber bila spasi<3hef
   (indikasi grup, sudah tercermin di ANc/ANco). **Vektor gaya**: tarik vertikal (merah, ∝T) + geser horizontal (biru, searah beban).
-  Grid + sumbu; **orbit/pan/zoom + auto-fit + tombol reset**; **klik baut → inspektur** (gaya T, geser Vu/n, D/C baja tarik & geser).
+  Grid + sumbu; **orbit/pan/zoom + auto-fit + tombol reset**; **klik baut → inspektur** (gaya T, geser Vu/n, rasio baja tarik & geser).
   `rebuild()` tiap input berubah; **recolor saat tema berganti** (MutationObserver `data-theme`). Skala scene `S=0,01` (mm→unit).
 - Laporan PDF/teks (ASCII-only; `tolatin` map ψ→psi, φ→phi, Σ→sum, ·→*, dst).
 - **Tervalidasi live vs hitung tangan** (Chromium headless + WebGL SwiftShader; default 2×2, sx=sy=250, da24/Ase353,
-  hef375, ca600, ha600, f'c25, futa400, Nu120, Mx20, Vu80 arah-X): Tmax **70,0 kN**, ΣTt 140; **tarik** φNsa 105,9 → D/C **0,66**,
-  breakout φNcbg → D/C **0,45**; **geser** Vsa **84,7**/φVsa 55,1 → D/C 0,36, Vb **271,9** (min 2 pers.), φVcbg **159,3** → D/C 0,50,
-  kcp 2, φVcpg **759,4** → D/C 0,11; **interaksi** UN 0,66/UV 0,50 → **0,82** ≤ 1 (menentukan). Nu=400 → 1,91 (NG, live).
+  hef375, ca600, ha600, f'c25, futa400, Nu120, Mx20, Vu80 arah-X): Tmax **70,0 kN**, ΣTt 140; **tarik** φNsa 105,9 → Rasio **0,66**,
+  breakout φNcbg → Rasio **0,45**; **geser** Vsa **84,7**/φVsa 55,1 → Rasio 0,36, Vb **271,9** (min 2 pers.), φVcbg **159,3** → Rasio 0,50,
+  kcp 2, φVcpg **759,4** → Rasio 0,11; **interaksi** UN 0,66/UV 0,50 → **0,82** ≤ 1 (menentukan). Nu=400 → 1,91 (NG, live).
   Dispose bersih (canvas tetap 1 setelah pindah tool & balik); nol console error.
 - **TIDAK termasuk** (increment berikutnya): pecah sisi **side-face blowout (17.6.4)**, **tulangan angkur** (anchor reinf, 17.5.2.1),
   **angkur pasca-pasang** (post-installed — hanya cast-in), **eksentrisitas geser** (ψec,V=1), model **bearing sumbu-netral** pelat,
@@ -464,7 +464,7 @@ berturut-turut (dispose bersih).
 kombinasi J3.7 (F'nt=1,3Fnt−Fnt/(φFnv)·frv, ambang 30%), tumpu/sobek J3.10 (1,2·lc·t·Fu ≤ 2,4·d·t·Fu; lc tepi/dalam;
 dh=d+2/d+3). **Kapasitas grup geser = Σ min(geser, tumpu) per baut**. Mutu A325/8.8, A490/10.9 (N/X), A307, kustom.
 Cek spasi 2,67d/3d & tepi Tabel J3.4M. `accepts:{shear:'Vu', axial:'Tu'}`. Kanvas: denah grup + bar keadaan batas.
-Validasi: 2×2 M20 A325-N t10 → φrnv 87,7 / lc 29/48 / φRn grup 350,6 / D/C 0,43; Tu=200 → F'nt 540,7, D/C 0,39. ✓
+Validasi: 2×2 M20 A325-N t10 → φrnv 87,7 / lc 29/48 / φRn grup 350,6 / Rasio 0,43; Tu=200 → F'nt 540,7, rasio 0,39. ✓
 
 **#12 Sambungan Las** (`weld-connection`, Sambungan) — Ps. J2/J4. Fillet Rn=0,6·FEXX·kd·β·Awe (Awe=0,707wL, φ=0,75),
 kd=(1+0,5sin^1,5θ) opsional, β end-loaded Lw/w>100; logam dasar leleh (1,0·0,6FyAgv) vs fraktur (0,75·0,6FuAnv);
@@ -495,15 +495,15 @@ modul 3D kedua setelah anchor-bolt-group). SNI 2847:2019 kompatibilitas regangan
 sapuan 48 sudut θ × 34 kedalaman c (log-spaced) → **permukaan interaksi P–Mx–My**. Blok tekan = poligon
 penampang ∩ halfplane u≤β1·c (**clipping Sutherland–Hodgman** + shoelace centroid), Cc di centroid blok; baja per
 BATANG (posisi x,y aktual) elastoplastis ±fy + koreksi beton terdesak; φ dari εt baja terjauh; plafon 0,80/0,85·Po.
-**Cek biaksial = kontur beban EKSAK**: iris permukaan desain di P=Pu (interpolasi per meridian), D/C = |Mu|/|φMn|
+**Cek biaksial = kontur beban EKSAK**: iris permukaan desain di P=Pu (interpolasi per meridian), rasio = |Mu|/|φMn|
 pada arah β=atan2(Muy,Mux) — bukan pendekatan resiprokal Bresler. Visual 3D: mesh permukaan transparan +
 meridian/paralel, sumbu P/Mx/My berwarna, grid di P=0, **cincin kontur iris di Pu** + titik demand merah + titik
 kapasitas se-arah; orbit/zoom/pan + reset; recolor saat ganti tema; rebuild men-dispose bersih (geometri renderer
 steady 29 setelah 5× rebuild). `accepts:{axial:'Pu', moment:'Mux'}`.
 Validasi PRESISI (400×400 8D19 fc25 fy400 d'60): formulasi poligon mereproduksi uniaksial tervalidasi **persis** —
 Balanced-X = Balanced-Y: cb 204 → **Pb 1462 & Mb 260** (cocok hitung tangan), M0x=M0y=142, Po 4259, φPn,maks 2215,
-Pnt −907; iris Pu=1200 arah-x → |φMn| 160,1 → D/C 0,94; **biaksial** Mux150+Muy100 → |Mu| 180,3 @34°, kapasitas
-se-arah 140,6 (kontur membulat < uniaksial 160 — perilaku benar) → D/C 1,28 NG. 4110 tri + 930 garis per frame;
+Pnt −907; iris Pu=1200 arah-x → |φMn| 160,1 → Rasio 0,94; **biaksial** Mux150+Muy100 → |Mu| 180,3 @34°, kapasitas
+se-arah 140,6 (kontur membulat < uniaksial 160 — perilaku benar) → Rasio 1,28 NG. 4110 tri + 930 garis per frame;
 nol console error; canvas tetap 1 saat pindah tool. ✓ BELUM: kelangsingan 6.6.4, Ps. 18, penampang non-persegi.
 ⚠️ Laporan mencantumkan sampel kontur kapasitas di P=Pu (bukan lagi sampel kurva 2D).
 
@@ -539,7 +539,7 @@ nilai daripada duplikasi mesin permukaan 3D di modul terpisah.
 - **Tervalidasi live** (fresh origin, port di-bump 2× hindari SW death-loop dev): keempat bentuk switch mulus tanpa
   reload, nol console error, PDF (`figSection`+`buildReport`) generate sukses tiap bentuk, guard invalid (dp terlalu
   besar utk kaki L) menampilkan pesan bersih tanpa exception. Rect **byte-for-byte reproduksi angka lama** (400×400
-  8D19 → Po 4259, D/C 0,94 — identik dgn validasi presisi di atas), memastikan refactor tidak regresi.
+  8D19 → Po 4259, rasio 0,94 — identik dgn validasi presisi di atas), memastikan refactor tidak regresi.
   SW cache **v58 → v59**. `APP_VER 'v0.7.4'`.
 - **TIDAK termasuk (baru)**: sentroid plastis L/T (lihat keterbatasan di atas), tulangan kustom per-batang (posisi
   bebas) — pola tulangan tetap mengikuti bentuk penampang (keliling/merata/sudut+spasi).
@@ -647,14 +647,14 @@ saja — 19 modul lain masih v0.2.0, bump serentak saat rilis).
   Dimensi poer dari bounding-box tiang + overhang `ov`.
 - **Dua basis beban** (yang diminta): **Ultimate kolom Pu** → Ru=Pu/N + opsi **momen biaksial** (distribusi kaku
   Ru,i = Pu/N + Muy·xi/Σx² + Mux·yi/Σy², guard Σ=0 → warning) · **Kapasitas tiang** (desain kapasitas) → Ru=Q semua tiang.
-- **Cek**: lentur di muka kolom (Ps. 13.4.2, As tiap arah + As,min susut-suhu, φMn, D/C) · geser 1-arah (Ps. 22.5,
+- **Cek**: lentur di muka kolom (Ps. 13.4.2, As tiap arah + As,min susut-suhu, φMn, rasio) · geser 1-arah (Ps. 22.5,
   penampang d dari muka, reaksi tiang interpolasi ±dp/2) · pons kolom (Ps. 22.6, b0 keliling d/2, β, αs=40) ·
   **pons tiang** (keliling d/2 dipangkas tepi → sudut/tepi/dalam αs 20/30/40; tiang persegi-ekuivalen 0,886·dp).
-  Lapis luar (d besar) → arah kantilever terbesar. **Governing = D/C maks** dari 6 cek.
+  Lapis luar (d besar) → arah kantilever terbesar. **Governing = Rasio maks** dari 6 cek.
 - **Kanvas denah** dgn overlay segment (Susunan / Lentur / Geser 1-arah / Pons), hover reaksi per tiang, dim Lx×Ly.
 - **Tervalidasi live** (port 5205, semua persis hitung tangan): default 4-tiang Pu 4000/dp400/s1200/h800/fc30/fy420 →
-  Ru 1000, poer 2000×2000, d 713/688, **Lentur Y govern D/C 0,93** (As,min 6D25), φMn 752; pons kolom D/C 0,44
-  (φVc 4555); pons tiang sudut D/C 0,57 (b0 1854, αs20). Mux 500 → Ru 1208,3/791,7 = 1000±208,3 ✓. N=2/N=6 default
+  Ru 1000, poer 2000×2000, d 713/688, **Lentur Y govern rasio 0,93** (As,min 6D25), φMn 752; pons kolom rasio 0,44
+  (φVc 4555); pons tiang sudut rasio 0,57 (b0 1854, αs20). Mux 500 → Ru 1208,3/791,7 = 1000±208,3 ✓. N=2/N=6 default
   → "TIDAK OK" (benar: pons-tiang & geser 1-arah gagal pada geometri tipis). Nol error, dispose bersih.
 - **TIDAK termasuk**: strut-and-tie poer tebal (Ps. 23), berat sendiri poer (diabaikan, konservatif), tulangan minimum
   detail (lihat Tool #20), reaksi tiang non-linear/pegas.

@@ -176,7 +176,7 @@
     r.tpReq = tpReq;
     r.dcPlate = tp > 0 ? tpReq / tp : Infinity;
 
-    // -- bearing D/C --
+    // -- bearing rasio --
     r.dcBrg = fpMax > 0 && isFinite(fp) ? fp / fpMax : Infinity;
 
     // -- baja angkur tarik --
@@ -215,10 +215,10 @@
     if (B < bf) r.warn.push('B = ' + B + ' mm < bf/lebar = ' + bf + ' mm — kolom tidak muat pada lebar pelat.');
     if (mode === 'small') r.warn.push('e = ' + e.toFixed(0) + ' mm ≤ ecrit = ' + ecrit.toFixed(0) + ' mm → momen KECIL: tumpu menahan sendiri, angkur tidak tarik.');
     if (mode === 'large' && !noSol) r.warn.push('e = ' + e.toFixed(0) + ' mm > ecrit = ' + ecrit.toFixed(0) + ' mm → momen BESAR: angkur menahan tarik T = ' + (T_N / 1000).toFixed(1) + ' kN.');
-    if (r.dcBrg > 1 && isFinite(r.dcBrg)) r.warn.push('D/C tumpu = ' + r.dcBrg.toFixed(2) + ' > 1 — tegangan tumpu > fp(max); perbesar pelat atau naikkan f\'c / A2.');
+    if (r.dcBrg > 1 && isFinite(r.dcBrg)) r.warn.push('Rasio tumpu = ' + r.dcBrg.toFixed(2) + ' > 1 — tegangan tumpu > fp(max); perbesar pelat atau naikkan f\'c / A2.');
     if (r.dcPlate > 1 && isFinite(r.dcPlate)) r.warn.push('tp,req = ' + tpReq.toFixed(1) + ' mm > tp = ' + tp + ' mm — pertebal pelat.');
-    if (T_N > 0 && r.dcTens > 1) r.warn.push('D/C tarik angkur = ' + r.dcTens.toFixed(2) + ' > 1 — perbesar diameter/jumlah angkur atau naikkan mutu.');
-    if (Vu > 0 && r.dcShear > 1) r.warn.push('D/C geser gesekan = ' + r.dcShear.toFixed(2) + ' > 1 — tambah shear lug atau andalkan geser angkur (cek di tool Anchor Bolt Group).');
+    if (T_N > 0 && r.dcTens > 1) r.warn.push('Rasio tarik angkur = ' + r.dcTens.toFixed(2) + ' > 1 — perbesar diameter/jumlah angkur atau naikkan mutu.');
+    if (Vu > 0 && r.dcShear > 1) r.warn.push('Rasio geser gesekan = ' + r.dcShear.toFixed(2) + ' > 1 — tambah shear lug atau andalkan geser angkur (cek di tool Anchor Bolt Group).');
     if (T_N > 0) r.warn.push('Cek kuat BETON angkur (cabut/breakout/pryout) di tool "Anchor Bolt Group" (ACI 318-19 Ch.17) memakai T = ' + (T_N / 1000).toFixed(1) + ' kN' + (Vu > 0 ? ' & Vu = ' + Vu.toFixed(1) + ' kN.' : '.'));
 
     return r;
@@ -248,7 +248,7 @@
     if (state.mouse) {
       state.UI.canvasTip(ctx, {
         mx: state.mouse.x, my: state.mouse.y, w: w, h: h, topBand: 34,
-        text: r.mode + ' · Y=' + (r.Y > 0 ? r.Y.toFixed(0) : '—') + 'mm · D/C ' + (isFinite(r.govDC) ? r.govDC.toFixed(2) : '—') + ' (' + r.gov + ')'
+        text: r.mode + ' · Y=' + (r.Y > 0 ? r.Y.toFixed(0) : '—') + 'mm · Rasio ' + (isFinite(r.govDC) ? r.govDC.toFixed(2) : '—') + ' (' + r.gov + ')'
       });
     }
   }
@@ -547,12 +547,12 @@
       return;
     }
 
-    state.cap.set(MODE_LABEL[r.mode] + ' · e=' + r.e.toFixed(0) + 'mm · D/C ' +
+    state.cap.set(MODE_LABEL[r.mode] + ' · e=' + r.e.toFixed(0) + 'mm · Rasio ' +
       (isFinite(r.govDC) ? r.govDC.toFixed(2) : '—') + ' (' + r.gov + ')');
 
     var okGov = r.feasible && r.govDC <= 1;
     results.appendChild(UI.heroRow([
-      { label: r.feasible ? 'D/C menentukan (' + r.gov + ')' : 'Status',
+      { label: r.feasible ? 'Rasio menentukan (' + r.gov + ')' : 'Status',
         value: r.feasible ? (isFinite(r.govDC) ? UI.fmt(r.govDC, 2) : '—') : 'Pelat kurang',
         unit: okGov ? 'OK' : 'NG', tone: okGov ? 'ok' : 'bad' },
       { label: 'Tebal pelat perlu tp', value: r.feasible ? UI.fmt(r.tpReq, 1) : '—', unit: 'mm' },
@@ -567,7 +567,7 @@
     results.appendChild(UI.kv('φc·Pp (kapasitas tumpu penuh)', UI.fmt(r.phiPp, 0) + ' kN'));
     results.appendChild(UI.kv('Tegangan tumpu fp', (isFinite(r.fp) ? UI.fmt(r.fp, 2) : '—') + ' MPa'));
     results.appendChild(UI.kv('Panjang tumpu Y', UI.fmt(r.Y, 0) + ' mm' + (r.mode === 'concentric' ? ' (= N, seragam)' : '')));
-    results.appendChild(UI.kv('D/C tumpu = fp/fp(max)', isFinite(r.dcBrg) ? UI.fmt(r.dcBrg, 2) : '—', r.dcBrg <= 1 ? 'ok' : 'bad'));
+    results.appendChild(UI.kv('Rasio tumpu = fp/fp(max)', isFinite(r.dcBrg) ? UI.fmt(r.dcBrg, 2) : '—', r.dcBrg <= 1 ? 'ok' : 'bad'));
     if (r.mode === 'concentric') results.appendChild(UI.kv('A1,perlu (info)', UI.fmt(r.A1req, 0) + ' mm² (terpasang ' + UI.fmt(r.A1, 0) + ')'));
 
     results.appendChild(UI.rhead('Tebal pelat (leleh lentur, φb=0,90)'));
@@ -579,21 +579,21 @@
       results.appendChild(UI.kv('tp,perlu sisi tarik', UI.fmt(r.tpTens, 1) + ' mm'));
     }
     results.appendChild(UI.kv('tp,perlu (menentukan)', UI.fmt(r.tpReq, 1) + ' mm'));
-    results.appendChild(UI.kv('D/C tebal = tp,perlu/tp', isFinite(r.dcPlate) ? UI.fmt(r.dcPlate, 2) : '—', r.dcPlate <= 1 ? 'ok' : 'bad'));
+    results.appendChild(UI.kv('Rasio tebal = tp,perlu/tp', isFinite(r.dcPlate) ? UI.fmt(r.dcPlate, 2) : '—', r.dcPlate <= 1 ? 'ok' : 'bad'));
 
     if (r.T > 0) {
       results.appendChild(UI.rhead('Baja angkur tarik (AISC J3)'));
       results.appendChild(UI.kv('Mutu · Fnt=0,75Fu', r.matLabel + ' · ' + UI.fmt(r.Fnt, 0) + ' MPa'));
       results.appendChild(UI.kv('Tarik total / per angkur', UI.fmt(r.T / 1000, 1) + ' / ' + UI.fmt(r.Trod, 1) + ' kN (' + r.nT + ' angkur)'));
       results.appendChild(UI.kv('φRn per angkur (⌀' + r.db + ')', UI.fmt(r.phiRnRod, 1) + ' kN'));
-      results.appendChild(UI.kv('D/C tarik angkur', UI.fmt(r.dcTens, 2), r.dcTens <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio tarik angkur', UI.fmt(r.dcTens, 2), r.dcTens <= 1 ? 'ok' : 'bad'));
     }
 
     if (r.Vu > 0) {
       results.appendChild(UI.rhead('Geser dasar — gesekan'));
       results.appendChild(UI.kv('μ (' + (r.surf === 'concrete' ? 'beton' : 'grout') + ')', UI.fmt(r.mu, 2)));
       results.appendChild(UI.kv('φVn gesekan (' + r.shearGov + ')', UI.fmt(r.phiVn, 1) + ' kN'));
-      results.appendChild(UI.kv('D/C geser = Vu/φVn', UI.fmt(r.dcShear, 2), r.dcShear <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Rasio geser = Vu/φVn', UI.fmt(r.dcShear, 2), r.dcShear <= 1 ? 'ok' : 'bad'));
     }
 
     var warnHtml = r.warn.length
@@ -727,7 +727,7 @@
     L.push(rowR('phic*Pp', numR(r.phiPp, 0) + ' kN'));
     L.push(rowR('Panjang tumpu Y', numR(r.Y, 0) + ' mm'));
     L.push(rowR('Tegangan tumpu fp', numR(r.fp, 2) + ' MPa'));
-    L.push(rowR('>> D/C tumpu', numR(r.dcBrg, 2) + (r.dcBrg <= 1 ? ' OK' : ' NG')));
+    L.push(rowR('>> Rasio tumpu', numR(r.dcBrg, 2) + (r.dcBrg <= 1 ? ' OK' : ' NG')));
     L.push('');
     L.push(' TEBAL PELAT (leleh lentur, phib=0.90)'); L.push(ruleR('='));
     L.push(rowR('m / n', numR(r.m, 1) + ' / ' + numR(r.n, 1) + ' mm'));
@@ -737,23 +737,23 @@
       L.push(rowR('lengan x / tp,perlu tarik', numR(r.x, 1) + ' / ' + numR(r.tpTens, 1) + ' mm'));
     }
     L.push(rowR('tp,perlu (menentukan)', numR(r.tpReq, 1) + ' mm'));
-    L.push(rowR('>> D/C tebal', numR(r.dcPlate, 2) + (r.dcPlate <= 1 ? ' OK' : ' NG')));
+    L.push(rowR('>> Rasio tebal', numR(r.dcPlate, 2) + (r.dcPlate <= 1 ? ' OK' : ' NG')));
     if (r.T > 0) {
       L.push('');
       L.push(' BAJA ANGKUR TARIK (AISC J3)'); L.push(ruleR('='));
       L.push(rowR('Mutu / Fnt=0.75Fu', tolatin(r.matLabel) + ' / ' + numR(r.Fnt, 0) + ' MPa'));
       L.push(rowR('Tarik total T', numR(r.T / 1000, 1) + ' kN (' + r.nT + ' angkur/muka)'));
       L.push(rowR('T per angkur / phiRn', numR(r.Trod, 1) + ' / ' + numR(r.phiRnRod, 1) + ' kN'));
-      L.push(rowR('>> D/C tarik angkur', numR(r.dcTens, 2) + (r.dcTens <= 1 ? ' OK' : ' NG')));
+      L.push(rowR('>> Rasio tarik angkur', numR(r.dcTens, 2) + (r.dcTens <= 1 ? ' OK' : ' NG')));
     }
     if (r.Vu > 0) {
       L.push('');
       L.push(' GESER DASAR (gesekan)'); L.push(ruleR('-'));
       L.push(rowR('mu / phiVn', numR(r.mu, 2) + ' / ' + numR(r.phiVn, 1) + ' kN'));
-      L.push(rowR('>> D/C geser', numR(r.dcShear, 2) + (r.dcShear <= 1 ? ' OK' : ' NG')));
+      L.push(rowR('>> Rasio geser', numR(r.dcShear, 2) + (r.dcShear <= 1 ? ' OK' : ' NG')));
     }
     L.push(ruleR('='));
-    L.push(rowR('>> D/C MENENTUKAN (' + tolatin(r.gov) + ')', numR(r.govDC, 2) + (r.feasible && r.govDC <= 1 ? ' OK' : ' NG')));
+    L.push(rowR('>> Rasio MENENTUKAN (' + tolatin(r.gov) + ')', numR(r.govDC, 2) + (r.feasible && r.govDC <= 1 ? ' OK' : ' NG')));
     L.push(ruleR('='));
 
     if (r.warn.length) {

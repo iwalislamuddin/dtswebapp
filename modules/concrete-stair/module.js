@@ -610,7 +610,7 @@
     results.appendChild(UI.heroRow([
       { label: 'δ retak (Ie)', value: UI.fmt(r.dCr, 2), unit: 'mm', tone: r.defOk ? 'ok' : 'bad' },
       { label: 'M+ / M−', value: UI.fmt(r.Mpos, 1) + ' / ' + UI.fmt(r.Mneg, 1), unit: 'kN·m/m' },
-      { label: 'Geser D/C', value: UI.fmt(r.dcrVc, 2), unit: r.dcrVc <= 1 ? 'OK' : 'NG', tone: r.dcrVc <= 1 ? 'ok' : 'bad' }
+      { label: 'Geser rasio', value: UI.fmt(r.dcrVc, 2), unit: r.dcrVc <= 1 ? 'OK' : 'NG', tone: r.dcrVc <= 1 ? 'ok' : 'bad' }
     ]));
 
     results.appendChild(UI.rhead('Geometri & model rangka'));

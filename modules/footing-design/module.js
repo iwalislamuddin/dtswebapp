@@ -587,7 +587,7 @@
       return;
     }
     state.cap.set('qmax ' + UI.fmt(r.qmax, 0) + ' kPa · SF dd ' + UI.fmt(r.SFbear, 2) +
-      (r.dcPunch != null ? ' · pons D/C ' + UI.fmt(r.dcPunch, 2) : ''));
+      (r.dcPunch != null ? ' · pons rasio ' + UI.fmt(r.dcPunch, 2) : ''));
 
     results.appendChild(UI.heroRow([
       { label: 'qmax tanah', value: UI.fmt(r.qmax, 0), unit: 'kPa', tone: r.qmax <= r.qa ? 'ok' : 'bad' },
@@ -615,14 +615,14 @@
       results.appendChild(UI.kv('As,min susut-suhu / spasi maks', UI.fmt(r.flexL.AsMin, 0) + ' mm²/m · ' + UI.fmt(r.flexL.sMax, 0) + ' mm'));
 
       results.appendChild(UI.rhead('Geser satu-arah (φ=0,75, di d dari muka)'));
-      results.appendChild(UI.kv('Arah L: Vu / φVc', UI.fmt(r.flexL.Vu, 1) + ' / ' + UI.fmt(r.phiVc1L, 1) + ' kN/m — D/C ' + UI.fmt(r.dc1L, 2), r.dc1L <= 1 ? 'ok' : 'bad'));
-      results.appendChild(UI.kv('Arah B: Vu / φVc', UI.fmt(r.flexB.Vu, 1) + ' / ' + UI.fmt(r.phiVc1B, 1) + ' kN/m — D/C ' + UI.fmt(r.dc1B, 2), r.dc1B <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Arah L: Vu / φVc', UI.fmt(r.flexL.Vu, 1) + ' / ' + UI.fmt(r.phiVc1L, 1) + ' kN/m — Rasio ' + UI.fmt(r.dc1L, 2), r.dc1L <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Arah B: Vu / φVc', UI.fmt(r.flexB.Vu, 1) + ' / ' + UI.fmt(r.phiVc1B, 1) + ' kN/m — Rasio ' + UI.fmt(r.dc1B, 2), r.dc1B <= 1 ? 'ok' : 'bad'));
 
       results.appendChild(UI.rhead('Geser dua-arah / pons (φ=0,75)'));
       results.appendChild(UI.kv('Keliling kritis b0 (d/2)', UI.fmt(r.b0, 0) + ' mm · d rata2 ' + UI.fmt(r.davg, 0) + ' mm'));
       results.appendChild(UI.kv('Vu pons = Pu − qu·Ain', UI.fmt(r.Vup, 0) + ' kN'));
       results.appendChild(UI.kv('vc menentukan ' + r.vcGov, UI.fmt(r.vcPunch, 2) + ' MPa'));
-      results.appendChild(UI.kv('Vu / φVc pons — D/C', UI.fmt(r.Vup, 0) + ' / ' + UI.fmt(r.phiVcp, 0) + ' kN · ' + UI.fmt(r.dcPunch, 2), r.dcPunch <= 1 ? 'ok' : 'bad'));
+      results.appendChild(UI.kv('Vu / φVc pons — Rasio', UI.fmt(r.Vup, 0) + ' / ' + UI.fmt(r.phiVcp, 0) + ' kN · ' + UI.fmt(r.dcPunch, 2), r.dcPunch <= 1 ? 'ok' : 'bad'));
     }
 
     if (r.warn.length) results.appendChild(UI.note('Peringatan',
@@ -740,10 +740,10 @@
       L.push(rowR('  >> D' + r.db + '-' + r.flexL.s, 'As ' + numR(r.flexL.AsReq, 0) + ' mm2/m' + (r.flexL.govMin ? ' (Asmin)' : '')));
       L.push(rowR('LENTUR arah B: Mu', numR(r.flexB.Mu, 1) + ' kNm/m'));
       L.push(rowR('  >> D' + r.db + '-' + r.flexB.s, 'As ' + numR(r.flexB.AsReq, 0) + ' mm2/m' + (r.flexB.govMin ? ' (Asmin)' : '')));
-      L.push(rowR('GESER 1-arah L: Vu/phiVc', numR(r.flexL.Vu, 1) + '/' + numR(r.phiVc1L, 1) + ' D/C ' + numR(r.dc1L, 2)));
-      L.push(rowR('GESER 1-arah B: Vu/phiVc', numR(r.flexB.Vu, 1) + '/' + numR(r.phiVc1B, 1) + ' D/C ' + numR(r.dc1B, 2)));
+      L.push(rowR('GESER 1-arah L: Vu/phiVc', numR(r.flexL.Vu, 1) + '/' + numR(r.phiVc1L, 1) + ' Rasio ' + numR(r.dc1L, 2)));
+      L.push(rowR('GESER 1-arah B: Vu/phiVc', numR(r.flexB.Vu, 1) + '/' + numR(r.phiVc1B, 1) + ' Rasio ' + numR(r.dc1B, 2)));
       L.push(rowR('PONS b0 / d', numR(r.b0, 0) + ' / ' + numR(r.davg, 0) + ' mm'));
-      L.push(rowR('PONS Vu/phiVc', numR(r.Vup, 0) + '/' + numR(r.phiVcp, 0) + ' kN D/C ' + numR(r.dcPunch, 2)));
+      L.push(rowR('PONS Vu/phiVc', numR(r.Vup, 0) + '/' + numR(r.phiVcp, 0) + ' kN rasio ' + numR(r.dcPunch, 2)));
     }
     if (r.warn.length) {
       L.push(''); L.push(' CATATAN'); L.push(ruleR('.'));

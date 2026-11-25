@@ -2456,7 +2456,7 @@
    "warn": [
     "fs dibatasi 120 kPa (batas lunak praktik) pada sebagian kedalaman.",
     "Kapasitas STRUKTURAL penampang tiang (bahan) tidak dicek di sini.",
-    "D/C = 2.16 > 1 — beban kerja melampaui Q izin."
+    "Rasio = 2.16 > 1 — beban kerja melampaui Q izin."
    ],
    "shape": "circle",
    "D": 0.4,

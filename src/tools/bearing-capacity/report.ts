@@ -5,7 +5,7 @@ import { check, fx, kv, type CalcStep, type FigOp, type Figure, type Report, typ
 import { BEARING_DEFAULTS, computeBearingUI, type BearingOk, type BearingUIInput } from './model'
 
 // Laporan Daya Dukung Tanah fondasi dangkal: data, tegangan overburden (koreksi MAT), faktor tiga metode,
-// rincian metode utama (rumus → substitusi → hasil), q izin dan rasio D/C.
+// rincian metode utama (rumus → substitusi → hasil), q izin dan rasio.
 
 export { BEARING_DEFAULTS }
 

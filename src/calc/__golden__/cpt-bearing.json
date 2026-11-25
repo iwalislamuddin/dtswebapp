@@ -2440,7 +2440,7 @@
     "qc̄ = 1.4 MPa rendah untuk pasir — cek apakah sebenarnya lempung/lanau (pilih mode Lempung).",
     "q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).",
     "σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual.",
-    "D/C = 5.18 > 1 — beban kerja melampaui daya dukung izin."
+    "Rasio = 5.18 > 1 — beban kerja melampaui daya dukung izin."
    ],
    "B": 1.5,
    "L": 1.5,

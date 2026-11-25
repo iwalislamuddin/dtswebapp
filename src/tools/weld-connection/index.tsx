@@ -134,12 +134,12 @@ function Inputs({
 
 function Results({ r, stale }: { r: WeldConnectionResult | null; stale: boolean }) {
   const [tab, setTab] = useState<DiagramTab>('kapasitas')
-  const status = stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : r && r.Ru <= 0 ? 'Isi beban Ru untuk menghitung D/C.' : null
+  const status = stale ? 'Input belum lengkap/valid — hasil di bawah dari input sah terakhir.' : r && r.Ru <= 0 ? 'Isi beban Ru untuk menghitung rasio.' : null
   const dcTile =
     r && r.Ru > 0
       ? [
           {
-            label: `D/C (${r.weldGoverns ? 'las' : 'logam dasar'} menentukan)`,
+            label: `Rasio (${r.weldGoverns ? 'las' : 'logam dasar'} menentukan)`,
             value: Number.isFinite(r.dc) ? fx(r.dc, 2) : '∞',
             sub: r.dc <= 1 ? 'OK' : 'NG',
             tone: r.dc <= 1 ? ('ok' as const) : ('bad' as const),

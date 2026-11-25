@@ -24,7 +24,7 @@ export interface CptBearingInput {
   Nk: NumLike
   /** Faktor keamanan (lempung), 0 = 3. */
   FS: NumLike
-  /** Tekanan kerja neto (kPa), 0 = tanpa cek D/C. */
+  /** Tekanan kerja neto (kPa), 0 = tanpa cek rasio. */
   qw: NumLike
 }
 
@@ -115,6 +115,6 @@ export function computeCptBearing(v: CptBearingInput, pts: CptPoint[]): CptBeari
   if (soil === 'sand')
     r.warn.push('q_izin pasir adalah nilai NETO berbasis penurunan 25 mm (bukan keruntuhan). Untuk penurunan izin berbeda, skala linear (mis. 40 mm → ×1,6).')
   r.warn.push('σv0 memakai γ total tanpa muka air tanah — bila MAT dangkal, gunakan γ efektif rata-rata secara manual.')
-  if (dc > 1) r.warn.push('D/C = ' + dc.toFixed(2) + ' > 1 — beban kerja melampaui daya dukung izin.')
+  if (dc > 1) r.warn.push('Rasio = ' + dc.toFixed(2) + ' > 1 — beban kerja melampaui daya dukung izin.')
   return r
 }

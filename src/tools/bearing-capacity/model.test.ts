@@ -54,7 +54,7 @@ describe('daya dukung tanah — laporan', () => {
     expect(v['q_{izin}']).toBe(r.pm.qall.toFixed(1))
   })
 
-  it('satu gambar; rasio D/C hanya bila q kerja diisi', () => {
+  it('satu gambar; rasio hanya bila q kerja diisi', () => {
     const rep = buildBearingReport(BEARING_DEFAULTS)!
     expect(rep.sections.flatMap((s) => s.blocks).filter((b) => b.k === 'figure')).toHaveLength(1)
     expect(rep.governing).toBeUndefined()

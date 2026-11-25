@@ -86,7 +86,7 @@ function Inputs({
           </Field>
         )}
         {f('FS', 'FS — faktor keamanan', undefined, 'Kosong/0 = 3.')}
-        {f('qapp', 'q — tekanan kerja (opsional)', 'kPa', '0 = lewati rasio D/C.')}
+        {f('qapp', 'q — tekanan kerja (opsional)', 'kPa', '0 = lewati rasio.')}
       </Card>
     </>
   )

@@ -143,8 +143,8 @@ export function compressionReport(i: CompressionInput, r: SteelCompressionResult
     })
 
   const dcRows: Row[] = [
-    ...(r.dcL != null ? [check('D/C DFBK = P_{u} / φ_{c}P_{n}', r.dcL)] : []),
-    ...(r.dcA != null ? [check('D/C ASD = P_{a} / (P_{n}/Ω_{c})', r.dcA)] : []),
+    ...(r.dcL != null ? [check('Rasio DFBK = P_{u} / φ_{c}P_{n}', r.dcL)] : []),
+    ...(r.dcA != null ? [check('Rasio ASD = P_{a} / (P_{n}/Ω_{c})', r.dcA)] : []),
   ]
   sections.push({
     title: 'Kekuatan tekan desain',
@@ -156,8 +156,8 @@ export function compressionReport(i: CompressionInput, r: SteelCompressionResult
           ...(t ? [{ desc: `Menentukan: ${r.govLS}`, lhs: 'P_{n}', expr: 'min(lentur; torsi)', subst: `min(${fx(r.PnFlex, 1)}; ${fx(t.Pn, 1)})`, value: fx(r.Pn, 1), unit: 'kN' }] : []),
           { desc: 'DFBK, φ_{c} = 0,90', lhs: 'φ_{c}P_{n}', subst: `0.90 × ${fx(r.Pn, 1)}`, value: fx(r.phiPn, 1), unit: 'kN' },
           { desc: 'ASD, Ω_{c} = 1,67', lhs: '\\frac{P_{n}}{Ω_{c}}', subst: `\\frac{${fx(r.Pn, 1)}}{1.67}`, value: fx(r.Pa, 1), unit: 'kN' },
-          ...(r.dcL != null ? [{ lhs: 'D/C_{DFBK}', expr: '\\frac{P_{u}}{φ_{c}P_{n}}', subst: `\\frac{${fx(r.Pu, 1)}}{${fx(r.phiPn, 1)}}`, value: fx(r.dcL, 3) }] : []),
-          ...(r.dcA != null ? [{ lhs: 'D/C_{ASD}', expr: '\\frac{P_{a}}{P_{n}/Ω_{c}}', subst: `\\frac{${fx(r.Pa_dem, 1)}}{${fx(r.Pa, 1)}}`, value: fx(r.dcA, 3) }] : []),
+          ...(r.dcL != null ? [{ lhs: 'Rasio_{DFBK}', expr: '\\frac{P_{u}}{φ_{c}P_{n}}', subst: `\\frac{${fx(r.Pu, 1)}}{${fx(r.phiPn, 1)}}`, value: fx(r.dcL, 3) }] : []),
+          ...(r.dcA != null ? [{ lhs: 'Rasio_{ASD}', expr: '\\frac{P_{a}}{P_{n}/Ω_{c}}', subst: `\\frac{${fx(r.Pa_dem, 1)}}{${fx(r.Pa, 1)}}`, value: fx(r.dcA, 3) }] : []),
         ],
       },
       ...(dcRows.length ? [{ k: 'rows' as const, rows: dcRows }] : [{ k: 'p' as const, text: 'Gaya perlu P_{u} / P_{a} belum diisi — hanya kapasitas yang dilaporkan.' }]),
@@ -165,7 +165,7 @@ export function compressionReport(i: CompressionInput, r: SteelCompressionResult
     ],
   })
 
-  const gov = r.dcL != null ? { label: 'D/C DFBK menentukan', ratio: r.dcL } : r.dcA != null ? { label: 'D/C ASD menentukan', ratio: r.dcA } : undefined
+  const gov = r.dcL != null ? { label: 'Rasio DFBK menentukan', ratio: r.dcL } : r.dcA != null ? { label: 'Rasio ASD menentukan', ratio: r.dcA } : undefined
   return {
     title: 'Batang Tekan Baja (SNI 1729:2020 Bab E)',
     summary: [

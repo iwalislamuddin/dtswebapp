@@ -283,7 +283,7 @@
       { type: 'segment', id: 'tfail', label: 'Keruntuhan (Terzaghi)', value: 'general',
         options: [{ value: 'general', label: 'Umum' }, { value: 'local', label: 'Lokal' }] },
       { type: 'number', id: 'FS', label: 'FS — faktor keamanan', unit: '', value: 3, min: 1, step: 0.5 },
-      { type: 'number', id: 'qapp', label: 'q — tekanan kerja (opsional)', unit: 'kPa', value: 0, min: 0, step: 5, hint: '0 = lewati rasio D/C. Tekanan kotak dasar fondasi.' }
+      { type: 'number', id: 'qapp', label: 'q — tekanan kerja (opsional)', unit: 'kPa', value: 0, min: 0, step: 5, hint: '0 = lewati rasio. Tekanan kotak dasar fondasi.' }
     ];
 
     function syncVisibility(vals) {
@@ -344,7 +344,7 @@
       { label: 'q_ult — ' + methodName(r.primary), value: UI.fmt(pm.qu, 1), unit: 'kPa' },
       { label: 'q_izin = qu/FS', value: UI.fmt(pm.qall, 1), unit: 'kPa' },
       (r.dc !== null)
-        ? { label: 'D/C = q/q_izin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
+        ? { label: 'Rasio = q/q_izin', value: UI.fmt(r.dc, 2), unit: r.dc <= 1 ? 'OK' : 'NG', tone: r.dc <= 1 ? 'ok' : 'bad' }
         : { label: 'q_ult neto', value: UI.fmt(pm.qnet, 1), unit: 'kPa' }
     ]));
     results.appendChild(UI.el('div', 'ck-empty',

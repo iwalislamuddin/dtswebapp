@@ -5,7 +5,7 @@ import { check, fx, kv, sci, type CalcStep, type FigOp, type Figure, type Report
 import { BASE_PLATE_DEFAULTS, computeBasePlateUI, type BasePlateUIInput } from './model'
 
 // Laporan Base Plate (sendi & jepit): beban rencana, tumpu beton, distribusi gaya, tebal pelat, angkur (ACI 318-19
-// Bab 17 / SNI 2847:2019 Ps. 17), geser dasar, las kolom–pelat, rekap D/C — dengan rumus dan substitusi.
+// Bab 17 / SNI 2847:2019 Ps. 17), geser dasar, las kolom–pelat, rekap rasio — dengan rumus dan substitusi.
 
 export { BASE_PLATE_DEFAULTS }
 
@@ -159,7 +159,7 @@ export function figElev(r: BasePlateResult): Figure {
   }
 }
 
-/** Gbr. 3 — rasio D/C tiap pemeriksaan. */
+/** Gbr. 3 — rasio tiap pemeriksaan. */
 function figChecks(checks: BaseCheck[]): Figure {
   const ops: FigOp[] = []
   const bx0 = 210, bw = 240, rh = 17
@@ -174,8 +174,8 @@ function figChecks(checks: BaseCheck[]): Figure {
   })
   const yb = 8 + checks.length * rh
   ops.push({ t: 'line', x1: X(1), y1: 4, x2: X(1), y2: yb, lw: 1.1, c: 'bad', dash: [3, 2] })
-  ops.push({ t: 'text', x: X(1), y: yb + 9, s: 'D/C = 1', size: 6.5, align: 'c', c: 'muted' })
-  return { h: figRows(yb + 12), ops, alt: 'Rasio D/C tiap pemeriksaan', caption: 'Gbr. 3 — Rasio kebutuhan / kapasitas tiap pemeriksaan.' }
+  ops.push({ t: 'text', x: X(1), y: yb + 9, s: 'Rasio = 1', size: 6.5, align: 'c', c: 'muted' })
+  return { h: figRows(yb + 12), ops, alt: 'Rasio tiap pemeriksaan', caption: 'Gbr. 3 — Rasio kebutuhan / kapasitas tiap pemeriksaan.' }
 }
 
 export function basePlateReport(r: BasePlateResult): Report {
@@ -321,7 +321,7 @@ export function basePlateReport(r: BasePlateResult): Report {
     )
   tSteps.push(
     { lhs: 't_{p,perlu}', expr: 'maks(t_{p,tumpu}; t_{p,tarik})', value: fx(r.tpReq, 1), unit: 'mm' },
-    dcStep('D/C_{pelat}', 't_{p,perlu}', 't_{p}', r.tpReq, v.tp),
+    dcStep('Rasio_{pelat}', 't_{p,perlu}', 't_{p}', r.tpReq, v.tp),
   )
   sections.push({ title: 'Tebal pelat landas (leleh lentur, φ_{b} = 0,9)', blocks: [{ k: 'calc', steps: tSteps }] })
 
@@ -329,7 +329,7 @@ export function basePlateReport(r: BasePlateResult): Report {
   if (r.Trow > 0) {
     const aSteps: CalcStep[] = [
       { desc: `f_{uta} = min(F_{u}; 1,9f_{ya}; 862) = ${fx(r.futa, 0)} MPa; φ = 0,75`, lhs: 'φN_{sa}', expr: '0.75 A_{se} f_{uta}', subst: `0.75 × ${fx(r.Ase, 0)} × ${fx(r.futa, 0)} / 10^{3}`, value: fx(r.phiNsa, 2), unit: 'kN', ref: '17.6.1.2' },
-      dcStep('D/C', 'T_{angkur}', 'φN_{sa}', r.Tanchor, r.phiNsa),
+      dcStep('Rasio', 'T_{angkur}', 'φN_{sa}', r.Tanchor, r.phiNsa),
       ...(r.hefReduced ? [{ desc: 'Tiga tepi atau lebih < 1,5h_{ef}', lhs: "h'_{ef}", expr: 'maks(\\frac{c_{a,maks}}{1.5}; \\frac{s_{maks}}{3})', value: fx(r.hefUsed, 0), unit: 'mm', ref: '17.6.2.1.2' }] : []),
       {
         lhs: 'N_{b}',
@@ -342,18 +342,18 @@ export function basePlateReport(r: BasePlateResult): Report {
       { lhs: 'ψ_{ec,N} / ψ_{ed,N} / ψ_{c,N}', value: `${fx(r.psiEcN, 3)} / ${fx(r.psiEdN, 3)} / ${fx(r.psiCN, 2)}` },
       { lhs: 'N_{cbg}', expr: '\\frac{A_{Nc}}{A_{Nco}} ψ_{ec,N} ψ_{ed,N} ψ_{c,N} N_{b}', value: fx(r.Ncbg, 2), unit: 'kN', ref: '17.6.2.1b' },
       { lhs: 'φN_{cbg}', subst: `${fx(r.phiConc, 2)} × ${fx(r.Ncbg, 2)}`, value: fx(r.phiNcbg, 2), unit: 'kN' },
-      dcStep('D/C', 'ΣT', 'φN_{cbg}', r.Trow + r.Trow2, r.phiNcbg),
+      dcStep('Rasio', 'ΣT', 'φN_{cbg}', r.Trow + r.Trow2, r.phiNcbg),
       v.head === 'headed'
         ? { desc: `Luas tumpu kepala (mur hex berat) A_{brg} = ${fx(r.Abrg, 0)} mm^{2}`, lhs: 'N_{p}', expr: "8 A_{brg} f'_{c}", subst: `8 × ${fx(r.Abrg, 0)} × ${fx(v.fc, 0)} / 10^{3}`, value: fx(r.Np, 2), unit: 'kN', ref: '17.6.3.2.2a' }
         : { lhs: 'N_{p}', expr: "0.9 f'_{c} e_{h} d_{a}", value: fx(r.Np, 2), unit: 'kN', ref: '17.6.3.2.2b' },
       { desc: `ψ_{c,P} = ${v.cracked ? '1,0' : '1,4'}; φ = 0,70`, lhs: 'φN_{pn}', value: fx(r.phiNpn, 2), unit: 'kN', ref: '17.6.3.1' },
-      dcStep('D/C', 'T_{angkur}', 'φN_{pn}', r.Tanchor, r.phiNpn),
+      dcStep('Rasio', 'T_{angkur}', 'φN_{pn}', r.Tanchor, r.phiNpn),
     ]
     if (r.phiNsbg != null && r.Nsbg != null)
       aSteps.push(
         { desc: 'h_{ef} > 2,5c_{a1} → ledakan sisi ditinjau', lhs: 'N_{sbg}', expr: "13 c_{a1} √(A_{brg}) λ √(f'_{c}) (faktor c_{a2}, grup)", value: fx(r.Nsbg, 2), unit: 'kN', ref: '17.6.4' },
         { lhs: 'φN_{sbg}', value: fx(r.phiNsbg, 2), unit: 'kN' },
-        dcStep('D/C', 'N_{ua}', 'φN_{sbg}', r.NsbDem, r.phiNsbg),
+        dcStep('Rasio', 'N_{ua}', 'φN_{sbg}', r.NsbDem, r.phiNsbg),
       )
     sections.push({ title: 'Angkur tarik (SNI 2847:2019 Ps. 17.6)', blocks: [{ k: 'calc', steps: aSteps }] })
   }
@@ -364,23 +364,23 @@ export function basePlateReport(r: BasePlateResult): Report {
       v.shearMode === 'friction'
         ? [
             { desc: `μ = ${fx(r.mu, 2)} (${v.grout > 0 ? 'baja di atas grout' : 'baja di atas beton'}); hanya tekan P_{u}`, lhs: 'φV_{n}', expr: "0.75 · min(μP_{u}; 0.2f'_{c}A_{1})", value: fx(r.phiVfr, 2), unit: 'kN', ref: 'DG1 3.5.1' },
-            dcStep('D/C', 'V_{u}', 'φV_{n}', r.Vu, r.phiVfr),
+            dcStep('Rasio', 'V_{u}', 'φV_{n}', r.Vu, r.phiVfr),
           ]
         : [
             { desc: v.grout > 0 ? 'Pelat di atas grout → ×0,8' : undefined, lhs: 'V_{sa}', expr: `0.6 A_{se} f_{uta}${v.grout > 0 ? ' × 0.8' : ''}`, value: fx(r.Vsa, 2), unit: 'kN', ref: '17.7.1.2' },
             { desc: `φ = 0,65; geser dibagi ke ${r.nShear} angkur`, lhs: 'φV_{sa}', value: fx(r.phiVsa, 2), unit: 'kN' },
-            dcStep('D/C', 'V_{u}/n', 'φV_{sa}', r.Vanchor, r.phiVsa),
+            dcStep('Rasio', 'V_{u}/n', 'φV_{sa}', r.Vanchor, r.phiVsa),
             ...(r.phiVcbg != null && r.Vcbg != null
               ? [
                   { desc: `Geser sejajar N menuju tepi, seluruh V_{u} oleh baris depan, c_{a1} = ${fx(r.ca1, 0)} mm`, lhs: 'V_{b}', expr: "min(0.6(\\frac{l_{e}}{d_{a}})^{0.2}√(d_{a}) λ √(f'_{c}) c_{a1}^{1.5}; 3.7 λ √(f'_{c}) c_{a1}^{1.5})", value: fx(r.Vb, 2), unit: 'kN', ref: '17.7.2.2' },
                   { lhs: 'A_{Vc} / A_{Vco}', subst: `${sci(r.AVc)} / ${sci(r.AVco)}`, value: fx(r.AVc / r.AVco, 3) },
                   { lhs: 'ψ_{ed,V} / ψ_{c,V} / ψ_{h,V}', value: `${fx(r.psiEdV, 3)} / ${fx(r.psiCV, 2)} / ${fx(r.psiHV, 3)}` },
                   { lhs: 'φV_{cbg}', expr: 'φ \\frac{A_{Vc}}{A_{Vco}} ψ_{ed,V} ψ_{c,V} ψ_{h,V} V_{b}', value: fx(r.phiVcbg, 2), unit: 'kN', ref: '17.7.2.1' },
-                  dcStep('D/C', 'V_{u}', 'φV_{cbg}', r.Vu, r.phiVcbg),
+                  dcStep('Rasio', 'V_{u}', 'φV_{cbg}', r.Vu, r.phiVcbg),
                 ]
               : []),
             { desc: `k_{cp} = ${r.kcp}; N_{cpg} = ${fx(r.Ncpg, 2)} kN (semua angkur, ψ_{ec} = 1); φ = 0,70`, lhs: 'φV_{cpg}', expr: 'φ k_{cp} N_{cpg}', value: fx(r.phiVcpg, 2), unit: 'kN', ref: '17.7.3' },
-            dcStep('D/C', 'V_{u}', 'φV_{cpg}', r.Vu, r.phiVcpg),
+            dcStep('Rasio', 'V_{u}', 'φV_{cpg}', r.Vu, r.phiVcpg),
           ]
     if (r.inter != null)
       vSteps.push({ desc: 'Rasio tarik & geser sama-sama > 0,2', lhs: 'Σ', expr: '\\frac{N_{ua}}{φN_{n}} + \\frac{V_{ua}}{φV_{n}} ≤ 1.2', subst: `${fx(r.interN, 3)} + ${fx(r.interV, 3)}`, value: fx(r.inter, 3), ref: '17.8.3' })
@@ -402,7 +402,7 @@ export function basePlateReport(r: BasePlateResult): Report {
             { lhs: 'f_{v}', expr: '\\frac{V_{u}}{L_{w,v}}', value: fx(r.fv, 1), unit: 'N/mm' },
             { lhs: 'f_{r}', expr: '√(f_{n}^{2} + f_{v}^{2})', value: fx(r.fr, 1), unit: 'N/mm' },
             { lhs: 'φR_{n}', expr: '0.75 × 0.6 F_{EXX} × 0.707w', subst: `0.75 × 0.6 × ${fx(v.FEXX, 0)} × 0.707 × ${fx(v.weld, 0)}`, value: fx(r.phiRw, 1), unit: 'N/mm', ref: 'J2.4' },
-            dcStep('D/C', 'f_{r}', 'φR_{n}', r.fr, r.phiRw),
+            dcStep('Rasio', 'f_{r}', 'φR_{n}', r.fr, r.phiRw),
           ],
         },
       ],
@@ -422,7 +422,7 @@ export function basePlateReport(r: BasePlateResult): Report {
       ...(r.gov ? [check(`Menentukan: ${r.gov.label}`, r.gov.dc)] : []),
     ],
     sections,
-    governing: r.gov ? { label: `D/C menentukan (${r.gov.label})`, ratio: r.gov.dc } : undefined,
+    governing: r.gov ? { label: `Rasio menentukan (${r.gov.label})`, ratio: r.gov.dc } : undefined,
     warnings: r.warn,
     scope: [
       'Asumsi: pelat kaku dengan tegangan tumpu persegi seragam (AISC DG1); momen satu arah terhadap sumbu kuat kolom; geser sejajar N; dua baris angkur sejajar B; angkur cor di tempat dengan mur hex berat; beton normal (λ = 1).',

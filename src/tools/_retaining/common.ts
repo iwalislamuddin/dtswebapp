@@ -135,7 +135,7 @@ export function basePressures(r: WallStab): { toe: number; heel: number; max: nu
   return { toe: 0, heel: m, max: m }
 }
 
-/** Rasio D/C tahap stabilitas layan (≤ 1 = OK). */
+/** Rasio tahap stabilitas layan (≤ 1 = OK). */
 export function stabilityRatios(r: WallStab): { label: string; ratio: number }[] {
   const out = [
     { label: `Guling ${r.FSotT!.toFixed(1)}/SF`, ratio: r.FSotT! / r.FSot! },

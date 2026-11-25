@@ -112,7 +112,7 @@ window.MODULE_REGISTRY = [
     status: 'active',
     seo: {
       title: 'Desain Pile Cap / Poer 2–6 Tiang — Lentur, Geser & Pons (SNI 2847:2019)',
-      desc: 'Desain poer/pile cap 2–6 tiang metode kaku SNI 2847:2019: reaksi tiang dari beban ultimate kolom (Pu) atau kapasitas tekan tiang (desain kapasitas), lentur di muka kolom, geser satu-arah, pons dua-arah kolom & pons tiang — lengkap denah interaktif dan rasio D/C.'
+      desc: 'Desain poer/pile cap 2–6 tiang metode kaku SNI 2847:2019: reaksi tiang dari beban ultimate kolom (Pu) atau kapasitas tekan tiang (desain kapasitas), lentur di muka kolom, geser satu-arah, pons dua-arah kolom & pons tiang — lengkap denah interaktif dan rasio.'
     }
   },
 
@@ -179,7 +179,7 @@ window.MODULE_REGISTRY = [
     status: 'active',
     seo: {
       title: 'Geser & Torsi Balok Beton Bertulang — φVn, φTn, Sengkang Minimum & Rasio Kekuatan (SNI 2847:2019)',
-      desc: 'Cek kombinasi geser (Vu) + torsi (Tu) balok beton persegi bertulang sesuai SNI 2847:2019: kapasitas geser φ(Vc+Vs) dengan Vc = 0,17·λ·√f\'c·bw·d & Vs = Av·fyt·d/s (batas Vs,maks 0,66√f\'c·bw·d), torsi batas Tth yang boleh diabaikan, kapasitas torsi φTn = φ·2·Ao·At·fyt·cotθ/s (θ=45°, Ao=0,85·Aoh), cek kecukupan dimensi penampang solid Ps. 22.7.7.1, sengkang minimum gabungan (Av+2At)/s (Ps. 9.6.4.2), tulangan longitudinal torsi Al & Al,min (Ps. 9.6.4.3), spasi maksimum sengkang, plus rasio kekuatan D/C. Input dimensi, mutu material, sengkang tertutup (jumlah kaki), tulangan longitudinal & gaya dalam — lengkap diagram penampang, sengkang tertutup, aliran torsi, dan laporan PDF/teks.'
+      desc: 'Cek kombinasi geser (Vu) + torsi (Tu) balok beton persegi bertulang sesuai SNI 2847:2019: kapasitas geser φ(Vc+Vs) dengan Vc = 0,17·λ·√f\'c·bw·d & Vs = Av·fyt·d/s (batas Vs,maks 0,66√f\'c·bw·d), torsi batas Tth yang boleh diabaikan, kapasitas torsi φTn = φ·2·Ao·At·fyt·cotθ/s (θ=45°, Ao=0,85·Aoh), cek kecukupan dimensi penampang solid Ps. 22.7.7.1, sengkang minimum gabungan (Av+2At)/s (Ps. 9.6.4.2), tulangan longitudinal torsi Al & Al,min (Ps. 9.6.4.3), spasi maksimum sengkang, plus rasio kekuatan rasio. Input dimensi, mutu material, sengkang tertutup (jumlah kaki), tulangan longitudinal & gaya dalam — lengkap diagram penampang, sengkang tertutup, aliran torsi, dan laporan PDF/teks.'
     }
   },
 
@@ -193,7 +193,7 @@ window.MODULE_REGISTRY = [
     status: 'active',
     seo: {
       title: 'Batang Tarik Baja (SNI 1729:2020)',
-      desc: 'Desain batang tarik baja: leleh penampang bruto & fraktur penampang neto efektif (Ae) sesuai SNI 1729:2020 (DFBK), lengkap dengan rasio D/C.'
+      desc: 'Desain batang tarik baja: leleh penampang bruto & fraktur penampang neto efektif (Ae) sesuai SNI 1729:2020 (DFBK), lengkap dengan rasio.'
     }
   },
 

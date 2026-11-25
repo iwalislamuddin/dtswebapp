@@ -415,7 +415,7 @@ export function computeConcreteWall(v: ConcreteWallInput): ConcreteWallResult {
   if (!r.okSl) r.warn.push('FS geser ' + st.FSsl.toFixed(2) + ' < ' + FSslT.toFixed(1) + ' — TIDAK AMAN; pertimbangkan shear key / tambah tanam / aktifkan pasif.')
   if (!okE) r.warn.push('e = ' + st.e.toFixed(3) + ' m > B/6 = ' + (B / 6).toFixed(3) + ' m — resultan layan di luar inti tengah.')
   if (st.dcQ !== null && st.dcQ > 1) r.warn.push('qmax = ' + st.qmax.toFixed(1) + ' kPa > q_izin = ' + qall.toFixed(1) + ' kPa — daya dukung TIDAK memadai.')
-  if (stem.ng) r.warn.push('STEM: ' + (stem.note || 'kapasitas lentur tidak cukup (D/C ' + (stem.dc as number).toFixed(2) + ').'))
+  if (stem.ng) r.warn.push('STEM: ' + (stem.note || 'kapasitas lentur tidak cukup (rasio ' + (stem.dc as number).toFixed(2) + ').'))
   if ((stem.dcV as number) > 1) r.warn.push('STEM: geser Vu ' + VuStem.toFixed(1) + ' kN > φVc ' + stem.phiVc.toFixed(1) + ' kN — pertebal dasar stem.')
   if (toeD.ng && toe > 0.01) r.warn.push('TOE: ' + (toeD.note || 'kapasitas lentur tidak cukup.'))
   if ((toeD.dcV as number) > 1 && toe > 0.01) r.warn.push('TOE: geser > φVc — pertebal tapak.')

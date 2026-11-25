@@ -203,8 +203,8 @@
 
       { type: 'group', label: 'Batang & Beban' },
       { type: 'number', id: 'L', label: 'Panjang batang L (kelangsingan)', unit: 'mm', value: 3000, min: 0, step: 100 },
-      { type: 'number', id: 'Pu', label: 'Pu — gaya tarik terfaktor (DFBK)', unit: 'kN', value: 0, min: 0, step: 10, hint: '0 = lewati rasio D/C.' },
-      { type: 'number', id: 'Pa', label: 'Pa — gaya tarik layan (ASD)', unit: 'kN', value: 0, min: 0, step: 10, hint: '0 = lewati rasio D/C.' }
+      { type: 'number', id: 'Pu', label: 'Pu — gaya tarik terfaktor (DFBK)', unit: 'kN', value: 0, min: 0, step: 10, hint: '0 = lewati rasio.' },
+      { type: 'number', id: 'Pa', label: 'Pa — gaya tarik layan (ASD)', unit: 'kN', value: 0, min: 0, step: 10, hint: '0 = lewati rasio.' }
     ];
 
     function syncVisibility(vals) {

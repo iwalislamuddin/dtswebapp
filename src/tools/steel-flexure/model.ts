@@ -20,7 +20,7 @@ export interface FlexureInput extends SteelGradeInput {
   Lb: string
   Cbpreset: string
   Cbval: string
-  /** kN·m; 0 = lewati D/C. */
+  /** kN·m; 0 = lewati rasio. */
   Mu: string
   Ma: string
 }

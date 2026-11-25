@@ -2,7 +2,7 @@ import { fx } from '../../report/model'
 import { Card, Field, NumField, Segmented } from '../../ui/kit'
 import { basePressures, geomOf, wallPolys, type Pt, type WallCommonInput, type WallStab } from './common'
 
-// Komponen UI bersama dinding penahan tanah: kartu input geometri & tanah, penampang SVG, grafik rasio D/C.
+// Komponen UI bersama dinding penahan tanah: kartu input geometri & tanah, penampang SVG, grafik rasio.
 
 type SetInput = (p: Partial<WallCommonInput>) => void
 
@@ -150,7 +150,7 @@ export function WallPreview({ r, w, h }: { r: WallStab; w: number; h: number }) 
   )
 }
 
-/** Batang rasio D/C; garis 1,0 = batas. */
+/** Batang rasio; garis 1,0 = batas. */
 export function RatioChart({ items, w, h, note }: { items: { label: string; ratio: number }[]; w: number; h: number; note?: string }) {
   if (w < 200 || h < 100 || !items.length) return null
   const padL = Math.min(190, w * 0.4), padR = 40, padT = 16, padB = 26

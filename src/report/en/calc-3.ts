@@ -10,7 +10,7 @@ export default {
   "Ringan-pasir (0,85)": "Sand-lightweight (0.85)",
   "Ringan (0,75)": "All-lightweight (0.75)",
   "Pu tarik": "Pu tension",
-  "Beban {0}: D/C = {1} > 1 — titik beban di LUAR permukaan desain.": "Load {0}: D/C = {1} > 1 — load point is OUTSIDE the design surface.",
+  "Beban {0}: Rasio = {1} > 1 — titik beban di LUAR permukaan desain.": "Load {0}: Ratio = {1} > 1 — load point is OUTSIDE the design surface.",
   "Struktur tidak stabil (mekanisme) — misalnya rol di kedua tumpuan. Pakai minimal satu sendi/jepit.": "Structure is unstable (mechanism) — e.g. rollers at both supports. Use at least one pinned/fixed support.",
   "Tinggi efektif ≤ 0.": "Effective depth ≤ 0.",
   "Tanpa pelapis / galvanis (1,0)": "Uncoated / galvanised (1.0)",
