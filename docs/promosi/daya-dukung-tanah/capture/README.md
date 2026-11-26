@@ -44,6 +44,17 @@ File › Buka Pekerjaan setelah selesai bila tidak dipakai.
   `out/` bukan `.state/`; isinya aman setelah email disamarkan — cek sekilas dulu isi `out/desktop/d20-*.png`.
 - **Atau** zip folder `out/` dan lampirkan di chat.
 
+## Mengulang dengan akun lain
+Hapus sesi dan hasil lama dulu, lalu jalankan lagi dan login dengan akun yang Premium-nya aktif:
+
+```powershell
+git pull
+Remove-Item -Recurse -Force .state, out -ErrorAction SilentlyContinue   # macOS/Linux: rm -rf .state out
+node capture.mjs
+```
+Aplikasi tidak punya jalur khusus admin: Detail, PDF, dan simpan cloud hanya terbuka bila akun itu punya Premium/trial
+aktif (label di menu akun). Setelah login, skrip membaca label itu dan **berhenti sendiri** bila Premium tidak aktif.
+
 ## Bila ada yang gagal
 - Detail terkunci / log berisi "PERHATIAN: Detail masih terkunci" → akun bukan Premium/trial aktif.
 - Langkah bertanda ✗ di akhir log: ulangi dengan `node capture.mjs --reuse-session --only=desktop` (atau `mobile`),

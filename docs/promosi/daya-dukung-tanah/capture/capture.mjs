@@ -141,6 +141,21 @@ async function waitForLogin(page) {
   throw new Error('Waktu tunggu login habis (10 menit)')
 }
 
+/** Berhenti lebih awal bila akun yang login tidak punya Premium/trial aktif (Detail, PDF, simpan cloud terkunci). */
+async function checkPremium(page) {
+  const badge = page.locator('.mb-badge-bar').first()
+  const text = await badge.waitFor({ timeout: 12000 }).then(() => badge.textContent()).catch(() => null)
+  log('   status akun:', text ? text.trim() : '(label tidak terbaca)')
+  if (text && /berakhir|belum/i.test(text) && !ARGS.includes('--allow-no-premium')) {
+    log('\n!!! Akun ini TIDAK punya Premium/trial aktif, jadi Detail, PDF, dan simpan ke cloud terkunci.')
+    log('    Hentikan, lalu jalankan ulang dan login dengan akun yang Premium-nya aktif.')
+    log('    (Tambahkan --allow-no-premium bila tetap ingin lanjut.)')
+    writeFileSync(path.join(OUT, 'log.txt'), LOG.join('\n') + '\n')
+    await browser.close()
+    process.exit(2)
+  }
+}
+
 /** Tangkap tab yang sedang tampil dalam irisan setinggi layar (desktop) atau viewport tinggi (mobile). */
 async function slices(ctxName, page, base, { tall = 0, step = 0.8, max = 8 } = {}) {
   const orig = page.viewportSize()
@@ -248,6 +263,7 @@ if (!ONLY || ONLY === 'desktop') {
       await step('desktop: menunggu Anda login', async () => {
         EMAIL = await waitForLogin(page)
         log('   login terdeteksi')
+        await checkPremium(page)
         mkdirSync(path.dirname(STATE), { recursive: true })
         await ctx.storageState({ path: STATE })
         stateSaved = true
