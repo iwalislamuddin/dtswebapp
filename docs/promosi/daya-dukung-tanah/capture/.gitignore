@@ -1,3 +1,5 @@
 # Sesi login (cookie + token) — JANGAN pernah di-commit.
 .state/
+# Akun demo (email + sandi) — hanya di laptop, JANGAN di-commit.
+.env.demo
 node_modules/

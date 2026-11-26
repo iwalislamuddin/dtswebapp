@@ -7,13 +7,17 @@
 //   node capture.mjs                      # desktop + mobile
 //   node capture.mjs --only=desktop       # atau --only=mobile
 //
+// Login: sesi disimpan di .state/ dan dipakai ulang otomatis. Bila sesi tidak ada/kedaluwarsa, skrip login sendiri
+// memakai akun demo di file .env.demo (EDFS_DEMO_EMAIL=..., EDFS_DEMO_PASSWORD=...; tidak pernah di-commit). Tanpa
+// file itu, Anda login manual di jendela browser. --fresh-login = abaikan sesi tersimpan.
+//
 // Variabel lingkungan (opsional):
 //   BASE_URL=https://tools.edifisia.com   OUT=out   CHANNEL=chrome (pakai Google Chrome terpasang)
 //   HEADLESS=1 (tanpa jendela; hanya untuk uji tanpa login)   CHROMIUM_PATH=/path/ke/chromium
-// Opsi: --skip-login (lewati tunggu login; untuk uji lokal)
+// Opsi: --skip-login (lewati login; untuk uji lokal), --fresh-login, --allow-no-premium
 import { chromium } from 'playwright'
 import { execFile } from 'node:child_process'
-import { mkdirSync, writeFileSync, existsSync } from 'node:fs'
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { promisify } from 'node:util'
 
@@ -26,6 +30,15 @@ const HEADLESS = process.env.HEADLESS === '1'
 const ARGS = process.argv.slice(2)
 const SKIP_LOGIN = ARGS.includes('--skip-login')
 const ONLY = (ARGS.find((a) => a.startsWith('--only=')) || '').split('=')[1] || ''
+const FRESH = ARGS.includes('--fresh-login')
+// Akun demo dari .env.demo (di laptop saja) atau variabel lingkungan; nilainya tidak pernah ditulis ke log.
+if (existsSync('.env.demo')) {
+  for (const line of readFileSync('.env.demo', 'utf8').split(/\r?\n/)) {
+    const m = line.match(/^\s*(EDFS_DEMO_EMAIL|EDFS_DEMO_PASSWORD)\s*=\s*(.*?)\s*$/)
+    if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '')
+  }
+}
+const DEMO = { email: process.env.EDFS_DEMO_EMAIL || '', password: process.env.EDFS_DEMO_PASSWORD || '' }
 const MASK = 'nama@email.com'
 const WORK_DESKTOP = 'Pondasi gedung A'
 const WORK_MOBILE = 'Pondasi gedung B'
@@ -127,24 +140,26 @@ const menuItem = (page, re) => page.getByRole('menuitem', { name: re })
 const dlg = (page) => page.locator('dialog.dlg[open]')
 const tab = (page, re) => page.getByRole('tab', { name: re })
 
-async function waitForLogin(page) {
-  log('\n>>> SILAKAN MASUK di jendela browser yang terbuka (ketik email & sandi sendiri; skrip tidak membacanya).')
-  log('    Setelah masuk Anda kembali ke Civil Tools. Jika tidak, ketik di tab itu:', TOOL)
+async function waitForLogin(page, manual = true) {
+  if (manual) {
+    log('\n>>> SILAKAN MASUK di jendela browser yang terbuka (ketik email & sandi sendiri; skrip tidak membacanya).')
+    log('    Setelah masuk Anda kembali ke Civil Tools. Jika tidak, ketik di tab itu:', TOOL)
+  }
   const t0 = Date.now()
-  while (Date.now() - t0 < 10 * 60 * 1000) {
+  while (Date.now() - t0 < (+process.env.LOGIN_TIMEOUT_MIN || 10) * 60 * 1000) {
     try {
       const loc = page.locator('.mb-account.user span')
       if (await loc.count()) { const e = (await loc.first().textContent())?.trim(); if (e) return e }
     } catch { /* halaman sedang berpindah */ }
     await page.waitForTimeout(1500)
   }
-  throw new Error('Waktu tunggu login habis (10 menit)')
+  throw new Error(`Waktu tunggu login habis (${+process.env.LOGIN_TIMEOUT_MIN || 10} menit) — cek email/sandi di .env.demo atau login manual`)
 }
 
 /** Berhenti lebih awal bila akun yang login tidak punya Premium/trial aktif (Detail, PDF, simpan cloud terkunci). */
 async function checkPremium(page) {
   const badge = page.locator('.mb-badge-bar').first()
-  const text = await badge.waitFor({ timeout: 12000 }).then(() => badge.textContent()).catch(() => null)
+  const text = await badge.waitFor({ state: 'attached', timeout: 12000 }).then(() => badge.textContent()).catch(() => null)
   log('   status akun:', text ? text.trim() : '(label tidak terbaca)')
   if (text && /berakhir|belum/i.test(text) && !ARGS.includes('--allow-no-premium')) {
     log('\n!!! Akun ini TIDAK punya Premium/trial aktif, jadi Detail, PDF, dan simpan ke cloud terkunci.')
@@ -245,62 +260,88 @@ async function loggedFlow(ctxName, ctx, page, { mobile, workName }) {
   })
 }
 
-// ================================================================== DESKTOP
-let stateSaved = existsSync(STATE) && ARGS.includes('--reuse-session')
-if (!ONLY || ONLY === 'desktop') {
-  const ctx = await browser.newContext(stateSaved ? { ...DESKTOP, storageState: STATE } : DESKTOP)
+// ================================================================== SESI
+/** Email akun bila halaman ini sudah login (menunggu sesi dimuat), atau '' bila tamu. */
+async function sessionEmail(page) {
+  const loc = page.locator('.mb-account.user span').first()
+  try { await loc.waitFor({ state: 'attached', timeout: 15000 }); return ((await loc.textContent()) || '').trim() } catch { return '' }
+}
+/** Pakai sesi tersimpan bila masih berlaku (token diperbarui lalu disimpan lagi). */
+async function sessionFromState() {
+  if (!existsSync(STATE) || FRESH || SKIP_LOGIN) return false
+  const ctx = await browser.newContext({ ...DESKTOP, storageState: STATE })
+  const p = await ctx.newPage()
+  let ok = false
+  try {
+    await openTool(p)
+    EMAIL = await sessionEmail(p)
+    if (EMAIL) { await checkPremium(p); await ctx.storageState({ path: STATE }); ok = true; log('✓ sesi tersimpan masih berlaku — tanpa login') }
+    else log('· sesi tersimpan sudah tidak berlaku — login ulang')
+  } catch (e) { log('· sesi tersimpan tidak bisa dipakai:', String(e.message).split('\n')[0]) }
+  await ctx.close()
+  return ok
+}
+/** Di halaman masuk (pusat akun edifisia.com/masuk atau dialog lokal): login otomatis dengan akun demo, atau manual. */
+async function ensureLogin(gctx, gpage) {
+  if (haveSession || SKIP_LOGIN) return
+  await step('login', async () => {
+    const auto = !!(DEMO.email && DEMO.password)
+    if (auto) {
+      log('   login otomatis dengan akun demo (.env.demo)')
+      const form = gpage.locator('form:has(input[type=password]):visible').first()
+      await form.waitFor({ timeout: 30000 })
+      await form.locator('input[type=email]').first().fill(DEMO.email)
+      await form.locator('input[type=password]').first().fill(DEMO.password)
+      await form.locator('button[type=submit]').first().click()
+      await gpage.waitForTimeout(4000)
+      const msg = gpage.locator('.login-error:visible, form .msg:visible, [role=alert]:visible').first()
+      if (await msg.count()) log('   pesan dari halaman masuk:', ((await msg.textContent()) || '').trim().slice(0, 160))
+    }
+    EMAIL = await waitForLogin(gpage, !auto)
+    log('   login terdeteksi')
+    await checkPremium(gpage)
+    mkdirSync(path.dirname(STATE), { recursive: true })
+    await gctx.storageState({ path: STATE })
+    haveSession = true
+  })
+}
+async function guestShots(kind, opts) {
+  const g = await browser.newContext(opts)
+  const gp = await g.newPage()
+  gp.on('pageerror', (e) => log('   pageerror:', e.message))
+  const c = kind === 'desktop' ? 'd' : 'm'
+  await step(`${kind}: tool sebagai tamu`, async () => { await openTool(gp); await shot(kind, gp, `${c}10-tamu`) })
+  await step(`${kind}: ${kind === 'desktop' ? 'klik' : 'ketuk'} Masuk`, async () => {
+    await gp.locator('button.mb-account').click()
+    await gp.waitForTimeout(3000)
+    const u = new URL(gp.url()); log('   alamat setelah Masuk:', u.origin + u.pathname)
+    await shot(kind, gp, `${c}12-halaman-masuk`) // sebelum mengetik apa pun
+  })
+  await ensureLogin(g, gp)
+  await g.close()
+}
+async function loggedRun(kind, opts, workName) {
+  if (!haveSession && !SKIP_LOGIN) { log(`! ${kind} setelah login dilewati: belum ada sesi.`); return }
+  const ctx = await browser.newContext(haveSession ? { ...opts, storageState: STATE } : opts)
   const page = await ctx.newPage()
   page.on('pageerror', (e) => log('   pageerror:', e.message))
-  if (!stateSaved) {
-    await step('desktop: tool sebagai tamu', async () => { await openTool(page); await shot('desktop', page, 'd10-tamu') })
-    await step('desktop: klik Masuk', async () => {
-      await page.locator('button.mb-account').click()
-      await page.waitForTimeout(3000)
-      const u = new URL(page.url()); log('   alamat setelah Masuk:', u.origin + u.pathname)
-      await shot('desktop', page, 'd12-halaman-masuk')
-    })
-    if (!SKIP_LOGIN) {
-      await step('desktop: menunggu Anda login', async () => {
-        EMAIL = await waitForLogin(page)
-        log('   login terdeteksi')
-        await checkPremium(page)
-        mkdirSync(path.dirname(STATE), { recursive: true })
-        await ctx.storageState({ path: STATE })
-        stateSaved = true
-        await installMask(ctx, page)
-      })
-    }
-  } else {
-    await openTool(page)
-    EMAIL = (await page.locator('.mb-account.user span').first().textContent().catch(() => ''))?.trim() || ''
-    await installMask(ctx, page)
-  }
-  await loggedFlow('desktop', ctx, page, { mobile: false, workName: WORK_DESKTOP })
+  await installMask(ctx, null)
+  await loggedFlow(kind, ctx, page, { mobile: kind === 'mobile', workName })
+  if (haveSession) await ctx.storageState({ path: STATE }) // simpan token terbaru (refresh token berganti tiap dipakai)
   await ctx.close()
 }
 
+let haveSession = await sessionFromState()
+
+// ================================================================== DESKTOP
+if (!ONLY || ONLY === 'desktop') {
+  await guestShots('desktop', DESKTOP)
+  await loggedRun('desktop', DESKTOP, WORK_DESKTOP)
+}
 // ================================================================== MOBILE
 if (!ONLY || ONLY === 'mobile') {
-  // 1) tamu: tombol Masuk + halaman masuk
-  const g = await browser.newContext(MOBILE)
-  const gp = await g.newPage()
-  await step('mobile: tool sebagai tamu', async () => { await openTool(gp); await shot('mobile', gp, 'm10-tamu') })
-  await step('mobile: ketuk Masuk', async () => {
-    await gp.locator('button.mb-account').click(); await gp.waitForTimeout(3000)
-    await shot('mobile', gp, 'm12-halaman-masuk')
-  })
-  await g.close()
-  // 2) sudah login (sesi dari desktop)
-  if (stateSaved || SKIP_LOGIN) {
-    const ctx = await browser.newContext(stateSaved ? { ...MOBILE, storageState: STATE } : MOBILE)
-    const page = await ctx.newPage()
-    page.on('pageerror', (e) => log('   pageerror:', e.message))
-    if (EMAIL) await installMask(ctx, null)
-    await loggedFlow('mobile', ctx, page, { mobile: true, workName: WORK_MOBILE })
-    await ctx.close()
-  } else {
-    log('! Mobile setelah login dilewati: belum ada sesi (jalankan desktop dulu, atau tambahkan --reuse-session).')
-  }
+  await guestShots('mobile', MOBILE)
+  await loggedRun('mobile', MOBILE, WORK_MOBILE)
 }
 
 await browser.close()
